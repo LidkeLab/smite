@@ -1,5 +1,5 @@
 classdef FindROI < handle
-    % FindROI() Finds and collates subregions from a stack of 2D images
+    % FindROI Finds and collates subregions from a stack of 2D images
     %
     % Subregions are found by filtering with a difference of Gaussians filter
     % followed by finding the local maximum.  Local maxima are used as the
@@ -12,10 +12,6 @@ classdef FindROI < handle
     % Filtering and maximum finding are implemented on GPU using CUDA
     % and the Parallel Processsing Toolbox.
     %
-    %   Res:        A binary image the same size as the input image
-    %               where the bright pixels represent the positions
-    %               of the found particles.
-    %               (The same size of the input sequence)
     %
     % REQUIRES:
     %   MATLAB 2014a or later versions
@@ -60,7 +56,6 @@ classdef FindROI < handle
         % Creates an object and copies Data and SMF fields to Properties
         %
         % INPUTS
-        %   Data:   Stack of 2D images (Optional)
         %   SMF:    SMF structure with fields (Optional)
         %       BoxFinding:
         %           BoxSize         %Linear box size for fitting (Pixels)
@@ -68,6 +63,7 @@ classdef FindROI < handle
         %           MinPhotons      %Minimum number of photons from emitter
         %       Fitting:
         %           PSFSigma        %Sigma of 2D Gaussian PSF Model (Pixels)
+        %   Data:   Stack of 2D images (Optional)
         %
         % OUTPUTS
         %   obj:    FindROI object

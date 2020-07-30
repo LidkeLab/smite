@@ -1,4 +1,10 @@
 
+%% Setup
+
+ME=userpath();
+addpath(fullfile(ME,'smite','MATLAB'));
+setupSMITE();
+
 %% Make Data
 PSFSigma=1.3;
 SZ=[128 256 2000];
@@ -16,10 +22,13 @@ FB=smi_core.FindROI(SMF,Data);
 tic
 [ROIStack,SMD]=FB.findROI();
 toc
-FB.showOverlay()
+%FB.showOverlay()
 
 
 
 %% Test gaussMLE
+
+GMLE=smi_core.GaussMLE(SMF,ROIStack)
+[Results,Stats]=GMLE.gaussMLE(SMD)
 
 

@@ -20,7 +20,7 @@ classdef SingleMoleculeFitting<handle
 %   FileName:       File name (char array or cell array of char array)
 %   FileDir:        File directory (char array or cell array of char array)
 %   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
-%   CameraType:     'EMCCD','sCMOS' (Default='EMCCD')
+%   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
@@ -34,14 +34,15 @@ classdef SingleMoleculeFitting<handle
 %
 % Fitting           {GaussMLE}
 %   PSFSigma:   Initial or fixed Sigma of 2D Gaussian PSF Model (Pixels)(Default=1)
-%   FitType:    'Basic','Sigma','Astig','SigmaXY'.'SampledZ'  (Default='Basic')
-%   Iterations: Newton Raphson iterations (Default=20)     
-%   Ax:         Asigmatism fit parameter (see GaussMLE)         
-%   Ay:         Asigmatism fit parameter (see GaussMLE)
-%   Bx:         Asigmatism fit parameter (see GaussMLE)
-%   By:         Asigmatism fit parameter (see GaussMLE)
-%   Gamma:      Asigmatism fit parameter (see GaussMLE)
-%   D:          Asigmatism fit parameter (see GaussMLE)
+%   FitType:    See fit class for options  (Default='XYNB')
+%   Iterations: Newton Raphson iterations (Default=20)
+%   ZFitStruct: Structure for astigmatic fitting:
+%       Ax:         Asigmatism fit parameter (see GaussMLE)         
+%       Ay:         Asigmatism fit parameter (see GaussMLE)
+%       Bx:         Asigmatism fit parameter (see GaussMLE)
+%       By:         Asigmatism fit parameter (see GaussMLE)
+%       Gamma:      Asigmatism fit parameter (see GaussMLE)
+%       D:          Asigmatism fit parameter (see GaussMLE)
 %
 % Thresholding      {ThresholdFits,SRA}
 %   MaxSE_XY:       Maximum allowed precision in x,y (Pixels)(Default=.2)
@@ -88,7 +89,7 @@ classdef SingleMoleculeFitting<handle
             SMF.Data.CameraType='EMCCD';
             SMF.Data.CameraGain=1;
             SMF.Data.CameraOffset=0;
-            SMF.CameraReadNoise=0;
+            SMF.Data.CameraReadNoise=0;
             
             SMF.BoxFinding.BoxSize=7;
             SMF.BoxFinding.BoxOverlap=2;
@@ -96,9 +97,15 @@ classdef SingleMoleculeFitting<handle
             
             %Fitting
             SMF.Fitting.PSFSigma=1;
-            SMF.Fitting.FitType='Basic';
+            SMF.Fitting.FitType='XYNB';
             SMF.Fitting.Iterations=20;
-            
+            SMF.Fitting.ZFitStruct.Ax=[];
+            SMF.Fitting.ZFitStruct.Ay=[];
+            SMF.Fitting.ZFitStruct.Bx=[];
+            SMF.Fitting.ZFitStruct.By=[];
+            SMF.Fitting.ZFitStruct.Gamma=[];
+            SMF.Fitting.ZFitStruct.D=[];
+
             %Thresholding
             SMF.MaxXY_SE=.2;
             SMF.MaxZ_SE=.05;
