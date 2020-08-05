@@ -8,10 +8,10 @@ function setupSMITE()
 %   UP=userpath;
 %   run(fullfile(userpath(1:end-1),'smite\setupSMITE'))
 
-SMITEPath=fileparts(which('setupSMI'));
+SMITEPath=fileparts(which('setupSMITE'));
 
 addpath(SMITEPath)
-addpath(fullfile(SMITEPath,'mex'))
+%addpath(fullfile(SMITEPath,'mex'))
 addpath(fullfile(SMITEPath,'ptx'))
 
 end
