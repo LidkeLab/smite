@@ -38,6 +38,9 @@ classdef FrameConnection < handle
     methods
         function [obj] = FrameConnection(SMD, SMF)
             %FrameConnection is a constructor for the FrameConnection class
+            % This constructor can be used to (optionally) set the input
+            % SMD structure and/or "unwrap" an SMF structure to set the 
+            % available class properties.
         end
     end
     
