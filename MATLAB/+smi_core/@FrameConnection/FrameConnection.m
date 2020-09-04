@@ -57,7 +57,7 @@ classdef FrameConnection < handle
     end
     
     methods
-        function [obj] = FrameConnection(obj, SMD, SMF)
+        function [obj] = FrameConnection(SMD, SMF)
             %FrameConnection is a constructor for the FrameConnection class
             % This constructor can be used to (optionally) set the input
             % SMD structure and/or "unwrap" an SMF structure to set the
