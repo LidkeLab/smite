@@ -54,7 +54,7 @@ classdef SingleMoleculeFitting<handle
 %   MaxBg:          Maximum background accepted from fit (Default=Inf)
 %
 % FrameConnection:  {FrameConnect,SRA}
-%   MaxSeperation:  Maximum seperation for connection (Pixels)(Default=1)
+%   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
 %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
 %   LoS:            Minimum accepted p-value for connection (Default=.01)
 % 
@@ -115,6 +115,11 @@ classdef SingleMoleculeFitting<handle
             SMF.MeanPhotons=200;
             SMF.MinPhotons=100;
             SMF.MaxBG=Inf;
+            
+            %FrameConnection
+            SMF.FrameConnection.MaxSeparation=1; % pixels 
+            SMF.FrameConnection.MaxFrameGap=4; % frames
+            SMF.FrameConnection.LoS=.01;
             
             %Tracking
             SMF.TrackMethods='SMA_SPT';
