@@ -13,11 +13,23 @@ function performFrameConnection(obj)
 %       in SMD identified by the indices nn and mm were connected during
 %       frame connection.  The exact value of the field "ConnectID" is
 %       itself arbitrary and carries no meaning further than associating
-%       localizations.
+%       localizations. This field is directly related to
+%       obj.SMDCombined.ConnectID as follows: 
+%           For a given ConnectID, say nn, the indices in arrays of SMD
+%           that were combined to generate a field in SMDCombined can be
+%           found as IndicesSMD = find(SMD.ConnectID == nn) (alternatively,
+%           IndicesSMD = smi_core.FrameConnection.findConnected(...
+%               SMDCombined, SMD, nn) )
 %
 % INPUTS:
 %   obj: An instance of the class smi_core/FrameConnection with all fields
 %        populated with meaningful entries.
+%
+% OUTPUTS:
+%   obj.SMDCombined: This method will update/add the field SMDCombined to
+%                    the class instance obj.  SMDCombined contains the
+%                    "frame-connected" localizations, i.e., the result of
+%                    performing frame-connection on obj.SMD.
 
 % Created by:
 %   David J. Schodt (Lidke Lab 2020)
@@ -37,7 +49,7 @@ InputExtras = []; % extra inputs sent to c_FrameConnect.mex*
 InputExtrasSE = [];
 obj.SMDCombined = smi_core.SingleMoleculeData.createSMD();
 obj.SMDCombined.NCombined = [];
-obj.SMDCombined.CombinedID = [];
+obj.SMDCombined.ConnectID = [];
 for nn = unique(obj.SMD.DatasetNum)
     % Isolate all valid localizations in the nn-th dataset and typecast
     % certain arrays for c_FrameConnect.mex* .
@@ -76,7 +88,8 @@ for nn = unique(obj.SMD.DatasetNum)
     % Perform the frame-connection using c_FrameConnect.mex*.
     [OutputCoords, OutputCoordsSE, NConnected, OutputFrames, ...
         OutputExtras, OutputExtrasSE, OutputPhotonsBgLogL, ...
-        OutputConnectID, OutputCombinedID] = c_FrameConnect(obj.LoS, ...
+        OutputConnectID, OutputConnectIDCombined] = ...
+        c_FrameConnect(obj.LoS, ...
         InputCoords, InputCoordsSE, InputFrameNum, ...
         InputExtras, InputExtrasSE, InputPhotonsBgLogL, ...
         obj.MaxSeparation, obj.MaxFrameGap, MaxConnectID);
@@ -95,8 +108,8 @@ for nn = unique(obj.SMD.DatasetNum)
         OutputPhotonsBgLogL(:, 2)];
     obj.SMDCombined.LogL = [obj.SMDCombined.LogL; ...
         OutputPhotonsBgLogL(:, 3)];
-    obj.SMDCombined.CombinedID = [obj.SMDCombined.CombinedID; ...
-        OutputCombinedID];
+    obj.SMDCombined.ConnectID = [obj.SMDCombined.ConnectID; ...
+        OutputConnectIDCombined];
     obj.SMDCombined.DatasetNum = [obj.SMDCombined.DatasetNum; ...
         nn*ones(numel(OutputFrames), 1, 'uint32')];
     obj.SMD.ConnectID(CurrentBool) = OutputConnectID;

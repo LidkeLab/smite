@@ -1,5 +1,14 @@
 classdef FrameConnection < handle
     %FrameConnection contains methods for performing frame connection.
+    % This class contains methods to perform frame-connection and to do
+    % associated tasks.  More specifically, the main usage of this class
+    % is to combine a time series of localizations arising from the same
+    % emitter into a single localization with great precision.
+    %
+    % EXAMPLE USAGE:
+    %   FC = smi_core.FrameConnection(SMD, SMF);
+    %   FC.performFrameConnection();
+    %   The primary "outputs" are then FC.SMDCombined and FC.SMD .
     %
     % REQUIRES:
     %   c_FrameConnect.mex*
@@ -13,7 +22,8 @@ classdef FrameConnection < handle
     %   SMDCombined
     %
     % METHOD LIST
-    %
+    %   performFrameConnection()
+    %   findConnected()
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
@@ -99,6 +109,7 @@ classdef FrameConnection < handle
     end
     
     methods (Static)
+        [SMDIndex] = findConnected(SMR, SMD, ID);
     end
     
     
