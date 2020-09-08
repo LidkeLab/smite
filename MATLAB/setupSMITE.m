@@ -11,7 +11,7 @@ function setupSMITE()
 SMITEPath=fileparts(which('setupSMITE'));
 
 addpath(SMITEPath)
-%addpath(fullfile(SMITEPath,'mex'))
+addpath(fullfile(SMITEPath,'mex'))
 addpath(fullfile(SMITEPath,'ptx'))
 
 end
