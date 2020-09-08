@@ -27,23 +27,22 @@ classdef FrameConnection < handle
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
-    %       based on a code written Hanieh Mazloom-Farsibaf
-    
+
     
     properties
         % Level of Significance
-        % (Scalar)(Type single)(Default = 0.01)
-        LoS(1, 1) single = 0.01;
+        % (Scalar)(Type double)(Default = 0.01)
+        LoS(1, 1) double = 0.01;
         
         % Maximum allowable separation between two localizations to still
         % be considered candidates for connection.
-        % (Scalar)(Type single)(Pixels)(Default = 1 pixel)
-        MaxSeparation(1, 1) single = 1;
+        % (Scalar)(Type double)(Pixels)(Default = 1 pixel)
+        MaxSeparation(1, 1) double = 1;
         
         % Maximum allowable frame gap between two localizations to still be
         % considered candidates for connection.
-        % (Pixels)(Type uint8)(Default = 5 frames)
-        MaxFrameGap(1, 1) uint8 = 5;
+        % (Pixels)(Type uint32)(Default = 5 frames)
+        MaxFrameGap(1, 1) uint32 = 5;
         
         % Fit type used to fit localizations (see GaussMLE class for
         % details)
@@ -110,6 +109,7 @@ classdef FrameConnection < handle
     
     methods (Static)
         [SMDIndex] = findConnected(SMR, SMD, ID);
+        [Success] = unitTest();
     end
     
     
