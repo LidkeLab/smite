@@ -17,13 +17,14 @@ function [Success] = unitTest()
 %               Success(3): performFrameConnection(), 'XYNBS'
 %               Success(4): performFrameConnection(), 'XYNBSXSY'
 %               Success(5): performFrameConnection(), 'XYZNB'
+%               Success(6): findConnected()
 
 % Created by: 
 %   David J. Schodt (Lidke Lab, 2020)
 
 
 % Initialize the Success output.
-Success = zeros(5, 1, 'logical');
+Success = zeros(6, 1, 'logical');
 
 % Seed the random number generator so that simulated SMD is predictable.
 % NOTE: If this is changed, there will almost certainly be entries of
@@ -177,5 +178,24 @@ Success(5) = (all(round(double(FC.SMDCombined.X), 2)==ExpectedX) ...
     && all(uint32(FC.SMDCombined.ConnectID)==uint32(1:NEmitters).') ...
     && all(uint32(FC.SMDCombined.NCombined)==uint32(NFrames)));
    
+% Test FrameConnection.findConnected() on some new, incomplete 'SMD' type
+% structures.  This is done by randomly permuting initial (pre frame
+% connection) SMD.ConnectID indices, using findConnected() to determine the
+% new permuted indices, and then summing over the permuted indices found
+% for each element of SMDCombined.ConnectID to check the result.
+% NOTE: In the computation of 'Success' below, I've used ismember instead
+%       of == just in case the output dimensions of findConnected() are
+%       changed someday.
+SMDCombinedInc.ConnectID = (1:NEmitters).';
+ConnectIDSMD = repelem((1:NEmitters).', NFrames, 1);
+SMDInc.ConnectID = ConnectIDSMD(randperm(NEmitters * NFrames));
+IndSMDSum = zeros(NEmitters, 1);
+for ii = 1:NEmitters
+    IndSMDSum(ii) = sum(FC.findConnected(SMDCombinedInc, SMDInc, ...
+        SMDCombinedInc.ConnectID(ii)));
+end 
+Success(6) = all(ismember(double(IndSMDSum), ...
+    [573; 585; 693; 550; 605; 487; 693]));
+
 
 end
