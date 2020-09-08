@@ -22,12 +22,13 @@ classdef FrameConnection < handle
     %   SMDCombined
     %
     % METHOD LIST
-    %   performFrameConnection()
     %   findConnected()
+    %   performFrameConnection()
+    %   unitTest()
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
-
+    
     
     properties
         % Level of Significance
