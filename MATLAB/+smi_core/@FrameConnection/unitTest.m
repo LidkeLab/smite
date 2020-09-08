@@ -26,7 +26,7 @@ function [Success] = unitTest()
 % Initialize the Success output.
 Success = zeros(6, 1, 'logical');
 
-% Seed the random number generator so that simulated SMD is predictable.
+% Seed the random number generator so that the simulated SMD is predictable
 % NOTE: If this is changed, there will almost certainly be entries of
 %       Success that are 0.
 rng(1234)
