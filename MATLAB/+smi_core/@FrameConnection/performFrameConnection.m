@@ -14,7 +14,7 @@ function performFrameConnection(obj)
 %       frame connection.  The exact value of the field "ConnectID" is
 %       itself arbitrary and carries no meaning further than associating
 %       localizations. This field is directly related to
-%       obj.SMDCombined.ConnectID as follows: 
+%       obj.SMDCombined.ConnectID as follows:
 %           For a given ConnectID, say nn, the indices in arrays of SMD
 %           that were combined to generate a field in SMDCombined can be
 %           found as IndicesSMD = find(SMD.ConnectID == nn) (alternatively,
@@ -32,57 +32,58 @@ function performFrameConnection(obj)
 %                    performing frame-connection on obj.SMD.
 
 % Created by:
-%   David J. Schodt (Lidke Lab 2020)
+%   David J. Schodt (Lidke Lab, 2020)
+%       based on a code written Hanieh Mazloom-Farsibaf
 
 
-% Initialize the field "ConnectID", which will be used to string together
-% trajectories.
-obj.SMD.ConnectID = zeros(numel(obj.SMD.X), 1, 'uint32');
-MaxConnectID = 0;
+% Initialize several new fields in SMD and SMDCombined.
+SMD = obj.SMD; % temporary local variable
+SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
+SMDCombined = smi_core.SingleMoleculeData.createSMD();
+SMDCombined.NCombined = [];
+SMDCombined.ConnectID = [];
 
 % Loop through each dataset and perform the frame connection process.
 % NOTE: Since numel(unique(obj.SMD.DatasetNum)) is typically small (e.g.,
 %       < 100) I don't anticipate any benefit to making local copies of any
-%       arrays from obj.SMD (as opposed to accessing them from obj.SMD
+%       arrays from SMD (as opposed to accessing them from SMD
 %       inside the loop, as I'm doing here).
 InputExtras = []; % extra inputs sent to c_FrameConnect.mex*
 InputExtrasSE = [];
-obj.SMDCombined = smi_core.SingleMoleculeData.createSMD();
-obj.SMDCombined.NCombined = [];
-obj.SMDCombined.ConnectID = [];
-for nn = unique(obj.SMD.DatasetNum)
+MaxConnectID = max(SMD.ConnectID);
+for nn = unique(SMD.DatasetNum)
     % Isolate all valid localizations in the nn-th dataset and typecast
     % certain arrays for c_FrameConnect.mex* .
-    CurrentBool = ((obj.SMD.DatasetNum==nn) & (obj.SMD.ThreshFlag==0));
+    CurrentBool = ((SMD.DatasetNum==nn) & (SMD.ThreshFlag==0));
     if ~any(CurrentBool)
         % All localizations in this dataset were thresholded out.
         continue
     end
-    InputFrameNum = uint32(obj.SMD.FrameNum(CurrentBool));
-    InputCoords = single([obj.SMD.X(CurrentBool), ...
-        obj.SMD.Y(CurrentBool)]);
-    InputCoordsSE = single([obj.SMD.X_SE(CurrentBool), ...
-        obj.SMD.Y_SE(CurrentBool)]);
-    InputPhotonsBgLogL = single([obj.SMD.Photons(CurrentBool), ...
-        obj.SMD.Bg(CurrentBool), ...
-        obj.SMD.LogL(CurrentBool)]);
+    InputFrameNum = uint32(SMD.FrameNum(CurrentBool));
+    InputCoords = single([SMD.X(CurrentBool), ...
+        SMD.Y(CurrentBool)]);
+    InputCoordsSE = single([SMD.X_SE(CurrentBool), ...
+        SMD.Y_SE(CurrentBool)]);
+    InputPhotonsBgLogL = single([SMD.Photons(CurrentBool), ...
+        SMD.Bg(CurrentBool), ...
+        SMD.LogL(CurrentBool)]);
     
     % Determine if we need to append additional arrays (e.g., for 3D
     % fitting we'll need to append 'Z' associated arrays).
     switch obj.FitType
         case 'XYNBS'
-            InputExtras = single(obj.SMD.PSFSigma(CurrentBool));
-            InputExtrasSE = single(obj.SMD.PSFSigma_SE(CurrentBool).^2);
+            InputExtras = single(SMD.PSFSigma(CurrentBool));
+            InputExtrasSE = single(SMD.PSFSigma_SE(CurrentBool).^2);
         case 'XYNBSXSY'
-            InputExtras = single([obj.SMD.PSFSigmaX(CurrentBool), ...
-                obj.SMD.PSFSigmaY(CurrentBool)]);
-            InputExtrasSE = single([obj.SMD.PSFSigmaX_SE(CurrentBool), ...
-                obj.SMD.PSFSigmaY_SE(CurrentBool)].^2);
+            InputExtras = single([SMD.PSFSigmaX(CurrentBool), ...
+                SMD.PSFSigmaY(CurrentBool)]);
+            InputExtrasSE = single([SMD.PSFSigmaX_SE(CurrentBool), ...
+                SMD.PSFSigmaY_SE(CurrentBool)].^2);
         case 'XYZNB'
             InputCoords = [InputCoords, ...
-                single(obj.SMD.Z(CurrentBool))];
+                single(SMD.Z(CurrentBool))];
             InputCoordsSE = [InputCoordsSE, ...
-                single(obj.SMD.Z_SE(CurrentBool))];
+                single(SMD.Z_SE(CurrentBool))];
     end
     
     % Perform the frame-connection using c_FrameConnect.mex*.
@@ -96,45 +97,59 @@ for nn = unique(obj.SMD.DatasetNum)
     
     % Store the outputs from c_FrameConnect.mex* in their appropriate place
     % in the class objects.
-    obj.SMDCombined.X = [obj.SMDCombined.X; OutputCoords(:, 1)];
-    obj.SMDCombined.Y = [obj.SMDCombined.Y; OutputCoords(:, 2)];
-    obj.SMDCombined.X_SE = [obj.SMDCombined.X_SE; OutputCoordsSE(:, 1)];
-    obj.SMDCombined.Y_SE = [obj.SMDCombined.Y_SE; OutputCoordsSE(:, 2)];
-    obj.SMDCombined.NCombined = [obj.SMDCombined.NCombined; NConnected];
-    obj.SMDCombined.FrameNum = [obj.SMDCombined.FrameNum; OutputFrames];
-    obj.SMDCombined.Photons = [obj.SMDCombined.Photons; ...
+    SMDCombined.X = [SMDCombined.X; OutputCoords(:, 1)];
+    SMDCombined.Y = [SMDCombined.Y; OutputCoords(:, 2)];
+    SMDCombined.X_SE = [SMDCombined.X_SE; OutputCoordsSE(:, 1)];
+    SMDCombined.Y_SE = [SMDCombined.Y_SE; OutputCoordsSE(:, 2)];
+    SMDCombined.NCombined = [SMDCombined.NCombined; NConnected];
+    SMDCombined.FrameNum = [SMDCombined.FrameNum; OutputFrames];
+    SMDCombined.Photons = [SMDCombined.Photons; ...
         OutputPhotonsBgLogL(:, 1)];
-    obj.SMDCombined.Bg = [obj.SMDCombined.Bg; ...
+    SMDCombined.Bg = [SMDCombined.Bg; ...
         OutputPhotonsBgLogL(:, 2)];
-    obj.SMDCombined.LogL = [obj.SMDCombined.LogL; ...
+    SMDCombined.LogL = [SMDCombined.LogL; ...
         OutputPhotonsBgLogL(:, 3)];
-    obj.SMDCombined.ConnectID = [obj.SMDCombined.ConnectID; ...
+    SMDCombined.ConnectID = [SMDCombined.ConnectID; ...
         OutputConnectIDCombined];
-    obj.SMDCombined.DatasetNum = [obj.SMDCombined.DatasetNum; ...
+    SMDCombined.DatasetNum = [SMDCombined.DatasetNum; ...
         nn*ones(numel(OutputFrames), 1, 'uint32')];
-    obj.SMD.ConnectID(CurrentBool) = OutputConnectID;
+    SMD.ConnectID(CurrentBool) = OutputConnectID;
     MaxConnectID = max(OutputConnectID);
     
     % Store some FitType dependent outputs if needed.
     if strcmpi(obj.FitType, 'XYNBS')
-        SMDCombined.PSFSigma = [obj.SMDCombined.PSFSigma; ...
+        SMDCombined.PSFSigma = [SMDCombined.PSFSigma; ...
             OutputExtras];
-        SMDCombined.PSFSigma_SE = [obj.SMDCombined.PSFSigma_SE; ...
+        SMDCombined.PSFSigma_SE = [SMDCombined.PSFSigma_SE; ...
             OutputExtrasSE];
     elseif strcmpi(obj.FitType, 'XYNBSXSY')
-        SMDCombined.PSFSigmaX = [obj.SMDCombined.PSFSigmaX; ...
+        SMDCombined.PSFSigmaX = [SMDCombined.PSFSigmaX; ...
             OutputExtras(:, 1)];
-        SMDCombined.PSFSigmaY = [obj.SMDCombined.PSFSigmaY; ...
+        SMDCombined.PSFSigmaY = [SMDCombined.PSFSigmaY; ...
             OutputExtras(:, 2)];
-        SMDCombined.PSFSigmaX_SE = [obj.SMDCombined.PSFSigmaX_SE; ...
+        SMDCombined.PSFSigmaX_SE = [SMDCombined.PSFSigmaX_SE; ...
             OutputExtrasSE(:, 1)];
-        SMDCombined.PSFSigmaY_SE = [obj.SMDCombined.PSFSigmaY_SE; ...
+        SMDCombined.PSFSigmaY_SE = [SMDCombined.PSFSigmaY_SE; ...
             OutputExtrasSE(:, 2)];
     elseif strcmpi(obj.FitType, 'XYZNB')
         SMDCombined.Z = [SMDCombined.Z; OutputCoords(:, 3)];
         SMDCombined.Z_SE = [SMDCombined.Z_SE; OutputCoordsSE(:, 3)];
     end
 end
+
+% Add a new field (IndSMD) to SMDCombined that specifies which indices of 
+% SMD were used to generate each entry.
+NLocTotal = numel(SMDCombined.ConnectID);
+IndSMD = cell(NLocTotal, 1);
+for ii = 1:NLocTotal
+    IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ...
+        SMDCombined.ConnectID(ii)));
+end
+SMDCombined.IndSMD = IndSMD;
+
+% Store the updated SMD and SMDCombined in obj.
+obj.SMDCombined = SMDCombined;
+obj.SMD = SMD;
 
 
 end
