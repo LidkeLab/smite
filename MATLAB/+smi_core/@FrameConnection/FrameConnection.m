@@ -13,7 +13,7 @@ classdef FrameConnection < handle
     % REQUIRES:
     %   c_FrameConnect.mex*
     %
-    % PROPERTY LIST (detailed descriptions provided in "properties")
+    % PROPERTY LIST:
     %   LoS
     %   MaxSeparation
     %   MaxFrameGap
@@ -21,7 +21,7 @@ classdef FrameConnection < handle
     %   SMD
     %   SMDCombined
     %
-    % METHOD LIST
+    % METHOD LIST:
     %   findConnected()
     %   performFrameConnection()
     %   unitTest()
