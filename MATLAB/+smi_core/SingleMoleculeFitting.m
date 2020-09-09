@@ -107,14 +107,14 @@ classdef SingleMoleculeFitting<handle
             SMF.Fitting.ZFitStruct.D=[];
 
             %Thresholding
-            SMF.MaxXY_SE=.2;
-            SMF.MaxZ_SE=.05;
-            SMF.MinPValue=.01;
-            SMF.MinPSFSigma=0.5;
-            SMF.MaxPSFSigma=2;
-            SMF.MeanPhotons=200;
-            SMF.MinPhotons=100;
-            SMF.MaxBG=Inf;
+            SMF.Thresholding.MaxXY_SE=.2;
+            SMF.Thresholding.MaxZ_SE=.05;
+            SMF.Thresholding.MinPValue=.01;
+            SMF.Thresholding.MinPSFSigma=0.5;
+            SMF.Thresholding.MaxPSFSigma=2;
+            SMF.Thresholding.MeanPhotons=200;
+            SMF.Thresholding.MinPhotons=100;
+            SMF.Thresholding.MaxBG=Inf;
             
             %FrameConnection
             SMF.FrameConnection.MaxSeparation=1; % pixels 
@@ -122,13 +122,13 @@ classdef SingleMoleculeFitting<handle
             SMF.FrameConnection.LoS=.01;
             
             %Tracking
-            SMF.TrackMethods='SMA_SPT';
-            SMF.Params_Track.D=1;
-            SMF.Params_Track.K_on=.1;
-            SMF.Params_Track.K_off=.1;
-            SMF.Params_Track.MaxFrameGap=10;
-            SMF.Params_Track.MaxDist=10;
-            SMF.MinTrackLength=3;
+            SMF.Tracking.TrackMethods='SMA_SPT';
+            SMF.Tracking.D=1;
+            SMF.Tracking.K_on=.1;
+            SMF.Tracking.K_off=.1;
+            SMF.Tracking.MaxFrameGap=10;
+            SMF.Tracking.MaxDist=10;
+            SMF.Tracking.MinTrackLength=3;
         end
     end
 end
