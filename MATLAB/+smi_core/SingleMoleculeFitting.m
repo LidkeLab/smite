@@ -53,19 +53,6 @@ classdef SingleMoleculeFitting<handle
 %   MinPhotons:     Minimum accepted photons from fit (Default=100)
 %   MaxBg:          Maximum background accepted from fit (Default=Inf)
 %
-% Threshold         {Threshold,SRA}
-%   MinMax.X:       Min/Max x-position (Pixels)(Default=[])
-%   MinMax.Y:       Min/Max y-position (Pixels)(Default=[])
-%   MinMax.Z:       Min/Max z-position (Pixels)(Default=[])
-%   MinMax.Photons: Min/Max photons accepted from fit (Default=[100,Inf])
-%   MinMax.Bg:      Min/Max background accepted from fit (Default=[])
-%   MinMax.PSFSigma:Min/Max PSF Sigma from fit (Pixels)(Default=[.5,2])
-%   MinMax.X_SE:    Min/Max allowed precision in x (Pixels)(Default[0,0.2])
-%   MinMax.Y_SE:    Min/Max allowed precision in y (Pixels)(Default=[0,0.2])
-%   MinMax.Z_SE:    Min/Max allowed precision in z (Microns)(Default=[0,0.5])
-%   MinMax.Pvalue:  Min/Max accepted p-value from fit (Default=[.01,1])
-%   MeanPhotons:    Mean photons (Default=200) (see FindROI)
-%
 % FrameConnection:  {FrameConnect,SRA}
 %   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
 %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
@@ -131,19 +118,6 @@ classdef SingleMoleculeFitting<handle
             SMF.Thresholding.MinPhotons=100;
             SMF.Thresholding.MaxBG=Inf;
 
-            %Threshold
-            SMF.Threshold.MinMax.X=[];
-            SMF.Threshold.MinMax.Y=[];
-            SMF.Threshold.MinMax.Z=[];
-            SMF.Threshold.MinMax.Photons=[100, Inf];
-            SMF.Threshold.MinMax.Bg=[];
-            SMF.Threshold.MinMax.PSFSigma=[0.5, 2];
-            SMF.Threshold.MinMax.X_SE=[0, 0.2];
-            SMF.Threshold.MinMax.Y_SE=[0, 0.2];
-            SMF.Threshold.MinMax.Z_SE=[0, 0.05];
-            SMF.Threshold.MinMax.Pvalue=[0.01, 1];
-            SMF.Threshold.MeanPhotons=200;
-            
             %FrameConnection
             SMF.FrameConnection.MaxSeparation=1; % pixels 
             SMF.FrameConnection.MaxFrameGap=4; % frames
