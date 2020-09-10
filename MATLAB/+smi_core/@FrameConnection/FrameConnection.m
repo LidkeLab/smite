@@ -1,9 +1,10 @@
 classdef FrameConnection < handle
-    % FrameConnection contains methods for performing frame connection.
+    % FrameConnection performs frame-connection on data in an SMD structure
     % This class contains methods to perform frame-connection and to do
     % associated tasks.  More specifically, the main usage of this class
     % is to combine a time series of localizations arising from the same
-    % emitter into a single localization with great precision.
+    % emitter into a single localization with precision greater than any
+    % one of the localizations in the time series.
     %
     % EXAMPLE USAGE:
     %   FC = smi_core.FrameConnection(SMD, SMF);
@@ -18,11 +19,11 @@ classdef FrameConnection < handle
     
     
     properties
-        FitType char = 'XYNB'; % see GaussMLE class for details
-        LoS(1, 1) double = 0.01; % Level of Significance
-        MaxFrameGap(1, 1) uint32 = 5; % max. frame gap between connections
-        MaxSeparation(1, 1) double = 1; % max. sep. between connections
-        SMD struct; % see SingleMoleculeData class for details
+        FitType char = 'XYNB'; % (Default = 'XYNB') see GaussMLE class
+        LoS(1, 1) double = 0.01; % (Default = 0.01)
+        MaxFrameGap(1, 1) uint32 = 5; % (Frames)(Default = 5)
+        MaxSeparation(1, 1) double = 1; % (Pixels)(Default = 1)
+        SMD struct; % see SingleMoleculeData class
     end
     
     properties (SetAccess = 'protected')
