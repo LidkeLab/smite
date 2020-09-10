@@ -20,7 +20,7 @@ classdef FrameConnection < handle
     
     properties
         FitType char = 'XYNB'; % (Default = 'XYNB') see GaussMLE class
-        LoS(1, 1) double = 0.01; % (Default = 0.01)
+        LoS(1, 1) double = 0.01; % (Default = 0.01), Level of Significance
         MaxFrameGap(1, 1) uint32 = 5; % (Frames)(Default = 5)
         MaxSeparation(1, 1) double = 1; % (Pixels)(Default = 1)
         SMD struct; % see SingleMoleculeData class
