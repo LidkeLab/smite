@@ -1,5 +1,5 @@
 classdef FrameConnection < handle
-    %FrameConnection contains methods for performing frame connection.
+    % FrameConnection contains methods for performing frame connection.
     % This class contains methods to perform frame-connection and to do
     % associated tasks.  More specifically, the main usage of this class
     % is to combine a time series of localizations arising from the same
@@ -12,63 +12,26 @@ classdef FrameConnection < handle
     %
     % REQUIRES:
     %   c_FrameConnect.mex*
-    %
-    % PROPERTY LIST:
-    %   LoS
-    %   MaxSeparation
-    %   MaxFrameGap
-    %   FitType
-    %   SMD
-    %   SMDCombined
-    %
-    % METHOD LIST:
-    %   findConnected()
-    %   performFrameConnection()
-    %   unitTest()
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
     
     
     properties
-        % Level of Significance
-        % (Scalar)(Type double)(Default = 0.01)
-        LoS(1, 1) double = 0.01;
-        
-        % Maximum allowable separation between two localizations to still
-        % be considered candidates for connection.
-        % (Scalar)(Type double)(Pixels)(Default = 1 pixel)
-        MaxSeparation(1, 1) double = 1;
-        
-        % Maximum allowable frame gap between two localizations to still be
-        % considered candidates for connection.
-        % (Pixels)(Type uint32)(Default = 5 frames)
-        MaxFrameGap(1, 1) uint32 = 5;
-        
-        % Fit type used to fit localizations (see GaussMLE class for
-        % details)
-        % (Type char)(Default = 'XYNB')
-        FitType char = 'XYNB';
-        
-        % Single Molecule Data structure (see SingleMoleculeData class for
-        % details) set by the user.  This is the, non frame-connected SMD
-        % structure.  After frame-connection, an additional field
-        % (SMD.ConnectID) which indicates which localizations were
-        % connected together.
-        SMD struct;
+        FitType char = 'XYNB'; % see GaussMLE class for details
+        LoS(1, 1) double = 0.01; % Level of Significance
+        MaxFrameGap(1, 1) uint32 = 5; % max. frame gap between connections
+        MaxSeparation(1, 1) double = 1; % max. sep. between connections
+        SMD struct; % see SingleMoleculeData class for details
     end
     
     properties (SetAccess = 'protected')
-        % Single Molecule Data structure (see SingleMoleculeData class for
-        % details) whose member localizations have been frame-connected.
-        % SMDCombined is the intended "output" to be prepared by methods in
-        % this class.
-        SMDCombined struct;
+        SMDCombined struct; % frame-connected SMD structure.
     end
     
     methods
         function [obj] = FrameConnection(SMD, SMF)
-            %FrameConnection is a constructor for the FrameConnection class
+            % FrameConnection prepares the FrameConnection class for use.
             % This constructor can be used to (optionally) set the input
             % SMD structure and/or "unwrap" an SMF structure to set the
             % available class properties.
