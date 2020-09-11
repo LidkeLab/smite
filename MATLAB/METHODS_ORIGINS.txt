@@ -13,6 +13,7 @@ smite <- sma-core-alpha
   unitTest			SMA_Core.frameConnect_unitTest 
  GaussMLE			SMA_Core.gaussMLE
  SingleMoleculeData		SMA_Core.createSMD
+  catSMD			SMA_Core.catSMD
  SingleMoleculeFitting		SMA_Core.createSMF
  @Threshold/
   rejectedLocalizations		SMA_Vis.rejectedLocalizations
