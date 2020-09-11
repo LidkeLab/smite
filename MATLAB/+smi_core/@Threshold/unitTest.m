@@ -66,11 +66,9 @@ function success = unitTest()
 
     MinInt=1000/(4*pi*PSFSigma^2)/4;
     %[SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
-    SMF.BoxFinding.PSFSigma   = PSFSigma;
-    SMF.BoxFinding.SigmaSmall = PSFSigma;
-    SMF.BoxFinding.SigmaLarge = 2*PSFSigma;
     SMF.BoxFinding.BoxSize    = 6*PSFSigma;
     SMF.BoxFinding.MinPhotons = MinInt;
+    SMF.Fitting.PSFSigma      = PSFSigma;
     FR = smi_core.FindROI(SMF, Data);
     [SMD, ROIStack] = FR.findROI(SMD);
 
@@ -79,7 +77,7 @@ function success = unitTest()
     SMF.Fitting.PSFSigma = PSFSigma;
     GM = smi_core.GaussMLE(SMF, ROIStack);
     GM.CameraType = CameraType;
-    [SMD, Statistics]=GM.gaussMLE(SMD);
+    [SMD, Statistics] = GM.gaussMLE(SMD);
 
     TH = smi_core.Threshold;
     FNames = TH.Fields;
