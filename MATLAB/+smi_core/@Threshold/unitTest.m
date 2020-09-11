@@ -30,21 +30,39 @@ function success = unitTest()
 
     %Data2Photons
     CameraType='EMCCD';
+%   if strcmp(CameraType,'EMCCD')
+%       CCDCalibration=struct('ROI',[],'OffsetImage',0,'GainImage',1,'ReadnoiseImage',[]);
+%   elseif strcmp(CameraType,'SCMOS')
+%       Y_start=897;
+%       X_start=897;
+%       Y_end=1152;
+%       X_end=1152;
+%       %CCDCalibration.ROI=[Y_start X_start Y_end X_end];
+%       %CCDCalibration.OffsetImage=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
+%       %CCDCalibration.GainImage=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
+%       %CCDCalibration.ReadnoiseImage=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
+%   end
     if strcmp(CameraType,'EMCCD')
-        CCDCalibration=struct('ROI',[],'OffsetImage',0,'GainImage',1,'ReadnoiseImage',[]);
+        RawDataROI=[];
+        CameraOffset=0;
+        CameraGain=1;
+        CameraReadNoise=[];
     elseif strcmp(CameraType,'SCMOS')
         Y_start=897;
         X_start=897;
         Y_end=1152;
         X_end=1152;
-        CCDCalibration.ROI=[Y_start X_start Y_end X_end];
-        CCDCalibration.OffsetImage=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
-        CCDCalibration.GainImage=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
-        CCDCalibration.ReadnoiseImage=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
+        RawDataROI=[Y_start X_start Y_end X_end];
+        CameraOffset=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
+        CameraGain=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
+        CameraReadNoise=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
     end
-
     %[Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
-    [Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
+    DP = smi_core.DataToPhotons;
+    SMF.Data.CameraGain = CameraGain;
+    SMF.Data.CameraOffset = CameraOffset;
+    SMF.Data.CameraReadNoise = CameraReadNoise;
+    [Data, CCDReadnoise] = DP.convertToPhotons(Data, SMF, RawDataROI);
 
     MinInt=1000/(4*pi*PSFSigma^2)/4;
     %[SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
