@@ -1,0 +1,31 @@
+smite <- sma-core-alpha
+
++smi_core/
+ @DriftCorrection/
+  calcDCResidual		SMA_Vis.calcDCResidual
+  driftCorrectKNN		SMA_Core.driftCorrectKNN
+  plotDriftCorrection		SMA_Vis.plotDriftCorrection
+  unitTest			SMA_Core.driftCorrectKNN_unitTest
+ FindROI			SMA_Core.findROI
+ @FrameConnection/
+  findConnected			SMA_Core.findConnected
+  performFrameConnection	SMA_Core.frameConnect
+  unitTest			SMA_Core.frameConnect_unitTest 
+ GaussMLE			SMA_Core.gaussMLE
+ SingleMoleculeData		SMA_Core.createSMD
+ SingleMoleculeFitting		SMA_Core.createSMF
+ @Threshold/
+  rejectedLocalizations		SMA_Vis.rejectedLocalizations
+  setThreshFlag			SMA_Core.thresholdSM
+  translateThreshFlag		SMA_Vis.translateThreshFlag
+  unitTest			SMA_Core.thresholdSM_unitTest
+
++smi_sim/
+ @GaussBobs/
+  gaussBlobImage		SMA_Sim.gaussBlobImage
+  gaussBlobROIStack		SMA_Sim.gaussBlobROIStack
+
++smi/
+ @SMLM/
+  gui				SMA_SR.SMA_SR
+  testFit			SMA_SR.SMA_SR
