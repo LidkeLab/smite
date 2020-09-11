@@ -44,7 +44,7 @@ classdef FindROI < handle
     methods
         function [obj]=FindROI(SMF,Data)
         %FindROI Create a FindROI object
-        %[obj]=FindROI(Data,SMF)
+        %[obj]=FindROI(SMF,Data)
         %
         % [obj]=FindROI()
         % Creates an object with default property values.

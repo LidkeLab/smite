@@ -13,7 +13,8 @@ function success = unitTest()
     %  OUTPUT: success (0 if passed; 1 if failed)
 
     %Created by
-    %  Sandeep Pallikkuth, Lidkelab 2017.
+    %  Sandeep Pallikkuth, Lidkelab 2017
+    % Revised Michael Wester 2020.
     %  ---------------------------------------------------------------------
 
     success=0;
@@ -21,13 +22,17 @@ function success = unitTest()
     SMD.NFiles=1; %Create a SMD structure
     PSFSigma=1;
 
-    Data=SMA_Sim.gaussBlobImage();
+    % Create default SMF structure.
+    SMF = smi_core.SingleMoleculeFitting.createSMF();
+
+    %Data=SMA_Sim.gaussBlobImage();
+    Data=smi_sim.GaussBlobs.gaussBlobImage();
 
     %Data2Photons
     CameraType='EMCCD';
     if strcmp(CameraType,'EMCCD')
         CCDCalibration=struct('ROI',[],'OffsetImage',0,'GainImage',1,'ReadnoiseImage',[]);
-    elseif strcmp(CameraType,'sCMOS')
+    elseif strcmp(CameraType,'SCMOS')
         Y_start=897;
         X_start=897;
         Y_end=1152;
@@ -37,11 +42,26 @@ function success = unitTest()
         CCDCalibration.GainImage=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
         CCDCalibration.ReadnoiseImage=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
     end
+
+    %[Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
     [Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
 
     MinInt=1000/(4*pi*PSFSigma^2)/4;
-    [SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
-    [SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
+    %[SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
+    SMF.BoxFinding.PSFSigma   = PSFSigma;
+    SMF.BoxFinding.SigmaSmall = PSFSigma;
+    SMF.BoxFinding.SigmaLarge = 2*PSFSigma;
+    SMF.BoxFinding.BoxSize    = 6*PSFSigma;
+    SMF.BoxFinding.MinPhotons = MinInt;
+    FR = smi_core.FindROI(SMF, Data);
+    [SMD, ROIStack] = FR.findROI(SMD);
+
+    %[SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
+    SMF.Fitting.FitType  = 'XYNB';
+    SMF.Fitting.PSFSigma = PSFSigma;
+    GM = smi_core.GaussMLE(SMF, ROIStack);
+    GM.CameraType = CameraType;
+    [SMD, Statistics]=GM.gaussMLE(SMD);
 
     TH = smi_core.Threshold;
     FNames = TH.Fields;
