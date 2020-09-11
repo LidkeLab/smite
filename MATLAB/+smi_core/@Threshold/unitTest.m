@@ -13,7 +13,8 @@ function success = unitTest()
     %  OUTPUT: success (0 if passed; 1 if failed)
 
     %Created by
-    %  Sandeep Pallikkuth, Lidkelab 2017.
+    %  Sandeep Pallikkuth, Lidkelab 2017
+    % Revised Michael Wester 2020.
     %  ---------------------------------------------------------------------
 
     success=0;
@@ -21,27 +22,62 @@ function success = unitTest()
     SMD.NFiles=1; %Create a SMD structure
     PSFSigma=1;
 
-    Data=SMA_Sim.gaussBlobImage();
+    % Create default SMF structure.
+    SMF = smi_core.SingleMoleculeFitting.createSMF();
+
+    %Data=SMA_Sim.gaussBlobImage();
+    Data=smi_sim.GaussBlobs.gaussBlobImage();
 
     %Data2Photons
     CameraType='EMCCD';
+%   if strcmp(CameraType,'EMCCD')
+%       CCDCalibration=struct('ROI',[],'OffsetImage',0,'GainImage',1,'ReadnoiseImage',[]);
+%   elseif strcmp(CameraType,'SCMOS')
+%       Y_start=897;
+%       X_start=897;
+%       Y_end=1152;
+%       X_end=1152;
+%       %CCDCalibration.ROI=[Y_start X_start Y_end X_end];
+%       %CCDCalibration.OffsetImage=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
+%       %CCDCalibration.GainImage=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
+%       %CCDCalibration.ReadnoiseImage=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
+%   end
     if strcmp(CameraType,'EMCCD')
-        CCDCalibration=struct('ROI',[],'OffsetImage',0,'GainImage',1,'ReadnoiseImage',[]);
-    elseif strcmp(CameraType,'sCMOS')
+        RawDataROI=[];
+        CameraOffset=0;
+        CameraGain=1;
+        CameraReadNoise=[];
+    elseif strcmp(CameraType,'SCMOS')
         Y_start=897;
         X_start=897;
         Y_end=1152;
         X_end=1152;
-        CCDCalibration.ROI=[Y_start X_start Y_end X_end];
-        CCDCalibration.OffsetImage=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
-        CCDCalibration.GainImage=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
-        CCDCalibration.ReadnoiseImage=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
+        RawDataROI=[Y_start X_start Y_end X_end];
+        CameraOffset=abs(single(normrnd(100,2,[Y_end-Y_start+1 X_end-X_start+1])));
+        CameraGain=abs(single(normrnd(2,0.05,[Y_end-Y_start+1 X_end-X_start+1])));
+        CameraReadNoise=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
     end
-    [Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
+    %[Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
+    DP = smi_core.DataToPhotons;
+    SMF.Data.CameraGain = CameraGain;
+    SMF.Data.CameraOffset = CameraOffset;
+    SMF.Data.CameraReadNoise = CameraReadNoise;
+    [Data, CCDReadnoise] = DP.convertToPhotons(Data, SMF, RawDataROI);
 
     MinInt=1000/(4*pi*PSFSigma^2)/4;
-    [SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
-    [SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
+    %[SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
+    SMF.BoxFinding.BoxSize    = 6*PSFSigma;
+    SMF.BoxFinding.MinPhotons = MinInt;
+    SMF.Fitting.PSFSigma      = PSFSigma;
+    FR = smi_core.FindROI(SMF, Data);
+    [ROIStack, SMD] = FR.findROI(SMD);
+
+    %[SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
+    SMF.Fitting.FitType  = 'XYNB';
+    SMF.Fitting.PSFSigma = PSFSigma;
+    GM = smi_core.GaussMLE(SMF, ROIStack);
+    GM.CameraType = CameraType;
+    [SMD, Statistics] = GM.gaussMLE(SMD);
 
     TH = smi_core.Threshold;
     FNames = TH.Fields;
