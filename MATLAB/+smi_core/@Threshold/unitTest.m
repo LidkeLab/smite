@@ -70,7 +70,7 @@ function success = unitTest()
     SMF.BoxFinding.MinPhotons = MinInt;
     SMF.Fitting.PSFSigma      = PSFSigma;
     FR = smi_core.FindROI(SMF, Data);
-    [SMD, ROIStack] = FR.findROI(SMD);
+    [ROIStack, SMD] = FR.findROI(SMD);
 
     %[SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
     SMF.Fitting.FitType  = 'XYNB';
