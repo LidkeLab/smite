@@ -16,6 +16,7 @@ smite <- sma-core-alpha
   catSMD			SMA_Core.catSMD
  SingleMoleculeFitting		SMA_Core.createSMF
  @Threshold/
+  applyThresh			SMA_SR.applyThresh
   rejectedLocalizations		SMA_Vis.rejectedLocalizations
   setThreshFlag			SMA_Core.thresholdSM
   translateThreshFlag		SMA_Vis.translateThreshFlag
