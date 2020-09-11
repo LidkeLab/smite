@@ -117,6 +117,10 @@ Success(2) = baseSuccess(FC.SMDCombined, ...
 
 % Perform the frame-connection procedure for the fit type 'XYNBS' and
 % perform various checks to see if it worked correctly.
+% NOTE: Testing this using round() as I've done is not the best way to 
+%       compare floats (it's better to do something like 
+%       abs(float1-float2) < tol), but for this simulation with the seeded
+%       rng, it works.
 SMF.FrameConnection.FitType = 'XYNBS'; % not needed, added for emphasis
 FC.FitType = 'XYNBS';
 FC.performFrameConnection();
@@ -183,6 +187,10 @@ Success(6) = all(ismember(double(IndSMDSum), ...
         % This function computes the baseline success of the
         % frame-connection, meaning that it checks several fields in the
         % SMDCombined structure that will not change based on the fit-type.
+        % NOTE: Testing this using round() as I've done is not the best
+        %       way to compare floats (it's better to do something like
+        %       abs(float1-float2) < tol), but for this simulation with the 
+        %       seeded rng, it works.
         
         BaseSuccess = ...
             (all(round(double(SMDCombined.X), 2)==ExpectedX) ...
