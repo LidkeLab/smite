@@ -1,6 +1,7 @@
 function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
     RawDataROI, CalibrationROI)
 %convertToPhotons converts RawData to units of photons.
+%
 % This method will convert the image(s) contained in the array RawData to
 % units of photons using the detector calibration information contained in
 % the input CalibrationStruct.

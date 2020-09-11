@@ -1,5 +1,6 @@
 function [Success] = unitTest()
 %unitTest tests vital functionality of the class smi_core.FrameConnection
+%
 % This method tests various methods in the class smi_core.FrameConnection
 % class to ensure that the vital functionality is working as intended.
 % This is done by simulating a populated SMD structure with known

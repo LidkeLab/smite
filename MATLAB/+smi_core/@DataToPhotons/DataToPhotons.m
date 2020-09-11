@@ -1,5 +1,6 @@
 classdef DataToPhotons < handle
-    % DataToPhotons contains static methods to convert raw data to photons.
+    %DataToPhotons contains static methods to convert raw data to photons.
+    %
     % This class contains static methods associated with the gain and
     % offset correction needed to convert raw data from the camera (arrays
     % given in Analog to Digital Units (ADU)) to units of photons.  The
