@@ -9,10 +9,13 @@ function [Success] = unitTest()
 %   Success: A boolean array whose elements indicate success/failure of
 %            various methods of the DataToPhotons class. (Boolean)
 %            Success(1): method convertToPhotons(), RawData is gain and
-%                        offset corrected succesfully.
+%                        offset corrected succesfully for non-scalar gain
+%                        and offset.
 %            Success(2): method convertToPhotons(), the input read-noise 
 %                        (given as a variance) is succesfully converted to 
-%                        units of photons^2.
+%                        units of photons^2 for non-scalar gain and offset.
+%            Success(3): Same as Success(1) for scalar gain.
+%            Success(4): Same as Success(2) for scalar offset.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -30,10 +33,12 @@ rng(1234)
 %       there is something meaningful to look at.
 FrameSizeFull = 256; % don't change this! other numbers assume = 256
 NFrames = 10;
-Background = 10; % photons (or, assumed to be equal to e-)
-CameraGain = 2 + 0.2*randn(FrameSizeFull, 'single'); % ADU / e-
-CameraOffset = 100 + 0.5*randn(FrameSizeFull, 'single'); % ADU
-ReadNoiseVariance = (3 +  1*randn(FrameSizeFull, 'single')).^2; % ADU^2
+Background = 10; % e- (treated as photons)
+SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF.Data.CameraGain = 2 + 0.2*randn(FrameSizeFull, 'single'); % ADU / e-
+SMF.Data.CameraOffset = 100 + 0.5*randn(FrameSizeFull, 'single'); % ADU
+SMF.Data.CameraReadNoise = ...
+    (3 +  1*randn(FrameSizeFull, 'single')).^2; % ADU^2
 SMD = smi_core.SingleMoleculeData.createSMD();
 SMD.X = repmat(128 + 64*[0; 1; 1; -1; -1], [NFrames, 1]);
 SMD.Y = repmat(128 + 64*[0; 1; -1; 1; -1], [NFrames, 1]);
@@ -47,11 +52,13 @@ SMD.Bg = zeros(5*NFrames, 1);
 % Add read noise to the simulated data and then convert to ADU.
 % NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted 
 %       to keep ReadNoiseVariance in units of ADU^2 for unit consistency.
-ReadNoiseVariancePhotons = ReadNoiseVariance ./ (CameraGain.^2);
+ReadNoiseVariancePhotons = SMF.Data.CameraReadNoise ...
+    ./ (SMF.Data.CameraGain.^2);
 DataWithReadNoise = Data ...
-    + (sqrt(ReadNoiseVariancePhotons).*randn(FrameSizeFull));
+    + sqrt(ReadNoiseVariancePhotons).*randn(FrameSizeFull);
 DataWithReadNoise(DataWithReadNoise < 0) = 0;
-RawDataFull = CameraGain.*DataWithReadNoise + CameraOffset;
+RawDataFull = SMF.Data.CameraGain.*DataWithReadNoise ...
+    + SMF.Data.CameraOffset;
 
 % Divide RawDataFull into 5 quadrants, one centered on each of the blobs
 % in the simulation (this is just to test that I'm indexing into arrays
@@ -60,6 +67,7 @@ IndicesTopLeft = [1:128; 1:128].'; % [rows, columns]
 IndicesTopRight = [1:128; 129:256].';
 IndicesBottomRight = [129:256; 129:256].';
 IndicesBottomLeft = [129:256; 1:128].';
+IndicesCenter = (128-64) + IndicesTopLeft;
 RawDataTopLeft = RawDataFull(IndicesTopLeft(:, 1), ...
     IndicesTopLeft(:, 2), :);
 RawDataTopRight = RawDataFull(IndicesTopRight(:, 1), ...
@@ -68,19 +76,15 @@ RawDataBottomRight = RawDataFull(IndicesBottomRight(:, 1), ...
     IndicesBottomRight(:, 2), :);
 RawDataBottomLeft = RawDataFull(IndicesBottomLeft(:, 1), ...
     IndicesBottomLeft(:, 2), :);
+RawDataCenter = RawDataFull(IndicesCenter(:, 1), ...
+    IndicesCenter(:, 2), :);
 ROITopLeft = [min(IndicesTopLeft), max(IndicesTopLeft)];
 ROITopRight = [min(IndicesTopRight), max(IndicesTopRight)];
 ROIBottomRight = [min(IndicesBottomRight), max(IndicesBottomRight)];
 ROIBottomLeft = [min(IndicesBottomLeft), max(IndicesBottomLeft)];
 
-% Prepare an SMF structure to hold the gain, offset, and read noise.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
-SMF.Data.CameraGain = CameraGain;
-SMF.Data.CameraOffset = CameraOffset;
-SMF.Data.CameraReadNoise = ReadNoiseVariance;
-
-% Test the gain/offset corrections in convertToPhotons() in all test
-% quadrants specified above.
+% Test the gain/offset corrections in convertToPhotons() in the corner test
+% quadrants.
 Success = zeros(2, 1, 'logical');
 CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
 CorrectedData = zeros(FrameSizeFull, FrameSizeFull, NFrames, 'single');
@@ -103,6 +107,39 @@ CorrectedNoise = zeros(FrameSizeFull, 'single');
     RawDataBottomLeft, SMF, ROIBottomLeft, CalibrationROI);
 Success(1) = all(abs(CorrectedData(:)-DataWithReadNoise(:)) < 0.1);
 Success(2) = all(abs(CorrectedNoise(:)-ReadNoiseVariancePhotons(:)) < 0.1);
+
+% Test the gain/offset corrections in convertToPhotons() in the center test
+% quadrant, avoiding setting the input ROI to test the default indexing.
+[CorrectedDataCenter, CorrectedNoiseCenter] = ...
+    smi_core.DataToPhotons.convertToPhotons(...
+    RawDataCenter, SMF, [], CalibrationROI);
+TrueDataCenter = DataWithReadNoise(IndicesCenter(:, 1), ...
+    IndicesCenter(:, 2), :);
+TrueNoiseCenter = ReadNoiseVariancePhotons(IndicesCenter(:, 1), ...
+    IndicesCenter(:, 2));
+Success(1) = (Success(1) ...
+    & all(abs(CorrectedDataCenter(:)-TrueDataCenter(:)) < 0.1));
+Success(2) = (Success(2) ...
+    & all(abs(CorrectedNoiseCenter(:)-TrueNoiseCenter(:)) < 0.1));
+
+% Repeat the above tests for scalar gain and offset (the quadrants no
+% longer matter in this case so we can just test the entire image).
+% Add read noise to the simulated data and then convert to ADU.
+% NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted 
+%       to keep ReadNoiseVariance in units of ADU^2 for unit consistency.
+SMF.Data.CameraGain = mean(SMF.Data.CameraGain(:));
+SMF.Data.CameraOffset = mean(SMF.Data.CameraOffset(:));
+SMF.Data.CameraReadNoise = mean(SMF.Data.CameraReadNoise(:));
+ScalarReadNoisePhotons = SMF.Data.CameraReadNoise / SMF.Data.CameraGain.^2;
+DataWithScalarReadNoise = Data ...
+    + sqrt(ScalarReadNoisePhotons)*randn(FrameSizeFull);
+DataWithScalarReadNoise(DataWithScalarReadNoise < 0) = 0;
+RawData = SMF.Data.CameraGain.*DataWithScalarReadNoise ...
+    + SMF.Data.CameraOffset;
+[CorrectedData, CorrectedNoise] = ...
+    smi_core.DataToPhotons.convertToPhotons(RawData, SMF);
+Success(3) = all(abs(CorrectedData(:)-DataWithScalarReadNoise(:)) < 0.1);
+Success(4) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
 
 
 end
