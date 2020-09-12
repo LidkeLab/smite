@@ -19,7 +19,7 @@ function success = unitTest()
 
     success=0;
 
-    SMD.NFiles=1; %Create a SMD structure
+    %SMD.NFiles=1; %Create a SMD structure
     PSFSigma=1;
 
     % Create default SMF structure.
@@ -70,7 +70,7 @@ function success = unitTest()
     SMF.BoxFinding.MinPhotons = MinInt;
     SMF.Fitting.PSFSigma      = PSFSigma;
     FR = smi_core.FindROI(SMF, Data);
-    [ROIStack, SMD] = FR.findROI(SMD);
+    [ROIStack, SMD] = FR.findROI();
 
     %[SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
     SMF.Fitting.FitType  = 'XYNB';
