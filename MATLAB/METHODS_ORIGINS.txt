@@ -2,8 +2,8 @@ smite <- sma-core-alpha
 
 +smi_core/
  @DataToPhotons/
-  convertToPhotons      SMA_Core.data2Photons
-  unitTest              SMA_Core.data2Photons_unitTest
+  convertToPhotons		SMA_Core.data2Photons
+  unitTest			SMA_Core.data2Photons_unitTest
  @DriftCorrection/
   calcDCResidual		SMA_Vis.calcDCResidual
   driftCorrectKNN		SMA_Core.driftCorrectKNN

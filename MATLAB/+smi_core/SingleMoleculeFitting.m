@@ -58,7 +58,12 @@ classdef SingleMoleculeFitting<handle
 %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
 %   LoS:            Minimum accepted p-value for connection (Default=.01)
 %
-% DriftCorrection   {DriftCorrection}
+% DriftCorrection   {DriftCorrection,SRA}
+%  L_intra          Intra-dataset threshold (Pixel)(Default=1)
+%  L_inter          Inter-dataset threshold (Pixel)(Default=2)
+%  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
+%  PDegree          Degree intra-dataset fitting poly for drift rate (Default=1)
+%  Init_inter       Init wrt previous dataset for inter-dataset DC (Default=0)
 % 
 % Tracking          {SPT}
 %   Method:         Type of method used for tracking (Default='smi_spt')
@@ -124,6 +129,11 @@ classdef SingleMoleculeFitting<handle
             SMF.FrameConnection.LoS=.01;
 
             %DriftCorrection
+            SMF.DriftCorrection.L_intra = 1; % pixel
+            SMF.DriftCorrection.L_inter = 2; % pixel
+            SMF.DriftCorrection.PixelSizeZUnit = 0.1; % um
+            SMF.DriftCorrection.PDegree = 1;
+            SMF.DriftCorrection.Init_inter = 0;
             
             %Tracking
             SMF.Tracking.TrackMethods='SMA_SPT';
