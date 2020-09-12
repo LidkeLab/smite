@@ -1,5 +1,6 @@
 function performFrameConnection(obj)
-%performFrameConnection is the "run" method of the FrameConnection class
+%performFrameConnection is the "run" method of the FrameConnection class.
+%
 % This method is intended to be used as the main "run" method of the
 % FrameConnection class, meaning that most users will set the properties of
 % the FrameConnection class, call this method, gather desired properties,

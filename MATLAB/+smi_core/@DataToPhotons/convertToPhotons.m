@@ -1,6 +1,7 @@
 function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
     RawDataROI, CalibrationROI)
 %convertToPhotons converts RawData to units of photons.
+%
 % This method will convert the image(s) contained in the array RawData to
 % units of photons using the detector calibration information contained in
 % the input CalibrationStruct.
@@ -40,8 +41,13 @@ function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
 %
 % OUTPUTS:
 %   Data: The input RawData corrected for gain and offset (i.e., converted
-%         to units of photons)(photons)(mxnxN numeric array)
-%
+%         to units of photons)(Photons)(mxnxN single array)
+%   ReadNoise: The input SMF field SMF.Data.CameraReadNoise converted to
+%              units of photons, truncated to the region of the camera
+%              defined by RawDataROI when appropriate (i.e., when 
+%              SMF.Data.CameraReadNoise is non-scalar).
+%              (Pixels)(mxn single array, 1x1 single array, or [], 
+%              depending on the input SMF.Data.CameraReadNoise)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -99,9 +105,10 @@ if (prod(SizeCameraGain) > 1)
     % If RawDataROI is empty, we will assume RawData corresponds to the
     % center ROI of GainImage and OffsetImage.
     if isempty(RawDataROI)
-        RawDataROI = repmat(CalibrationROI(1:2), [1, 2]) ...
-            + [round((SizeCameraGain(1:2)-SizeRawData(1:2))/2), ...
-            SizeRawData(1:2) + 1];
+        StartPosition = ...
+            1 + round((SizeCameraGain(1:2)-SizeRawData(1:2))/2);
+        RawDataROI = repmat(StartPosition, [1, 2]) ...
+            + [0, 0, SizeRawData(1:2)-1];
     end
     
     % Isolate the desired portions of GainImage and OffsetImage.

@@ -1,5 +1,6 @@
 classdef FrameConnection < handle
-    % FrameConnection performs frame-connection on data in an SMD structure
+    %FrameConnection performs frame-connection on data in an SMD structure
+    %
     % This class contains methods to perform frame-connection and to do
     % associated tasks.  More specifically, the main usage of this class
     % is to combine a time series of localizations arising from the same
