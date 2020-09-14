@@ -38,7 +38,7 @@ methods
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
-   function obj = DriftCorrection(obj, SMF)
+   function obj = DriftCorrection(SMF)
    % SMF values, if provided, can override some of the class properties.
 
       if exist('SMF', 'var')

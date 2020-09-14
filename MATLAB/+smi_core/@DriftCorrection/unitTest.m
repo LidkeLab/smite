@@ -121,18 +121,20 @@ dipshow(DriftIm)  %synthetic drift image
 %GaussIm = SMA_Vis.gaussianImage(SMDin, SRImageZoom);
 %dipshow(GaussIm);
 
-DC = smi_core.DriftCorrection;
-%DriftParams.PDegree      = 1;
-%DriftParams.TolFun_intra = 1e-2;
-%DriftParams.TolX_intra   = 1e-4;
-%DriftParams.TolFun_inter = 1e-2;
-%DriftParams.TolX_inter   = 1e-4;
-DC.DriftParams.Init_inter   = SMDin.NFrames;
-%DriftParams.Init_inter   = 0;
+SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF.DriftCorrection.Init_inter = SMDin.NFrames;
+DC = smi_core.DriftCorrection(SMF);
+%DriftParams.PDegree       = 1;
+%DriftParams.TolFun_intra  = 1e-2;
+%DriftParams.TolX_intra    = 1e-4;
+%DriftParams.TolFun_inter  = 1e-2;
+%DriftParams.TolX_inter    = 1e-4;
+%DC.DriftParams.Init_inter = SMDin.NFrames;
+%DriftParams.Init_inter    = 0;
 
 clear SMDin SMD
 SMDin = SMDsave;
-[SMD, Statistics] = DC.driftCorrectKNN(SMDin, DriftParams);
+[SMD, Statistics] = DC.driftCorrectKNN(SMDin);
 %Statistics
 
 % Remove any NaNs.
@@ -179,7 +181,7 @@ correctedDriftIm = 255 * correctedDriftIm / P;
 dipshow(correctedDriftIm)
 
 % Plot the drift correction as a function of time.
-DC_fig = DC.plotDriftCorrection(SMD, DriftParams);
+DC_fig = DC.plotDriftCorrection(SMD);
 showm(DC_fig);
 
 % Plot the residual between the pre-drift data and the drift corrected
@@ -359,19 +361,22 @@ view([-66, 12])
 hold off
 %saveas(gcf, '3Dsim_DriftImage', 'png');
 
-DC = smi_core.DriftCorrection;
-%DriftParams.PixelSizeZUnit = SMDin.PixelSizeZUnit;
-%DriftParams.PDegree        = 1;
-%DriftParams.TolFun_intra   = 1e-2;
-%DriftParams.TolX_intra     = 1e-4;
-%DriftParams.TolFun_inter   = 1e-2;
-%DriftParams.TolX_inter     = 1e-4;
+SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF.DriftCorrection.Init_inter = SMDin.NFrames;
+DC = smi_core.DriftCorrection(SMF);
 DC.DriftParams.Init_inter     = SMDin.NFrames;
-%DriftParams.Init_inter     = 0;
+%DriftParams.PixelSizeZUnit = SMDin.PixelSizeZUnit;
+%DriftParams.PDegree       = 1;
+%DriftParams.TolFun_intra  = 1e-2;
+%DriftParams.TolX_intra    = 1e-4;
+%DriftParams.TolFun_inter  = 1e-2;
+%DriftParams.TolX_inter    = 1e-4;
+%DC.DriftParams.Init_inter = SMDin.NFrames;
+%DriftParams.Init_inter    = 0;
 
 clear SMDin SMD
 SMDin = SMDsave;
-[SMD, Statistics] = DC.driftCorrectKNN(SMDin, DriftParams);
+[SMD, Statistics] = DC.driftCorrectKNN(SMDin);
 
 figure();
 hold on
@@ -434,7 +439,7 @@ fprintf('SMD.X/Y/Z - (SMDin.X/Y/Z - SMD.DriftX/Y/Z = %f nm\n', ...
         consistency_in * P2nm);
 
 % Plot the drift correction as a function of time.
-DC_fig = DC.plotDriftCorrection(SMD, DriftParams);
+DC_fig = DC.plotDriftCorrection(SMD);
 showm(DC_fig);
 hold on
 view([-66, 12])
