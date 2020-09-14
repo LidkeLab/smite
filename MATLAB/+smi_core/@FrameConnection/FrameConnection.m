@@ -10,7 +10,9 @@ classdef FrameConnection < handle
     % EXAMPLE USAGE:
     %   FC = smi_core.FrameConnection(SMD, SMF);
     %   FC.performFrameConnection();
-    %   The primary "outputs" are then FC.SMDCombined and FC.SMD .
+    %       The primary "outputs" are then FC.SMDCombined and FC.SMD .
+    %   Alternatively, you can use this class as a "function" as follows:
+    %   [~, SMD, SMDCombined] = smi_core.FrameConnection(SMD, SMF, 1);
     %
     % REQUIRES:
     %   c_FrameConnect.mex*
@@ -32,15 +34,28 @@ classdef FrameConnection < handle
     end
     
     methods
-        function [obj] = FrameConnection(SMD, SMF)
-            % FrameConnection prepares the FrameConnection class for use.
+        function [obj, SMD, SMDCombined] = FrameConnection(SMD, SMF, ...
+                AutoRun)
+            %FrameConnection prepares the FrameConnection class for use.
             % This constructor can be used to (optionally) set the input
             % SMD structure and/or "unwrap" an SMF structure to set the
             % available class properties.
             
+
+            % Set a default for the AutoRun flag, which specifies whether
+            % or not we should attempt to perform frame-connection
+            % immediately (i.e., perform frame-connection in this
+            % constructor).
+            if (~exist('AutoRun', 'var') || isempty(AutoRun))
+                AutoRun = 0;
+            end            
+            
             % Set the input SMD structure as a class property (if provided)
             if (exist('SMD', 'var') && ~isempty(SMD))
                 obj.SMD = SMD;
+                AllFieldsSet = 1;
+            else
+                AllFieldsSet = 0;
             end
             
             % "Unwrap" the SMF structure to see if it contains any of the
@@ -57,6 +72,8 @@ classdef FrameConnection < handle
                     if isfield(SMF.FrameConnection, FrameConnectFields{ff})
                         obj.(FrameConnectFields{ff}) = ...
                             SMF.FrameConnection.(FrameConnectFields{ff});
+                    else
+                        AllFieldsSet = 0;
                     end
                 end
                 for ff = 1:numel(FittingFields)
@@ -65,8 +82,21 @@ classdef FrameConnection < handle
                     if isfield(SMF.Fitting, FittingFields{ff})
                         obj.(FittingFields{ff}) = ...
                             SMF.Fitting.(FittingFields{ff});
+                    else
+                        AllFieldsSet = 0;
                     end
                 end
+            end
+            
+            % If all required fields are set, run the frame-connection
+            % process.
+            if (AutoRun && AllFieldsSet)
+                obj.performFrameConnection()
+                SMD = obj.SMD;
+                SMDCombined = obj.SMDCombined;
+            else
+                SMD = obj.SMD;
+                SMDCombined = SMD;
             end
         end
         
