@@ -364,7 +364,6 @@ hold off
 SMF = smi_core.SingleMoleculeFitting.createSMF();
 SMF.DriftCorrection.Init_inter = SMDin.NFrames;
 DC = smi_core.DriftCorrection(SMF);
-DC.DriftParams.Init_inter     = SMDin.NFrames;
 %DriftParams.PixelSizeZUnit = SMDin.PixelSizeZUnit;
 %DriftParams.PDegree       = 1;
 %DriftParams.TolFun_intra  = 1e-2;
