@@ -98,6 +98,13 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    DriftParams.TolFun_inter   = obj.TolFun_inter;
    DriftParams.TolX_inter     = obj.TolX_inter;
    DriftParams.Init_inter     = obj.Init_inter;
+   if ~isempty(obj.NDatasets)
+      DriftParams.NDatasets   = obj.NDatasets;
+   end
+   if ~isempty(obj.NFrames)
+      DriftParams.NFrames     = obj.NFrames;
+   end
+
    % Initialize various parameters, either provided by the user or defaults.
 %  if exist('DriftParams', 'var')
       % PixelSizeZUnit is needed for 3D to convert Z into the same units as X
@@ -143,7 +150,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 %     L_intra       = 1;     % intra-dataset threshold
 %     L_inter       = 2;     % inter-dataset threshold
 %     PixelSizeZUnit = 0.1;  % pixel size in um
-%     PDegree      = 1;      % degree of the intra-dataset fitting polynomial
+%     PDegree       = 1;     % degree of the intra-dataset fitting polynomial
 %                            % for drift correction
 %     TolFun_intra = 1e-2;   % termination tolerance on the function value
 %     TolX_intra   = 1e-4;   % termination tolerance on the fitting polynomial

@@ -27,6 +27,10 @@ properties
    TolX_inter     = 1e-4;
    % initialization wrt the previous dataset for inter-dataset drift correction
    Init_inter     = 0;
+   % if non-empty, override the collected value of number of datasets
+   NDatasets      = [];
+   % if non-empty, override the collected value of number of frames per dataset
+   NFrames        = [];
 
 end % properties
 % =============================================================================
