@@ -454,7 +454,7 @@ fprintf('RMSE             between true and DC locations = %f\n', rmse);
 % Compare computed vs. true drift.
 base = 0;
 framenums = [];
-for j = 1:SMDin.ndatasets
+for j = 1:SMDin.NDatasets
    framenums([1:SMDin.NFrames] + base) = ...
       arrayfun(@(i) SMDin.NFrames*(j - 1) + i - 1, 1:SMDin.NFrames);
    base = base + SMDin.NFrames;
