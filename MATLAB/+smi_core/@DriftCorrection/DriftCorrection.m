@@ -34,8 +34,8 @@ end % properties
 % =============================================================================
 methods
 
-   [SMD, Statistics] = driftCorrectKNN(SMD, DriftParams)
-   DC_fig = plotDriftCorrection(SMD, DriftParams, option)
+   [SMD, Statistics] = driftCorrectKNN(obj, SMD)
+   DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
    function obj = DriftCorrection(obj, SMF)

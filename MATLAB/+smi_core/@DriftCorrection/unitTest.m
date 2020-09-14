@@ -13,10 +13,10 @@ function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 %       Y:            y coordinates (Nx1)
 %       DatasetNum:   dataset number from which localization originates (Nx1)
 %       FrameNum:     frame   number from which localization originates (Nx1)
-%       Nframes:      number of frames in each dataset
-%       Ndatasets:    number of datasets
-%       DriftX:       found x drift (Nframes x Ndatasets)
-%       DriftY:       found y drift (Nframes x Ndatasets)
+%       NFrames:      number of frames in each dataset
+%       NDatasets:    number of datasets
+%       DriftX:       found x drift (NFrames x NDatasets)
+%       DriftY:       found y drift (NFrames x NDatasets)
 %   Statistics:   statistical information about the algorithm performance
 %                 including various input parameters
 %
@@ -78,8 +78,8 @@ SMDin.X = X;
 SMDin.Y = Y;
 SMDin.DatasetNum = DatasetNum;
 SMDin.FrameNum   = FrameNum;
-SMDin.Ndatasets = n_frames / FpD;
-SMDin.Nframes   = n_frames / SMDin.Ndatasets;
+SMDin.NDatasets = n_frames / FpD;
+SMDin.NFrames   = n_frames / SMDin.NDatasets;
 SMDin.Photons = Photons;
 SMDin.X_SE = SMD.X_SE;
 SMDin.Y_SE = SMD.Y_SE;
@@ -98,7 +98,7 @@ X_True = single(SMDin.X);
 Y_True = single(SMDin.Y);
 if strcmp(yn, 'No')
    % Creating drift per frame: fast way!
-   frame_num = SMDin.Nframes*(SMDin.DatasetNum - 1) + SMDin.FrameNum - 1;
+   frame_num = SMDin.NFrames*(SMDin.DatasetNum - 1) + SMDin.FrameNum - 1;
    SMDin.X = SMDin.X + frame_num*PpFX;
    SMDin.Y = SMDin.Y + frame_num*PpFY;
    % Boundary condtions.
@@ -127,7 +127,7 @@ DC = smi_core.DriftCorrection;
 %DriftParams.TolX_intra   = 1e-4;
 %DriftParams.TolFun_inter = 1e-2;
 %DriftParams.TolX_inter   = 1e-4;
-DC.DriftParams.Init_inter   = SMDin.Nframes;
+DC.DriftParams.Init_inter   = SMDin.NFrames;
 %DriftParams.Init_inter   = 0;
 
 clear SMDin SMD
@@ -194,10 +194,10 @@ fprintf('RMSE             between true and DC locations = %f nm\n', ...
 % Compare computed vs. true drift.
 base = 0;
 framenums = [];
-for j = 1:SMDin.Ndatasets
-   framenums([1:SMDin.Nframes] + base) = ...
-      arrayfun(@(i) SMDin.Nframes*(j - 1) + i - 1, 1:SMDin.Nframes);
-   base = base + SMDin.Nframes;
+for j = 1:SMDin.NDatasets
+   framenums([1:SMDin.NFrames] + base) = ...
+      arrayfun(@(i) SMDin.NFrames*(j - 1) + i - 1, 1:SMDin.NFrames);
+   base = base + SMDin.NFrames;
 end
 x_drift = mean(SMD.DriftX(:) ./ (framenums(:) + 1));
 y_drift = mean(SMD.DriftY(:) ./ (framenums(:) + 1));
@@ -294,8 +294,8 @@ SMDin.Y = Y;
 SMDin.Z = Z;
 SMDin.DatasetNum = DatasetNum;
 SMDin.FrameNum   = FrameNum;
-SMDin.Ndatasets = n_frames / FpD;
-SMDin.Nframes   = n_frames / SMDin.Ndatasets;
+SMDin.NDatasets = n_frames / FpD;
+SMDin.NFrames   = n_frames / SMDin.NDatasets;
 SMDin.Photons = Photons;
 SMDin.X_SE = SMD.X_SE;
 SMDin.Y_SE = SMD.Y_SE;
@@ -326,7 +326,7 @@ Y_True = single(SMDin.Y);
 Z_True = single(SMDin.Z);
 if strcmp(yn, 'No')
    %creating drift per frame: fast way!
-   frame_num = SMDin.Nframes*(SMDin.DatasetNum - 1) + SMDin.FrameNum - 1;
+   frame_num = SMDin.NFrames*(SMDin.DatasetNum - 1) + SMDin.FrameNum - 1;
    SMDin.X = SMDin.X + frame_num*PpFX;
    SMDin.Y = SMDin.Y + frame_num*PpFY;
    SMDin.Z = SMDin.Z + frame_num*PpFZ*SMDin.PixelSizeZUnit;
@@ -366,7 +366,7 @@ DC = smi_core.DriftCorrection;
 %DriftParams.TolX_intra     = 1e-4;
 %DriftParams.TolFun_inter   = 1e-2;
 %DriftParams.TolX_inter     = 1e-4;
-DC.DriftParams.Init_inter     = SMDin.Nframes;
+DC.DriftParams.Init_inter     = SMDin.NFrames;
 %DriftParams.Init_inter     = 0;
 
 clear SMDin SMD
@@ -450,10 +450,10 @@ fprintf('RMSE             between true and DC locations = %f\n', rmse);
 % Compare computed vs. true drift.
 base = 0;
 framenums = [];
-for j = 1:SMDin.Ndatasets
-   framenums([1:SMDin.Nframes] + base) = ...
-      arrayfun(@(i) SMDin.Nframes*(j - 1) + i - 1, 1:SMDin.Nframes);
-   base = base + SMDin.Nframes;
+for j = 1:SMDin.ndatasets
+   framenums([1:SMDin.NFrames] + base) = ...
+      arrayfun(@(i) SMDin.NFrames*(j - 1) + i - 1, 1:SMDin.NFrames);
+   base = base + SMDin.NFrames;
 end
 x_drift = mean(SMD.DriftX(:) ./ (framenums(:) + 1));
 y_drift = mean(SMD.DriftY(:) ./ (framenums(:) + 1));
