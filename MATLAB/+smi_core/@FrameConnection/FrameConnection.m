@@ -58,34 +58,20 @@ classdef FrameConnection < handle
                 AllFieldsSet = 0;
             end
             
-            % "Unwrap" the SMF structure to see if it contains any of the
-            % class properties that we'll need.
+            % Set class properties based on the input SMF structure (if it
+            % was provided).
             if (exist('SMF', 'var') && ~isempty(SMF))
-                FrameConnectFields = {'MaxSeparation', ...
-                    'MaxFrameGap', ...
-                    'LoS'};
-                FittingFields = {'FitType'};
-                for ff = 1:numel(FrameConnectFields)
-                    % Check if this field exists in SMF.FrameConnect, and
-                    % if it does, copy it into the appropriate class
-                    % property.
-                    if isfield(SMF.FrameConnection, FrameConnectFields{ff})
-                        obj.(FrameConnectFields{ff}) = ...
-                            SMF.FrameConnection.(FrameConnectFields{ff});
-                    else
-                        AllFieldsSet = 0;
-                    end
-                end
-                for ff = 1:numel(FittingFields)
-                    % Check if this field exists in SMF.Fitting, and if it
-                    % does, copy it into the appropriate class property.
-                    if isfield(SMF.Fitting, FittingFields{ff})
-                        obj.(FittingFields{ff}) = ...
-                            SMF.Fitting.(FittingFields{ff});
-                    else
-                        AllFieldsSet = 0;
-                    end
-                end
+                % Pad the input SMF structure to ensure it contains all
+                % fields defined in SingleMoleculeFitting.createSMF().
+                SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
+                
+                % Set the desired SMF fields to class properties.
+               	obj.FitType = SMF.Fitting.FitType;
+                obj.LoS = SMF.FrameConnection.LoS;
+                obj.MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
+                obj.MaxSeparation = SMF.FrameConnection.MaxSeparation;
+            else
+                AllFieldsSet = 0;
             end
             
             % If all required fields are set, run the frame-connection
@@ -95,6 +81,11 @@ classdef FrameConnection < handle
                 SMD = obj.SMD;
                 SMDCombined = obj.SMDCombined;
             else
+                if (nargout() > 1)
+                    warning(['Constructor outputs SMD and ', ...
+                        'SMDCombined were requested but ', ...
+                        'frame-connection was not performed.'])
+                end
                 SMD = obj.SMD;
                 SMDCombined = SMD;
             end
