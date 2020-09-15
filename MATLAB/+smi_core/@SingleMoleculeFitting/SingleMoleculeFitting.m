@@ -144,8 +144,8 @@ classdef SingleMoleculeFitting<handle
             SMF.Tracking.MaxDist=10;
             SMF.Tracking.MinTrackLength=3;
         end
-        
-        [FieldValue] = extractField(SMF, FieldName);
+
+        [SMFPadded] = padSMF(SMF, SMFPadding);
         
     end
 end
