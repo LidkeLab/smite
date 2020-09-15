@@ -10,11 +10,18 @@ smite <- sma-core-alpha
   plotDriftCorrection		SMA_Vis.plotDriftCorrection
   unitTest			SMA_Core.driftCorrectKNN_unitTest
  FindROI			SMA_Core.findROI
+ @FRC
+  posToFRC			SMA_Core.posToFRC
+  posToResolution		SMA_Core.posToResolution
+  qCorrectionLocs		SMA_Core.qCorrectionLocs
+  unitTest			SMA_Core.FRC_unitTest
  @FrameConnection/
   findConnected			SMA_Core.findConnected
   performFrameConnection	SMA_Core.frameConnect
   unitTest			SMA_Core.frameConnect_unitTest 
  GaussMLE			SMA_Core.gaussMLE
+ @LocalizeData
+  LocalizeData			
  SingleMoleculeData		SMA_Core.createSMD
   catSMD			SMA_Core.catSMD
  SingleMoleculeFitting		SMA_Core.createSMF
