@@ -5,6 +5,20 @@ function [SMFPadded] = padSMF(SMF, SMFPadding)
 % fields are in both SMF and SMFPadding, the output SMFPadded will contain
 % the value present in SMFPadding.
 %
+% EXAMPLE USAGE:
+%   SMF.Data.CameraGain = 1.23;
+%   SMFPadding.Data.CameraGain = 10;
+%   SMFPadding.Fitting.FitType = 'XYNBS';
+%   [SMFPadded] = smi_core.SingleMoleculeFitting.padSMF(SMF, SMFPadding); 
+%       SMFPadded.Data.CameraGain==1.23, but SMFPadded.Fitting.FitType will
+%       be set to 'XYNBS'.
+%   [SMFPadded] = smi_core.SingleMoleculeFitting.padSMF(SMF);
+%       SMFPadded will be a complete SMF structure with all default values
+%       present except Data.CameraGain, which will be set to
+%       SMF.Data.CameraGain (this can be used to ensure an incomplete SMF
+%       is padded to contain all fields defined in
+%       SingleMoleculeFitting.createSMF()).
+%
 % INPUTS:
 %   SMF: Single Molecule Fitting structure whose existing entries are
 %        retained in the output SMFPadded.
