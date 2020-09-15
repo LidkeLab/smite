@@ -26,7 +26,8 @@ classdef DataToPhotons < handle
     end
     
     methods (Static)
-        [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
+        [Data, ReadNoise] = convertToPhotons(RawData, ...
+            CameraGain, CameraOffset, CameraReadNoise, ...
             RawDataROI, CalibrationROI);
         [Success] = unitTest();
     end

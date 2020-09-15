@@ -1,4 +1,5 @@
-function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
+function [Data, ReadNoise] = convertToPhotons(RawData, ...
+    CameraGain, CameraOffset, CameraReadNoise, ...
     RawDataROI, CalibrationROI)
 %convertToPhotons converts RawData to units of photons.
 %
@@ -15,17 +16,13 @@ function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
 % INPUTS:
 %   RawData: An array whose entries correspond to pixels of the collection
 %            camera. (ADU)(mxnxN numeric array)
-%   SMF: A Single Molecule Fitting structure containing the following 
-%        fields in a sub-structure 'Data' (see SingleMoleculeFitting class
-%        for more details):
-%        CameraGain: An array specifying the camera gain. This can be
-%                    either a scalar (e.g., for a CCD) or a matrix (e.g., 
-%                    for an sCMOS). 
-%                    (ADU/e-)(1x1 array, or (m+a)x(n+b) array w/ a,b >= 0)
-%        CameraOffset: An array specifying the camera offset.
-%                      (ADU)(dimensions must match CameraGain)
-%        CameraReadNoise: An array specifying the camera noise.
-%                         (ADU^2)(dimensions must match CameraGain)
+%   CameraGain: An array specifying the camera gain. This can be either a 
+%               scalar (e.g., for a CCD) or a matrix (e.g., for an sCMOS). 
+%               (ADU/e-)(1x1 array, or (m+a)x(n+b) array w/ a,b >= 0)
+%   CameraOffset: An array specifying the camera offset.
+%                 (ADU)(dimensions must match CameraGain)
+%   CameraReadNoise: An array specifying the camera noise.
+%                    (ADU^2)(dimensions must match CameraGain)
 %   RawDataROI: The region of interest (ROI) of the input RawData on the
 %               camera. 
 %               (Pixels)([YStart, XStart, YEnd, XEnd])
@@ -42,12 +39,12 @@ function [Data, ReadNoise] = convertToPhotons(RawData, SMF, ...
 % OUTPUTS:
 %   Data: The input RawData corrected for gain and offset (i.e., converted
 %         to units of photons)(Photons)(mxnxN single array)
-%   ReadNoise: The input SMF field SMF.Data.CameraReadNoise converted to
-%              units of photons, truncated to the region of the camera
-%              defined by RawDataROI when appropriate (i.e., when 
-%              SMF.Data.CameraReadNoise is non-scalar).
+%   ReadNoise: The input field CameraReadNoise converted to units of 
+%              photons, truncated to the region of the camera defined by
+%              RawDataROI when appropriate (i.e., when CameraReadNoise is 
+%              non-scalar).
 %              (Pixels)(mxn single array, 1x1 single array, or [], 
-%              depending on the input SMF.Data.CameraReadNoise)
+%              depending on the input CameraReadNoise)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -60,14 +57,14 @@ if (~exist('RawDataROI', 'var') || isempty(RawDataROI))
     RawDataROI = [];
 end
 if (~exist('CalibrationROI', 'var') || isempty(CalibrationROI))
-    CalibrationROI = [1, 1, size(SMF.Data.CameraGain)];
+    CalibrationROI = [1, 1, size(CameraGain)];
 end
 
 % Typecast arrays where appropriate.
 RawData = single(RawData);
-CameraGain = single(SMF.Data.CameraGain);
-CameraOffset = single(SMF.Data.CameraOffset);
-CameraReadNoise = single(SMF.Data.CameraReadNoise);
+CameraGain = single(CameraGain);
+CameraOffset = single(CameraOffset);
+CameraReadNoise = single(CameraReadNoise);
 
 % Compare array sizes and ROI definitions to ensure consistency.
 SizeRawData = size(RawData);
