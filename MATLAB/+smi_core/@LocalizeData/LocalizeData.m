@@ -1,6 +1,12 @@
 classdef LocalizeData < handle
     %LocalizeData contains methods used to find localizations in raw data.
-    
+    % This class contains method(s) to generate localizations from numeric
+    % arrays of raw data in the form of images/stacks of images.
+    % 
+    %
+    %
+    % REQUIRES:
+    %   DipImage, to use joinchannels() in LocalizeData.genLocalizations().
     
     properties
         CameraType = 'EMCCD'; % (Default = 'EMCCD') see GaussMLE class
@@ -16,8 +22,6 @@ classdef LocalizeData < handle
     
     properties (SetAccess = 'protected')
         ScaledData % (Photons) Gain and offset corrected RawData
-        EmitterModel % (Photons) Model of the emitter fit blobs
-        ModelDataOverlay % (Photons) Overlay of ScaledData and EmitterModel
         SMD % see SingleMoleculeData class
     end
     
@@ -32,44 +36,31 @@ classdef LocalizeData < handle
                 obj.RawData = RawData;
             end
             
-            % "Unwrap" the SMF structure to see if it contains any of the
-            % class properties that we'll need.
+            % Set class properties based on the input SMF structure (if it
+            % was provided).
             if (exist('SMF', 'var') && ~isempty(SMF))
-                BoxFindingFields = {'BoxSize', 'MinPhotons'};
-                DataFields = {'CameraType', ...
-                    'CameraGain', ...
-                    'CameraOffset', ...
-                    'CameraReadNoise'};
-                FittingFields = {'FitType', 'PSFSigma'};
-                for ff = 1:numel(BoxFindingFields)
-                    % Check if this field exists in SMF.BoxFinding, and if
-                    % it does, copy it into the appropriate class property.
-                    if isfield(SMF.BoxFinding, BoxFindingFields{ff})
-                        obj.(BoxFindingFields{ff}) = ...
-                            SMF.BoxFinding.(BoxFindingFields{ff});
-                    end
-                end
-                for ff = 1:numel(DataFields)
-                    % Check if this field exists in SMF.Data, and if it 
-                    % does, copy it into the appropriate class property.
-                    if isfield(SMF.Data, DataFields{ff})
-                        obj.(DataFields{ff}) = SMF.Data.(DataFields{ff});
-                    end
-                end
-                for ff = 1:numel(FittingFields)
-                    % Check if this field exists in SMF.Fitting, and if it
-                    % does, copy it into the appropriate class property.
-                    if isfield(SMF.Fitting, FittingFields{ff})
-                        obj.(FittingFields{ff}) = ...
-                            SMF.Fitting.(FittingFields{ff});
-                    end
-                end
+                % Pad the input SMF structure to ensure it contains all
+                % fields defined in SingleMoleculeFitting.createSMF().
+                SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
+                
+                % Set the desired SMF fields to class properties.
+               	obj.CameraType = SMF.Data.CameraType;
+                obj.CameraGain = SMF.Data.CameraGain;
+                obj.CameraOffset = SMF.Data.CameraOffset;
+                obj.CameraReadNoise = SMF.Data.CameraReadNoise;
+                obj.BoxSize = SMF.BoxFinding.BoxSize;
+                obj.MinPhotons = SMF.BoxFinding.MinPhotons;
+                obj.PSFSigma = SMF.Fitting.PSFSigma;
+                obj.FitType = SMF.Fitting.FitType;
             end
         end
+        
+        genLocalizations(obj)
+        
     end
     
     methods (Static)
-        
+        [Success] = unitTest();
     end
     
     
