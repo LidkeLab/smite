@@ -27,10 +27,11 @@ function [SMDCombined, SMD] = performFrameConnection(obj)
 %        populated with meaningful entries.
 %
 % OUTPUTS:
-%   obj.SMDCombined: This method will update/add the field SMDCombined to
-%                    the class instance obj.  SMDCombined contains the
-%                    "frame-connected" localizations, i.e., the result of
-%                    performing frame-connection on obj.SMD.
+%   SMDCombined: SMDCombined contains the "frame-connected" localizations,
+%                i.e., the result of performing frame-connection on obj.SMD
+%   SMD: obj.SMD but with the field 'ConnectID' populated (see
+%        smi_core.FrameConnection.findConnected() for a careful description
+%        of 'ConnectID'.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
