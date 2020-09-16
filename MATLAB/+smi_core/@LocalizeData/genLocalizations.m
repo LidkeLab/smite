@@ -25,9 +25,9 @@ SMF.Data.CameraType = obj.CameraType;
 SMF.Data.CameraGain = obj.CameraGain;
 SMF.Data.CameraOffset = obj.CameraOffset;
 SMF.Data.CameraReadNoise = obj.CameraReadNoise;
-SMF.FindROI.BoxSize = obj.BoxSize;
-SMF.FindROI.PSFSigma = obj.PSFSigma;
-SMF.FindROI.MinPhotons = obj.MinPhotons;
+SMF.BoxFinding.BoxSize = obj.BoxSize;
+SMF.BoxFinding.PSFSigma = obj.PSFSigma;
+SMF.BoxFinding.MinPhotons = obj.MinPhotons;
 
 % Perform the gain and offset correction on the raw data.
 [ScaledData] = smi_core.DataToPhotons.convertToPhotons(obj.RawData, ...
