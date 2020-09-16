@@ -66,7 +66,7 @@ SMF.Data.CameraGain = CameraGain;
 SMF.Data.CameraOffset = CameraOffset;
 SMF.Data.CameraReadNoise = CameraReadNoise;
 SMF.BoxFinding.BoxSize = 10;
-SMF.Fitting.PSFSigma = PSFSigma;
+SMF.Fitting.PSFSigma = SMD.PSFSigma;
 
 % Attempt to generate localizations from the simulated data.
 LD = smi_core.LocalizeData(RawData, SMF);
