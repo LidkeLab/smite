@@ -20,11 +20,14 @@ smite <- sma-core-alpha
   performFrameConnection	SMA_Core.frameConnect
   unitTest			SMA_Core.frameConnect_unitTest 
  GaussMLE			SMA_Core.gaussMLE
- @LocalizeData
-  LocalizeData			
+ @LocalizeData/
+  LocalizeData
+  genLocalizations      SMA_Core.fitStack
  SingleMoleculeData		SMA_Core.createSMD
   catSMD			SMA_Core.catSMD
- SingleMoleculeFitting		SMA_Core.createSMF
+ @SingleMoleculeFitting/		
+    createSMF           SMA_Core.createSMF
+    padSMF
  @Threshold/
   applyThresh			SMA_SR.applyThresh
   rejectedLocalizations		SMA_Vis.rejectedLocalizations
