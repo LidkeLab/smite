@@ -5,6 +5,11 @@ function [SMD, ScaledData] = genLocalizations(obj)
 % emitters, fitting a model function to the pixel values in that ROI, and
 % then thresholding the resulting localizations.
 % 
+% OUTPUTS: 
+%   SMD: Single Molecule Data structure (see SingleMoleculeData class).
+%   ScaledData: Gain and offset corrected obj.RawData. 
+%               (Photons)(numeric array)
+%
 % REQUIRES:
 %   DipImage, to use joinchannels()
 
