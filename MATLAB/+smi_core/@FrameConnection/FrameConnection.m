@@ -9,8 +9,7 @@ classdef FrameConnection < handle
     %
     % EXAMPLE USAGE:
     %   FC = smi_core.FrameConnection(SMD, SMF);
-    %   FC.performFrameConnection();
-    %       The primary "outputs" are then FC.SMDCombined and FC.SMD .
+    %   [SMDCombined, SMD] = FC.performFrameConnection();
     %   Alternatively, you can use this class as a "function" as follows:
     %   [~, SMD, SMDCombined] = smi_core.FrameConnection(SMD, SMF, 1);
     %
@@ -34,7 +33,7 @@ classdef FrameConnection < handle
     end
     
     methods
-        function [obj, SMD, SMDCombined] = FrameConnection(SMD, SMF, ...
+        function [obj, SMDCombined, SMD] = FrameConnection(SMD, SMF, ...
                 AutoRun)
             %FrameConnection prepares the FrameConnection class for use.
             % This constructor can be used to (optionally) set the input
@@ -77,9 +76,7 @@ classdef FrameConnection < handle
             % If all required fields are set, run the frame-connection
             % process.
             if (AutoRun && AllFieldsSet)
-                obj.performFrameConnection()
-                SMD = obj.SMD;
-                SMDCombined = obj.SMDCombined;
+                [SMDCombined, SMD] = obj.performFrameConnection();
             else
                 if (nargout() > 1)
                     warning(['Constructor outputs SMD and ', ...
@@ -91,7 +88,8 @@ classdef FrameConnection < handle
             end
         end
         
-        performFrameConnection(obj)
+        [SMDCombined, SMD] = performFrameConnection(obj)
+        
     end
     
     methods (Static)

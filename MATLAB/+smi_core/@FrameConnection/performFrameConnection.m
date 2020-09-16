@@ -1,4 +1,4 @@
-function performFrameConnection(obj)
+function [SMDCombined, SMD] = performFrameConnection(obj)
 %performFrameConnection is the "run" method of the FrameConnection class.
 %
 % This method is intended to be used as the main "run" method of the
