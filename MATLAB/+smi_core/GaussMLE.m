@@ -110,7 +110,7 @@ classdef GaussMLE < handle
         %       Photons_SE:     Uncertainly as standard error (Mx1)
         %       Bg_SE:          Uncertainly as standard error (Mx1)
         %       PSFSigma_SE     Uncertainly as standard error (Mx1)or(Mx2)
-        %       LogL:           Log likelihood at MLE (Mx1)
+        %       LogLikelihood:  Log likelihood at MLE (Mx1)
         %       PValue:         PValue (Mx1)
         %
         % REQUIRES:
@@ -259,7 +259,7 @@ classdef GaussMLE < handle
         % OUTPUTS
         %   PValue:     P value of fit
         %
-            X2_CDF=inline('gammainc(x/2,k/2)','k','x');
+            X2_CDF=@(k,x)gammainc(x/2,k/2);
             K=FitBoxSize^2-NParams;
             X2=-2*LLR;
             PValue=1-X2_CDF(K,X2);

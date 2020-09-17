@@ -37,7 +37,7 @@ classdef SingleMoleculeData
     %   DatasetNum:     File number from which localization originates
     %   FrameNum:       Frame number from which localization originates
     %   PValue:         p-value of fit
-    %   LogL:           log likelihood of fit
+    %   LogLikelihood:  Log likelihood of fit
     %   ConnectID:      Identifies the same emitter accross multiple frames
     %   ThreshFlag:     Indicates a valid fit.  0=valid.  See SMA_Core.ThresholdSM
     %   DriftX:         X drift relative to first frame (Pixels) (NFrames x NDatasets)
@@ -83,7 +83,7 @@ classdef SingleMoleculeData
             SMD.DatasetNum=[];
             SMD.FrameNum=[];
             SMD.PValue=[];
-            SMD.LogL=[];
+            SMD.LogLikelihood=[];
             SMD.ConnectID=[];
             SMD.ThreshFlag=[];
             SMD.DriftX=[];

@@ -60,7 +60,9 @@ classdef SMLM < handle
             
             
             Dataset=obj.loadDataset(DataSetIndex);
-            SMD=smi_core.localizeData(obj.SMF,Dataset);
+            
+            %localizeData
+            SMD=smi_core.genLocalizations(Dataset,obj.SMF);
             
             %frame connection
             
