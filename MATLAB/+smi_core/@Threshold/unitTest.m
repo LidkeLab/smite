@@ -81,7 +81,7 @@ function success = unitTest()
 
     TH = smi_core.Threshold;
     FNames = TH.Fields;
-    %FNames={'X';'Y';'Z';'Photons';'Bg';'PSFSigma';'PSFSigmaX';'PSFSigmaY';'X_SE';'Y_SE';'Z_SE';'Photons_SE';'Bg_SE';'PSFSigma_SE';'PSFSigmaX_SE';'PSFSigmaY_SE';'ZOffset';'DatasetNum';'FrameNum';'PValue';'LogL';'ConnectID'};
+    %FNames={'X';'Y';'Z';'Photons';'Bg';'PSFSigma';'PSFSigmaX';'PSFSigmaY';'X_SE';'Y_SE';'Z_SE';'Photons_SE';'Bg_SE';'PSFSigma_SE';'PSFSigmaX_SE';'PSFSigmaY_SE';'ZOffset';'DatasetNum';'FrameNum';'PValue';'LogLikelihood';'ConnectID'};
     SMDFN=fieldnames(SMD);
     for i=1:length(FNames)
         Check1=ismember(FNames(i),SMDFN);
