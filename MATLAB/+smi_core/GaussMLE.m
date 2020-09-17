@@ -238,7 +238,8 @@ classdef GaussMLE < handle
         Results.LogLikelihood=LL_out;
         
         %Calculate p values
-        Results.PValue=smi_core.GaussMLE.pValue(NP,size(obj.Data,1),Results.LogL);
+        Results.PValue=smi_core.GaussMLE.pValue(NP,size(obj.Data,1), ...
+            Results.LogLikelihood);
         
         Statistics.FitTime=toc;
         Statistics.FitPerSecond=N/Statistics.FitTime;
