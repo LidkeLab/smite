@@ -119,9 +119,8 @@ classdef SingleMoleculeFitting<handle
             SMF.Thresholding.MinPValue=.01;
             SMF.Thresholding.MinPSFSigma=0.5;
             SMF.Thresholding.MaxPSFSigma=2;
-            SMF.Thresholding.MeanPhotons=200;
             SMF.Thresholding.MinPhotons=100;
-            SMF.Thresholding.MaxBG=Inf;
+            SMF.Thresholding.MaxBg=Inf;
 
             %FrameConnection
             SMF.FrameConnection.MaxSeparation=1; % pixels 
