@@ -32,7 +32,7 @@ properties(Constant = true)
    %Fields={'X';'Y';'Z';'Photons';'Bg';'PSFSigma';'PSFSigmaX';'PSFSigmaY';   ...
    %        'X_SE';'Y_SE';'Z_SE';'Photons_SE';'Bg_SE';'PSFSigma_SE';         ...
    %        'PSFSigmaX_SE';'PSFSigmaY_SE';'ZOffset';'DatasetNum';'FrameNum'; ...
-   %        'PValue';'LogLikelihood';'ConnectID'};
+   %        'PValue';'LogL';'ConnectID'};
 
 end % properties(Constant = true)
 % =============================================================================
@@ -42,7 +42,7 @@ methods
 
    rejectedLocalizations(obj, SMD, options, SaveDir)
    [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
-   [ThreshFlagReadable, HotBits] = translateThreshFlag(obj, ThreshFlag)
+   [ThreshFlagReadable, HotBits] = translateThreshFlagNS(obj, ThreshFlag)
 
 end % methods
 % =============================================================================
@@ -51,6 +51,7 @@ end % methods
 methods(Static)
 
    [SMR] = applyThresh(SMD)
+   [ThreshFlagReadable, HotBits] = translateThreshFlag(ThreshFlag);
    success = unitTest()
 
 end % methods(Static)

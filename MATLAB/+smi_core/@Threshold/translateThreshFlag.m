@@ -1,8 +1,11 @@
-function [ThreshFlagReadable, HotBits] = translateThreshFlag(obj, ThreshFlag)
-%translateThreshFlag translates decimal ThreshFlag to human readable string.
-% This method will take the numeric array ThreshFlag (decimal integers) and
-% output the human-readable threshold identifier given by the mapping in
-% setThreshFlag().
+function [ThreshFlagReadable, HotBits] = translateThreshFlag(ThreshFlag)
+%translateThreshFlag is a static "wrapper" for translateThreshFlagNS
+% This method is a "wrapper" for the method
+% smi_core.Threshold.translateThreshFlagNS(). The purpose of this static
+% method is to be a more user-friendly version of the non-static method
+% translateThreshFlagNS(). This method will create an instance of the
+% Threshold class solely for the purpose of calling
+% translateThreshFlagNS().
 %
 % NOTE: This method assumes that ThreshFlag is 32 bits, i.e.,
 %       max possible ThreshFlag = 2^32 - 1, but it does not directly
@@ -11,7 +14,8 @@ function [ThreshFlagReadable, HotBits] = translateThreshFlag(obj, ThreshFlag)
 % EXAMPLE:
 %   Given an SMD structure with SMD.ThreshFlag populated, this method can
 %   be used as
-%   ThreshFlagReadable = smi_core.Threshold.translateThreshFlag(SMD.ThreshFlag);
+%   ThreshFlagReadable = smi_core.Threshold.translateThreshFlag(...
+%       SMD.ThreshFlag);
 %
 % INPUTS:
 %   ThreshFlag: Array containing the decimal integer threshold flags as
@@ -37,27 +41,12 @@ function [ThreshFlagReadable, HotBits] = translateThreshFlag(obj, ThreshFlag)
 %   David James Schodt (Lidkelab, 2020)
 
 
-   % Define some parameters and initialize/pre-allocate arrays as needed.
-   NFlags = numel(ThreshFlag); 
-   ThreshFlagReadable = cell(NFlags, 1);
-   HotBits = ThreshFlagReadable; % initialize
-   NBits = 32; % defined to emphasize this assumption
+% Create an instance of the smi_core.Threshold class.
+Threshold = smi_core.Threshold();
 
-   % Define our bit-to-string map such that ThreshFlagMap(bb) <-> threshold
-   % flag string for bit bb (note that this method will use the uncommon
-   % convention that bits start at 1, as is used in setThreshFlag()).
-   ThreshFlagMap = repelem("Unknown flag", NBits);
-   ThreshFlagFields = convertCharsToStrings(obj.Fields)';
-   ThreshFlagMap(1:numel(ThreshFlagFields)) = ThreshFlagFields;
+% Call the non-static class method translateThreshFlagNS().
+[ThreshFlagReadable, HotBits] = ...
+    Threshold.translateThreshFlagNS(ThreshFlag);
 
-   % Loop through the input elements of ThreshFlag and translate.
-   for ii = 1:NFlags
-       % Determine which bits of ThreshFlag(ii) are "hot", i.e., set to 1.
-       HotBitBool = logical(bitget(ThreshFlag(ii), 1:NBits));
-       HotBits{ii} = uint32(find(HotBitBool));
-    
-       % Populate the ii-th element of the ThreshFlagReadable array.
-       ThreshFlagReadable{ii} = ThreshFlagMap(HotBitBool);
-   end
 
 end % translateThreshFlag
