@@ -1,4 +1,4 @@
-function [SMDCandidates, SMDPreThresh] = genLocalizations(obj)
+function [SMD, SMDPreThresh] = genLocalizations(obj)
 %genLocalizations generates localizations from scaled data.
 % This method will generate localizations from an array of data by first
 % first finding candidate ROIs in the data that may contain emitters, 
