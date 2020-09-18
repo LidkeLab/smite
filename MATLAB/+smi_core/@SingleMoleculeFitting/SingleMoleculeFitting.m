@@ -144,7 +144,8 @@ classdef SingleMoleculeFitting<handle
             SMF.Tracking.MinTrackLength=3;
         end
 
-        [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding);
+        [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
+            DisplayWarnings);
         
     end
 end

@@ -1,4 +1,5 @@
-function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding)
+function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
+    DisplayWarnings)
 %padSMF adds fields in SMFPadding to SMF that weren't already present.
 % This method will search for fields present in the union of the SMF
 % fields and SMFPadding fields and set them in the output SMFPadded.  When
@@ -26,6 +27,9 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding)
 %               (e.g., SMF might be an incomplete SMF structure and
 %               SMFPadding might be an SMF with all default values).
 %               (Default = smi_core.SingleMoleculeFitting.createSMF())
+%   DisplayWarnings: A flag to specify whether or not a warning should be
+%                    displayed in the Command Window when a field gets
+%                    padded. (Default = 0)
 %
 % OUTPUTS:
 %   SMFPadded: An SMF structure containing all fields present in the union
@@ -47,31 +51,52 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding)
 if (~exist('SMFPadding', 'var') || isempty(SMFPadding))
     SMFPadding = smi_core.SingleMoleculeFitting.createSMF();
 end
+if (~exist('DisplayWarnings', 'var') || isempty(DisplayWarnings))
+    DisplayWarnings = 0;
+end
 
 % Create a default SMF structure to initialize the output.
-SMFPadded = smi_core.SingleMoleculeFitting.createSMF();
+SMFDefault = smi_core.SingleMoleculeFitting.createSMF();
 
 % Merge the input SMF and SMFPadding structs, treating the SMF as the
 % "primary" struct (i.e., the merged field values are only taken from
 % SMFPadding when they aren't present in SMF).
-[SMFInputMerged, PaddingStruct] = mergeStructs(SMF, SMFPadding);
+[SMFInputMerged, PaddingStruct] = mergeStructs(SMF, SMFPadding, ...
+    inputname(1), inputname(2), DisplayWarnings);
 
-% Merge the complete (but default valued) SMFPadded with the merged input
+% Merge the complete (but default valued) SMFDefault with the merged input
 % structures to generate the desired output SMFPadded.
 [SMFPadded, PaddingStructDefaults] = ...
-    mergeStructs(SMFInputMerged, SMFPadded);
+    mergeStructs(SMFInputMerged, SMFDefault, ...
+    inputname(1), 'default SMF', DisplayWarnings);
 
 % Merge the padding structures to generate the output PaddedFields.
 [PaddedFields] = mergeStructs(PaddingStruct, PaddingStructDefaults);
 
     function [MergedStruct, PaddingStruct] = mergeStructs(...
-            PrimaryStruct, SecondaryStruct)
+            PrimaryStruct, SecondaryStruct, ...
+            PrimaryStructName, SecondaryStructName, DisplayWarnings)
         % This function will merge PrimaryStruct and SecondaryStruct, with
         % field values coming from SecondaryStruct only if not present in
         % PrimaryStruct.  The additional output PaddingStruct will be a
         % structure of similar organization to
         % PrimaryStruct/SecondaryStruct whose fields are those which were
-        % padded to PrimaryStruct to generate MergedStruct.
+        % padded to PrimaryStruct to generate MergedStruct. If the optional
+        % flag DisplayWarnings==1, a warning will be displayed in the
+        % Command Window each time a field is padded.
+        
+        % Set default inputs if needed.
+        if (~exist('DisplayWarnings', 'var') || isempty(DisplayWarnings))
+            DisplayWarnings = 0;
+        end
+        if (~exist('PrimaryStructName', 'var') ...
+                || isempty(PrimaryStructName))
+            PrimaryStructName = 'PrimaryStruct';
+        end
+        if (~exist('SecondaryStructName', 'var') ...
+                || isempty(SecondaryStructName))
+            SecondaryStructName = 'SecondaryStruct';
+        end
         
         % Create a list of fields in the input structs.
         FieldsPrimary = fieldnames(PrimaryStruct);
@@ -101,6 +126,12 @@ SMFPadded = smi_core.SingleMoleculeFitting.createSMF();
                     PaddingStruct.(CurrentSubField) = ...
                         SecondaryStruct.(CurrentSubField);
                 end
+                if DisplayWarnings
+                    warning('Field ''%s'' in %s padded from %s', ...
+                        CurrentSubField, ...
+                        PrimaryStructName, ...
+                        SecondaryStructName)
+                end
             elseif ~ismember(CurrentSubField, FieldsPrimary)
                 % This field is unique to SecondaryStruct so we need to add
                 % it to the output structure.
@@ -108,6 +139,12 @@ SMFPadded = smi_core.SingleMoleculeFitting.createSMF();
                     SecondaryStruct.(CurrentSubField);
                 PaddingStruct.(CurrentSubField) = ...
                     SecondaryStruct.(CurrentSubField);
+                if DisplayWarnings
+                    warning('Field %s in %s padded by field from %s', ...
+                        CurrentSubField, ...
+                        PrimaryStructName, ...
+                        SecondaryStructName)
+                end
             end
         end
     end
