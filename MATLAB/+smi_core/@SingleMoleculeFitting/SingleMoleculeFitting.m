@@ -45,6 +45,7 @@ classdef SingleMoleculeFitting<handle
 %       D:          Asigmatism fit parameter (see GaussMLE)
 %
 % Thresholding      {ThresholdFits,SRA}
+%   On              Perform thresholding? (Default=true)
 %   MaxSE_XY:       Maximum allowed precision in x,y (Pixels)(Default=.2)
 %   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
 %   LoS:            Minimum accepted p-value from fit (Default=.01)
@@ -54,11 +55,13 @@ classdef SingleMoleculeFitting<handle
 %   MaxBg:          Maximum background accepted from fit (Default=Inf)
 %
 % FrameConnection:  {FrameConnect,SRA}
+%   On              Perform frame connection? (Default=true)
 %   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
 %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
 %   LoS:            Minimum accepted p-value for connection (Default=.01)
 %
 % DriftCorrection   {DriftCorrection,SRA}
+%  On               Perform drift correction? (Default=true)
 %  L_intra          Intra-dataset threshold (Pixel)(Default=1)
 %  L_inter          Inter-dataset threshold (Pixel)(Default=2)
 %  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
@@ -114,6 +117,7 @@ classdef SingleMoleculeFitting<handle
             SMF.Fitting.ZFitStruct.D=[];
 
             %Thresholding
+            SMF.Thresholding.On=true;
             SMF.Thresholding.MaxXY_SE=.2;
             SMF.Thresholding.MaxZ_SE=.05;
             SMF.Thresholding.MinPValue=.01;
@@ -123,11 +127,13 @@ classdef SingleMoleculeFitting<handle
             SMF.Thresholding.MaxBg=Inf;
 
             %FrameConnection
+            SMF.FrameConnection.On=true;
             SMF.FrameConnection.MaxSeparation=1; % pixels 
             SMF.FrameConnection.MaxFrameGap=4; % frames
             SMF.FrameConnection.LoS=.01;
 
             %DriftCorrection
+            SMF.DriftCorrection.On = true;
             SMF.DriftCorrection.L_intra = 1; % pixel
             SMF.DriftCorrection.L_inter = 2; % pixel
             SMF.DriftCorrection.PixelSizeZUnit = 0.1; % um

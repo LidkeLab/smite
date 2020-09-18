@@ -39,6 +39,8 @@ end % properties
 methods
 
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
+   [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
+   [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
