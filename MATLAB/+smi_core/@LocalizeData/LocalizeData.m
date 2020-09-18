@@ -10,9 +10,9 @@ classdef LocalizeData < handle
     %
     % EXAMPLE USAGE:
     %   LD = smi_core.LocalizeData(RawData, SMF);
-    %   [SMD, ScaledData] = LD.genLocalizations();
+    %   [SMD, SMDPreThresh] = LD.genLocalizations();
     %   OR
-    %   [~, SMD, ScaledData] = smi_core.LocalizeData(RawData, SMF, 1);
+    %   [~, SMD, SMDPreThresh] = smi_core.LocalizeData(RawData, SMF, 1);
     
     
     properties
@@ -34,13 +34,13 @@ classdef LocalizeData < handle
     end
     
     methods
-        function [obj, SMD] = LocalizeData(ScaledData, SMF, AutoRun)
+        function [obj, SMD, SMDPreThresh] = LocalizeData(...
+                ScaledData, SMF, AutoRun)
             %LocalizeData creates an instance of the LocalizeData class.
             % This method will prepare the LocalizeData class, setting
             % inputs to class properties if provided. This constructor can
             % also be used to run the main run method of the class, as long
             % as ScaledData and SMF are provided. To do so, set AutoRun = 1
-            
             
             % Set a default for the AutoRun flag, which specifies whether
             % or not we should run genLocalizations() in this constructor.
@@ -88,10 +88,11 @@ classdef LocalizeData < handle
             
             % Run genLocalizations() if desired.
             if (AutoRun && AllFieldsSet)
-                [SMD] = obj.genLocalizations();
+                [SMD, SMDPreThresh] = obj.genLocalizations();
             else
                 if (nargout() > 1)
-                    warning(['Constructor output SMD requested but ', ...
+                    warning(['Constructor outputs SMD and ', ...
+                        'SMDPreThresh requested but ', ...
                         'localizations were not generated.'])
                 end
                 SMD = [];
