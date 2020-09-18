@@ -52,3 +52,6 @@
 %       Douglas Schwarz (2020). uipickfiles: uigetfile on steroids
 %       (https://www.mathworks.com/matlabcentral/fileexchange/10867-uipickfiles-uigetfile-on-steroids),
 %       MATLAB Central File Exchange. Retrieved September 17, 2020.
+% -----------------------------------------------------------------------------
+% setupExternalSoftware
+%    function for startup.m to setup required paths for smite external software
