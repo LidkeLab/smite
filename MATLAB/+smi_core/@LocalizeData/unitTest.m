@@ -48,13 +48,15 @@ SMF.Fitting.PSFSigma = SMD.PSFSigma;
 
 % Attempt to generate localizations from the simulated data.
 LD = smi_core.LocalizeData(ScaledData, SMF);
-[SMD] = LD.genLocalizations();
+[SMD, SMDPreThresh] = LD.genLocalizations();
 
-% Check that the SMD makes sense (an exact check won't be done though).
+% Check that SMD and SMDPreThresh make sense and are consistent with each
+% other (this isn't meant to be an exact check of individual fields).
 NEmitters = 5;
-Success(1) = (all(SMD.FrameNum==repelem((1:NFrames).', NEmitters)) ...
-    && (numel(SMD.X)==NEmitters*NFrames) ...
-    && ~any(SMD.ThreshFlag));
+Success(1) = ...
+    (all(SMDPreThresh.FrameNum==repelem((1:NFrames).', NEmitters)) ...
+    && (numel(SMDPreThresh.X)==NEmitters*NFrames) ...
+    && (numel(SMD.X)==sum(SMDPreThresh.ThreshFlag==0)));
 
 % Check that the constructor is setting class properties as intended.
 % NOTE: I'm just choosing numbers that'll stick out from the defaults.
