@@ -151,7 +151,7 @@ classdef SingleMoleculeFitting<handle
         end
 
         [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
-            DisplayWarnings);
+            DisplayMessages);
         
     end
 end
