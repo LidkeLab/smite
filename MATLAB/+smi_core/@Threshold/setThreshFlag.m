@@ -96,7 +96,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
     % checking for MinMax field values and assigning failure flags (value 1)
     % for corresponding SMD fields
     if sum(strcmp(fieldnames(MinMax), 'X')) == 1
-        if ~isempty(MinMax.X)==1
+        if ~isempty(MinMax.X)==1 && ~isempty(SMD.X)
             tflagX=SMD.X<MinMax.X(1)|SMD.X>MinMax.X(2)|~isreal(SMD.X)| isnan(SMD.X);
             k=find(tflagX); % find the position of failures in the array
             xx=strmatch('X',obj.Fields,'exact');
@@ -104,7 +104,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Y')) == 1
-        if ~isempty(MinMax.Y)==1
+        if ~isempty(MinMax.Y)==1 && ~isempty(SMD.Y)
             tflagY=SMD.Y<MinMax.Y(1)|SMD.Y>MinMax.Y(2)|~isreal(SMD.Y)|isnan(SMD.Y);
             k=find(tflagY); % find the position of failures in the array
             xx=strmatch('Y',obj.Fields,'exact');
@@ -112,7 +112,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Z')) == 1
-        if ~isempty(MinMax.Z)==1
+        if ~isempty(MinMax.Z)==1 && ~isempty(SMD.Z)
             tflagZ=SMD.Z<MinMax.Z(1)|SMD.Z>MinMax.Z(2)|~isreal(SMD.Z)|isnan(SMD.Z);
             k=find(tflagZ); % find the position of failures in the array
             xx=strmatch('Z',obj.Fields,'exact');
@@ -120,7 +120,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Photons')) == 1
-        if ~isempty(MinMax.Photons)==1
+        if ~isempty(MinMax.Photons)==1 && ~isempty(SMD.Photons)
             tflagI=SMD.Photons<MinMax.Photons(1)|SMD.Photons>MinMax.Photons(2)...
                 |~isreal(SMD.Photons)|isnan(SMD.Photons);
             k=find(tflagI); % find the position of failures in the array
@@ -129,7 +129,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Bg')) == 1
-        if ~isempty(MinMax.Bg)==1
+        if ~isempty(MinMax.Bg)==1 && ~isempty(SMD.Bg)
             tflagBg=SMD.Bg<MinMax.Bg(1)|SMD.Bg>MinMax.Bg(2)|~isreal(SMD.Bg)...
                 |isnan(SMD.Bg);
             k=find(tflagBg); % find the position of failures in the array
@@ -138,7 +138,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'PSFSigma')) == 1
-        if ~isempty(MinMax.PSFSigma)==1
+        if ~isempty(MinMax.PSFSigma)==1 && ~isempty(SMD.PSFSigma)
             tflagPSFSigma=SMD.PSFSigma<MinMax.PSFSigma(1)|...
                 SMD.PSFSigma>MinMax.PSFSigma(2)|~isreal(SMD.PSFSigma)...
                 |isnan(SMD.PSFSigma);
@@ -148,7 +148,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'X_SE')) == 1
-        if ~isempty(MinMax.X_SE)==1
+        if ~isempty(MinMax.X_SE)==1 && ~isempty(SMD.X_SE)
             tflagXSE=SMD.X_SE<MinMax.X_SE(1)|SMD.X_SE>MinMax.X_SE(2)|...
                 SMD.X_SE~=real(SMD.X_SE)|isnan(SMD.X_SE);
 
@@ -158,25 +158,25 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Y_SE')) == 1
-        if ~isempty(MinMax.Y_SE)==1
+        if ~isempty(MinMax.Y_SE)==1 && ~isempty(SMD.Y_SE)
             tflagYSE=SMD.Y_SE<MinMax.Y_SE(1)|SMD.Y_SE>MinMax.Y_SE(2)|...
-                SMD.Y_SE~=real(SMD.Y_SE)|isnan(SMD.X_SE);
+                SMD.Y_SE~=real(SMD.Y_SE)|isnan(SMD.Y_SE);
             k=find(tflagYSE); % find the position of failures in the array
             xx=strmatch('Y_SE',obj.Fields,'exact');
             TFlag(k)=bitset(TFlag(k),xx);
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'Z_SE')) == 1
-        if ~isempty(MinMax.Z_SE)==1
+        if ~isempty(MinMax.Z_SE)==1 && ~isempty(SMD.Z_SE)
             tflagZSE=SMD.Z_SE<MinMax.Z_SE(1)|SMD.Z_SE>MinMax.Z_SE(2)|...
-                SMD.Z_SE~=real(SMD.Z_SE)|isnan(SMD.X_SE);
+                SMD.Z_SE~=real(SMD.Z_SE)|isnan(SMD.Z_SE);
             k=find(tflagZSE); % find the position of failures in the array
             xx=strmatch('Z_SE',obj.Fields,'exact');
             TFlag(k)=bitset(TFlag(k),xx);
         end
     end
     if sum(strcmp(fieldnames(MinMax), 'PValue')) == 1
-        if ~isempty(MinMax.PValue)==1
+        if ~isempty(MinMax.PValue)==1 && ~isempty(SMD.PValue)
             tflagPValue=SMD.PValue<MinMax.PValue(1)|...
                 SMD.PValue>MinMax.PValue(2)|~isreal(SMD.PValue)...
                 |isnan(SMD.PValue);

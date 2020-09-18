@@ -1,6 +1,6 @@
-function [ThreshFlagReadable, HotBits] = translateThreshFlagNS(obj, ...
-    ThreshFlag)
-%translateThreshFlagNS translates ThreshFlag to a human readable string
+function [ThreshFlagReadable, HotBits] = ...
+    translateThreshFlagNS(obj, ThreshFlag)
+%translateThreshFlagNS translates ThreshFlag to a human readable string.
 % This method will take the numeric array ThreshFlag (decimal integers) and
 % output the human-readable threshold identifier given by the mapping in
 % setThreshFlag().  The 'NS' suffix stands for non-static, as this is the
@@ -14,8 +14,8 @@ function [ThreshFlagReadable, HotBits] = translateThreshFlagNS(obj, ...
 % EXAMPLE:
 %   Given an SMD structure with SMD.ThreshFlag populated, this method can
 %   be used as
-%   ThreshFlagReadable = smi_core.Threshold.translateThreshFlag(...
-%       SMD.ThreshFlag);
+%   ThreshFlagReadable = ...
+%      smi_core.Threshold.translateThreshFlag(SMD.ThreshFlag);
 %
 % INPUTS:
 %   ThreshFlag: Array containing the decimal integer threshold flags as
@@ -40,7 +40,6 @@ function [ThreshFlagReadable, HotBits] = translateThreshFlagNS(obj, ...
 % Created by:
 %   David James Schodt (Lidkelab, 2020)
 
-
 % Define some parameters and initialize/pre-allocate arrays as needed.
 NFlags = numel(ThreshFlag);
 ThreshFlagReadable = cell(NFlags, 1);
@@ -59,10 +58,9 @@ for ii = 1:NFlags
     % Determine which bits of ThreshFlag(ii) are "hot", i.e., set to 1.
     HotBitBool = logical(bitget(ThreshFlag(ii), 1:NBits));
     HotBits{ii} = uint32(find(HotBitBool));
-    
+
     % Populate the ii-th element of the ThreshFlagReadable array.
     ThreshFlagReadable{ii} = ThreshFlagMap(HotBitBool);
 end
-
 
 end % translateThreshFlagNS

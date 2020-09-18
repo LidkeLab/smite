@@ -69,18 +69,18 @@ function success = unitTest()
     SMF.BoxFinding.BoxSize    = 6*PSFSigma;
     SMF.BoxFinding.MinPhotons = MinInt;
     SMF.Fitting.PSFSigma      = PSFSigma;
-    FR = smi_core.FindROI(SMF, Data);
-    [ROIStack, SMD] = FR.findROI();
+    FindROI = smi_core.FindROI(SMF, Data);
+    [ROIStack, SMD] = FindROI.findROI();
 
     %[SMD,Statistics]=SMA_Core.gaussMLE(ROIStack,'Basic','CCD',PSFSigma);
     SMF.Fitting.FitType  = 'XYNB';
     SMF.Fitting.PSFSigma = PSFSigma;
-    GM = smi_core.GaussMLE(SMF, ROIStack);
-    GM.CameraType = CameraType;
-    [SMD, Statistics] = GM.gaussMLE(SMD);
+    GaussMLE = smi_core.GaussMLE(SMF, ROIStack);
+    GaussMLE.CameraType = CameraType;
+    [SMD, Statistics] = GaussMLE.gaussMLE(SMD);
 
-    TH = smi_core.Threshold;
-    FNames = TH.Fields;
+    Threshold = smi_core.Threshold;
+    FNames = Threshold.Fields;
     %FNames={'X';'Y';'Z';'Photons';'Bg';'PSFSigma';'PSFSigmaX';'PSFSigmaY';'X_SE';'Y_SE';'Z_SE';'Photons_SE';'Bg_SE';'PSFSigma_SE';'PSFSigmaX_SE';'PSFSigmaY_SE';'ZOffset';'DatasetNum';'FrameNum';'PValue';'LogLikelihood';'ConnectID'};
     SMDFN=fieldnames(SMD);
     for i=1:length(FNames)
@@ -111,12 +111,12 @@ function success = unitTest()
 
     fprintf('Running setThreshFlag with empty MinMax\n');
     MinMax1.X=MinMax.X;
-    [SMD,TFlag]=TH.setThreshFlag(SMD, MinMax1);
+    [SMD,TFlag]=Threshold.setThreshFlag(SMD, MinMax1);
     fprintf('Running setThreshFlag with nonempty MinMax\n');
     MinMax2=rmfield(MinMax,'X');
     MinMax2=rmfield(MinMax2,'Y');
     MinMax2=rmfield(MinMax2,'Z');
-    [SMD,TFlag]=TH.setThreshFlag(SMD, MinMax2);
+    [SMD,TFlag]=Threshold.setThreshFlag(SMD, MinMax2);
     MM2FN=fieldnames(MinMax2);
     NFields=length(MM2FN);
     FNThresh=getfield(SMD,'ThreshFlag');
