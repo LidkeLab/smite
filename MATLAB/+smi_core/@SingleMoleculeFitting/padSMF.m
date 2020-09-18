@@ -9,7 +9,7 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding)
 %   SMF.Data.CameraGain = 1.23;
 %   SMFPadding.Data.CameraGain = 10;
 %   SMFPadding.Fitting.FitType = 'XYNBS';
-%   [SMFPadded] = smi_core.SingleMoleculeFitting.padSMF(SMF, SMFPadding); 
+%   [SMFPadded] = smi_core.SingleMoleculeFitting.padSMF(SMF, SMFPadding);
 %       SMFPadded.Data.CameraGain==1.23, but SMFPadded.Fitting.FitType will
 %       be set to 'XYNBS'.
 %   [SMFPadded] = smi_core.SingleMoleculeFitting.padSMF(SMF);
@@ -46,9 +46,6 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding)
 % Set defaults if needed.
 if (~exist('SMFPadding', 'var') || isempty(SMFPadding))
     SMFPadding = smi_core.SingleMoleculeFitting.createSMF();
-end
-if (~exist('DisplayUpdates', 'var') || isempty(DisplayUpdates))
-    DisplayUpdates = 0;
 end
 
 % Create a default SMF structure to initialize the output.
@@ -110,7 +107,7 @@ SMFPadded = smi_core.SingleMoleculeFitting.createSMF();
                 MergedStruct.(CurrentSubField) = ...
                     SecondaryStruct.(CurrentSubField);
                 PaddingStruct.(CurrentSubField) = ...
-                        SecondaryStruct.(CurrentSubField);
+                    SecondaryStruct.(CurrentSubField);
             end
         end
     end
