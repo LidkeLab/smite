@@ -58,11 +58,8 @@ function success = unitTest()
         CameraReadNoise=abs(single(normrnd(50,40,[Y_end-Y_start+1 X_end-X_start+1])));
     end
     %[Data,CCDReadnoise]=SMA_Core.data2Photons(Data,CCDCalibration);
-    DP = smi_core.DataToPhotons;
-    SMF.Data.CameraGain = CameraGain;
-    SMF.Data.CameraOffset = CameraOffset;
-    SMF.Data.CameraReadNoise = CameraReadNoise;
-    [Data, CCDReadnoise] = DP.convertToPhotons(Data, SMF, RawDataROI);
+    [Data, CCDReadnoise] = smi_core.DataToPhotons.convertToPhotons(Data, ...
+       CameraGain, CameraOffset, CameraReadNoise, RawDataROI);
 
     MinInt=1000/(4*pi*PSFSigma^2)/4;
     %[SMD,ROIStack]=SMA_Core.findROI(SMD,Data,PSFSigma,2*PSFSigma,PSFSigma*6,MinInt);
