@@ -1,17 +1,15 @@
-function [SMD, ScaledData] = genLocalizations(obj)
-%genLocalizations generates localizations from raw data.
-% This method will generate localizations from an array of raw data.  This
-% is done by first finding candidate ROIs in the raw data that may contain
-% emitters, fitting a model function to the pixel values in that ROI, and
-% then thresholding the resulting localizations.
+function [SMDCandidates, SMDPreThresh] = genLocalizations(obj)
+%genLocalizations generates localizations from scaled data.
+% This method will generate localizations from an array of data by first
+% first finding candidate ROIs in the data that may contain emitters, 
+% fitting a model function to the pixel values in that ROI, and then 
+% thresholding the resulting localizations.
 % 
 % OUTPUTS: 
-%   SMD: Single Molecule Data structure (see SingleMoleculeData class).
-%   ScaledData: Gain and offset corrected obj.RawData. 
-%               (Photons)(numeric array)
-%
-% REQUIRES:
-%   DipImage, to use joinchannels()
+%   SMD: Single Molecule Data structure (see SingleMoleculeData class) with
+%        only valid localizations (i.e., those that passed all thresholds).
+%   SMDPreThresh: SMD structure with all found localizations, even those
+%                 that did not pass the thresholds.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -22,46 +20,32 @@ function [SMD, ScaledData] = genLocalizations(obj)
 % Construct an SMF structure from the class properties.
 SMF = smi_core.SingleMoleculeFitting.createSMF();
 SMF.Data.CameraType = obj.CameraType;
-SMF.Data.CameraGain = obj.CameraGain;
-SMF.Data.CameraOffset = obj.CameraOffset;
-SMF.Data.CameraReadNoise = obj.CameraReadNoise;
 SMF.BoxFinding.BoxSize = obj.BoxSize;
-SMF.BoxFinding.PSFSigma = obj.PSFSigma;
+SMF.BoxFinding.BoxOverlap = obj.BoxOverlap;
 SMF.BoxFinding.MinPhotons = obj.MinPhotons;
-
-% Perform the gain and offset correction on the raw data.
-[ScaledData] = smi_core.DataToPhotons.convertToPhotons(obj.RawData, ...
-    obj.CameraGain, obj.CameraOffset, obj.CameraReadNoise);
-                
+SMF.Fitting.FitType = obj.FitType;
+SMF.Fitting.PSFSigma = obj.PSFSigma;
+SMF.Fitting.Iterations = obj.Iterations;
+SMF.Fitting.ZFitStruct = obj.ZFitStruct;
+               
 % Generate candidate ROIs from the gain and offset corrected data.
-FindROI = smi_core.FindROI(SMF, ScaledData);
-[ROIStack, SMD] = FindROI.findROI();
+FindROI = smi_core.FindROI(SMF, obj.ScaledData);
+[ROIStack, SMDCandidates] = FindROI.findROI();
 
 % Pass the candidate ROIs to the fitting algorithm.  The output SMD from
 % GaussMLE will contain localizations w.r.t. the ROIStack coordinates and
 % thus we need to convert back to the full field of view before proceeding.
 GaussMLE = smi_core.GaussMLE(SMF, ROIStack);
-[SMD] = GaussMLE.gaussMLE(SMD);
-SMD.X = SMD.X + SMD.XBoxCorner;
-SMD.Y = SMD.Y + SMD.YBoxCorner;
+[SMDCandidates] = GaussMLE.gaussMLE(SMDCandidates);
+SMDCandidates.X = SMDCandidates.X + SMDCandidates.XBoxCorner;
+SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 
-% Set (but don't apply) the ThreshFlag in the SMD structure.
-MinMax.X_SE = [0, SMF.Thresholding.MaxXY_SE];
-MinMax.Y_SE = [0, SMF.Thresholding.MaxXY_SE];
-if ~isempty(SMD.Z_SE)
-    MinMax.Z_SE = [0, SMF.Thresholding.MaxZ_SE];
-end
-MinMax.PValue = [SMF.Thresholding.MinPValue, 1];
-MinMax.PSFSigma = [SMF.Thresholding.MinPSFSigma, ...
-    SMF.Thresholding.MaxPSFSigma];
-MinMax.Photons = [SMF.Thresholding.MinPhotons, Inf];
-MinMax.Bg = [0, SMF.Thresholding.MaxBG];
+% Threshold localizations.
 Threshold = smi_core.Threshold;
-[SMD] = Threshold.setThreshFlag(SMD, MinMax);
-
-% Store SMD and ScaledData as class properties.
+[SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, obj.MinMax);
+[SMD] = Threshold.applyThresh(SMDPreThresh);
+obj.SMDPreThresh = SMDPreThresh;
 obj.SMD = SMD;
-obj.ScaledData = ScaledData;
 
 
 end
