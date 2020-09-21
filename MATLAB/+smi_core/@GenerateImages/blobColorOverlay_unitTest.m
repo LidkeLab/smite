@@ -17,6 +17,7 @@ SMD.Photons(SMD.Photons<=0) = 0;
 SMD.Background=zeros(NBlobs,1); % no background for individual emitters
 SMD.PSFSigma=1.3+0.1*randn(NBlobs,1);
 SMD.FrameNum = 1+round((NFrames-1)*rand(NBlobs,1));
+SMD.Bg=5*ones(NBlobs,1); % now add background to SMD for overlay
 [~,Sequence] = smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames,SMD);
 Sequence = Sequence+Background; % add background to the whole sequence
 % remove particles from SMD to simulated not all got fit
@@ -25,7 +26,7 @@ SMD.Y = SMD.Y(1:NBlobs/2);
 SMD.Photons=SMD.Photons(1:NBlobs/2);
 SMD.PSFSigma=SMD.PSFSigma(1:NBlobs/2);
 SMD.FrameNum = SMD.FrameNum(1:NBlobs/2);
-SMD.Background=5*ones(NBlobs/2,1); % now add background to SMD for overlay
+SMD.Bg=5*ones(NBlobs/2,1); % now add background to SMD for overlay
 
 % test with no output
 fprintf('Testing with no output...\n');

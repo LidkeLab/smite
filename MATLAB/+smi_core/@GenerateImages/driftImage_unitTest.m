@@ -13,6 +13,8 @@ Y = 1 + 27*rand(pointsPerPoint,1);
 % simulate drift
 SMR.X = zeros(10*pointsPerPoint,1);
 SMR.Y = zeros(10*pointsPerPoint,1);
+SMR.XSize = 40;
+SMR.YSize = 30;
 SMR.DatasetNum = zeros(10*pointsPerPoint,1);
 SMR.FrameNum = zeros(size(SMR.X));
 for ii = 1 : 10
@@ -22,25 +24,24 @@ for ii = 1 : 10
     SMR.FrameNum(((ii-1)*pointsPerPoint)+1 : ii*pointsPerPoint) = 1:1:pointsPerPoint;
 end
 % input parameters
-RawDataSize = [30,40]; %[y,x]
 SRImageZoom = 4;
 
 % test with no output
 fprintf('Testing with no output...\n');
-smi_core.GenerateImages.driftImage(SMR,RawDataSize,SRImageZoom);
+smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
 diptruesize(gcf,200);
 pause(3);
 close gcf
 % test with single output variable
 fprintf('Testing with single output variable...\n');
-[driftIm] = smi_core.GenerateImages.driftImage(SMR,RawDataSize,SRImageZoom);
+[driftIm] = smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
 h = dipshow(driftIm);
 diptruesize(h,200);
 pause(3)
 close(h)
 % test with 2 output variables
 fprintf('Testing with two output variables...\n');
-[driftIm,driftImRGB] = smi_core.GenerateImages.driftImage(SMR,RawDataSize,SRImageZoom);
+[driftIm,driftImRGB] = smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
 h1 = dipshow(driftIm);
 diptruesize(h1,200);
 h2 = dipshow(driftImRGB);
