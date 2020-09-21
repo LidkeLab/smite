@@ -1,5 +1,5 @@
 function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
-    DisplayWarnings)
+    DisplayMessages)
 %padSMF adds fields in SMFPadding to SMF that weren't already present.
 % This method will search for fields present in the union of the SMF
 % fields and SMFPadding fields and set them in the output SMFPadded.  When
@@ -27,7 +27,7 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 %               (e.g., SMF might be an incomplete SMF structure and
 %               SMFPadding might be an SMF with all default values).
 %               (Default = smi_core.SingleMoleculeFitting.createSMF())
-%   DisplayWarnings: A flag to specify whether or not a warning should be
+%   DisplayMessages: A flag to specify whether or not a message should be
 %                    displayed in the Command Window when a field gets
 %                    padded. (Default = 0)
 %
@@ -51,8 +51,13 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 if (~exist('SMFPadding', 'var') || isempty(SMFPadding))
     SMFPadding = smi_core.SingleMoleculeFitting.createSMF();
 end
-if (~exist('DisplayWarnings', 'var') || isempty(DisplayWarnings))
-    DisplayWarnings = 0;
+if (~exist('DisplayMessages', 'var') || isempty(DisplayMessages))
+    DisplayMessages = 0;
+end
+if ((nargin>1) && ~isempty(inputname(2)))
+    SecondInputName = inputname(2);
+else
+    SecondInputName = 'default SMF';
 end
 
 % Create a default SMF structure to initialize the output.
@@ -62,32 +67,32 @@ SMFDefault = smi_core.SingleMoleculeFitting.createSMF();
 % "primary" struct (i.e., the merged field values are only taken from
 % SMFPadding when they aren't present in SMF).
 [SMFInputMerged, PaddingStruct] = mergeStructs(SMF, SMFPadding, ...
-    inputname(1), inputname(2), DisplayWarnings);
+    inputname(1), SecondInputName, DisplayMessages);
 
 % Merge the complete (but default valued) SMFDefault with the merged input
 % structures to generate the desired output SMFPadded.
 [SMFPadded, PaddingStructDefaults] = ...
     mergeStructs(SMFInputMerged, SMFDefault, ...
-    inputname(1), 'default SMF', DisplayWarnings);
+    inputname(1), 'default SMF', DisplayMessages);
 
 % Merge the padding structures to generate the output PaddedFields.
 [PaddedFields] = mergeStructs(PaddingStruct, PaddingStructDefaults);
 
     function [MergedStruct, PaddingStruct] = mergeStructs(...
             PrimaryStruct, SecondaryStruct, ...
-            PrimaryStructName, SecondaryStructName, DisplayWarnings)
+            PrimaryStructName, SecondaryStructName, DisplayMessages)
         % This function will merge PrimaryStruct and SecondaryStruct, with
         % field values coming from SecondaryStruct only if not present in
         % PrimaryStruct.  The additional output PaddingStruct will be a
         % structure of similar organization to
         % PrimaryStruct/SecondaryStruct whose fields are those which were
         % padded to PrimaryStruct to generate MergedStruct. If the optional
-        % flag DisplayWarnings==1, a warning will be displayed in the
+        % flag DisplayMessages==1, a warning will be displayed in the
         % Command Window each time a field is padded.
         
         % Set default inputs if needed.
-        if (~exist('DisplayWarnings', 'var') || isempty(DisplayWarnings))
-            DisplayWarnings = 0;
+        if (~exist('DisplayMessages', 'var') || isempty(DisplayMessages))
+            DisplayMessages = 0;
         end
         if (~exist('PrimaryStructName', 'var') ...
                 || isempty(PrimaryStructName))
@@ -108,39 +113,47 @@ SMFDefault = smi_core.SingleMoleculeFitting.createSMF();
         MergedStruct = PrimaryStruct;
         for ii = 1:numel(FieldsSecondary)
             CurrentSubField = FieldsSecondary{ii};
+            AddToOutput = 0;
             if isstruct(SecondaryStruct.(CurrentSubField))
-                % If this field is itself a structure, we need to dig
-                % deeper into this structure to extract fields, unless it's
-                % unique to PrimaryStruct (in which case we just leave it
-                % as is).
                 if ismember(CurrentSubField, FieldsPrimary)
+                    % This sub-structure is present in PrimaryStruct, but
+                    % we still want to ensure that it's complete, so we'll
+                    % call the mergeStructs() function recursively.
+                    PrimarySubStructName = sprintf('%s.%s', ...
+                        PrimaryStructName, CurrentSubField);
+                    SecondarySubStructName = sprintf('%s.%s', ...
+                        SecondaryStructName, CurrentSubField);
                     [MergedStruct.(CurrentSubField), SubPadStruct] = ...
                         mergeStructs(PrimaryStruct.(CurrentSubField), ...
-                        SecondaryStruct.(CurrentSubField));
+                        SecondaryStruct.(CurrentSubField), ...
+                        PrimarySubStructName, SecondarySubStructName, ...
+                        DisplayMessages);
                     if ~isempty(fieldnames(SubPadStruct))
+                        % NOTE: When we're only padding part of the
+                        %       sub-structure, we don't want to set the
+                        %       AddToOutput flag to 1.
                         PaddingStruct.(CurrentSubField) = SubPadStruct;
                     end
                 else
-                    MergedStruct.(CurrentSubField) = ...
-                        SecondaryStruct.(CurrentSubField);
-                    PaddingStruct.(CurrentSubField) = ...
-                        SecondaryStruct.(CurrentSubField);
-                end
-                if DisplayWarnings
-                    warning('Field ''%s'' in %s padded from %s', ...
-                        CurrentSubField, ...
-                        PrimaryStructName, ...
-                        SecondaryStructName)
+                    % In this case, the entire sub-structure didn't exist
+                    % in PrimaryStruct, so we'll add it in its entirety.
+                    AddToOutput = 1;
                 end
             elseif ~ismember(CurrentSubField, FieldsPrimary)
                 % This field is unique to SecondaryStruct so we need to add
                 % it to the output structure.
+                AddToOutput = 1;
+            end
+            
+            % Update the output structure (note that partial sub-structures
+            % were already padded in the if/else block(s) above).
+            if AddToOutput
                 MergedStruct.(CurrentSubField) = ...
                     SecondaryStruct.(CurrentSubField);
                 PaddingStruct.(CurrentSubField) = ...
                     SecondaryStruct.(CurrentSubField);
-                if DisplayWarnings
-                    warning('Field %s in %s padded by field from %s', ...
+                if DisplayMessages
+                    fprintf('Field ''%s'' in %s padded from %s\n', ...
                         CurrentSubField, ...
                         PrimaryStructName, ...
                         SecondaryStructName)
