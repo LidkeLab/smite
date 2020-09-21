@@ -1,0 +1,41 @@
+function success = colorImage_unitTest()
+%colorImageUnitTest tests all functionality of smi_core.GenerateImages.colorImage
+
+success = 0;
+fprintf('\nTesting smi_core.GenerateImages.colorImage...\n');
+fprintf('Creating image...\n');
+
+% create image
+SZ = 256;
+NFrames = 1;
+[Data,~] = smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames);
+
+% inputs
+ColorMap = parula(256);
+sortedVals = sort(Data(:));
+NumEl = numel(sortedVals);
+MinMax = [sortedVals(round(NumEl*0.1)),sortedVals(round(NumEl*0.9))];
+
+% test with only image input
+fprintf('Testing with image as only input...\n');
+[RGBim]=smi_core.GenerateImages.colorImage(Data);
+dipshow(RGBim);
+pause(3);
+close all
+% test with image and colormap input
+fprintf('Testing with image and colormap input...\n');
+[RGBim]=smi_core.GenerateImages.colorImage(Data,ColorMap);
+dipshow(RGBim)
+pause(3)
+close all
+% test without colormap (default should be hot)
+fprintf('Testing with image, colormap and minmax input...\n');
+[RGBim]=smi_core.GenerateImages.colorImage(Data,ColorMap,MinMax);
+dipshow(RGBim)
+pause(3)
+close all
+
+% finish
+fprintf('Done, test successful!\n\n');
+success = 1;
+end
