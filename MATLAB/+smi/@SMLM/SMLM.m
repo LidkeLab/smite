@@ -61,10 +61,13 @@ classdef SMLM < handle
             
             Dataset=obj.loadDataset(DataSetIndex);
             
-            %localizeData
-            SMD=smi_core.genLocalizations(Dataset,obj.SMF);
+            % Generate localizations from the current Dataset.
+            LD = smi_core.LocalizeData(Dataset, obj.SMF);
+            [SMD] = LD.genLocalizations();
             
-            %frame connection
+            % Perform frame-connection on localizations in SMD.
+            FC = smi_core.FrameConnection(SMD, obj.SMF);
+            [SMD] = FC.performFrameConnection();
             
             %drift correction 
             
