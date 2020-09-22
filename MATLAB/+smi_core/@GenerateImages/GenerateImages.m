@@ -3,6 +3,15 @@ classdef GenerateImages
 %GenerateImages contains static methods for all visualization functions
 %   of single molecule super-resolution data.
 %
+% blobColorOverlay creates color overlay of fitted emitters (green) onto data
+%   (red). 
+% colorImage generates RGB image with given colormap from a grey scale image
+% dispIm produces a flexible GUI for multiple images.
+% driftImage generates 2D histogram image from SR data.
+% gaussianImage creates gaussian-blob image from SR data.
+% histogramImage generates 2D histogram image from SR data.
+% scaleBar creates a scale bar of desired length on the input image.
+%
 % REQUIRES:
 %   Statistics Toolbox
 %   Parallel Procesing Toolbox
@@ -32,6 +41,7 @@ methods(Static)
    [success] = histogramImage_unitTest()
 
    function [success] = unitTest()
+      %unitTest tests various class functionality.
       [success(1)] = smi_core.GenerateImages.blobColorOverlay_unitTest();
       [success(2)] = smi_core.GenerateImages.colorImage_unitTest();
       [success(3)] = smi_core.GenerateImages.driftImage_unitTest();

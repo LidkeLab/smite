@@ -1,5 +1,5 @@
 function success = blobColorOverlay_unitTest()
-%histogramImageUnitTest tests all functionality of smi_core.GenerateImages.blobColorOverlay
+%blobColorOverlay_unitTest tests all functionality of blobColorOverlay.
 
 success = 0;
 fprintf('\nTesting smi_core.GenerateImages.blobColorOverlay...\n');

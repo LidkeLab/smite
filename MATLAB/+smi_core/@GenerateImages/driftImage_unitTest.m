@@ -1,5 +1,5 @@
 function success = driftImage_unitTest()
-%driftImageUnitTest tests all functionality of smi_core.GenerateImages.driftImage
+%driftImage_unitTest tests all functionality of driftImage.
 
 success = 0;
 fprintf('\nTesting smi_core.GenerateImages.driftImage...\n');

@@ -1,6 +1,9 @@
 function plotBox(SMD,Data,Frame,BoxSize)
-%plotBox() takes the data and the structure containing the box info and the
+%plotBox plots the found boxes in the given Frame of the Data/SMD structure.
+%
+%plotBox takes the data and the structure containing the box info and the
 %number of the frame that you are interested in and plot the found boxes.
+
 ParticleFrame = find(SMD.FrameNum==Frame);
 XCorners = double(SMD.XBoxCorner(ParticleFrame));
 YCorners = double(SMD.YBoxCorner(ParticleFrame));

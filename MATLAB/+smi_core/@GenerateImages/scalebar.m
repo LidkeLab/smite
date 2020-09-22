@@ -1,5 +1,5 @@
 function [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)
-%  Function to put scalebar on image 
+%scalebar puts a scalebar of a desired length on the input image.
 %   
 %   Creates a scale bar of desired length on the input image. 
 %   
@@ -19,9 +19,9 @@ function [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)
 %   Matlab
 %   Statistics Toolbox
 %   Dipimage toolbox
-%
-% CITATION:
-%   Sandeep Pallikkuth , Lidke Lab, 2017       
+
+% Created by
+%   Sandeep Pallikkuth, Lidke Lab, 2017       
 
 if nargin<3
     msg1='Not enough input. Please input image, pixel size, scalebar length and scale bar location !';

@@ -1,5 +1,5 @@
 function success = histogramImage_unitTest()
-%histogramImageUnitTest tests all functionality of smi_core.GenerateImages.histogramImage
+%histogramImage_unitTest tests all functionality of histogramImage.
 
 success = 0;
 fprintf('\nTesting smi_core.GenerateImages.histogramImage...\n');

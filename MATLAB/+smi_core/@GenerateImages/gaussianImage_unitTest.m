@@ -1,5 +1,5 @@
 function success = gaussianImage_unitTest()
-%gaussianImageUnitTest tests all functionality of smi_core.GenerateImages.gaussianImage
+%gaussianImage_unitTest tests all functionality of gaussianImage.
 
 success = 0;
 fprintf('\nTesting smi_core.GenerateImages.gaussianImage...\n');
