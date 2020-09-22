@@ -30,7 +30,6 @@ methods(Static)
    [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
    [GaussIm] = gaussianImage(SMR, SRImageZoom)
    [HistIm, RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
-   plotBox(SMD, Data, Frame, BoxSize)
    [ImageOut, Image] = scalebar(Image, PixelSize, Length, Location)
 
    % Unit tests.
