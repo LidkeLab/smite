@@ -9,7 +9,8 @@ smite <- sma-core-alpha
   driftCorrectKNN		SMA_Core.driftCorrectKNN
   plotDriftCorrection		SMA_Vis.plotDriftCorrection
   unitTest			SMA_Core.driftCorrectKNN_unitTest
- FindROI			SMA_Core.findROI
+ @FindROI/			SMA_Core.findROI
+  plotBox			SMA_Vis.plotBox
  @FRC
   posToFRC			SMA_Core.posToFRC
   posToResolution		SMA_Core.posToResolution
@@ -50,11 +51,11 @@ smite <- sma-core-alpha
   driftImage			SMA_Vis.driftImage
   driftImage_unitTest		SMA_Vis.driftImage_unitTest
   gaussianImage			SMA_Vis.gaussianImage
-  gaussianImage_unitTest	SMA_Vis.histogramImage_unitTest
+  gaussianImage_unitTest	SMA_Vis.histogramImage_unitTest (modified)
   histogramImage		SMA_Vis.histogramImage
   histogramImage_unitTest	SMA_Vis.histogramImage_unitTest
   scalebar			SMA_Vis.scalebar
-
+  unitTest
 
 +smi/
  @SMLM/
