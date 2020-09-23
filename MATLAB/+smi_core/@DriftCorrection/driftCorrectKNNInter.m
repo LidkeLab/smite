@@ -15,6 +15,10 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
 %      FrameNum       frame   number from which localization originates (Nx1)
 %      NDatasets      number of datasets
 %      NFrames        number of frames in each dataset
+%      DriftX         intra-dataset x drift (NFrames x NDatasets)
+%      DriftY         intra-dataset y drift (NFrames x NDatasets)
+%      DriftZ         intra-dataset z drift (NFrames x NDatasets) [OPTIONAL]
+%                  Note: DriftX/Y/Z should be computed by driftCorrectKNNIntra
 %   obj:           [class properties]
 %                     optimization parameters with the following fields:
 %      L_intra        intra-dataset threshold (Default = 1 pixel)
