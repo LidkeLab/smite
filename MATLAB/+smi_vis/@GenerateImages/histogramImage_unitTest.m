@@ -2,7 +2,7 @@ function success = histogramImage_unitTest()
 %histogramImage_unitTest tests all functionality of histogramImage.
 
 success = 0;
-fprintf('\nTesting smi_core.GenerateImages.histogramImage...\n');
+fprintf('\nTesting smi_vis.GenerateImages.histogramImage...\n');
 
 % setting display options
 TrueSize = dipgetpref('TrueSize');
@@ -20,12 +20,12 @@ ColorMap = 'jet';
 
 % test with no output
 fprintf('Testing with no output...\n');
-smi_core.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
+smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
 pause(3)
 close all
 % test with output
 fprintf('Testing with output and all input...\n');
-[histIm,RGBim] = smi_core.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
+[histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
 dipshow(histIm)
 h = dipshow(RGBim);
 pos = h.Position;
@@ -35,7 +35,7 @@ pause(3)
 close all
 % test without colormap (default should be hot)
 fprintf('Testing with output and no colormap input...\n');
-[histIm,RGBim] = smi_core.GenerateImages.histogramImage(SMR,SRImageZoom);
+[histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom);
 dipshow(histIm)
 h = dipshow(RGBim);
 pos = h.Position;

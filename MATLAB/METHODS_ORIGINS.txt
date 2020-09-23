@@ -40,6 +40,22 @@ smite <- sma-core-alpha
   gaussBlobImage		SMA_Sim.gaussBlobImage
   gaussBlobROIStack		SMA_Sim.gaussBlobROIStack
 
++smi_vis/
+ @GenerateImages
+  blobColorOverlay		SMA_Vis.blobColorOverlay
+  blobColorOverlay_unitTest	SMA_Vis.blobColorOverlay_unitTest
+  colorImage			SMA_Vis.colorImage
+  colorImage_unitTest		SMA_Vis.colorImage_unitTest
+  dispIm			SMA_Vis.dispIm
+  driftImage			SMA_Vis.driftImage
+  driftImage_unitTest		SMA_Vis.driftImage_unitTest
+  gaussianImage			SMA_Vis.gaussianImage
+  gaussianImage_unitTest	SMA_Vis.histogramImage_unitTest
+  histogramImage		SMA_Vis.histogramImage
+  histogramImage_unitTest	SMA_Vis.histogramImage_unitTest
+  scalebar			SMA_Vis.scalebar
+
+
 +smi/
  @SMLM/
   gui				SMA_SR.SMA_SR

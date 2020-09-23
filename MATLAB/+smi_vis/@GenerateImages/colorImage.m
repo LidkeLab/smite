@@ -22,7 +22,7 @@ function [RGBimage]=colorImage(Image,ColorMap,MinMax)
 
 % check input
 if nargin < 1
-     error('smi_core:GenerateImages:colorImage:notEnoughInputArgs','Need at least Image input');
+     error('smi_vis:GenerateImages:colorImage:notEnoughInputArgs','Need at least Image input');
 end
 if nargin < 2
     ColorMap = hot(256);

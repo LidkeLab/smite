@@ -22,7 +22,7 @@ function [HistIm,RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
 
 % check input
 if nargin <1
-    error('smi_core:GenerateImages::histogramImage:notEnoughInputArgs','Need input of atleast SMR');
+    error('smi_vis:GenerateImages::histogramImage:notEnoughInputArgs','Need input of atleast SMR');
 end
 
 if nargin<2
@@ -31,7 +31,7 @@ if nargin<2
 end
 
 if ~isfield(SMR,'X') || ~isfield(SMR,'Y')
-    error('smi_core:GenerateImages::histogramImage:noXYfields','First input should be structure with fields X and Y');
+    error('smi_vis:GenerateImages::histogramImage:noXYfields','First input should be structure with fields X and Y');
 end
 if nargin < 3
     ColorMap = 'hot';
@@ -56,7 +56,7 @@ end
 if nargout > 1
     cm = eval([ColorMap '(256)']);
     MinMax = [0,imagemax];
-    RgbHistIm = smi_core.GenerateImages.colorImage(HistIm,cm,MinMax);
+    RgbHistIm = smi_vis.GenerateImages.colorImage(HistIm,cm,MinMax);
 end
 
 end

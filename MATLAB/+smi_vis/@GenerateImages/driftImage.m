@@ -22,7 +22,7 @@ function [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
 
 % check input
 if nargin <1
-    error('smi_core:GenerateImages:driftImage: Not enough input arguments. Please input atleast SMR');
+    error('smi_vis:GenerateImages:driftImage: Not enough input arguments. Please input atleast SMR');
 end
 
 if nargin<2
@@ -52,7 +52,7 @@ if nargout==0
     dipshow(DriftIm);
     colormap(cm);
 elseif nargout == 2
-    [DriftImRGB]=smi_core.GenerateImages.colorImage(DriftIm,cm);
+    [DriftImRGB]=smi_vis.GenerateImages.colorImage(DriftIm,cm);
 end
 
 end

@@ -2,7 +2,7 @@ function success = driftImage_unitTest()
 %driftImage_unitTest tests all functionality of driftImage.
 
 success = 0;
-fprintf('\nTesting smi_core.GenerateImages.driftImage...\n');
+fprintf('\nTesting smi_vis.GenerateImages.driftImage...\n');
 
 % create random input
 fprintf('Creating data...\n');
@@ -28,20 +28,20 @@ SRImageZoom = 4;
 
 % test with no output
 fprintf('Testing with no output...\n');
-smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
+smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 diptruesize(gcf,200);
 pause(3);
 close gcf
 % test with single output variable
 fprintf('Testing with single output variable...\n');
-[driftIm] = smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
+[driftIm] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 h = dipshow(driftIm);
 diptruesize(h,200);
 pause(3)
 close(h)
 % test with 2 output variables
 fprintf('Testing with two output variables...\n');
-[driftIm,driftImRGB] = smi_core.GenerateImages.driftImage(SMR,SRImageZoom);
+[driftIm,driftImRGB] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 h1 = dipshow(driftIm);
 diptruesize(h1,200);
 h2 = dipshow(driftImRGB);

@@ -1,10 +1,10 @@
 classdef GenerateImages
 
-%GenerateImages contains static methods for all visualization functions
+%GenerateImages contains static methods for general visualization functions
 %   of single molecule super-resolution data.
 %
 % blobColorOverlay creates color overlay of fitted emitters (green) onto data
-%   (red). 
+%    (red). 
 % colorImage generates RGB image with given colormap from a grey scale image
 % dispIm produces a flexible GUI for multiple images.
 % driftImage generates 2D histogram image from SR data.
@@ -13,10 +13,15 @@ classdef GenerateImages
 % scaleBar creates a scale bar of desired length on the input image.
 %
 % REQUIRES:
-%   Statistics Toolbox
-%   Parallel Procesing Toolbox
-%   Dipimage toolbox
-%   NVidia GPU
+%    Statistics Toolbox
+%    Parallel Procesing Toolbox
+%    Dipimage toolbox
+%    NVidia GPU
+%
+% SEE ALSO (other visualization routines):
+%    smi_core.DriftCorrection.plotDriftCorrection
+%    smi_core.FindROI.plotBox
+%    smi_core.Threshold.rejectedLocalizations
 
 % Lidke Lab 2017, 2020
     
@@ -41,11 +46,11 @@ methods(Static)
 
    function [success] = unitTest()
       %unitTest tests various class functionality.
-      [success(1)] = smi_core.GenerateImages.blobColorOverlay_unitTest();
-      [success(2)] = smi_core.GenerateImages.colorImage_unitTest();
-      [success(3)] = smi_core.GenerateImages.driftImage_unitTest();
-      [success(4)] = smi_core.GenerateImages.gaussianImage_unitTest();
-      [success(5)] = smi_core.GenerateImages.histogramImage_unitTest();
+      [success(1)] = smi_vis.GenerateImages.blobColorOverlay_unitTest();
+      [success(2)] = smi_vis.GenerateImages.colorImage_unitTest();
+      [success(3)] = smi_vis.GenerateImages.driftImage_unitTest();
+      [success(4)] = smi_vis.GenerateImages.gaussianImage_unitTest();
+      [success(5)] = smi_vis.GenerateImages.histogramImage_unitTest();
    end
 end % methods(Static)
 
