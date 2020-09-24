@@ -74,7 +74,7 @@ SMDSim.PSFSigmaY = PSFSigmaXY(2)*OnesArray ...
 SMDSim.PSFSigmaX_SE = PSFSigmaNoise * OnesArray;
 SMDSim.PSFSigmaY_SE = SMDSim.PSFSigmaX_SE;
 SMDSim.FrameNum = repelem((1:NFrames).', NEmitters);
-SMDSim.DatasetNum = 1;
+SMDSim.DatasetNum = OnesArray;
 SMDSim.ThreshFlag = 0 * OnesArray;
 
 % Prepare the frame-connection class and ensure the constructor is working
