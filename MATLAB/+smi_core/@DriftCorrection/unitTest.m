@@ -88,7 +88,7 @@ SMDin.PixelSizeZUnit = PixelSizeZUnit;
 
 % Histogram image of this data.
 SRImageZoom = 4;
-TrueIm = SMA_Vis.histogramImage(SMDin, SRImageZoom); %new
+TrueIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
 P = prctile(TrueIm(TrueIm > 0), 99.9);
 TrueIm(TrueIm > P) = P;
 TrueIm = 255 * TrueIm / P;
@@ -113,12 +113,12 @@ if strcmp(yn, 'No')
 end
 SMDsave = SMDin;
 
-DriftIm = SMA_Vis.histogramImage(SMDin, SRImageZoom); %new
+DriftIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
 P = prctile(DriftIm(DriftIm > 0), 99.9);
 DriftIm(DriftIm > P) = P;
 DriftIm = 255 * DriftIm / P;
 dipshow(DriftIm)  %synthetic drift image
-%GaussIm = SMA_Vis.gaussianImage(SMDin, SRImageZoom);
+%GaussIm = smi_vis.GenerateImages.gaussianImage(SMDin, SRImageZoom);
 %dipshow(GaussIm);
 
 SMF = smi_core.SingleMoleculeFitting.createSMF();
@@ -171,7 +171,7 @@ fprintf('SMDin.X/Y - (SMD.X/Y + SMD.DriftX/Y = %f nm\n', ...
 fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y = %f nm\n', ...
         consistency_in * P2nm);
 
-correctedDriftIm = SMA_Vis.histogramImage(SMD, SRImageZoom);
+correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
 %dipshow(DriftIm)
 % Clean up the sum image by setting the 0.1% top intensity pixels to the
 % 99.9% intensity value.
@@ -182,7 +182,7 @@ dipshow(correctedDriftIm)
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
-showm(DC_fig);
+figure(DC_fig);
 
 % Plot the residual between the pre-drift data and the drift corrected
 % post-drift data.
@@ -224,6 +224,89 @@ Statistics2.DriftX_mean = x_drift;
 Statistics2.DriftY_mean = y_drift;
 Statistics2.DriftX_True = PpFX;
 Statistics2.DriftY_True = PpFY;
+
+% -----------------------------------------------------------------------------
+
+% Perform the same calculation, but now separate the intra-dataset and
+% inter-dataset portions.
+clear SMDin SMD
+SMDin = SMDsave;
+[SMDIntra, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin);
+[SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
+SMD = SMDInter;
+
+% Remove any NaNs.
+nans = find(isnan(SMDsave.X) | isnan(SMDsave.Y) | isnan(SMD.X) | isnan(SMD.Y));
+n_nans = numel(nans);
+if n_nans > 0
+   fprintf('%d NaNs removed!\n', n_nans);
+   SMDsave.X(nans) = [];
+   SMDsave.Y(nans) = [];
+   SMD.X(nans) = [];
+   SMD.Y(nans) = [];
+   X_True(nans) = [];
+   X_Yrue(nans) = [];
+end
+
+% Consistency check.
+N = numel(SMD.X);
+X_inDC = zeros(N, 1, 'single');
+Y_inDC = zeros(N, 1, 'single');
+X_unDC = zeros(N, 1, 'single');
+Y_unDC = zeros(N, 1, 'single');
+for k = 1:N
+   i = SMD.FrameNum(k);
+   j = SMD.DatasetNum(k);
+   X_inDC(k) = SMDsave.X(k) - SMD.DriftX(i, j);
+   Y_inDC(k) = SMDsave.Y(k) - SMD.DriftY(i, j);
+   X_unDC(k) = SMD.X(k) + SMD.DriftX(i, j);
+   Y_unDC(k) = SMD.Y(k) + SMD.DriftY(i, j);
+end
+consistency_un = sum(abs(SMDin.X - X_unDC) + abs(SMDin.Y - Y_unDC));
+consistency_in = sum(abs(SMD.X - X_inDC) + abs(SMD.Y - Y_inDC));
+fprintf('SMDin.X/Y - (SMD.X/Y + SMD.DriftX/Y = %f nm\n', ...
+        consistency_un * P2nm);
+fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y = %f nm\n', ...
+        consistency_in * P2nm);
+
+correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
+%dipshow(DriftIm)
+% Clean up the sum image by setting the 0.1% top intensity pixels to the
+% 99.9% intensity value.
+P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
+correctedDriftIm(correctedDriftIm > P) = P;
+correctedDriftIm = 255 * correctedDriftIm / P;
+dipshow(correctedDriftIm)
+
+% Plot the drift correction as a function of time.
+DC_fig = DC.plotDriftCorrection(SMD);
+figure(DC_fig);
+
+% Plot the residual between the pre-drift data and the drift corrected
+% post-drift data.
+[residual, dist, rmse, nnfig] = DC.calcDCResidual(SMD, X_True, Y_True);
+%dipshow(residual);
+fprintf('average distance between true and DC locations = %f nm\n', ...
+        dist * P2nm);
+fprintf('RMSE             between true and DC locations = %f nm\n', ...
+        rmse * P2nm);
+
+% Compare computed vs. true drift.
+base = 0;
+framenums = [];
+for j = 1:SMDin.NDatasets
+   framenums([1:SMDin.NFrames] + base) = ...
+      arrayfun(@(i) SMDin.NFrames*(j - 1) + i - 1, 1:SMDin.NFrames);
+   base = base + SMDin.NFrames;
+end
+x_drift = mean(SMD.DriftX(:) ./ (framenums(:) + 1));
+y_drift = mean(SMD.DriftY(:) ./ (framenums(:) + 1));
+%fprintf('average x-drift per frame = %f px (true = %f px)\n', x_drift, PpFX);
+%fprintf('average y-drift per frame = %f px (true = %f px)\n', y_drift, PpFY);
+fprintf('average x-drift per frame = %f nm (true = %f nm)\n', ...
+        x_drift * P2nm, PpFX * P2nm);
+fprintf('average y-drift per frame = %f nm (true = %f nm)\n', ...
+        y_drift * P2nm, PpFY * P2nm);
 
 % -----------------------------------------------------------------------------
 % 3D
@@ -439,7 +522,7 @@ fprintf('SMD.X/Y/Z - (SMDin.X/Y/Z - SMD.DriftX/Y/Z = %f nm\n', ...
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
-showm(DC_fig);
+figure(DC_fig);
 hold on
 view([-66, 12])
 hold off

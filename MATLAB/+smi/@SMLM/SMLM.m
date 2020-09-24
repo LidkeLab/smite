@@ -51,7 +51,9 @@ classdef SMLM < handle
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
             end
             
-            %interdataset drift correction
+            % Inter-dataset drift correction.
+            DC = smi_core.DriftCorrection(obj.SMF);
+            obj.SMD = DC.driftCorrectKNNInter(obj.SMD);
         end
         
         
@@ -61,14 +63,17 @@ classdef SMLM < handle
             
             Dataset=obj.loadDataset(DataSetIndex);
             
-            %localizeData
-            SMD=smi_core.genLocalizations(Dataset,obj.SMF);
+            % Generate localizations from the current Dataset.
+            LD = smi_core.LocalizeData(Dataset, obj.SMF);
+            [SMD] = LD.genLocalizations();
             
-            %frame connection
+            % Perform frame-connection on localizations in SMD.
+            FC = smi_core.FrameConnection(SMD, obj.SMF);
+            [SMD] = FC.performFrameConnection();
             
-            %drift correction 
-            
-            
+            % Intra-dataset drift correction.
+            DC = smi_core.DriftCorrection(obj.SMF);
+            SMD = DC.driftCorrectKNNIntra(SMD);
         end
         
         

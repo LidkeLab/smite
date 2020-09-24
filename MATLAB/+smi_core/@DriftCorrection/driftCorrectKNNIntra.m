@@ -1,9 +1,9 @@
 function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
-%driftCorrectKNN calculates the drift directly from X,Y{,Z} coordinates
+%driftCorrectKNNIntra calculates intra-dataset drift directly from X,Y{,Z} coordinates
 % by fitting a polynomial depending on time (i.e., frame number) to the frames
 % with each dataset (intra-dataset), and fitting constant shifts between
 % datasets (inter-dataset).  Fitting is done via performing fminsearch on the
-% (weighted) sums of nearest neighbor distances.
+% (weighted) sums of nearest neighbor distances.  Intra-dataset portion.
 %
 % INPUTS:
 %   SMD:         A structure with fields:
@@ -105,60 +105,33 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
       DriftParams.NFrames     = obj.NFrames;
    end
 
-   % Initialize various parameters, either provided by the user or defaults.
-%  if exist('DriftParams', 'var')
-      % PixelSizeZUnit is needed for 3D to convert Z into the same units as X
-      % and Y.  PixelSizeZUnit is the X/Y pixel size in units of um.
-      if isfield(DriftParams, 'PixelSizeZUnit')
-         PixelSizeZUnit = DriftParams.PixelSizeZUnit;
-      else
-         PixelSizeZUnit = 0.1;   % default value in um
-      end
-      % L_intra is the intra-dataset threshold used in the cost function
-      % computation to limit spurious nearest neighbor distances.  L_intra is
-      % in units of pixels.
-      if isfield(DriftParams, 'L_intra')
-         L_intra = DriftParams.L_intra;
-      else
-         L_intra = 1;   % default value in pixels
-      end
-      % L_inter is the inter-dataset threshold used in the cost function
-      % computation to limit spurious nearest neighbor distances.  L_inter is
-      % in units of pixels.
-      if isfield(DriftParams, 'L_inter')
-         L_inter = DriftParams.L_inter;
-      else
-         L_inter = 2;   % default value in pixels
-      end
-      PDegree      = DriftParams.PDegree;
-      TolFun_intra = DriftParams.TolFun_intra;
-      TolX_intra   = DriftParams.TolX_intra;
-      TolFun_inter = DriftParams.TolFun_inter;
-      TolX_inter   = DriftParams.TolX_inter;
-      Init_inter   = DriftParams.Init_inter;
+   % Initialize various parameters.
+   % PixelSizeZUnit is needed for 3D to convert Z into the same units as X
+   % and Y.  PixelSizeZUnit is the X/Y pixel size in units of um.
+   PixelSizeZUnit = DriftParams.PixelSizeZUnit;
+   % L_intra is the intra-dataset threshold used in the cost function
+   % computation to limit spurious nearest neighbor distances.  L_intra is
+   % in units of pixels.
+   L_intra = DriftParams.L_intra;
+   % L_inter is the inter-dataset threshold used in the cost function
+   % computation to limit spurious nearest neighbor distances.  L_inter is
+   % in units of pixels.
+   L_inter = DriftParams.L_inter;
+   PDegree      = DriftParams.PDegree;
+   TolFun_intra = DriftParams.TolFun_intra;
+   TolX_intra   = DriftParams.TolX_intra;
+   TolFun_inter = DriftParams.TolFun_inter;
+   TolX_inter   = DriftParams.TolX_inter;
+   Init_inter   = DriftParams.Init_inter;
 
-      if any(isfield(DriftParams, {'NDatasets', 'NFrames'}))
-         SMD = ReorganizeDatasets(SMD, DriftParams);
-         % SMD.NFrames has changed, so if Init_inter was set to the old value,
-         % now reset it to the new value.
-         if Init_inter == NFrames_C
-            Init_inter = SMD.NFrames;
-         end
+   if any(isfield(DriftParams, {'NDatasets', 'NFrames'}))
+      SMD = ReorganizeDatasets(SMD, DriftParams);
+      % SMD.NFrames has changed, so if Init_inter was set to the old value,
+      % now reset it to the new value.
+      if Init_inter == NFrames_C
+         Init_inter = SMD.NFrames;
       end
-%  else
-%     % Default values.
-%     L_intra       = 1;     % intra-dataset threshold
-%     L_inter       = 2;     % inter-dataset threshold
-%     PixelSizeZUnit = 0.1;  % pixel size in um
-%     PDegree       = 1;     % degree of the intra-dataset fitting polynomial
-%                            % for drift correction
-%     TolFun_intra = 1e-2;   % termination tolerance on the function value
-%     TolX_intra   = 1e-4;   % termination tolerance on the fitting polynomial
-%     TolFun_inter = 1e-2;   % termination tolerance on the function value
-%     TolX_inter   = 1e-4;   % termination tolerance on the fitting polynomial
-%     Init_inter   = SMD.NFrames; % initialization with respect to the previous
-%                            % dataset for inter-dataset drift correction
-%  end
+   end
 
    Statistics.Ndims          = Ndims;
    Statistics.PixelSizeZUnit = PixelSizeZUnit;
@@ -258,6 +231,9 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
    Statistics.Intra_iterations  = it;
    Statistics.Intra_funcCount   = fc;
    Statistics.Intra_elapsedTime = toc;
+
+   obj.idx  = idx;
+   obj.SMRS = SMRS;
 
    % ---------- Inter-Dataset drift correction --------------------------------
 

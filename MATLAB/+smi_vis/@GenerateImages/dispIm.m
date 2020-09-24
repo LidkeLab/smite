@@ -1,14 +1,15 @@
 function dispIm()
+%dispIm produces a flexible GUI for multiple images.
+%
 %When called a gui pops up and multiple images can be uploaded using 
 %"Choose Image" bottom. The "Backward" and "Forward" bottoms allow going
 %back and forth between the loaded images. Tools from the menu bar, such as
 %zoom in and zoom out can be used to adjust the dispalyed images. The
 %adjustments do not go back to default when moving back and forth between
 %the images
-%
-% Citation:
-%   Mohamadreza Fazel 2019, Lidke Lab
-%
+
+% Created by:
+%    Mohamadreza Fazel 2019, Lidke Lab
 
 Im={};
 map={};

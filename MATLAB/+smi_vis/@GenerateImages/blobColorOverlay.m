@@ -1,5 +1,5 @@
 function [OverlayImage] = blobColorOverlay(Sequence,SMD,AutoScale)
-%blobColorOverlay Creates overlay of fitted emitters onto data
+%blobColorOverlay creates overlay of fitted emitters onto data.
 %   
 %   Creates color overlay of fitted emitters (green) onto data (red). 
 %   smi_sim.GaussBlobs.gaussBlobImage is used to generate the blobs of the
@@ -27,8 +27,8 @@ function [OverlayImage] = blobColorOverlay(Sequence,SMD,AutoScale)
 %   Parallel Procesing Toolbox
 %   Dipimage toolbox
 %   NVidia GPU
-%
-% CITATION:
+
+% Created by:
 %   Marjolein Meddens and Hanieh Mazloom-Farsibaf 2017, Lidke Lab        
 
 if nargin<3

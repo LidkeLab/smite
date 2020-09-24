@@ -1,8 +1,8 @@
 function success = blobColorOverlay_unitTest()
-%histogramImageUnitTest tests all functionality of smi_core.GenerateImages.blobColorOverlay
+%blobColorOverlay_unitTest tests all functionality of blobColorOverlay.
 
 success = 0;
-fprintf('\nTesting smi_core.GenerateImages.blobColorOverlay...\n');
+fprintf('\nTesting smi_vis.GenerateImages.blobColorOverlay...\n');
 
 % create sequence and SMD
 SZ=256;
@@ -30,14 +30,14 @@ SMD.Bg=5*ones(NBlobs/2,1); % now add background to SMD for overlay
 
 % test with no output
 fprintf('Testing with no output...\n');
-smi_core.GenerateImages.blobColorOverlay(Sequence,SMD);
+smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
 fprintf('Check sequence if you like, it will close in 20 sec...\n');
 pause(20)
 close all
 
 % test with output
 fprintf('Testing with output...\n');
-[~] = smi_core.GenerateImages.blobColorOverlay(Sequence,SMD);
+[~] = smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
 close all
 
 % finish

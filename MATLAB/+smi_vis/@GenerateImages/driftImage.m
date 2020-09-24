@@ -1,23 +1,28 @@
 function [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
 %driftImage generates 2D histogram image from SR data
+%
 %   INPUT
-%      SMR - structure containing at least fields 'X', 'Y', 'XSize', 'YSize','FileNum', and 
-%            'FrameNum' having the x and y coordinates, rawdata x and y sizes, file number and 
-%            frame number of localizations to be plotted
+%      SMR - structure containing at least fields 'X', 'Y', 'XSize', 'YSize',
+%            'FileNum', and 'FrameNum' having the x and y coordinates, rawdata
+%            x and y sizes, file number and frame number of localizations to be
+%            plotted
 %      SRImageZoom - zoom factor for drift image 
+%
 %   OUTPUT
 %      If no output args are given drift image will be displayed
-%      DriftIm - gray value drift image
+%      DriftIm    - gray value drift image
 %      DriftImRGB - RBG drift image
+%
 %   REQUIRES
 %      Matlab 2014b or higher
 %      Dipimage toolbox (http://www.diplib.org/)
 
-% Marjolein Meddens, Lidke Lab 2017
+% Created by:
+%    Marjolein Meddens, Lidke Lab 2017
 
 % check input
 if nargin <1
-    error('smi_core:GenerateImages:driftImage: Not enough input arguments. Please input atleast SMR');
+    error('smi_vis:GenerateImages:driftImage: Not enough input arguments. Please input atleast SMR');
 end
 
 if nargin<2
@@ -47,7 +52,7 @@ if nargout==0
     dipshow(DriftIm);
     colormap(cm);
 elseif nargout == 2
-    [DriftImRGB]=smi_core.GenerateImages.colorImage(DriftIm,cm);
+    [DriftImRGB]=smi_vis.GenerateImages.colorImage(DriftIm,cm);
 end
 
 end

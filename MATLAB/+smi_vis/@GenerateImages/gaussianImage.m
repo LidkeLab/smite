@@ -1,18 +1,20 @@
 function [GaussIm] = gaussianImage(SMR,SRImageZoom)
-% Function gaussianImage creates gaussian-blob image from SR data
+%gaussianImage creates gaussian-blob image from SR data.
+%
 % INPUT:
 %   SMR - SMR results structure with fields X, Y, Bg, X_SE, Y_SE, Photons,
 %   FrameNum, XSize, YSize
 %   SRImageZoom - zoom factor (default value of 10)
+%
 % OUTPUT:
 %   GaussIm - Gaussian blob image 
 %
 % REQUIRES:
 %   smi_sim.GaussBlobs.gaussBlobImage.m (and requirements within)
 %   Matlab
-%
-% CITATION:
-%   Sandeep Pallikkuth, Lidke Lab 2017
+
+% Created by:
+%    Sandeep Pallikkuth, Lidke Lab 2017
 
 % checking inputs
 if nargin<1

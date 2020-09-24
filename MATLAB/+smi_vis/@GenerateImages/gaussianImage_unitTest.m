@@ -1,8 +1,8 @@
 function success = gaussianImage_unitTest()
-%gaussianImageUnitTest tests all functionality of smi_core.GenerateImages.gaussianImage
+%gaussianImage_unitTest tests all functionality of gaussianImage.
 
 success = 0;
-fprintf('\nTesting smi_core.GenerateImages.gaussianImage...\n');
+fprintf('\nTesting smi_vis.GenerateImages.gaussianImage...\n');
 
 % setting display options
 TrueSize = dipgetpref('TrueSize');
@@ -24,12 +24,12 @@ SRImageZoom = 4;
 
 % test with no output
 fprintf('Testing with no output...\n');
-smi_core.GenerateImages.gaussianImage(SMR,SRImageZoom);
+smi_vis.GenerateImages.gaussianImage(SMR,SRImageZoom);
 pause(3)
 close all
 % test with output
 fprintf('Testing with output and all input...\n');
-[gaussIm] = smi_core.GenerateImages.gaussianImage(SMR,SRImageZoom);
+[gaussIm] = smi_vis.GenerateImages.gaussianImage(SMR,SRImageZoom);
 dipshow(gaussIm)
 pause(3)
 close all

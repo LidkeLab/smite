@@ -313,6 +313,8 @@ classdef FindROI < handle
             LocalMaxIm=permute(LocalMaxIm,[2 1 3]);
             LocalMaxIm = gather(LocalMaxIm);
         end
+
+        plotBox(SMD, Data, Frame, BoxSize)
     end
 end
 
