@@ -27,11 +27,9 @@ function [SMD] = catSMD(SMD1, SMD2)
 
 
 % Define which SMD fields are vector fields vs. scalar fields.
-% NOTE: We could just check which fields are numeric vectors
-%       with (numel() > 1), but that convenience limits us to
-%       SMD structures with more than one localization.  Fields
-%       that aren't present in this list will still be checked
-%       in that manner just to be safe.
+% NOTE: We could just check which fields are numeric vectors with 
+%       (numel() > 1), but that convenience limits us to SMD structures 
+%       with more than one localization.
 VectorFields = {'XBoxCorner', 'YBoxCorner', ...
     'X', 'Y', 'Z', ...
     'X_SE', 'Y_SE', 'Z_SE', ...
