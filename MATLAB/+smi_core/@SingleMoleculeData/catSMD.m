@@ -10,7 +10,10 @@ function [SMD] = catSMD(SMD1, SMD2)
 % NOTE: There is a hard-coded set of vector fields below called
 %       VectorFields!!!  If these are changed in SingleMoleculeData.m (or
 %       if they are used differently than usual in some context), this
-%       set of fields may need to be revised.
+%       set of fields may need to be revised. Similarly, there is a set of
+%       "special" fields defined by SpecialFields which are treated
+%       differently towards the end of this method (their treatment will be
+%       different on a case-by-case basis).
 %
 % INPUTS:
 %   SMD1: A Single Molecule Data structure.
@@ -32,13 +35,9 @@ if (isempty(SMD1) && isempty(SMD2))
     error('Inputs SMD1 and SMD2 cannot both be empty');
 elseif isempty(SMD1)
     SMD = SMD2;
-    warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
-        'Input SMD1 was empty, setting output SMD to SMD2'])
     return
 elseif isempty(SMD2)
     SMD = SMD1;
-    warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
-        'Input SMD2 was empty, setting output SMD to SMD1'])
     return
 end
 
@@ -54,8 +53,15 @@ VectorFields = {'XBoxCorner', 'YBoxCorner', ...
     'PSFSigma', 'PSFSigmaX', 'PSFSigmaY', ...
     'PSFSigma_SE', 'PSFSigmaX_SE', 'PSFSigmaY_SE', ...
     'PValue', 'LogLikelihood', 'ThreshFlag', ...
-    'DatasetNum', 'FrameNum', 'ConnectID', ...
-    'DriftX', 'DriftY', 'DriftZ'};
+    'DatasetNum', 'FrameNum', 'ConnectID'};
+
+% Define a set of "special" fields in SMD: these fields are treated
+% differently on a case-by-case basis towards the end of this method.
+% NOTE: I mostly added this to bypass the warnings that happen in the main
+%       for loop below. In fact, not all of the "special" fields are even
+%       in this list, e.g., PSFSigma is also treated differently in some
+%       cases, but not included in this list.
+SpecialFields = {'DriftX', 'DriftY', 'DriftZ', 'NDatasets'};
 
 % Create a list of fields present in each of SMD1 and SMD2.
 FieldNames1 = fieldnames(SMD1);
@@ -92,40 +98,42 @@ end
 
 % Loop through fields present in SMD1 and SMD2 and begin constructing the
 % concatenated output SMD.
+% NOTE: There are a several "special" fields (which aren't defined in
+%       VectorFields above) that will be defined illogically/incorrectly in
+%       this loop.  Those fields will be revised later on.
 AllFieldNames = unique([FieldNames1; FieldNames2]);
 SharedFields = AllFieldNames(ismember(AllFieldNames, FieldNames1) ...
     & ismember(AllFieldNames, FieldNames2));
 IsVectorField = ismember(SharedFields, VectorFields);
+IsSpecialField = ismember(SharedFields, SpecialFields);
 for ff = 1:numel(SharedFields)
     % Place the current field in the output SMD, concatenating when
     % appropriate.
+    CurrentField = SharedFields{ff};
     if IsVectorField(ff)
         % Vector fields should be concatenated directly.
-        SMD.(SharedFields{ff}) = [SMD1.(SharedFields{ff}); ...
-            SMD2.(SharedFields{ff})];
-    elseif isequal(SMD1.(SharedFields{ff}), SMD2.(SharedFields{ff}))
+        SMD.(CurrentField) = [SMD1.(CurrentField); SMD2.(CurrentField)];
+    elseif isequal(SMD1.(CurrentField), SMD2.(CurrentField))
         % We want to ensure non-vector fields are consistent with one
         % another before setting the output field.
-        SMD.(SharedFields{ff}) = SMD1.(SharedFields{ff});
-    else
+        SMD.(CurrentField) = SMD1.(CurrentField);
+    elseif ~IsSpecialField(ff)
         % This appears to be a non-vector field, but the field is not equal
         % in SMD1 and SMD2; we will trust the user and concatenate these
         % two as though it were a vector field.
         warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
             'SMD field ''%s'' is different in each of ', ...
-            'SMD1 and SMD2, attempting to concatenate.'], ...
-            SharedFields{ff})
+            'SMD1 and SMD2, attempting to concatenate.'], CurrentField)
         try
-            SMD.(SharedFields{ff}) = ...
-                [SMD1.(SharedFields{ff}); ...
-                SMD2.(SharedFields{ff})];
+            SMD.(CurrentField) = [SMD1.(CurrentField); ...
+                SMD2.(CurrentField)];
         catch Exception
             warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
                 'Concatenation of field ''%s'' failed, storing as ', ...
-                'cell array.\n%s, %s'], SharedFields{ff}, ...
+                'cell array.\n%s, %s'], CurrentField, ...
                 Exception.identifier, Exception.message)
-            SMD.(SharedFields{ff}) = {SMD1.(SharedFields{ff}); ...
-                SMD2.(SharedFields{ff})};
+            SMD.(CurrentField) = {SMD1.(CurrentField); ...
+                SMD2.(CurrentField)};
         end
     end
 end
@@ -139,6 +147,12 @@ end
 if (numel(unique(SMD.DatasetNum)) == 1)
     SMD.DatasetNum = unique(SMD.DatasetNum);
 end
+
+% Revise the drift related fields, which should be treated differently.
+% NOTE: The dimensions of drift will be [NFrames, NDatasets], so if one of 
+SMD.DriftX = [SMD1.DriftX, SMD2.DriftX];
+SMD.DriftY = [SMD1.DriftY, SMD2.DriftY];
+SMD.DriftZ = [SMD1.DriftZ, SMD2.DriftZ];
 
 % Define the output SMD.NDatasets in a manner consistent with
 % SMD.DatasetNum.
