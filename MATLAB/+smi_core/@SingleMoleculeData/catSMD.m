@@ -26,6 +26,22 @@ function [SMD] = catSMD(SMD1, SMD2)
 %   David J. Schodt (Lidke lab, 2020)
 
 
+% Ensure neither of the input SMD's are empty.  If one of them is empty,
+% output the other one without changes.  If both are empty, throw an error.
+if (isempty(SMD1) && isempty(SMD2))
+    error('Inputs SMD1 and SMD2 cannot both be empty');
+elseif isempty(SMD1)
+    SMD = SMD2;
+    warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
+        'Input SMD1 was empty, setting output SMD to SMD2'])
+    return
+elseif isempty(SMD2)
+    SMD = SMD1;
+    warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
+        'Input SMD2 was empty, setting output SMD to SMD1'])
+    return
+end
+
 % Define which SMD fields are vector fields vs. scalar fields.
 % NOTE: We could just check which fields are numeric vectors with 
 %       (numel() > 1), but that convenience limits us to SMD structures 
