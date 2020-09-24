@@ -3,103 +3,145 @@ classdef LoadData < handle
     % .h5 format files.
     %
     % INPUTS:
-    %   SMF -
-    %   varargin -
+    %   SMF - Single Molecule Fitting structure. The name and directory
+    %   location of the data file is obtained from fields
+    %   (SMF.Data.FileName and SMF.Data.FileDir) of SMF. If the fields are
+    %   non-existent or are empty, data file selection will be required
+    %   with a pop-up window.
+    %   varargin - input arguments helping to locate the 'data' to be
+    %   loaded from the data file. This varies for the different file
+    %   extensions (.mat, .ics and .h5). For details please see
+    %   documentation for the methods.
     %
     % OUTPUTS:
-    %   Data -
-    %   SMF -
+    %   Data - data loaded from FileName, converted to type single
+    %   SMF - SMF structure modified by adding fields FileName and FileDir,
+    %   if not present.
     %
-    % REQUIRES:
-    %   MATLAB 2014a or later versions
-    %   Dipimage (www.diplib.org)
+    % METHODS:
+    %   loadDataMat, loadDataIcs, loadDataH5
     %
     % CITATION:
     %   Sandeep Pallikkuth, Lidke Lab, 2020
     
-    properties
-        SMF
-    end
-    
+   
     properties (SetAccess = 'protected')
-        FileType           % Filetype determined from SMF.FileName
+        FileType           % Filetype determined from SMF.Data.FileName
         FullFileName       % Full file path
     end
     
     methods
-        function [obj, Data] = loadData(SMF,varargin)
+        function [obj,Data,SMF] = LoadData(SMF,varargin)
             % INPUT
-            %    FileName - full path to datafile, must be mat, ics or h5
+            %    SMF - single molecule fitting structure
             %    varargin - input parameters, different for each file type:
             %       mat: MatVarName, name of matlab variable containing the data
-            %           Eg:  [Data] = loadData('FileName.mat',sequence)
+            %            DatasetNum, number indicating the file in
+            %            SMF.Data.FileName cell array
             %       ics: no parameters needed
             %       h5: DatasetIdx, index of dataset to be loaded from h5 file
             %           ChannelIdx (optional), index of channel to be loaded, default is 1
-            %           Eg:  [Data] = loadData('FileName.h5',1,1)
             % OUTPUT
             %    Data - data loaded from FileName, converted to type single
+            %    SMF - single molecule fitting structure with FileName,
+            %    FileDir and ResultsDir added.
             
-            if isfield(SMF,'FileName')
-                obj.FileType = SMF.FileName(end-2:end);
-                obj.FullFileName=fullfile(SMF.FileDir,SMF.FileName);
+            if isfield(SMF.Data,'FileName')&&~isempty(SMF.Data.FileName)
+                % determining FileTye from SMF entries of FileName
+                if iscell(SMF.Data.FileName)
+                    obj.FileType=SMF.Data.FileName{1}(end-2:end);
+                else
+                    obj.FileType = SMF.Data.FileName(end-2:end);
+                end
+                obj.FullFileName=fullfile(SMF.Data.FileDir,SMF.Data.FileName);
             else
+                % If Filename entry not present in SMF, option to choose
+                % the file/s
                 [filename, pathname]=uigetfile('Y:\*.mat;*.mat;*.ics;*.h5','MultiSelect','on');
-                SMF.FileName=filename;
-                SMF.FileDir=pathname;
-                obj.FullFileName=fullfile(SMF.FileDir,SMF.FileName);
+                SMF.Data.FileName=filename;
+                SMF.Data.FileDir=pathname;
+                SMF.Data.ResultsDir=fullfile(pathname,'Results');
+                obj.FullFileName=fullfile(SMF.Data.FileDir,SMF.Data.FileName);
+                if iscell(SMF.Data.FileName)
+                    obj.FileType=SMF.Data.FileName{1}(end-2:end);
+                else
+                    obj.FileType = SMF.Data.FileName(end-2:end);
+                end
             end
             
             switch obj.FileType
                 case 'mat'
-                    % loading .mat file/s
-                    Data=loadDataMat(obj.FullFileName,varargin);
+                    % loading images from .mat file/s
+                    Data=smi_core.LoadData.loadDataMat(obj.FullFileName,varargin);
                 case 'ics'
                     % loading images from .ics file
-                    Data=loadDataIcs(obj.FullFileName,varargin);
+                    Data=smi_core.LoadData.loadDataIcs(obj.FullFileName,varargin);
                 case '.h5'
                     % loading images from .h5 file
-                    Data=loadDataH5(obj.FullFileName,varargin);
+                    Data=smi_core.LoadData.loadDataH5(obj.FullFileName,varargin);
             end
         end
-        
+    end
+    
+    methods (Static)
         function [Data]=loadDataMat(FullFileName,varargin)
+            % static method for loading .mat file/s
+            % INPUT
+            %    FullFileName - full path to datafile, must be h5
+            %    varargin - input parameters
+            %           MatVarName, name of matlab variable containing the data
+            %            DatasetNum, number indicating the file in
+            %            SMF.Data.FileName cell array
+            %           Eg:  [Data] = smi_core.LoadData.loadDataMat('FullFileName.mat',sequence,DatasetNum)
+            % OUTPUT
+            %    Data - data loaded from FileName, converted to type single
             if isempty(varargin)
-                error('smi_core.LoadData.loadDataMat:noMatVarName','No Matlab variable name given for mat file, please give as input: Data = smi_core.LoadData.loadDataMat(FileName,MatVarName)')
+                error('smi_core.LoadData.loadDataMat:','Not enough input arguments: Data = smi_core.LoadData.loadDataMat(FileName,MatVarName,DatasetNumber)');
+            elseif nargin<2
+                error('smi_core.LoadData.loadDataMat:','Not enough input arguments: Data = smi_core.LoadData.loadDataMat(FileName,MatVarName,DatasetNumber)');
             end
             MatVarName = varargin{1};
             if iscell(MatVarName)
                 MatVarName=MatVarName{1};
             end
+            DatasetNum = varargin{1}{2};
             % load data
-            tmp = load(FullFileName,MatVarName);
+            tmp = load(FullFileName{DatasetNum},MatVarName);
             Data = single(tmp.(MatVarName));
         end
         
         function [Data]=loadDataIcs(FullFileName,varargin)
+            % static method for loading .ics file
+            % no input arguments needed
+            % INPUT
+            %    FullFileName - full path to datafile, must be .ics
+            %    Eg:  [Data] = smi_core.LoadData.loadDataIcs('FullFileName.ics')
+            % OUTPUT
+            %    Data - data loaded from FileName, converted to type single
             tmp = readim(FullFileName);
             Data = single(tmp);
         end
         
         function [Data] = loadDataH5(FullFileName,varargin)
+            % static method for loading .h5 file
             % INPUT
-            %    FullFileName - full path to datafile, must be h5
+            %    FullFileName - full path to datafile, must be .h5
             %    varargin - input parameters
             %       h5: DatasetIdx, index of dataset to be loaded from h5 file
             %           ChannelIdx (optional), index of channel to be loaded, default is 1
-            %           Eg:  [Data] = loadDataH5('FileName.h5',1,1)
+            %           Eg:  [Data] = smi_core.LoadData.loadDataH5('FileName.h5',1,1)
             % OUTPUT
             %    Data - data loaded from FileName, converted to type single
             
             if isempty(varargin)
-                error('smi_core:loadData:noDatasetIndex','No dataset index given for h5 file, please give as input: Data = smi_core.LoadData.loadData(FileName,DatasetIndex)')
+                error('smi_core:LoadData:noDatasetIndex','No dataset index given for h5 file, please give as input: Data = smi_core.LoadData.loadDataH5(FileName,DatasetIndex)')
             elseif nargin == 2
                 ChannelIdx = 1;
             elseif nargin > 2
                 ChannelIdx = varargin{2};
             end
             
-            DatasetIdx = varargin{1};
+            DatasetIdx = cell2mat(varargin{1});
             HD5Info = h5info(FullFileName);
             
             % Define a flag to indicate the .h5 file structure: 0 indicates
@@ -183,11 +225,9 @@ classdef LoadData < handle
                 error('smi_core:loadData:unknownDataset','h5 file does not contain dataset %s in %s, cannot load data',DataSetName,ChannelName);
             end
             % load data
-            Data=single(h5read(FileName,DataName));
-            otherwise
-                % unknown file type
-                error('smi_core:loadData:unknownFileType','Unknown type of file, datafile should be of type mat, ics or h5')
+            Data=single(h5read(FullFileName,DataName));
         end
+        
     end
 end
 
