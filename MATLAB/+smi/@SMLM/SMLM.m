@@ -60,8 +60,8 @@ classdef SMLM < handle
         function SMD=analyzeDataset(obj,DataSetIndex)
         % analyzeDataset Load and analyze one dataset    
             
-            
-            Dataset=obj.loadDataset(DataSetIndex);
+            obj.SMF=smi_core.SingleMoleculeFitting.createSMF();
+            [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DataSetIndex);
             
             % Generate localizations from the current Dataset.
             LD = smi_core.LocalizeData(Dataset, obj.SMF);
@@ -81,9 +81,10 @@ classdef SMLM < handle
         end
         
         
-        function loadDataset(obj,DataSetIndex)
+        function [Dataset, SMF]=loadDataset(obj,SMF,DataSetIndex)
         % loadDataset load a dataset and convert to photons
-        % set obj.Data    
+        % set obj.Data   
+        [~, Dataset, SMF] = smi_core.LoadData(SMF,DataSetIndex);
         end
         
         function saveResults(obj)
