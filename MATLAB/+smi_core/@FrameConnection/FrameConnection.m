@@ -88,7 +88,7 @@ classdef FrameConnection < handle
             end
         end
         
-        [SMDCombined, SMD] = performFrameConnection(obj)
+        [SMDCombined, SMD] = performFrameConnection(obj, ConnectIDStart)
         
     end
     
