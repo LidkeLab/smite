@@ -100,14 +100,24 @@ classdef LoadData < handle
             elseif nargin<2
                 error('smi_core.LoadData.loadDataMat:','Not enough input arguments: Data = smi_core.LoadData.loadDataMat(FileName,MatVarName,DatasetNumber)');
             end
+            while any(cellfun(@iscell,varargin))
+                varargin = [varargin{cellfun(@iscell,varargin)} varargin(~cellfun(@iscell,varargin))];
+            end
+
             MatVarName = varargin{1};
             if iscell(MatVarName)
                 MatVarName=MatVarName{1};
             end
-            DatasetNum = varargin{1}{2};
+            DatasetNum = varargin{2};
             % load data
-            tmp = load(FullFileName{DatasetNum},MatVarName);
-            Data = single(tmp.(MatVarName));
+            if iscell(FullFileName)
+                tmp = load(FullFileName{DatasetNum},MatVarName);
+                Data = single(tmp.(MatVarName));
+            else
+                tmp = load(FullFileName,MatVarName);
+                Data = single(tmp.(MatVarName));
+            end
+                
         end
         
         function [Data]=loadDataIcs(FullFileName,varargin)
@@ -140,8 +150,11 @@ classdef LoadData < handle
             elseif nargin > 2
                 ChannelIdx = varargin{2};
             end
+            while any(cellfun(@iscell,varargin))
+                varargin = [varargin{cellfun(@iscell,varargin)} varargin(~cellfun(@iscell,varargin))];
+            end
             
-            DatasetIdx = cell2mat(varargin{1});
+            DatasetIdx = varargin{1};
             HD5Info = h5info(FullFileName);
             
             % Define a flag to indicate the .h5 file structure: 0 indicates
