@@ -68,12 +68,16 @@ classdef SMLM < handle
             [SMD] = LD.genLocalizations();
             
             % Perform frame-connection on localizations in SMD.
-            FC = smi_core.FrameConnection(SMD, obj.SMF);
-            [SMD] = FC.performFrameConnection();
+            if obj.SMF.FrameConnection.On 
+                FC = smi_core.FrameConnection(SMD, obj.SMF);
+                [SMD] = FC.performFrameConnection();
+            end
             
             % Intra-dataset drift correction.
-            DC = smi_core.DriftCorrection(obj.SMF);
-            SMD = DC.driftCorrectKNNIntra(SMD);
+            if obj.SMF.DriftCorrection.On 
+                DC = smi_core.DriftCorrection(obj.SMF);
+                SMD = DC.driftCorrectKNNIntra(SMD);
+            end
         end
         
         
