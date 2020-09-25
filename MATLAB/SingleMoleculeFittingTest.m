@@ -148,7 +148,7 @@ classdef SingleMoleculeFittingTest < handle
             obj.DriftCorrection.Init_inter = 0;
             
             %Tracking
-            obj.Tracking.TrackMethods='SMA_SPT';
+            obj.Tracking.Method='SMA_SPT';
             obj.Tracking.D=1;
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
@@ -443,7 +443,7 @@ classdef SingleMoleculeFittingTest < handle
             
             % Validate the inputs given in TrackingInput.
             if (isfield(TrackingInput, 'Method') ...
-                    && ~ismember(FittingInput.Method, {'SMA_SPT'}))
+                    && ~ismember(TrackingInput.Method, {'SMA_SPT'}))
                 error('SMF.Tracking.Method must be one of SMA_SPT,')
             end
             if isfield(TrackingInput, 'D')
