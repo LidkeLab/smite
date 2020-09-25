@@ -1,4 +1,4 @@
-function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
+function [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 % unitTest tests smi_core.DriftCorrection.driftCorrectKNN.
 % Synthetic data is created by smlmData.m, which then has drift imposed upon
 % it.  This data is then drift corrected by driftCorrectKNN, producing a SMD
@@ -8,7 +8,8 @@ function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 %   No inputs needed
 %
 % OUTPUTS:
-%   SMD           data structure with the following fields:
+%   success           0 (failure) or 1 (success)
+%   SMD2, SMD3        data structure with the following fields:
 %       X:            x coordinates (Nx1) where N is total number of points
 %       Y:            y coordinates (Nx1)
 %       DatasetNum:   dataset number from which localization originates (Nx1)
@@ -17,8 +18,10 @@ function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 %       NDatasets:    number of datasets
 %       DriftX:       found x drift (NFrames x NDatasets)
 %       DriftY:       found y drift (NFrames x NDatasets)
-%   Statistics:   statistical information about the algorithm performance
-%                 including various input parameters
+%   Statistics2:  statistical information about the algorithm performance
+%                 including various input parameters (2D example)
+%   Statistics3:  statistical information about the algorithm performance
+%                 including various input parameters (3D example)
 %
 % REQUIRES:
 %   DIPimage Toolbox
@@ -29,6 +32,8 @@ function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 % CITATION:
 %   Farzin Farzam (Keith Lidke Lab 2017) [adapted from driftCorrect2D_unitTest]
 %   Michael Wester (Lidke Lab 2017/2018)
+
+success = 0;
 
 close all
 
@@ -46,15 +51,21 @@ PpFY = 0.007;      % y drift (pixels per frame)
 FpD = 100;         % number of frames per dataset
 K_on =  0.0005;    % off to on rate (1/frames)
 
+%load('SMDsim2D');
 [Data, SMDsim] = SMA_Sim.smlmData(shape, yn, 1, K_on, 1, 2000, rho, ...
                                   1.3, 15, XYSize, n_frames, 'Equib');
+SMDsim.DatasetNum = ones(size(SMDsim.X));
 fprintf('2D\n');
 fprintf('rho = %d fluorophores/pixel\n', rho);
 n_particles = numel(SMDsim.X);
 fprintf('Number of emitters = %d, per pixel = %f, per dataset = %f\n', ...
         n_particles, n_particles / XYSize^2, n_particles / (n_frames / FpD));
-[n_local, n_blinks] = blinks(n_particles, SMDsim.X, SMDsim.Y, SMDsim.FrameNum);
-fprintf('Number of localizations = %d, blinks = %d\n', n_local, n_blinks);
+[n_emitters, n_blinks, n_local, n_datasets] = ...
+   blinks(n_particles, SMDsim.X, SMDsim.Y, SMDsim.Y, ...
+          SMDsim.FrameNum, SMDsim.DatasetNum);
+fprintf( ...
+   '# of emitters = %d, blinks = %d, localizations = %d, datasets = %d\n', ...
+   n_emitters, n_blinks, n_local, n_datasets);
 SMD.XSize = XYSize;
 SMD.YSize = XYSize;
 SMD.X_SE = zeros(n_particles, 1);
@@ -232,6 +243,7 @@ Statistics2.DriftY_True = PpFY;
 % Perform the same calculation, but now separate the intra-dataset and
 % inter-dataset portions.  Simulate the` situation of calling the two portions
 % from separate functions.
+fprintf('\n2D: separated intra-dataset and inter-dataset\n');
 clear SMD
 SMDin = SMDsave;
 SMDIntra = [];
@@ -370,16 +382,21 @@ PSF_struct.PSF = PSF;
 PSF_struct.XYSamPerPix = XYSamPerPix;
 PSF_struct.ZSamPerUnit = ZSamPerUnit;
 
+%load('SMDsim3D');
 [Data, SMDsim] = SMA_Sim.smlmData(shape, yn ,1, 0.0005, 1, 2000, rho, ...
                                   PSF_struct, 15, XYSize, n_frames, 'Equib');
+SMDsim.DatasetNum = ones(size(SMDsim.X));
 fprintf('\n3D\n');
 fprintf('rho = %d fluorophores/pixel\n', rho);
 n_particles = numel(SMDsim.X);
 fprintf('Number of particles = %d, per pixel = %f, per dataset = %f\n', ...
         n_particles, n_particles / XYSize^2, n_particles / (n_frames / FpD));
-[n_local, n_blinks] = blinks3(n_particles, SMDsim.X, SMDsim.Y, SMDsim.Z, ...
-                              SMDsim.FrameNum);
-fprintf('Number of localizations = %d, blinks = %d\n', n_local, n_blinks);
+[n_emitters, n_blinks, n_local, n_datasets] = ...
+   blinks(n_particles, SMDsim.X, SMDsim.Y, SMDsim.Z, ...
+          SMDsim.FrameNum, SMDsim.DatasetNum);
+fprintf( ...
+   '# of emitters = %d, blinks = %d, localizations = %d, datasets = %d\n', ...
+   n_emitters, n_blinks, n_local, n_datasets);
 
 SMD.XSize = XYSize;
 SMD.YSize = XYSize;
@@ -600,45 +617,48 @@ Statistics3.DriftX_True = PpFX;
 Statistics3.DriftY_True = PpFY;
 Statistics3.DriftZ_True = PpFZ;
 
+success = 1;
+
 end
 
 % =============================================================================
 
-function [n_local, n_blinks] = blinks(n_particles, X, Y, F)
-% Find all the frame number sets (fns) for each localization (of which there
-% are n_local).
+function [n_emitters, n_blinks, n_local, n_datasets] = ...
+   blinks(n_particles, X, Y, Z, F, D)
+% Find all the frame number sets (fns) for each emitter (of which there are
+% n_emitters).
+%
+% INPUTS:
+%    n_particles   total number of particles (localizations) given
+%    X, Y, Z       particle coordinates
+%    F             absolute frame numbers
+%    D             dataset numbers
+%
+% OUTPUTS:
+%    n_emitters    number of distinct locations, each corresponding to an
+%                  emitter
+%    n_blinks      number of blinking events
+%    n_local       number of entries
+%    n_datasets    number of distinct datasets
+%
+% Data from smlmData with no imposed drift looks like:
+%
+%     X         Y        F
+%     2.9100    1.1548   22.0000
+%     2.9100    1.1548   23.0000
+%     2.9100    1.1548   24.0000
+%     2.9100    1.1548  452.0000
+%    17.6154    1.1999  477.0000
+%    58.0133    1.5341   40.0000
+%    58.0133    1.5341   41.0000
+%
+% This corresponds to 3 emitters (distinct positions), 4 blinking events (2 for
+% the first emitter, 1 each for the other two), and 7 localizations (before
+% frame connection).
 
    fns = {};
    i = 1;
-   n_local = 0;
-   while i <= n_particles
-      x = X(i);
-      y = Y(i);
-      f = F(i);
-
-      i = i + 1;
-      while i <= n_particles & X(i) == x & Y(i) == y
-         f = [f, F(i)];
-         i = i + 1;
-      end
-      n_local = n_local + 1;
-      fns{n_local} = f;
-   end
-
-   % Count the number of blinks.
-   n_blinks = sum(cellfun(@(e) numel(find(diff(e) ~= 1)) + 1, fns));
-
-end
-
-% -----------------------------------------------------------------------------
-
-function [n_local, n_blinks] = blinks3(n_particles, X, Y, Z, F)
-% Find all the frame number sets (fns) for each localization (of which there
-% are n_local).
-
-   fns = {};
-   i = 1;
-   n_local = 0;
+   n_emitters = 0;
    while i <= n_particles
       x = X(i);
       y = Y(i);
@@ -650,11 +670,17 @@ function [n_local, n_blinks] = blinks3(n_particles, X, Y, Z, F)
          f = [f, F(i)];
          i = i + 1;
       end
-      n_local = n_local + 1;
-      fns{n_local} = f;
+      n_emitters = n_emitters + 1;
+      fns{n_emitters} = f;
    end
 
-   % Count the number of blinks.
+   % Count the number of localizations.
+   n_local = n_particles;
+
+   % Count the number of blinking events.
    n_blinks = sum(cellfun(@(e) numel(find(diff(e) ~= 1)) + 1, fns));
+
+   % Count the number of datasets.
+   n_datasets = numel(unique(D));
 
 end
