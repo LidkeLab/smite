@@ -18,6 +18,7 @@ classdef SMLM < handle
     end
     
     properties (Access=protected)
+        DC  % DriftCorrection class object used internally
         SMD % SMD structure with final analysis results
         NDataSets %
         
@@ -45,6 +46,8 @@ classdef SMLM < handle
         function analyzeAll(obj)
             % analyzeAll loops over dataset and creates SMD
             
+            % DriftCorrection class object is also used in analyzeDataset
+            obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
             for nn=1:obj.NDatasets
                 SMDnn=obj.analyzeDataset(nn);
@@ -52,8 +55,7 @@ classdef SMLM < handle
             end
             
             % Inter-dataset drift correction.
-            DC = smi_core.DriftCorrection(obj.SMF);
-            obj.SMD = DC.driftCorrectKNNInter(obj.SMD);
+            obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
         end
         
         
@@ -75,8 +77,7 @@ classdef SMLM < handle
             
             % Intra-dataset drift correction.
             if obj.SMF.DriftCorrection.On 
-                DC = smi_core.DriftCorrection(obj.SMF);
-                SMD = DC.driftCorrectKNNIntra(SMD);
+                SMD = obj.DC.driftCorrectKNNIntra(SMD, DataSetIndex);
             end
         end
         
