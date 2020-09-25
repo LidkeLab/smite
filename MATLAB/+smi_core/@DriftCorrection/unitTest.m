@@ -9,27 +9,28 @@ function [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 %
 % OUTPUTS:
 %   success           0 (failure) or 1 (success)
-%   SMD2, SMD3        data structure with the following fields:
+%   SMD2, SMD3    data structures for 2D or 3D examples with the following
+%                 fields:
 %       X:            x coordinates (Nx1) where N is total number of points
 %       Y:            y coordinates (Nx1)
+%       Z:            z coordinates (Nx1)
 %       DatasetNum:   dataset number from which localization originates (Nx1)
 %       FrameNum:     frame   number from which localization originates (Nx1)
 %       NFrames:      number of frames in each dataset
 %       NDatasets:    number of datasets
-%       DriftX:       found x drift (NFrames x NDatasets)
-%       DriftY:       found y drift (NFrames x NDatasets)
+%       DriftX:       found x drift (Nframes x Ndatasets)
+%       DriftY:       found y drift (Nframes x Ndatasets)
+%       DriftZ:       found z drift (Nframes x Ndatasets)
 %   Statistics2:  statistical information about the algorithm performance
-%                 including various input parameters (2D example)
-%   Statistics3:  statistical information about the algorithm performance
-%                 including various input parameters (3D example)
+%   Statistics3   including various input parameters (2D or 3D)
 %
 % REQUIRES:
 %   DIPimage Toolbox
 %   Parallel Processing Toolbox
 %   Statistics Toolbox
 %   NVidia GPU
-%
-% CITATION:
+
+% Created by:
 %   Farzin Farzam (Keith Lidke Lab 2017) [adapted from driftCorrect2D_unitTest]
 %   Michael Wester (Lidke Lab 2017/2018)
 
