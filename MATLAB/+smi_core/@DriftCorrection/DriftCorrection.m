@@ -82,7 +82,7 @@ end % properties(SetAccess = protected)
 methods(Static)
 
    [residual, dist, rmse, nnfig] = calcDCResidual(SMD, X_True, Y_True, Z_True)
-   [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
+   [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 
 end % methods(Static)
 % =============================================================================
