@@ -178,7 +178,7 @@ classdef SingleMoleculeFittingTest < handle
                         'char, string, or cell.'])
                 elseif (isfield(obj.Data, 'ResultsDir') ...
                             && isempty(obj.Data.ResultsDir))
-                        obj.Data.ResultsDir = fullfile(...
+                        DataInput.ResultsDir = fullfile(...
                             DataInput.FileDir, 'Results');
                 end
             end
@@ -220,7 +220,7 @@ classdef SingleMoleculeFittingTest < handle
                     error('''SMF.Data.PixelSize'' must be numeric.')
                 end
             end
-            
+                        
             % Set the input fields as class properties.
             InputFields = fieldnames(DataInput);
             for ff = 1:numel(InputFields)
@@ -518,4 +518,3 @@ classdef SingleMoleculeFittingTest < handle
                 
     end
 end
-
