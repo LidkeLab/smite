@@ -1,4 +1,4 @@
-function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
+function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 %driftCorrectKNNIntra calculates intra-dataset drift directly from X,Y{,Z} coordinates
 % by fitting a polynomial depending on time (i.e., frame number) to the frames
 % with each dataset (intra-dataset), and fitting constant shifts between
@@ -6,6 +6,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
 % (weighted) sums of nearest neighbor distances.  Intra-dataset portion.
 %
 % INPUTS:
+%   iDataset:    Dataset index
 %   SMD:         A structure with fields:
 %      X              x coordinates (Nx1) where N is total number of points
 %      Y              y coordinates (Nx1)
@@ -38,17 +39,6 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
 %                     with brightfield registration, while final drift works
 %                     well generally (but the optimization process may not
 %                     converge quite as quickly) (Default = SMD.NFrames)
-%      NDatasets      [OPTIONAL] override the collected value.  This causes the
-%                     dataset/frame numbering to be reorganized internally as
-%                     specified by the user
-%      NFrames        [OPTIONAL] override the collected value.  See above
-%      NOTES: Only one of NDatasets or NFrames needs to be specified.  These
-%             numbers must evenly divide the total number of frames.  Better
-%             results can sometimes occur by increasing the number of datasets
-%             or decreasing the number of frames per dataset up to some limit
-%             when the datasets become too sparse.  Init_inter will be
-%             automatically changed from SMD.NFrames (if so specified) to
-%             NFrames.
 %
 % OUTPUTS:
 %   SMD:         SMD data structure with updated fields:
@@ -62,8 +52,6 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
 %                including various input parameters above and ...:
 %      NDatasets          internal number of datasets
 %      NFrames            internal number of frames per dataset
-%      NDatasets_C        original (collected) number of datasets
-%      NFrames_C          original (collected) number of frames per dataset
 %      Intra_iterations   intra-dataset number of fminsearch iterations
 %      Intra_funcCount    intra-dataset number of fminsearch function evals
 %      Intra_elapsedTime  intra-dataset elapsed time for drift correction
@@ -85,9 +73,6 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
    else
       Ndims = 2;
    end
-
-   NDatasets_C = SMD.NDatasets;
-   NFrames_C   = SMD.NFrames;
 
    DriftParams.L_intra        = obj.L_intra;
    DriftParams.L_inter        = obj.L_inter;
@@ -124,21 +109,10 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
    TolX_inter   = DriftParams.TolX_inter;
    Init_inter   = DriftParams.Init_inter;
 
-   if any(isfield(DriftParams, {'NDatasets', 'NFrames'}))
-      SMD = ReorganizeDatasets(SMD, DriftParams);
-      % SMD.NFrames has changed, so if Init_inter was set to the old value,
-      % now reset it to the new value.
-      if Init_inter == NFrames_C
-         Init_inter = SMD.NFrames;
-      end
-   end
-
    Statistics.Ndims          = Ndims;
    Statistics.PixelSizeZUnit = PixelSizeZUnit;
    Statistics.NDatasets      = SMD.NDatasets;
    Statistics.NFrames        = SMD.NFrames;
-   Statistics.NDatasets_C    = NDatasets_C;
-   Statistics.NFrames_C      = NFrames_C;
    Statistics.L_intra        = L_intra;
    Statistics.L_inter        = L_inter;
    Statistics.PDegree        = PDegree;
@@ -166,14 +140,15 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
    idx = zeros(N, 1);
    base = 0;
 
-   SMRS = cell(1, SMD.NDatasets);
+   %SMRS = cell(1, SMD.NDatasets);
    % Count the number of iterations and function calls.
    it = 0;   fc = 0;
    % Note that variables like X, Y, Z are vectors, while variables like XY are
    % n x Ndims matrices.  The basic reason for combining vectors into matrices
    % is to allow easier generalization to 3D.
    for i = 1:SMD.NDatasets
-      mask = SMD.DatasetNum == i;
+      %mask = SMD.DatasetNum == i;
+      mask = SMD.DatasetNum == iDataset;
       n = sum(mask);
       XY = zeros(n, Ndims, 'single');
       XY(:, 1) = SMD.X(mask);
@@ -216,8 +191,10 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
       PY = P(PDegree + 1 : 2*PDegree);
 
       % Values corrected for drift.
-      SMRS{i}.XY = XYC;
-      SMRS{i}.n  = n;
+      %SMRS{i}.XY = XYC;
+      %SMRS{i}.n  = n;
+      SMRS{iDataset}.XY = XYC;
+      SMRS{iDataset}.n  = n;
 
       range = double(1:SMD.NFrames);
       SMD.DriftX(:, i) = polyval([PX', 0], range);
@@ -232,8 +209,8 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
    Statistics.Intra_funcCount   = fc;
    Statistics.Intra_elapsedTime = toc;
 
-   obj.idx  = idx;
-   obj.SMRS = SMRS;
+   obj.idx = [obj.idx; idx + numel(obj.idx)];
+   obj.SMRS{iDataset} = SMRS{iDataset};
 
    % ---------- Inter-Dataset drift correction --------------------------------
 
@@ -282,62 +259,5 @@ function [sumNND, X] = minD_intra(Theta, X, T, Ndims, L_intra)
       n = sum(nans);
       sumNND = sum(min(D2, L_intra)) * (1 + n/numel(D2));
    end
-
-end
-
-% =============================================================================
-
-function SMD = ReorganizeDatasets(SMD, DriftParams)
-% Reorganize the collected frames into user specified dataset divisions.
-
-   % NDatasets is the number of datasets.
-   % NFrames   is the number of frames per dataset.
-   % NFrames_total is the total number of frames over all datasets.
-   NFrames_total = SMD.NDatasets * SMD.NFrames;
-   if isfield(DriftParams, 'NDatasets') && ~isempty(DriftParams.NDatasets)
-      NDatasets = DriftParams.NDatasets;
-      NFrames   = NFrames_total / NDatasets;
-      if mod(NFrames, 1) ~= 0
-         error(['DriftParams.NDatasets (%d) does not divide evenly into\n', ...
-                'the total number of frames (%d)!'], NDatasets, NFrames_total);
-      end
-      if isfield(DriftParams, 'NFrames') && ~isempty(DriftParams.NFrames)
-         if DriftParams.NFrames ~= NFrames
-         error(['DriftParams.NDatasets * DriftParams.NFrames (%d * %d) !=\n',...
-                'the total number of frames (%d)!'], ...
-               DriftParams.NDatasets, DriftParams.NFrames, NFrames_total);
-         end
-      end
-   elseif isfield(DriftParams, 'NFrames') && ~isempty(DriftParams.NFrames)
-      NFrames   = DriftParams.NFrames;
-      NDatasets = NFrames_total / NFrames;
-      if mod(NDatasets, 1) ~= 0
-         error(['DriftParams.NFrames (%d) does not divide evenly into\n', ...
-                'the total number of frames (%d)!'], NFrames, NFrames_total);
-      end
-   end
-
-   % Compute absolute frame number as if there was only one dataset.
-   FrameNumAbs = ...
-      (SMD.DatasetNum - 1)*double(SMD.NFrames) + double(SMD.FrameNum);
-   % Reorganize the absolute frame numbers into new dataset divisions.
-   DatasetNum = ones(size(FrameNumAbs));
-   FrameNum   = zeros(size(FrameNumAbs));
-   for i = 1 : numel(DatasetNum)
-      DatasetNum(i) = ...
-         (FrameNumAbs(i) - 1 - mod(FrameNumAbs(i) - 1, NFrames)) / NFrames + 1;
-      FrameNum(i)   = mod(FrameNumAbs(i) - 1, NFrames) + 1;
-   end
-
-   % Save collected dataset/frame numbering.
-   SMD.Collected.NDatasets  = SMD.NDatasets;
-   SMD.Collected.NFrames    = SMD.NFrames;
-   SMD.Collected.DatasetNum = SMD.DatasetNum;
-   SMD.Collected.FrameNum   = SMD.FrameNum;
-   % Replace the old numbering scheme with the new one.
-   SMD.NDatasets  = NDatasets;
-   SMD.NFrames    = NFrames;
-   SMD.DatasetNum = DatasetNum;
-   SMD.FrameNum   = FrameNum;
 
 end

@@ -42,17 +42,6 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
 %                     with brightfield registration, while final drift works
 %                     well generally (but the optimization process may not
 %                     converge quite as quickly) (Default = SMD.NFrames)
-%      NDatasets      [OPTIONAL] override the collected value.  This causes the
-%                     dataset/frame numbering to be reorganized internally as
-%                     specified by the user
-%      NFrames        [OPTIONAL] override the collected value.  See above
-%      NOTES: Only one of NDatasets or NFrames needs to be specified.  These
-%             numbers must evenly divide the total number of frames.  Better
-%             results can sometimes occur by increasing the number of datasets
-%             or decreasing the number of frames per dataset up to some limit
-%             when the datasets become too sparse.  Init_inter will be
-%             automatically changed from SMD.NFrames (if so specified) to
-%             NFrames.
 %
 % OUTPUTS:
 %   SMD:         SMD data structure with updated fields:
@@ -66,8 +55,6 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
 %                including various input parameters above and ...:
 %      NDatasets          internal number of datasets
 %      NFrames            internal number of frames per dataset
-%      NDatasets_C        original (collected) number of datasets
-%      NFrames_C          original (collected) number of frames per dataset
 %      Intra_iterations   intra-dataset number of fminsearch iterations
 %      Intra_funcCount    intra-dataset number of fminsearch function evals
 %      Intra_elapsedTime  intra-dataset elapsed time for drift correction
@@ -89,9 +76,6 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    else
       Ndims = 2;
    end
-
-   NDatasets_C = SMD.NDatasets;
-   NFrames_C   = SMD.NFrames;
 
    DriftParams.L_intra        = obj.L_intra;
    DriftParams.L_inter        = obj.L_inter;
@@ -132,8 +116,6 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    Statistics.PixelSizeZUnit = PixelSizeZUnit;
    Statistics.NDatasets      = SMD.NDatasets;
    Statistics.NFrames        = SMD.NFrames;
-   Statistics.NDatasets_C    = NDatasets_C;
-   Statistics.NFrames_C      = NFrames_C;
    Statistics.L_intra        = L_intra;
    Statistics.L_inter        = L_inter;
    Statistics.PDegree        = PDegree;

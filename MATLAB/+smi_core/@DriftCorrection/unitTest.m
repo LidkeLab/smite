@@ -30,6 +30,8 @@ function [SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 %   Farzin Farzam (Keith Lidke Lab 2017) [adapted from driftCorrect2D_unitTest]
 %   Michael Wester (Lidke Lab 2017/2018)
 
+close all
+
 %shape = 'uniform'; % pattern type
 shape = 'star';    % pattern type
 yn = 'No';         % smlmData compute drift?
@@ -44,8 +46,9 @@ PpFY = 0.007;      % y drift (pixels per frame)
 FpD = 100;         % number of frames per dataset
 K_on =  0.0005;    % off to on rate (1/frames)
 
-[Data, SMDsim] = SMA_Sim.smlmData(shape, yn, 1, K_on, 1, 2000, rho, ...
-                                  1.3, 15, XYSize, n_frames, 'Equib');
+%[Data, SMDsim] = SMA_Sim.smlmData(shape, yn, 1, K_on, 1, 2000, rho, ...
+%                                  1.3, 15, XYSize, n_frames, 'Equib');
+load('SMDsim2D.mat');
 fprintf('2D\n');
 fprintf('rho = %d fluorophores/pixel\n', rho);
 n_particles = numel(SMDsim.X);
@@ -72,6 +75,7 @@ PixelSizeZUnit = 0.1; % um
 P2nm = PixelSizeZUnit * 1000;
 
 % Re-organize so X and Y are the first inputs.
+SMDin = smi_core.SingleMoleculeData.createSMD();
 SMDin.XSize = XYSize;
 SMDin.YSize = XYSize;
 SMDin.X = X;
@@ -132,18 +136,17 @@ DC = smi_core.DriftCorrection(SMF);
 %DC.DriftParams.Init_inter = SMDin.NFrames;
 %DriftParams.Init_inter    = 0;
 
-clear SMDin SMD
-SMDin = SMDsave;
+clear SMD
 [SMD, Statistics] = DC.driftCorrectKNN(SMDin);
 %Statistics
 
 % Remove any NaNs.
-nans = find(isnan(SMDsave.X) | isnan(SMDsave.Y) | isnan(SMD.X) | isnan(SMD.Y));
+nans = find(isnan(SMDin.X) | isnan(SMDin.Y) | isnan(SMD.X) | isnan(SMD.Y));
 n_nans = numel(nans);
 if n_nans > 0
    fprintf('%d NaNs removed!\n', n_nans);
-   SMDsave.X(nans) = [];
-   SMDsave.Y(nans) = [];
+   SMDin.X(nans) = [];
+   SMDin.Y(nans) = [];
    SMD.X(nans) = [];
    SMD.Y(nans) = [];
    X_True(nans) = [];
@@ -159,8 +162,8 @@ Y_unDC = zeros(N, 1, 'single');
 for k = 1:N
    i = SMD.FrameNum(k);
    j = SMD.DatasetNum(k);
-   X_inDC(k) = SMDsave.X(k) - SMD.DriftX(i, j);
-   Y_inDC(k) = SMDsave.Y(k) - SMD.DriftY(i, j);
+   X_inDC(k) = SMDin.X(k) - SMD.DriftX(i, j);
+   Y_inDC(k) = SMDin.Y(k) - SMD.DriftY(i, j);
    X_unDC(k) = SMD.X(k) + SMD.DriftX(i, j);
    Y_unDC(k) = SMD.Y(k) + SMD.DriftY(i, j);
 end
@@ -228,20 +231,46 @@ Statistics2.DriftY_True = PpFY;
 % -----------------------------------------------------------------------------
 
 % Perform the same calculation, but now separate the intra-dataset and
-% inter-dataset portions.
-clear SMDin SMD
+% inter-dataset portions.  Simulate the` situation of calling the two portions
+% from separate functions.
+clear SMD
 SMDin = SMDsave;
-[SMDIntra, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin);
-[SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
-SMD = SMDInter;
+SMDIntra = [];
+SMDtmp   = [];
+X_TrueTmp = [];
+Y_TrueTmp = [];
+obj.DC = smi_core.DriftCorrection(SMF);
+for i = 1 : SMDin.NDatasets
+   SMDin_i = SMDin;
+   SMDin_i.NDatasets = 1;
+   mask = SMDin.DatasetNum == i;
+   SMDin_i.X          = single(SMDin.X(mask));
+   SMDin_i.Y          = single(SMDin.Y(mask));
+   SMDin_i.X_SE       = SMDin.X_SE(mask);
+   SMDin_i.Y_SE       = SMDin.Y_SE(mask);
+   SMDin_i.DatasetNum = SMDin.DatasetNum(mask);
+   SMDin_i.FrameNum   = SMDin.FrameNum(mask);
+   SMDin_i.Photons    = SMDin.Photons(mask);
+   SMDin_i.Bg         = SMDin.Bg(mask);
+   X_TrueTmp = [X_TrueTmp; X_True(mask)];
+   Y_TrueTmp = [Y_TrueTmp; Y_True(mask)];
+   [SMDIntra_i, StatisticsIntra] = obj.DC.driftCorrectKNNIntra(SMDin_i, i);
+   SMDtmp   = smi_core.SingleMoleculeData.catSMD(SMDtmp,   SMDin_i);
+   SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i);
+end
+[SMDInter, StatisticsInter] = obj.DC.driftCorrectKNNInter(SMDIntra);
+SMD   = SMDInter;
+SMDin = SMDtmp;
+X_True = X_TrueTmp;
+Y_True = Y_TrueTmp;
 
 % Remove any NaNs.
-nans = find(isnan(SMDsave.X) | isnan(SMDsave.Y) | isnan(SMD.X) | isnan(SMD.Y));
+nans = find(isnan(SMDin.X) | isnan(SMDin.Y) | isnan(SMD.X) | isnan(SMD.Y));
 n_nans = numel(nans);
 if n_nans > 0
    fprintf('%d NaNs removed!\n', n_nans);
-   SMDsave.X(nans) = [];
-   SMDsave.Y(nans) = [];
+   SMDin.X(nans) = [];
+   SMDin.Y(nans) = [];
    SMD.X(nans) = [];
    SMD.Y(nans) = [];
    X_True(nans) = [];
@@ -257,8 +286,8 @@ Y_unDC = zeros(N, 1, 'single');
 for k = 1:N
    i = SMD.FrameNum(k);
    j = SMD.DatasetNum(k);
-   X_inDC(k) = SMDsave.X(k) - SMD.DriftX(i, j);
-   Y_inDC(k) = SMDsave.Y(k) - SMD.DriftY(i, j);
+   X_inDC(k) = SMDin.X(k) - SMD.DriftX(i, j);
+   Y_inDC(k) = SMDin.Y(k) - SMD.DriftY(i, j);
    X_unDC(k) = SMD.X(k) + SMD.DriftX(i, j);
    Y_unDC(k) = SMD.Y(k) + SMD.DriftY(i, j);
 end
@@ -425,17 +454,16 @@ if strcmp(yn, 'No')
       end
    end
 end
-SMDsave = SMDin;
 
 figure();
 hold on
 cm = colormap(jet);
 n_cm = size(cm, 1);
 sz = 5;
-min_Z = min(SMDsave.Z);
-max_Z = max(SMDsave.Z);
-indx = max(1, ceil((n_cm - 1) * (SMDsave.Z - min_Z) / (max_Z - min_Z) + 1));
-scatter3(SMDsave.X * P2nm, SMDsave.Y * P2nm, SMDsave.Z * 1000, sz, indx);
+min_Z = min(SMDin.Z);
+max_Z = max(SMDin.Z);
+indx = max(1, ceil((n_cm - 1) * (SMDin.Z - min_Z) / (max_Z - min_Z) + 1));
+scatter3(SMDin.X * P2nm, SMDin.Y * P2nm, SMDin.Z * 1000, sz, indx);
 xlabel('x (nm)');
 ylabel('y (nm)');
 zlabel('z (nm)');
@@ -456,8 +484,7 @@ DC = smi_core.DriftCorrection(SMF);
 %DC.DriftParams.Init_inter = SMDin.NFrames;
 %DriftParams.Init_inter    = 0;
 
-clear SMDin SMD
-SMDin = SMDsave;
+clear SMD
 [SMD, Statistics] = DC.driftCorrectKNN(SMDin);
 
 figure();
@@ -478,13 +505,13 @@ hold off
 %saveas(gcf, '3Dsim_correctedDriftImage', 'png');
 
 % Remove any NaNs.
-nans = find(isnan(SMDsave.X) | isnan(SMDsave.Y) | isnan(SMD.X) | isnan(SMD.Y));
+nans = find(isnan(SMDin.X) | isnan(SMDin.Y) | isnan(SMD.X) | isnan(SMD.Y));
 n_nans = numel(nans);
 if n_nans > 0
    fprintf('%d NaNs removed!\n', n_nans);
-   SMDsave.X(nans) = [];
-   SMDsave.Y(nans) = [];
-   SMDsave.Z(nans) = [];
+   SMDin.X(nans) = [];
+   SMDin.Y(nans) = [];
+   SMDin.Z(nans) = [];
    SMD.X(nans) = [];
    SMD.Y(nans) = [];
    SMD.Z(nans) = [];
@@ -504,9 +531,9 @@ Z_unDC = zeros(N, 1, 'single');
 for k = 1:N
    i = SMD.FrameNum(k);
    j = SMD.DatasetNum(k);
-   X_inDC(k) = SMDsave.X(k) - SMD.DriftX(i, j);
-   Y_inDC(k) = SMDsave.Y(k) - SMD.DriftY(i, j);
-   Z_inDC(k) = SMDsave.Z(k) - SMD.DriftZ(i, j);
+   X_inDC(k) = SMDin.X(k) - SMD.DriftX(i, j);
+   Y_inDC(k) = SMDin.Y(k) - SMD.DriftY(i, j);
+   Z_inDC(k) = SMDin.Z(k) - SMD.DriftZ(i, j);
    X_unDC(k) = SMD.X(k) + SMD.DriftX(i, j);
    Y_unDC(k) = SMD.Y(k) + SMD.DriftY(i, j);
    Z_unDC(k) = SMD.Z(k) + SMD.DriftZ(i, j);

@@ -42,22 +42,12 @@ end % properties
 % =============================================================================
 
 % =============================================================================
-properties(SetAccess = protected)
-
-   % indexing array to record rearrangements of points into datasets
-   idx;
-   % values corrected for drift; fields: X, Y, n
-   SMRS = {};
-
-end % properties(SetAccess = protected)
-% =============================================================================
-
-% =============================================================================
 methods
 
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
-   [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD)
+   [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
    [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
+   SCobj = initializeDriftCorrection(SCobj)
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
@@ -75,6 +65,17 @@ methods
    end
 
 end % methods
+% =============================================================================
+
+% =============================================================================
+properties(SetAccess = protected)
+
+   % indexing array to record rearrangements of points into datasets
+   idx;
+   % values corrected for drift; fields: X, Y, n
+   SMRS = {};
+
+end % properties(SetAccess = protected)
 % =============================================================================
 
 % =============================================================================
