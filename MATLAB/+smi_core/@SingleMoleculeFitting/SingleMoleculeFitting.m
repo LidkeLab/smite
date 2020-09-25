@@ -24,8 +24,8 @@ classdef SingleMoleculeFitting<handle
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
-%   FrameRate:      Data Collection Frame Rate (1/s) 
-%   PixelSize:      Camera back-projected pixel size (micron)   
+%   FrameRate:      Data Collection Frame Rate (1/s)(Default=100)
+%   PixelSize:      Camera back-projected pixel size (micron)(Default=0.1)
 %
 % BoxFinding:       {FindROI}
 %   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
@@ -96,11 +96,18 @@ classdef SingleMoleculeFitting<handle
             %   (none)
             %
             
+            %Data
+            SMF.Data.FileName='';
+            SMF.Data.FileDir='';
+            SMF.Data.ResultsDir='/Results';
             SMF.Data.CameraType='EMCCD';
             SMF.Data.CameraGain=1;
             SMF.Data.CameraOffset=0;
             SMF.Data.CameraReadNoise=0;
+            SMF.Data.FrameRate=100;
+            SMF.Data.PixelSize=0.1;
             
+            %BoxFinding
             SMF.BoxFinding.BoxSize=7;
             SMF.BoxFinding.BoxOverlap=2;
             SMF.BoxFinding.MinPhotons=200;
