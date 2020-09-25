@@ -46,9 +46,8 @@ PpFY = 0.007;      % y drift (pixels per frame)
 FpD = 100;         % number of frames per dataset
 K_on =  0.0005;    % off to on rate (1/frames)
 
-%[Data, SMDsim] = SMA_Sim.smlmData(shape, yn, 1, K_on, 1, 2000, rho, ...
-%                                  1.3, 15, XYSize, n_frames, 'Equib');
-load('SMDsim2D.mat');
+[Data, SMDsim] = SMA_Sim.smlmData(shape, yn, 1, K_on, 1, 2000, rho, ...
+                                  1.3, 15, XYSize, n_frames, 'Equib');
 fprintf('2D\n');
 fprintf('rho = %d fluorophores/pixel\n', rho);
 n_particles = numel(SMDsim.X);
