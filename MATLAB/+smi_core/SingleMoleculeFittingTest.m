@@ -463,7 +463,7 @@ classdef SingleMoleculeFittingTest < handle
             end
             if isfield(TrackingInput, 'MaxFrameGap')
                 if ~isnumeric(TrackingInput.MaxFrameGap)
-                    error(['''SMF.DriftCorrection.MaxFrameGap'' ', ...
+                    error(['''SMF.Tracking.MaxFrameGap'' ', ...
                         'must be logical or interpretable as logical ', ...
                         '(numeric).'])
                 end
@@ -475,7 +475,7 @@ classdef SingleMoleculeFittingTest < handle
             end
             if isfield(TrackingInput, 'MinTrackLength')
                 if ~isnumeric(TrackingInput.MinTrackLength)
-                    error(['''SMF.DriftCorrection.MinTrackLength'' ', ...
+                    error(['''SMF.Tracking.MinTrackLength'' ', ...
                         'must be logical or interpretable as logical ', ...
                         '(numeric).'])
                 end
@@ -489,6 +489,33 @@ classdef SingleMoleculeFittingTest < handle
             end
         end
         
+        function [SMFStruct] = packageSMF(obj)
+            %packageSMF converts class instance obj to a structure array.
+            % This method will convert the class instance into a structure
+            % array by setting all class properties as fields in the
+            % structure array.
+            
+            % Generate the output SMFStruct.
+            ClassFields = fieldnames(obj);
+            for ff = 1:numel(ClassFields)
+                SMFStruct.(ClassFields{ff}) = obj.(ClassFields{ff});
+            end
+        end
+        
+        function reloadSMF(obj, SMFStruct)
+            %reloadSMF reloads the fields in SMFStruct as class properties.
+            % This method will take the fields given in the structure array
+            % SMFStruct and set them to the corresponding class properties.
+            
+            % Update class properties based on fields in SMFStruct.
+            InputFields = fieldnames(SMFStruct);
+            ClassFields = fieldnames(obj);
+            ValidFields = InputFields(ismember(InputFields, ClassFields));
+            for ff = 1:numel(ValidFields)
+                obj.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
+            end
+        end
+                
     end
 end
 
