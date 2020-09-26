@@ -8,7 +8,11 @@ classdef DriftCorrection < handle
 %
 % EXAMPLE USAGE (see also unitTest):
 %    DC = smi_core.DriftCorrection(SMF);
-%    [SMDIntra, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin);
+%    SMDIntra = [];
+%    for i = 1 : NDatasets
+%       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i);
+%       SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i);
+%    end
 %    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
 %    SMDout = SMDInter;
 
