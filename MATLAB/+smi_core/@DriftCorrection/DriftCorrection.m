@@ -46,6 +46,17 @@ end % properties
 % =============================================================================
 
 % =============================================================================
+properties(SetAccess = protected)
+
+   % indexing array to record rearrangements of points into datasets
+   idx;
+   % values corrected for drift; fields: X, Y, n
+   SMRS = {};
+
+end % properties(SetAccess = protected)
+% =============================================================================
+
+% =============================================================================
 methods
 
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
@@ -69,17 +80,6 @@ methods
    end
 
 end % methods
-% =============================================================================
-
-% =============================================================================
-properties(SetAccess = protected)
-
-   % indexing array to record rearrangements of points into datasets
-   idx;
-   % values corrected for drift; fields: X, Y, n
-   SMRS = {};
-
-end % properties(SetAccess = protected)
 % =============================================================================
 
 % =============================================================================
