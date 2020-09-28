@@ -37,12 +37,12 @@ classdef SingleMoleculeFittingTest < handle
 %   FitType:    See fit class for options  (Default='XYNB')
 %   Iterations: Newton Raphson iterations (Default=20)
 %   ZFitStruct: Structure for astigmatic fitting:
-%       Ax:         Asigmatism fit parameter (see GaussMLE)         
-%       Ay:         Asigmatism fit parameter (see GaussMLE)
-%       Bx:         Asigmatism fit parameter (see GaussMLE)
-%       By:         Asigmatism fit parameter (see GaussMLE)
-%       Gamma:      Asigmatism fit parameter (see GaussMLE)
-%       D:          Asigmatism fit parameter (see GaussMLE)
+%       Ax:         Astigmatism fit parameter (see GaussMLE)         
+%       Ay:         Astigmatism fit parameter (see GaussMLE)
+%       Bx:         Astigmatism fit parameter (see GaussMLE)
+%       By:         Astigmatism fit parameter (see GaussMLE)
+%       Gamma:      Astigmatism fit parameter (see GaussMLE)
+%       D:          Astigmatism fit parameter (see GaussMLE)
 %
 % Thresholding      {ThresholdFits,SRA}
 %   On              Perform thresholding? (Default=true)
