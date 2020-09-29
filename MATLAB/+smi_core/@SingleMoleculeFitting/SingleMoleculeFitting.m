@@ -62,6 +62,7 @@ classdef SingleMoleculeFitting<handle
 %
 % DriftCorrection   {DriftCorrection,SRA}
 %  On               Perform drift correction? (Default=true)
+%  BFRegistration   Was brightfield registration performed? (Default=true)
 %  L_intra          Intra-dataset threshold (Pixel)(Default=1)
 %  L_inter          Inter-dataset threshold (Pixel)(Default=2)
 %  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
@@ -141,6 +142,7 @@ classdef SingleMoleculeFitting<handle
 
             %DriftCorrection
             SMF.DriftCorrection.On = true;
+            SMF.DriftCorrection.BFRegistration = true;
             SMF.DriftCorrection.L_intra = 1; % pixel
             SMF.DriftCorrection.L_inter = 2; % pixel
             SMF.DriftCorrection.PixelSizeZUnit = 0.1; % um
