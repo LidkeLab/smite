@@ -36,6 +36,47 @@ smite <- sma-core-alpha
   translateThreshFlag		SMA_Vis.translateThreshFlag
   unitTest			SMA_Core.thresholdSM_unitTest
 
++smi_psf/
+ @PointSpreadFunction/
+  SMA_PSF			SMA_PSF.SMA_PSF
+  createPSFStruct		SMA_PSF.createPSFStruct
+  createZernikeStruct		SMA_PSF.createZernikeStruct
+  crlbPSFPupil			SMA_PSF.crlbPSFPupil
+  crlbPSFPupil_unitTest		SMA_PSF.crlbPSFPupil_unitTest
+  gui				SMA_PSF.gui
+  optimPSFZernike		SMA_PSF.optimPSFZernike
+  optimPSFZernike_unitTest	SMA_PSF.optimPSFZernike_unitTest
+  oversamplePSFPupil		SMA_PSF.oversamplePSFPupil
+  oversamplePSFPupil_unitTest	SMA_PSF.oversamplePSFPupil_unitTest
+  phaseRetrieval		SMA_PSF.phaseRetrieval
+  phaseRetrievalEM		SMA_PSF.phaseRetrievalEM
+  phaseRetrieval_Spiral		SMA_PSF.phaseRetrieval_Spiral
+  phaseRetrieval_unitTest	SMA_PSF.phaseRetrieval_unitTest
+  psfROIStack			SMA_PSF.psfROIStack
+  psfROIStack_unitTest		SMA_PSF.psfROIStack_unitTest
+  rescaleOTF			SMA_PSF.rescaleOTF
+  scalarPSF			SMA_PSF.scalarPSF
+  scalarPSFPrasadZone		SMA_PSF.scalarPSFPrasadZone
+  scalarPSFPrasadZone_unitTest	SMA_PSF.scalarPSFPrasadZone_unitTest
+  scalarPSFPupil		SMA_PSF.scalarPSFPupil
+  scalarPSFZernike		SMA_PSF.scalarPSFZernike
+  unitTest
+  zernikeExpansion		SMA_PSF.zernikeExpansion
+  zernikeImage			SMA_PSF.zernikeImage
+  zernikeImage_unitTest		SMA_PSF.zernikeImage_unitTest
+  zernikeSum			SMA_PSF.zernikeSum
+ @Zernike/
+  unitTest			SMA_PSF.zernike_unitTest
+  zNM2Noll			SMA_PSF.zernikeNM2Noll
+  zNM2Wyant			SMA_PSF.zernikeNM2Wyant
+  zNZNoll			SMA_PSF.zernikeNZNoll
+  zNZWyant			SMA_PSF.zernikeNZWyant
+  zNamesNoll			SMA_PSF.zernikeNamesNoll
+  zNamesWyant			SMA_PSF.zernikeNamesWyant
+  zNoll2NM			SMA_PSF.zernikeNoll2NM
+  zProperNollIndex		SMA_PSF.zernikeProperNollIndex
+  zWyant2NM			SMA_PSF.zernikeWyant2NM
+
 +smi_sim/
  @GaussBobs/
   gaussBlobImage		SMA_Sim.gaussBlobImage
