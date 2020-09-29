@@ -8,6 +8,8 @@ function [Report]=optimPSFZernike_unitTest()
 %   Parallel Procesing Toolbox
 %   NVidia GPU
 %
+
+Report = 0;
  
 %% Blind start. Search for Astigmatism
 P=smi_psf.PointSpreadFunction.createPSFStruct();
@@ -28,5 +30,7 @@ P.ZC_Phase(24)=2;
 clc;
 [PFound_Tet,PSF3,CRLB_Tetra]=smi_psf.PointSpreadFunction.optimPSFZernike(P,PhaseMask,P.ZC_Phase);
 PFound_Tet.ZC_Phase
+
+Report = 1;
 
 end

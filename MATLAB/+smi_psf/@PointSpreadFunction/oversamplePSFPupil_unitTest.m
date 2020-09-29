@@ -1,6 +1,8 @@
 function [Report] = oversamplePFSPupil_unitTest(PSFStruct,Sampling)
 %oversamplePFSPupil_unitTest Test and Demonstrate oversamplePFSPupil
 
+Report = 0;
+
 %%
 clc; close all
 %Create PSFStruct
@@ -16,5 +18,7 @@ colormap('hot')
 %Show upsampled PSF
 dipshow(gather(PFS_OS))
 colormap('hot')
+
+Report = 1;
 
 end

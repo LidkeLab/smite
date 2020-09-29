@@ -1,6 +1,7 @@
 function [Report]=zernikeImage_unitTest()
 %zernikeImage_unitTest tests zernikeImage functionality.
 
+Report = 0;
 
 %% Check orthogonality
 
@@ -42,3 +43,5 @@ for nn=1:NMax
     end
     fprintf('N=%d, Inner product: %g Expected: %g\n',nn,IP,Norm)
 end
+
+Report = 1;

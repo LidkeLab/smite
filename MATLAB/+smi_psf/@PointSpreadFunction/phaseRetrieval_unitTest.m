@@ -101,3 +101,5 @@ dipshow(gather(P_OutZ.Pupil))
 dipshow(gather(DataIn))
 dipshow(gather(PSFZ))
 P_OutZ.ZC_Phase
+
+PSFStruct = P;

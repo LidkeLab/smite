@@ -1,7 +1,8 @@
 function [Report]=scalarPSFPrasadZone_unitTest()
 %scalarPSFPrasadZone_unitTest tests scalarPSFPrasadZone functionality.
 
-%%
+Report = 0;
+
 L=5;
 Photons=500;
 Bg=5;
@@ -17,5 +18,7 @@ dipshow(gather(PSF));
 dipshow(gather(P.Pupil(:,:,2)));
 smi_psf.PointSpreadFunction.crlbPSFPupil(P,Photons,Bg);
 smi_psf.PointSpreadFunction.crlbPSFPupil(smi_psf.PointSpreadFunction.createPSFStruct(),Photons,Bg)
+
+Report = 1;
 
 end
