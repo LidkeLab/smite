@@ -15,7 +15,7 @@ Report = 0;
 P=smi_psf.PointSpreadFunction.createPSFStruct();
 PhaseMask=0;
 PhaseMask(6)=1; %Vertical Astigmatism 
-clc;
+%clc;
 [PFound,PSF,CRLB_Astig]=smi_psf.PointSpreadFunction.optimPSFZernike(P,PhaseMask);
 
 %%  Directed Start. Search for Tetrapod
@@ -27,7 +27,7 @@ PhaseMask(24)=0; %Vertical Second Order Astigmatism
 P.ZC_Phase(6)=1;
 P.ZC_Phase(12)=-2;
 P.ZC_Phase(24)=2;
-clc;
+%clc;
 [PFound_Tet,PSF3,CRLB_Tetra]=smi_psf.PointSpreadFunction.optimPSFZernike(P,PhaseMask,P.ZC_Phase);
 PFound_Tet.ZC_Phase
 

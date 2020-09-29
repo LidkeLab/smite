@@ -4,7 +4,7 @@ function [Report] = oversamplePFSPupil_unitTest(PSFStruct,Sampling)
 Report = 0;
 
 %%
-clc; close all
+%clc; close all
 %Create PSFStruct
 P=smi_psf.PointSpreadFunction.createPSFStruct();
 P.Z=(-2:.02:2)

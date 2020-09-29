@@ -2,7 +2,7 @@ function [PSFStruct]=phaseRetrieval_unitTest()
 %phaseRetrieval phaseRetrieval_unitTest using GS Algorithm
 
 %%
-close all
+%close all
 
 %Create a noise defocus stack with offset
 P=smi_psf.PointSpreadFunction.createPSFStruct();

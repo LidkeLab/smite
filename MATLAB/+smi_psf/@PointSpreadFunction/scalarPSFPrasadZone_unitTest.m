@@ -7,7 +7,7 @@ L=5;
 Photons=500;
 Bg=5;
 
-close all;clc;
+%close all;clc;
 P=smi_psf.PointSpreadFunction.createPSFStruct();
 P.Z=(-10:.5:10);
 P.SZ=256;
