@@ -79,7 +79,7 @@ SMDSim.ThreshFlag = 0 * OnesArray;
 
 % Prepare the frame-connection class and ensure the constructor is working
 % as intended.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting;
 SMF.FrameConnection.FitType = 'XYNB';
 SMF.FrameConnection.LoS = 0.01023;
 SMF.FrameConnection.MaxSeparation = 1.023;
