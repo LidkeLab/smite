@@ -141,6 +141,7 @@ classdef SingleMoleculeFitting < handle
 
             %DriftCorrection
             obj.DriftCorrection.On = true;
+            obj.DriftCorrection.BFRegistration = true;
             obj.DriftCorrection.L_intra = 1; % pixel
             obj.DriftCorrection.L_inter = 2; % pixel
             obj.DriftCorrection.PixelSizeZUnit = 0.1; % um
