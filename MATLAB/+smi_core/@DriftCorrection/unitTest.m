@@ -136,16 +136,15 @@ dipshow(DriftIm)  %synthetic drift image
 %GaussIm = smi_vis.GenerateImages.gaussianImage(SMDin, SRImageZoom);
 %dipshow(GaussIm);
 
-SMF = smi_core.SingleMoleculeFitting.createSMF();
-SMF.DriftCorrection.Init_inter = SMDin.NFrames;
-DC = smi_core.DriftCorrection(SMF);
+SMF = smi_core.SingleMoleculeFitting();
+SMF.DriftCorrection.BFRegistration = false;
+DC = smi_core.DriftCorrection(SMF, SMDin);
 %DriftParams.PDegree       = 1;
 %DriftParams.TolFun_intra  = 1e-2;
 %DriftParams.TolX_intra    = 1e-4;
 %DriftParams.TolFun_inter  = 1e-2;
 %DriftParams.TolX_inter    = 1e-4;
-%DC.DriftParams.Init_inter = SMDin.NFrames;
-%DriftParams.Init_inter    = 0;
+%DriftParams.Init_inter    = SMDin.NFrames;
 
 clear SMD
 [SMD, Statistics] = DC.driftCorrectKNN(SMDin);
@@ -251,7 +250,7 @@ SMDIntra = [];
 SMDtmp   = [];
 X_TrueTmp = [];
 Y_TrueTmp = [];
-obj.DC = smi_core.DriftCorrection(SMF);
+obj.DC = smi_core.DriftCorrection(SMF, SMDin);
 for i = 1 : SMDin.NDatasets
    SMDin_i = SMDin;
    SMDin_i.NDatasets = 1;
@@ -489,17 +488,16 @@ view([-66, 12])
 hold off
 %saveas(gcf, '3Dsim_DriftImage', 'png');
 
-SMF = smi_core.SingleMoleculeFitting.createSMF();
-SMF.DriftCorrection.Init_inter = SMDin.NFrames;
-DC = smi_core.DriftCorrection(SMF);
+SMF = smi_core.SingleMoleculeFitting();
+SMF.DriftCorrection.BFRegistration = false;
+DC = smi_core.DriftCorrection(SMF, SMDin);
 %DriftParams.PixelSizeZUnit = SMDin.PixelSizeZUnit;
 %DriftParams.PDegree       = 1;
 %DriftParams.TolFun_intra  = 1e-2;
 %DriftParams.TolX_intra    = 1e-4;
 %DriftParams.TolFun_inter  = 1e-2;
 %DriftParams.TolX_inter    = 1e-4;
-%DC.DriftParams.Init_inter = SMDin.NFrames;
-%DriftParams.Init_inter    = 0;
+%DriftParams.Init_inter = SMDin.NFrames;
 
 clear SMD
 [SMD, Statistics] = DC.driftCorrectKNN(SMDin);

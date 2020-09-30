@@ -62,11 +62,11 @@ classdef SingleMoleculeFitting < handle
 %
 % DriftCorrection   {DriftCorrection,SRA}
 %  On               Perform drift correction? (Default=true)
+%  BFRegistration   Was brightfield registration performed? (Default=true)
 %  L_intra          Intra-dataset threshold (Pixel)(Default=1)
 %  L_inter          Inter-dataset threshold (Pixel)(Default=2)
 %  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
 %  PDegree          Degree intra-dataset fitting poly for drift rate (Default=1)
-%  Init_inter       Init wrt previous dataset for inter-dataset DC (Default=0)
 % 
 % Tracking          {SPT}
 %   Method:         Type of method used for tracking (Default='smi_spt')
@@ -146,7 +146,6 @@ classdef SingleMoleculeFitting < handle
             obj.DriftCorrection.L_inter = 2; % pixel
             obj.DriftCorrection.PixelSizeZUnit = 0.1; % um
             obj.DriftCorrection.PDegree = 1;
-            obj.DriftCorrection.Init_inter = 0;
             
             %Tracking
             obj.Tracking.Method='SMA_SPT';
@@ -436,12 +435,6 @@ classdef SingleMoleculeFitting < handle
                 if mod(DCInput.PDegree, 1)
                     error(['''SMF.DriftCorrection.PDegree'' ', ...
                         'must be an integer.'])
-                end
-            end
-            if isfield(DCInput, 'Init_inter')
-                if ~isnumeric(DCInput.Init_inter)
-                    error(['''SMF.DriftCorrection.Init_inter'' ', ...
-                        'must be numeric.'])
                 end
             end
             
