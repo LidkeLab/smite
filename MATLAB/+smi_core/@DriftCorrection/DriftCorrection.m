@@ -7,7 +7,7 @@ classdef DriftCorrection < handle
 % additional measures with calcDCResidual.
 %
 % EXAMPLE USAGE (see also unitTest):
-%    DC = smi_core.DriftCorrection(SMF);
+%    DC = smi_core.DriftCorrection(SMF, SMDin);
 %    SMDIntra = [];
 %    for i = 1 : NDatasets
 %       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i);
