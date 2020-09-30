@@ -41,7 +41,7 @@ SMD.Bg = zeros(5*NFrames, 1);
     FrameSizeFull, NFrames, SMD, Background);
 
 % Generate an SMF structure.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraType = 'SCMOS';
 SMF.BoxFinding.BoxSize = 10;
 SMF.Fitting.PSFSigma = SMD.PSFSigma;
@@ -60,7 +60,7 @@ Success(1) = ...
 
 % Check that the constructor is setting class properties as intended.
 % NOTE: I'm just choosing numbers that'll stick out from the defaults.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraType = 'SCMOS';
 SMF.BoxFinding.BoxSize = 8;
 SMF.BoxFinding.BoxOverlap = 3;

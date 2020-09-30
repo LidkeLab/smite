@@ -53,10 +53,10 @@ classdef LocalizeData < handle
             % construct class properties.
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Pad the input SMF structure to ensure it contains all
-                % fields defined in SingleMoleculeFitting.createSMF().
+                % fields defined in smi_core.SingleMoleculeFitting.
                 SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
             else
-                SMF = smi_core.SingleMoleculeFitting.createSMF();
+                SMF = smi_core.SingleMoleculeFitting;
             end
             
             % Set class properties based on the SMF structure input to the

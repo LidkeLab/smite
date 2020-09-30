@@ -18,7 +18,7 @@ function [SMD, SMDPreThresh] = genLocalizations(obj)
 
 
 % Construct an SMF structure from the class properties.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraType = obj.CameraType;
 SMF.BoxFinding.BoxSize = obj.BoxSize;
 SMF.BoxFinding.BoxOverlap = obj.BoxOverlap;
