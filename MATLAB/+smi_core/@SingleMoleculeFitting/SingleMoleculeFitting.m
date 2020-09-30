@@ -171,21 +171,7 @@ classdef SingleMoleculeFitting < handle
                 SMFStruct.(ClassFields{ff}) = obj.(ClassFields{ff});
             end
         end
-        
-        function reloadSMF(obj, SMFStruct)
-            %reloadSMF reloads the fields in SMFStruct as class properties.
-            % This method will take the fields given in the structure array
-            % SMFStruct and set them to the corresponding class properties.
-            
-            % Update class properties based on fields in SMFStruct.
-            InputFields = fieldnames(SMFStruct);
-            ClassFields = fieldnames(obj);
-            ValidFields = InputFields(ismember(InputFields, ClassFields));
-            for ff = 1:numel(ValidFields)
-                obj.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
-            end
-        end
-        
+                
         function set.Data(obj, DataInput)
             % This is a set method for the class property Data.
             
@@ -521,7 +507,27 @@ classdef SingleMoleculeFitting < handle
     end
     
     methods (Static)
+        function [SMF] = reloadSMF(SMFStruct)
+            %reloadSMF loads a struct type SMF into a class instance SMF
+            % This method will take the fields given in the structure array
+            % SMFStruct and set them to the corresponding class properties,
+            % i.e., it creates an SMF class instance from an input
+            % SMFStruct.
+            
+            % Create an instance of the SingleMoleculeFitting class.
+            SMF = smi_core.SingleMoleculeFitting;
+            
+            % Update class properties based on fields in SMFStruct.
+            InputFields = fieldnames(SMFStruct);
+            ClassFields = fieldnames(SMF);
+            ValidFields = InputFields(ismember(InputFields, ClassFields));
+            for ff = 1:numel(ValidFields)
+                SMF.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
+            end
+        end
+        
         [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
             DisplayMessages);
     end
+    
 end
