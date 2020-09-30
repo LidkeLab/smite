@@ -17,8 +17,8 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 %       SMFPadded will be a complete SMF structure with all default values
 %       present except Data.CameraGain, which will be set to
 %       SMF.Data.CameraGain (this can be used to ensure an incomplete SMF
-%       is padded to contain all fields defined in
-%       SingleMoleculeFitting.createSMF()).
+%       is padded to contain all fields defined in the
+%       SingleMoleculeFitting class).
 %
 % INPUTS:
 %   SMF: Single Molecule Fitting structure whose existing entries are
@@ -26,7 +26,7 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 %   SMFPadding: An SMF structure with additional fields not present in SMF
 %               (e.g., SMF might be an incomplete SMF structure and
 %               SMFPadding might be an SMF with all default values).
-%               (Default = smi_core.SingleMoleculeFitting.createSMF())
+%               (Default = smi_core.SingleMoleculeFitting)
 %   DisplayMessages: A flag to specify whether or not a message should be
 %                    displayed in the Command Window when a field gets
 %                    padded. (Default = 0)
@@ -36,8 +36,8 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 %              of SMF and SMFPadding, with values of the intersecting
 %              fields always being taken from the input SMF.  Additionally,
 %              this output is guaranteed to have all fields defined in
-%              smi_core.SingleMoleculeFitting.createSMF(), even if they
-%              weren't in either of SMF or SMFPadding.
+%              smi_core.SingleMoleculeFitting, even if they weren't in
+%              either of SMF or SMFPadding.
 %   PaddedFields: A structure with similar organization to an SMF structure
 %                 whose fields are the fields in SMFPadded that were not
 %                 present in the input SMF (i.e., these are all of the
@@ -49,7 +49,7 @@ function [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
 
 % Set defaults if needed.
 if (~exist('SMFPadding', 'var') || isempty(SMFPadding))
-    SMFPadding = smi_core.SingleMoleculeFitting.createSMF();
+    SMFPadding = smi_core.SingleMoleculeFitting;
 end
 if (~exist('DisplayMessages', 'var') || isempty(DisplayMessages))
     DisplayMessages = 0;
@@ -61,7 +61,7 @@ else
 end
 
 % Create a default SMF structure to initialize the output.
-SMFDefault = smi_core.SingleMoleculeFitting.createSMF();
+SMFDefault = smi_core.SingleMoleculeFitting;
 
 % Merge the input SMF and SMFPadding structs, treating the SMF as the
 % "primary" struct (i.e., the merged field values are only taken from

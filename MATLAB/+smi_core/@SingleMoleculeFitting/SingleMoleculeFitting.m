@@ -1,4 +1,4 @@
-classdef SingleMoleculeFitting<handle
+classdef SingleMoleculeFitting < handle
 % SingleMoleculeFitting A class defining the Single Molecule Fitting structure
 %
 % The SMF structure is a structure of structures that collectively contain
@@ -24,8 +24,8 @@ classdef SingleMoleculeFitting<handle
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
-%   FrameRate:      Data Collection Frame Rate (1/s)(Default=100)
-%   PixelSize:      Camera back-projected pixel size (micron)(Default=0.1)
+%   FrameRate:      Data Collection Frame Rate (1/s) 
+%   PixelSize:      Camera back-projected pixel size (micron)   
 %
 % BoxFinding:       {FindROI}
 %   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
@@ -37,12 +37,12 @@ classdef SingleMoleculeFitting<handle
 %   FitType:    See fit class for options  (Default='XYNB')
 %   Iterations: Newton Raphson iterations (Default=20)
 %   ZFitStruct: Structure for astigmatic fitting:
-%       Ax:         Asigmatism fit parameter (see GaussMLE)         
-%       Ay:         Asigmatism fit parameter (see GaussMLE)
-%       Bx:         Asigmatism fit parameter (see GaussMLE)
-%       By:         Asigmatism fit parameter (see GaussMLE)
-%       Gamma:      Asigmatism fit parameter (see GaussMLE)
-%       D:          Asigmatism fit parameter (see GaussMLE)
+%       Ax:         Astigmatism fit parameter (see GaussMLE)         
+%       Ay:         Astigmatism fit parameter (see GaussMLE)
+%       Bx:         Astigmatism fit parameter (see GaussMLE)
+%       By:         Astigmatism fit parameter (see GaussMLE)
+%       Gamma:      Astigmatism fit parameter (see GaussMLE)
+%       D:          Astigmatism fit parameter (see GaussMLE)
 %
 % Thresholding      {ThresholdFits,SRA}
 %   On              Perform thresholding? (Default=true)
@@ -80,85 +80,447 @@ classdef SingleMoleculeFitting<handle
 
 % created by:
 % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
-
     
+    properties
+        Data struct {mustBeNonempty} = struct();
+        BoxFinding struct {mustBeNonempty} = struct();
+        Fitting struct {mustBeNonempty} = struct();
+        Thresholding struct {mustBeNonempty} = struct();
+        FrameConnection struct {mustBeNonempty} = struct();
+        DriftCorrection struct {mustBeNonempty} = struct();
+        Tracking struct {mustBeNonempty} = struct();
+    end
     
-    methods (Static)
+    methods
         
-        function [SMF] = createSMF()
-            %createSMF Creates an default Single Molecule Fitting (SMF) structure
-            %
-            % INPUTS:
-            %   (none)
-            % OUTPUTS:
-            %   SMF:    An SMF structure with all fields set to defaults
-            % REQUIRES:
-            %   (none)
-            %
+        function obj = SingleMoleculeFitting()
+            % Class constructor used to set default property values.
             
             %Data
-            SMF.Data.FileName='';
-            SMF.Data.FileDir='';
-            SMF.Data.ResultsDir='/Results';
-            SMF.Data.CameraType='EMCCD';
-            SMF.Data.CameraGain=1;
-            SMF.Data.CameraOffset=0;
-            SMF.Data.CameraReadNoise=0;
-            SMF.Data.FrameRate=100;
-            SMF.Data.PixelSize=0.1;
+            obj.Data.FileName='';
+            obj.Data.FileDir='';
+            obj.Data.ResultsDir='';
+            obj.Data.CameraType='EMCCD';
+            obj.Data.CameraGain=1;
+            obj.Data.CameraOffset=0;
+            obj.Data.CameraReadNoise=0;
+            obj.Data.FrameRate=1;
+            obj.Data.PixelSize=0.1;
             
             %BoxFinding
-            SMF.BoxFinding.BoxSize=7;
-            SMF.BoxFinding.BoxOverlap=2;
-            SMF.BoxFinding.MinPhotons=200;
+            obj.BoxFinding.BoxSize=7;
+            obj.BoxFinding.BoxOverlap=2;
+            obj.BoxFinding.MinPhotons=200;
             
             %Fitting
-            SMF.Fitting.PSFSigma=1;
-            SMF.Fitting.FitType='XYNB';
-            SMF.Fitting.Iterations=20;
-            SMF.Fitting.ZFitStruct.Ax=[];
-            SMF.Fitting.ZFitStruct.Ay=[];
-            SMF.Fitting.ZFitStruct.Bx=[];
-            SMF.Fitting.ZFitStruct.By=[];
-            SMF.Fitting.ZFitStruct.Gamma=[];
-            SMF.Fitting.ZFitStruct.D=[];
+            obj.Fitting.PSFSigma=1;
+            obj.Fitting.FitType='XYNB';
+            obj.Fitting.Iterations=20;
+            obj.Fitting.ZFitStruct.Ax=[];
+            obj.Fitting.ZFitStruct.Ay=[];
+            obj.Fitting.ZFitStruct.Bx=[];
+            obj.Fitting.ZFitStruct.By=[];
+            obj.Fitting.ZFitStruct.Gamma=[];
+            obj.Fitting.ZFitStruct.D=[];
 
             %Thresholding
-            SMF.Thresholding.On=true;
-            SMF.Thresholding.MaxXY_SE=.2;
-            SMF.Thresholding.MaxZ_SE=.05;
-            SMF.Thresholding.MinPValue=.01;
-            SMF.Thresholding.MinPSFSigma=0.5;
-            SMF.Thresholding.MaxPSFSigma=2;
-            SMF.Thresholding.MinPhotons=100;
-            SMF.Thresholding.MaxBg=Inf;
+            obj.Thresholding.On=true;
+            obj.Thresholding.MaxXY_SE=.2;
+            obj.Thresholding.MaxZ_SE=.05;
+            obj.Thresholding.MinPValue=.01;
+            obj.Thresholding.MinPSFSigma=0.5;
+            obj.Thresholding.MaxPSFSigma=2;
+            obj.Thresholding.MinPhotons=100;
+            obj.Thresholding.MaxBg=Inf;
 
             %FrameConnection
-            SMF.FrameConnection.On=true;
-            SMF.FrameConnection.MaxSeparation=1; % pixels 
-            SMF.FrameConnection.MaxFrameGap=4; % frames
-            SMF.FrameConnection.LoS=.01;
+            obj.FrameConnection.On=true;
+            obj.FrameConnection.MaxSeparation=1; % pixels 
+            obj.FrameConnection.MaxFrameGap=4; % frames
+            obj.FrameConnection.LoS=.01;
 
             %DriftCorrection
-            SMF.DriftCorrection.On = true;
-            SMF.DriftCorrection.L_intra = 1; % pixel
-            SMF.DriftCorrection.L_inter = 2; % pixel
-            SMF.DriftCorrection.PixelSizeZUnit = 0.1; % um
-            SMF.DriftCorrection.PDegree = 1;
-            SMF.DriftCorrection.Init_inter = 0;
+            obj.DriftCorrection.On = true;
+            obj.DriftCorrection.L_intra = 1; % pixel
+            obj.DriftCorrection.L_inter = 2; % pixel
+            obj.DriftCorrection.PixelSizeZUnit = 0.1; % um
+            obj.DriftCorrection.PDegree = 1;
+            obj.DriftCorrection.Init_inter = 0;
             
             %Tracking
-            SMF.Tracking.TrackMethods='SMA_SPT';
-            SMF.Tracking.D=1;
-            SMF.Tracking.K_on=.1;
-            SMF.Tracking.K_off=.1;
-            SMF.Tracking.MaxFrameGap=10;
-            SMF.Tracking.MaxDist=10;
-            SMF.Tracking.MinTrackLength=3;
+            obj.Tracking.Method='SMA_SPT';
+            obj.Tracking.D=1;
+            obj.Tracking.K_on=.1;
+            obj.Tracking.K_off=.1;
+            obj.Tracking.MaxFrameGap=10;
+            obj.Tracking.MaxDist=10;
+            obj.Tracking.MinTrackLength=3;
+            
         end
-
+        
+        function [SMFStruct] = packageSMF(obj)
+            %packageSMF converts class instance obj to a structure array.
+            % This method will convert the class instance into a structure
+            % array by setting all class properties as fields in the
+            % structure array.
+            
+            % Generate the output SMFStruct.
+            ClassFields = fieldnames(obj);
+            for ff = 1:numel(ClassFields)
+                SMFStruct.(ClassFields{ff}) = obj.(ClassFields{ff});
+            end
+        end
+        
+        function reloadSMF(obj, SMFStruct)
+            %reloadSMF reloads the fields in SMFStruct as class properties.
+            % This method will take the fields given in the structure array
+            % SMFStruct and set them to the corresponding class properties.
+            
+            % Update class properties based on fields in SMFStruct.
+            InputFields = fieldnames(SMFStruct);
+            ClassFields = fieldnames(obj);
+            ValidFields = InputFields(ismember(InputFields, ClassFields));
+            for ff = 1:numel(ValidFields)
+                obj.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
+            end
+        end
+        
+        function set.Data(obj, DataInput)
+            % This is a set method for the class property Data.
+            
+            % Validate the inputs given in DataInput.
+            if isfield(DataInput, 'FileName')
+                if ~(ischar(DataInput.FileName) ...
+                        || isstring(DataInput.FileName) ...
+                        || iscell(DataInput.FileName))
+                    error(['''SMF.Data.FileName'' must be of type ', ...
+                        'char, string, or cell.'])
+                end
+            end
+            if isfield(DataInput, 'FileDir')
+                if ~(ischar(DataInput.FileDir) ...
+                        || isstring(DataInput.FileDir) ...
+                        || iscell(DataInput.FileDir))
+                    error(['''SMF.Data.FileDir'' must be of type ', ...
+                        'char, string, or cell.'])
+                elseif (isfield(obj.Data, 'ResultsDir') ...
+                            && isempty(obj.Data.ResultsDir) ...
+                            && ~isempty(DataInput.FileDir))
+                        DataInput.ResultsDir = fullfile(...
+                            DataInput.FileDir, 'Results');
+                end
+            end
+            if isfield(DataInput, 'ResultsDir')
+                if ~(ischar(DataInput.ResultsDir) ...
+                        || isstring(DataInput.ResultsDir))
+                    error(['''SMF.Data.ResultsDir'' must be of type ', ...
+                        'char or string.'])
+                end
+            end
+            if isfield(DataInput, 'CameraType')
+                if ~ismember(DataInput.CameraType, {'EMCCD', 'SCMOS'})
+                    error(['''SMF.Data.CameraType'' must be either ', ...
+                        '''EMCCD'' or ''SCMOS'''])
+                end
+            end
+            if isfield(DataInput, 'CameraGain')
+                if ~isnumeric(DataInput.CameraGain)
+                    error('''SMF.Data.CameraGain'' must be numeric.')
+                end
+            end
+            if isfield(DataInput, 'CameraOffset')
+                if ~isnumeric(DataInput.CameraOffset)
+                    error('''SMF.Data.CameraOffset'' must be numeric.')
+                end
+            end
+            if isfield(DataInput, 'CameraReadNoise')
+                if ~isnumeric(DataInput.CameraReadNoise)
+                    error('''SMF.Data.CameraReadNoise'' must be numeric.')
+                end
+            end
+            if isfield(DataInput, 'FrameRate')
+                if ~isnumeric(DataInput.FrameRate)
+                    error('''SMF.Data.FrameRate'' must be numeric.')
+                end
+            end
+            if isfield(DataInput, 'PixelSize')
+                if ~isnumeric(DataInput.PixelSize)
+                    error('''SMF.Data.PixelSize'' must be numeric.')
+                end
+            end
+                        
+            % Set the input fields as class properties.
+            InputFields = fieldnames(DataInput);
+            for ff = 1:numel(InputFields)
+                obj.Data.(InputFields{ff}) = DataInput.(InputFields{ff});
+            end
+        end
+        
+        function set.BoxFinding(obj, BoxFindingInput)
+            % This is a set method for the class property BoxFinding.
+            
+            % Validate the inputs given in BoxFindingInput.
+            if isfield(BoxFindingInput, 'BoxSize')
+                if mod(BoxFindingInput.BoxSize, 1)
+                    error(['''SMF.BoxFinding.BoxSize'' ', ...
+                        'must be an integer.'])
+                end
+            end
+            if isfield(BoxFindingInput, 'BoxOverlap')
+                if mod(BoxFindingInput.BoxOverlap, 1)
+                    error(['''SMF.BoxFinding.BoxOverlap'' ', ...
+                        'must be an integer.'])
+                end
+            end
+            if isfield(BoxFindingInput, 'MinPhotons')
+                if ~isnumeric(BoxFindingInput.MinPhotons)
+                    error(['''SMF.BoxFinding.MinPhotons'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(BoxFindingInput);
+            for ff = 1:numel(InputFields)
+                obj.BoxFinding.(InputFields{ff}) = ...
+                    BoxFindingInput.(InputFields{ff});
+            end
+        end
+        
+        function set.Fitting(obj, FittingInput)
+            % This is a set method for the class property Fitting.
+            
+            % Validate the inputs given in FittingInput.
+            if isfield(FittingInput, 'PSFSigma')
+                if ~isnumeric(FittingInput.PSFSigma)
+                    error('''SMF.Fitting.PSFSigma'' must be numeric.')
+                end
+            end
+            if (isfield(FittingInput, 'FitType') ...
+                    && ~ismember(FittingInput.FitType, ...
+                    {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'}))
+                error(['SMF.Fitting.FitType must be one of ', ...
+                    'XYNB, XYNBS, XYNBSXSY, or XYZNB'])
+            end
+            if isfield(FittingInput, 'Iterations')
+                if mod(FittingInput.Iterations, 1)
+                    error('''SMF.Fitting.Iterations'' must be an integer.')
+                end
+            end
+            if isfield(FittingInput, 'ZFitStruct')
+                if ~isstruct(FittingInput.ZFitStruct)
+                    error(['''SMF.Fitting.ZFitStruct'' must be of ', ...
+                        'type struct.'])
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(FittingInput);
+            for ff = 1:numel(InputFields)
+                obj.Fitting.(InputFields{ff}) = ...
+                    FittingInput.(InputFields{ff});
+            end
+        end
+        
+        function set.Thresholding(obj, ThresholdingInput)
+            % This is a set method for the class property Thresholding.
+            
+            % Validate the inputs given in ThresholdingInput.
+            if isfield(ThresholdingInput, 'On')
+                if ~(islogical(ThresholdingInput.On) ...
+                        || isnumeric(ThresholdingInput.On))
+                    error(['''SMF.Thresholding.On'' must be logical ', ...
+                        'or interpretable as logical (numeric).'])
+                end
+            end
+            if isfield(ThresholdingInput, 'MaxXY_SE')
+                if ~isnumeric(ThresholdingInput.MaxXY_SE)
+                    error('''SMF.Thresholding.MaxXY_SE'' must be numeric.')
+                end
+            end
+            if isfield(ThresholdingInput, 'MaxZ_SE')
+                if ~isnumeric(ThresholdingInput.MaxZ_SE)
+                    error('''SMF.Thresholding.MaxZ_SE'' must be numeric.')
+                end
+            end
+            if isfield(ThresholdingInput, 'MinPValue')
+                if ~isnumeric(ThresholdingInput.MinPValue)
+                    error(['''SMF.Thresholding.MinPValue'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(ThresholdingInput, 'MinPSFSigma')
+                if ~isnumeric(ThresholdingInput.MinPSFSigma)
+                    error(['''SMF.Thresholding.MinPSFSigma'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(ThresholdingInput, 'MaxPSFSigma')
+                if ~isnumeric(ThresholdingInput.MaxPSFSigma)
+                    error(['''SMF.Thresholding.MaxPSFSigma'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(ThresholdingInput, 'MinPhotons')
+                if ~isnumeric(ThresholdingInput.MinPhotons)
+                    error(['''SMF.Thresholding.MinPhotons'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(ThresholdingInput, 'MaxBg')
+                if ~isnumeric(ThresholdingInput.MaxBg)
+                    error('''SMF.Thresholding.MaxBg'' must be numeric.')
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(ThresholdingInput);
+            for ff = 1:numel(InputFields)
+                obj.Thresholding.(InputFields{ff}) = ...
+                    ThresholdingInput.(InputFields{ff});
+            end
+        end
+        
+        function set.FrameConnection(obj, FCInput)
+            % This is a set method for the class property FrameConnection.
+            
+            % Validate the inputs given in FCInput.
+            if isfield(FCInput, 'On')
+                if ~(islogical(FCInput.On) || isnumeric(FCInput.On))
+                    error(['''SMF.FrameConnection.On'' must be ', ...
+                        'logical or interpretable as logical (numeric).'])
+                end
+            end
+            if isfield(FCInput, 'MaxSeparation')
+                if ~isnumeric(FCInput.MaxSeparation)
+                    error(['''SMF.FrameConnection.MaxSeparation'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(FCInput, 'MaxFrameGap')
+                if mod(FCInput.MaxFrameGap, 1)
+                    error(['''SMF.FrameConnection.MaxFrameGap'' ', ...
+                        'must be an integer.'])
+                end
+            end
+            if isfield(FCInput, 'LoS')
+                if ~isnumeric(FCInput.LoS)
+                    error('''SMF.FrameConnection.LoS'' must be numeric.')
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(FCInput);
+            for ff = 1:numel(InputFields)
+                obj.FrameConnection.(InputFields{ff}) = ...
+                    FCInput.(InputFields{ff});
+            end
+        end
+        
+        function set.DriftCorrection(obj, DCInput)
+            % This is a set method for the class property DriftCorrection.
+            
+            % Validate the inputs given in DCInput.
+            if isfield(DCInput, 'On')
+                if ~(islogical(DCInput.On) || isnumeric(DCInput.On))
+                    error(['''SMF.DriftCorrection.On'' must be ', ...
+                        'logical or interpretable as logical (numeric).'])
+                end
+            end
+            if isfield(DCInput, 'L_intra')
+                if ~isnumeric(DCInput.L_intra)
+                    error(['''SMF.DriftCorrection.L_intra'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(DCInput, 'L_inter')
+                if ~isnumeric(DCInput.L_inter)
+                    error(['''SMF.DriftCorrection.L_inter'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(DCInput, 'PixelSizeZUnit')
+                if ~isnumeric(DCInput.PixelSizeZUnit)
+                    error(['''SMF.DriftCorrection.PixelSizeZUnit'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            if isfield(DCInput, 'PDegree')
+                if mod(DCInput.PDegree, 1)
+                    error(['''SMF.DriftCorrection.PDegree'' ', ...
+                        'must be an integer.'])
+                end
+            end
+            if isfield(DCInput, 'Init_inter')
+                if ~isnumeric(DCInput.Init_inter)
+                    error(['''SMF.DriftCorrection.Init_inter'' ', ...
+                        'must be numeric.'])
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(DCInput);
+            for ff = 1:numel(InputFields)
+                obj.DriftCorrection.(InputFields{ff}) = ...
+                    DCInput.(InputFields{ff});
+            end
+        end
+        
+        function set.Tracking(obj, TrackingInput)
+            % This is a set method for the class property Tracking.
+            
+            % Validate the inputs given in TrackingInput.
+            if (isfield(TrackingInput, 'Method') ...
+                    && ~ismember(TrackingInput.Method, {'SMA_SPT'}))
+                error('SMF.Tracking.Method must be one of SMA_SPT,')
+            end
+            if isfield(TrackingInput, 'D')
+                if ~isnumeric(TrackingInput.D)
+                    error('''SMF.Tracking.D'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'K_on')
+                if ~isnumeric(TrackingInput.K_on)
+                    error('''SMF.Tracking.K_on'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'K_off')
+                if ~isnumeric(TrackingInput.K_off)
+                    error('''SMF.Tracking.K_off'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'MaxFrameGap')
+                if ~isnumeric(TrackingInput.MaxFrameGap)
+                    error(['''SMF.Tracking.MaxFrameGap'' ', ...
+                        'must be logical or interpretable as logical ', ...
+                        '(numeric).'])
+                end
+            end
+            if isfield(TrackingInput, 'MaxDist')
+                if ~isnumeric(TrackingInput.MaxDist)
+                    error('''SMF.Tracking.MaxDist'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'MinTrackLength')
+                if ~isnumeric(TrackingInput.MinTrackLength)
+                    error(['''SMF.Tracking.MinTrackLength'' ', ...
+                        'must be logical or interpretable as logical ', ...
+                        '(numeric).'])
+                end
+            end
+            
+            % Set the input fields as class properties.
+            InputFields = fieldnames(TrackingInput);
+            for ff = 1:numel(InputFields)
+                obj.Tracking.(InputFields{ff}) = ...
+                    TrackingInput.(InputFields{ff});
+            end
+        end
+                        
+    end
+    
+    methods (Static)
         [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
             DisplayMessages);
-        
     end
 end
