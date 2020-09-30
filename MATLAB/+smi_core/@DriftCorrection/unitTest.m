@@ -368,14 +368,14 @@ FpD = 100;         % number of frames per dataset
 %% generating PSF-array
 XYSamPerPix = 6;
 ZSamPerUnit = 10;
-%Create the Sampled PSF using SMA_PSF.scalarPSFZernike
-PSFStruct=SMA_PSF.createPSFStruct();
+%Create the Sampled PSF using smi_psf.PointSpreadFunction.scalarPSFZernike
+PSFStruct=smi_psf.PointSpreadFunction.createPSFStruct();
 PSFStruct.ZC_Phase(6)=1; %Astigmatism
 PSFStruct.PixelSize=.12/XYSamPerPix; %micron from RB setup
 PSFStruct.Z=(-0.7:1/ZSamPerUnit:0.7);
 PSFStruct.SZ = 64*XYSamPerPix;
 PSFStruct.OSZ = 128*XYSamPerPix;
-[PSF,PSFStruct_Out]=SMA_PSF.scalarPSFZernike(PSFStruct);
+[PSF,PSFStruct_Out]=smi_psf.PointSpreadFunction.scalarPSFZernike(PSFStruct);
 PSF = gather(PSF/sum(PSF(:)));
 clear PSFStruct
 %% simulate 3D data

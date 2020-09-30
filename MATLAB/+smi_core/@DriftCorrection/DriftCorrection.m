@@ -25,24 +25,40 @@ properties
    L_inter        = 2;
    % X/Y pixel size in um (only needed for 3D drift correction)
    PixelSizeZUnit = 0.1;
-   % degree of the intra-dataset fitting polynomial for drift rate
+   % Degree of the intra-dataset fitting polynomial for drift rate
    PDegree        = 1;
-   % termination tolerance on the intra-dataset function value
+   % Termination tolerance on the intra-dataset function value
    TolFun_intra   = 1e-2;
-   % termination tolerance on the intra-dataset fitting polynomial
+   % Termination tolerance on the intra-dataset fitting polynomial
    TolX_intra     = 1e-4;
-   % termination tolerance on the inter-dataset function value
+   % Termination tolerance on the inter-dataset function value
    TolFun_inter   = 1e-2;
-   % termination tolerance on the inter-dataset fitting polynomial
+   % Termination tolerance on the inter-dataset fitting polynomial
    TolX_inter     = 1e-4;
-   % initialization wrt the previous dataset for inter-dataset drift correction
+   % Initialization wrt the previous dataset for inter-dataset drift correction
+   % The value should be either 0 (no initial drift), 1 (initial drift of the
+   % previous dataset) or SMD.NFrames (final drift); zero or initial drift
+   % should work well with brightfield registration, while final drift works
+   % well generally (but the optimization process may not converge quite as
+   % quickly).
    Init_inter     = 0;
-   % if non-empty, override the collected value of number of datasets
+   % If non-empty, override the collected value of number of datasets
    NDatasets      = [];
-   % if non-empty, override the collected value of number of frames per dataset
+   % If non-empty, override the collected value of number of frames per dataset
    NFrames        = [];
 
 end % properties
+% =============================================================================
+
+% =============================================================================
+properties(SetAccess = protected)
+
+   % Indexing array to record rearrangements of points into datasets
+   idx;
+   % Values corrected for drift; fields: XY, n
+   SMRS = {};
+
+end % properties(SetAccess = protected)
 % =============================================================================
 
 % =============================================================================
@@ -51,7 +67,6 @@ methods
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
    [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
-   SCobj = initializeDriftCorrection(SCobj)
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
@@ -69,17 +84,6 @@ methods
    end
 
 end % methods
-% =============================================================================
-
-% =============================================================================
-properties(SetAccess = protected)
-
-   % indexing array to record rearrangements of points into datasets
-   idx;
-   % values corrected for drift; fields: X, Y, n
-   SMRS = {};
-
-end % properties(SetAccess = protected)
 % =============================================================================
 
 % =============================================================================
