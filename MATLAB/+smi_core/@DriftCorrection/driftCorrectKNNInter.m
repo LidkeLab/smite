@@ -98,6 +98,7 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    end
    if ~isempty(obj.NDatasets)
       DriftParams.NDatasets   = obj.NDatasets;
+      obj.Init_inter          = obj.NDatasets;
    end
    if ~isempty(obj.NFrames)
       DriftParams.NFrames     = obj.NFrames;
