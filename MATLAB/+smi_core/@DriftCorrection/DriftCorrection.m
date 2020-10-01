@@ -42,6 +42,11 @@ properties
    % well generally (but the optimization process may not converge quite as
    % quickly).
    Init_inter     = 0;
+   % Semi-redundant variable, needed because SMD may not exist when the
+   % constructor is invoked, so Init_inter has to be set in
+   % driftCorrectKNNInter (only needed when breaking intra-dataset and
+   % inter-dataset calculations up).
+   BFRegistration = true;
    % If non-empty, override the collected value of number of datasets
    NDatasets      = [];
    % If non-empty, override the collected value of number of frames per dataset
@@ -80,13 +85,14 @@ methods
          obj.L_inter        = SMF.DriftCorrection.L_inter;
          obj.PixelSizeZUnit = SMF.DriftCorrection.PixelSizeZUnit;
          obj.PDegree        = SMF.DriftCorrection.PDegree;
+         obj.BFRegistration = SMF.DriftCorrection.BFRegistration;
          if SMF.DriftCorrection.BFRegistration
             obj.Init_inter  = 0;
          else
             if exist('SMD', 'var')
                obj.Init_inter  = SMD.NFrames;
             else
-               error('SMD not available when BFRegistration is false.');
+               %error('SMD not available when BFRegistration is false.');
             end
          end
       end
