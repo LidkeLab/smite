@@ -7,7 +7,7 @@ classdef DriftCorrection < handle
 % additional measures with calcDCResidual.
 %
 % EXAMPLE USAGE (see also unitTest):
-%    DC = smi_core.DriftCorrection(SMF);
+%    DC = smi_core.DriftCorrection(SMF, SMDin);
 %    SMDIntra = [];
 %    for i = 1 : NDatasets
 %       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i);
@@ -42,6 +42,11 @@ properties
    % well generally (but the optimization process may not converge quite as
    % quickly).
    Init_inter     = 0;
+   % Semi-redundant variable, needed because SMD may not exist when the
+   % constructor is invoked, so Init_inter has to be set in
+   % driftCorrectKNNInter (only needed when breaking intra-dataset and
+   % inter-dataset calculations up).
+   BFRegistration = true;
    % If non-empty, override the collected value of number of datasets
    NDatasets      = [];
    % If non-empty, override the collected value of number of frames per dataset
@@ -70,15 +75,26 @@ methods
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
-   function obj = DriftCorrection(SMF)
+   function obj = DriftCorrection(SMF, SMD)
    % SMF values, if provided, can override some of the class properties.
+   % SMD is needed for SMD.NFrames when SMF.DriftCorrection.BFRegistration is
+   % false.
 
       if exist('SMF', 'var')
          obj.L_intra        = SMF.DriftCorrection.L_intra;
          obj.L_inter        = SMF.DriftCorrection.L_inter;
          obj.PixelSizeZUnit = SMF.DriftCorrection.PixelSizeZUnit;
          obj.PDegree        = SMF.DriftCorrection.PDegree;
-         obj.Init_inter     = SMF.DriftCorrection.Init_inter;
+         obj.BFRegistration = SMF.DriftCorrection.BFRegistration;
+         if SMF.DriftCorrection.BFRegistration
+            obj.Init_inter  = 0;
+         else
+            if exist('SMD', 'var')
+               obj.Init_inter  = SMD.NFrames;
+            else
+               %error('SMD not available when BFRegistration is false.');
+            end
+         end
       end
 
    end
