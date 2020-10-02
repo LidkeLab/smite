@@ -394,6 +394,8 @@ classdef SingleMoleculeFitting < handle
                         || isnumeric(ThresholdingInput.On))
                     error(['''SMF.Thresholding.On'' must be logical ', ...
                         'or interpretable as logical (numeric).'])
+                elseif isnumeric(ThresholdingInput.On)
+                    ThresholdingInput.On = logical(ThresholdingInput.On);
                 end
             end
             if isfield(ThresholdingInput, 'MaxXY_SE')
@@ -452,6 +454,8 @@ classdef SingleMoleculeFitting < handle
                 if ~(islogical(FCInput.On) || isnumeric(FCInput.On))
                     error(['''SMF.FrameConnection.On'' must be ', ...
                         'logical or interpretable as logical (numeric).'])
+                elseif isnumeric(FCInput.On)
+                    FCInput.On = logical(FCInput.On);
                 end
             end
             if isfield(FCInput, 'MaxSeparation')
@@ -488,6 +492,8 @@ classdef SingleMoleculeFitting < handle
                 if ~(islogical(DCInput.On) || isnumeric(DCInput.On))
                     error(['''SMF.DriftCorrection.On'' must be ', ...
                         'logical or interpretable as logical (numeric).'])
+                elseif isnumeric(DCInput.On)
+                    DCInput.On = logical(DCInput.On);
                 end
             end
             if isfield(DCInput, 'L_intra')
@@ -547,10 +553,9 @@ classdef SingleMoleculeFitting < handle
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')
-                if ~isnumeric(TrackingInput.MaxFrameGap)
+                if mod(TrackingInput.MaxFrameGap, 1)
                     error(['''SMF.Tracking.MaxFrameGap'' ', ...
-                        'must be logical or interpretable as logical ', ...
-                        '(numeric).'])
+                        'must be an integer.'])
                 end
             end
             if isfield(TrackingInput, 'MaxDist')
@@ -559,10 +564,9 @@ classdef SingleMoleculeFitting < handle
                 end
             end
             if isfield(TrackingInput, 'MinTrackLength')
-                if ~isnumeric(TrackingInput.MinTrackLength)
+                if mod(TrackingInput.MinTrackLength, 1)
                     error(['''SMF.Tracking.MinTrackLength'' ', ...
-                        'must be logical or interpretable as logical ', ...
-                        '(numeric).'])
+                        'must be an integer.'])
                 end
             end
             
