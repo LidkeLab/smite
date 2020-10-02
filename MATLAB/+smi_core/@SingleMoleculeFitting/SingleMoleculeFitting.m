@@ -92,16 +92,22 @@ classdef SingleMoleculeFitting < handle
     end
     
     properties (Access = protected)
-        % NOTE: I've created this protected property specifically to be 
-        %       used in the GUI. Specifically, I wanted to add this instead
-        %       of doing, e.g., fieldnames(obj) inside gui.m because we
-        %       might add other (non-field) properties to this class later
-        %       on. If new fields are added to the SMF, or if these field
-        %       names are changed, this list should be updated so that the 
-        %       GUI can work correctly.  
-        SMFFieldNames = {'Data', 'BoxFinding', 'Fitting', ...
+        % NOTE: I've created these protected property specifically to be 
+        %       used in the GUI. While this is annoying, I think it will be
+        %       more future-proofed: if we want to add other properties to
+        %       SingleMoleculeFitting that aren't meant to be accessible in
+        %       the GUI, this gives us a way to exclude those.
+        
+        % This is a cell array of class property names to be present in GUI
+        SMFPropertyNames = {'Data', 'BoxFinding', 'Fitting', ...
             'Thresholding', 'FrameConnection', 'DriftCorrection', ...
             'Tracking'};
+        
+        % This is a structure similar to SMF but field entries define units
+        % This is basically an SMF structure but the sub-fields are all
+        % char arrays defining the units/datatype. For example,
+        % SMFFieldNotes.Data.CameraGain = 'ADU'. 
+        SMFFieldNotes struct = struct();
     end
     
     methods        
@@ -169,14 +175,62 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.MaxDist=10;
             obj.Tracking.MinTrackLength=3;
             
+            % Define some useful notes for these fields to use in the GUI.
+            % NOTE: Sub-structs (e.g., SMF.Fitting.ZFitStruct, should only
+            %       have one note pertaining to the overall structure!).
+            obj.SMFFieldNotes.Data.FileName = 'char array, cell array';
+            obj.SMFFieldNotes.Data.FileDir = 'char array, cell array';
+            obj.SMFFieldNotes.Data.ResultsDir = 'char array';
+            obj.SMFFieldNotes.Data.CameraType = 'EMCCD, SCMOS';
+            obj.SMFFieldNotes.Data.CameraGain = 'ADU / e-';
+            obj.SMFFieldNotes.Data.CameraOffset = 'ADU';
+            obj.SMFFieldNotes.Data.CameraReadNoise = 'ADU^2';
+            obj.SMFFieldNotes.Data.FrameRate = 'frames / second';
+            obj.SMFFieldNotes.Data.PixelSize = 'micrometers';
+            obj.SMFFieldNotes.BoxFinding.BoxSize = 'pixels';
+            obj.SMFFieldNotes.BoxFinding.BoxOverlap = 'pixels';
+            obj.SMFFieldNotes.BoxFinding.MinPhotons = 'photons';
+            obj.SMFFieldNotes.Fitting.PSFSigma = 'pixels';
+            obj.SMFFieldNotes.Fitting.FitType = ...
+                'XYNB, XYNBS, XYNBSXSY, XYZNB';
+            obj.SMFFieldNotes.Fitting.Iterations = '';
+            obj.SMFFieldNotes.Fitting.ZFitStruct = 'see GaussMLE';
+            obj.SMFFieldNotes.Thresholding.On = 'logical';
+            obj.SMFFieldNotes.Thresholding.MaxXY_SE = 'pixels';
+            obj.SMFFieldNotes.Thresholding.MaxZ_SE = 'pixels';
+            obj.SMFFieldNotes.Thresholding.MinPValue = '[0, 1]';
+            obj.SMFFieldNotes.Thresholding.MinPSFSigma = 'pixels';
+            obj.SMFFieldNotes.Thresholding.MaxPSFSigma = 'pixels';
+            obj.SMFFieldNotes.Thresholding.MinPhotons = 'photons';
+            obj.SMFFieldNotes.Thresholding.MaxBg = 'photons';
+            obj.SMFFieldNotes.FrameConnection.On = 'logical';
+            obj.SMFFieldNotes.FrameConnection.MaxSeparation = 'pixels'; 
+            obj.SMFFieldNotes.FrameConnection.MaxFrameGap = 'frames';
+            obj.SMFFieldNotes.FrameConnection.LoS = '[0, 1]';
+            obj.SMFFieldNotes.DriftCorrection.On = 'logical';
+            obj.SMFFieldNotes.DriftCorrection.BFRegistration = 'logical';
+            obj.SMFFieldNotes.DriftCorrection.L_intra = 'pixels';
+            obj.SMFFieldNotes.DriftCorrection.L_inter = 'pixels';
+            obj.SMFFieldNotes.DriftCorrection.PixelSizeZUnit = ...
+                'micrometers';
+            obj.SMFFieldNotes.DriftCorrection.PDegree = '';
+            obj.SMFFieldNotes.Tracking.Method = ...
+                'must be SMA_SPT for now';
+            obj.SMFFieldNotes.Tracking.D = 'pixel^2 / frame';
+            obj.SMFFieldNotes.Tracking.K_on = '1 / frame';
+            obj.SMFFieldNotes.Tracking.K_off = '1 / frame';
+            obj.SMFFieldNotes.Tracking.MaxFrameGap = 'frames';
+            obj.SMFFieldNotes.Tracking.MaxDist = 'pixels';
+            obj.SMFFieldNotes.Tracking.MinTrackLength = 'observations';
+            
             % Check that the protected property 'SMFFieldNames' makes
             % sense, i.e., it doesn't have entries that don't exist as
             % properties.
             PropertyNames = fieldnames(obj);
-            if ~all(ismember(obj.SMFFieldNames, PropertyNames))
+            if ~all(ismember(obj.SMFPropertyNames, PropertyNames))
                 warning(['smi_core.SingleMoleculeFitting: Not all ', ...
                     'entries in the protected property ', ...
-                    '''SMFFieldNames'' exist as class properties. ', ...
+                    '''SMFPropertyNames'' exist as class properties. ', ...
                     'Please revise in SingleMoleculeFitting.m'])
             end
         end
@@ -216,7 +270,7 @@ classdef SingleMoleculeFitting < handle
                             && isempty(obj.Data.ResultsDir) ...
                             && ~isempty(DataInput.FileDir))
                         DataInput.ResultsDir = fullfile(...
-                            DataInput.FileDir{1}, 'Results');
+                            DataInput.FileDir, 'Results');
                 end
             end
             if isfield(DataInput, 'ResultsDir')
