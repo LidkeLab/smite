@@ -91,11 +91,24 @@ classdef SingleMoleculeFitting < handle
         Tracking struct {mustBeNonempty} = struct();
     end
     
-    methods
+    properties (Access = protected)
+        % NOTE: I've created this protected property specifically to be 
+        %       used in the GUI. Specifically, I wanted to add this instead
+        %       of doing, e.g., fieldnames(obj) inside gui.m because we
+        %       might add other (non-field) properties to this class later
+        %       on. If new fields are added to the SMF, or if these field
+        %       names are changed, this list should be updated so that the 
+        %       GUI can work correctly.  
+        SMFFieldNames = {'Data', 'BoxFinding', 'Fitting', ...
+            'Thresholding', 'FrameConnection', 'DriftCorrection', ...
+            'Tracking'};
+    end
+    
+    methods        
         
         function obj = SingleMoleculeFitting()
             % Class constructor used to set default property values.
-            
+                        
             %Data
             obj.Data.FileName='';
             obj.Data.FileDir='';
@@ -157,6 +170,16 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.MaxDist=10;
             obj.Tracking.MinTrackLength=3;
             
+            % Check that the protected property 'SMFFieldNames' makes
+            % sense, i.e., it doesn't have entries that don't exist as
+            % properties.
+            PropertyNames = fieldnames(obj);
+            if ~all(ismember(obj.SMFFieldNames, PropertyNames))
+                warning(['smi_core.SingleMoleculeFitting: Not all ', ...
+                    'entries in the protected property ', ...
+                    '''SMFFieldNames'' exist as class properties. ', ...
+                    'Please revise in SingleMoleculeFitting.m'])
+            end
         end
         
         function [SMFStruct] = packageSMF(obj)
@@ -194,7 +217,7 @@ classdef SingleMoleculeFitting < handle
                             && isempty(obj.Data.ResultsDir) ...
                             && ~isempty(DataInput.FileDir))
                         DataInput.ResultsDir = fullfile(...
-                            DataInput.FileDir, 'Results');
+                            DataInput.FileDir{1}, 'Results');
                 end
             end
             if isfield(DataInput, 'ResultsDir')
@@ -503,6 +526,8 @@ classdef SingleMoleculeFitting < handle
                     TrackingInput.(InputFields{ff});
             end
         end
+        
+        [GUIParent] = gui(obj, GUIParent);
                         
     end
     
