@@ -21,6 +21,11 @@ function gui(obj, GUIParent)
 %   David J. Schodt (Lidke lab, 2020)
 
 
+% Define a list of 'special' fields which are treated differently below
+% (i.e., we want to manually create special GUI elements for these fields
+% below).
+SpecialFields = {'Data.FileName'};
+
 % Create a figure handle for the GUI if needed. 
 if ~(exist('GUIParent', 'var') && ~isempty(GUIParent) ...
         && isgraphics(GUIParent))
@@ -33,7 +38,7 @@ end
 
 % Generate some tabs in the GUI, one per class property.
 NSMFFields = numel(obj.SMFPropertyNames);
-TabGroup = uitabgroup(GUIParent, 'Position', [0, 0.08, 1, 0.92], ...
+TabGroup = uitabgroup(GUIParent, 'Position', [0, 0.1, 1, 0.9], ...
     'Units', 'pixels');
 PropertyTabs = cell(NSMFFields, 1);
 for ff = 1:NSMFFields
@@ -45,7 +50,7 @@ end
 % NOTE: I've moved this into a separate loop over fields just to clean up
 %       the code a bit.
 TextInitPos = [0, 0, 0.25, 0.08];
-UIControlInitPos = [TextInitPos(1)+TextInitPos(3), 0, 0.25, 0.08];
+UIControlInitPos = [TextInitPos(1)+TextInitPos(3), 0, 0.25, 0.1];
 UIControls = cell(NSMFFields, 1);
 SubfieldNames = UIControls;
 for ff = 1:NSMFFields
@@ -63,9 +68,11 @@ for ff = 1:NSMFFields
         % Create the 'text' and 'edit' uicontrols, skipping the 'edit'
         % control if the field is a 'struct' (an edit box wouldn't make
         % sense in that case).  If the field is a 'struct', we'll make a
-        % 'popupmenu' style uicontrol for the fields. Note that some
-        % numbers were added to positions arbitrarily to improve
-        % appearance.
+        % 'popupmenu' style uicontrol for the fields.  If the field is in
+        % the list of special fields defined at the top of this code, we'll
+        % define it's GUI elements on a case by case basis.
+        % NOTE: Some numbers were added to positions arbitrarily to 
+        %       improve appearance.  
         CurrentYPosition = TopPosition - TextInitPos(4) ...
             - (UIControlInitPos(4)-0.01)*ss;
         uicontrol(PropertyTabs{ff}, 'Style', 'text', ...
@@ -73,14 +80,41 @@ for ff = 1:NSMFFields
             'HorizontalAlignment', 'right', 'Units', 'normalized', ...
             'Position', TextInitPos + [0, CurrentYPosition, 0, 0])
         CurrentSubfield = CurrentProperty.(SubfieldNames{ff}{ss});
-        if isstruct(CurrentSubfield)            
+        CurrentSubfieldName = [obj.SMFPropertyNames{ff}, ...
+                '.', SubfieldNames{ff}{ss}];
+        if ismember(CurrentSubfieldName, SpecialFields)
+            % Create a listbox uicontrol to show the file names.
+            if strcmp(CurrentSubfieldName, 'Data.FileName')
+                % Create the listbox.
+                UIControls{ff}{ss}{1} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'listbox', 'String', CurrentSubfield, ...
+                    'Units', 'normalized', ...
+                    'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0]);
+                
+                % Create a button to allow for selection of other files.
+                UIControls{ff}{ss}{2} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'pushbutton', 'String', 'Select File(s)', ...
+                    'Units', 'normalized', ...
+                    'Position', UIControlInitPos ...
+                    + [UIControlInitPos(3), CurrentYPosition, 0, 0], ...
+                    'Callback', @selectFiles);
+                
+                % Define the location of an additional note (the note 
+                % contained in obj.SMFPropertyNames, to be used below).
+                NotePosition = TextInitPos ...
+                    + [UIControls{ff}{ss}{2}.Position(1)...
+                    + UIControls{ff}{ss}{2}.Position(3), ...
+                    CurrentYPosition, TextInitPos(3), 0];
+            end
+        elseif isstruct(CurrentSubfield)            
             % Add an edit box associated with this pop-up menu.
             SubSubfields = fieldnames(CurrentSubfield);
             UIControls{ff}{ss}{2} = uicontrol(PropertyTabs{ff}, ...
                 'Style', 'edit', 'Units', 'normalized',...
                 'String', num2str(CurrentSubfield.(SubSubfields{1})), ...
                 'Position', UIControlInitPos ...
-                + [UIControlInitPos(1), CurrentYPosition, 0, 0], ...
+                + [UIControlInitPos(3), CurrentYPosition, 0, 0], ...
                 'Callback', @guiToProperties);
                         
             % Make the pop-up menu.
@@ -129,7 +163,7 @@ end
 
 % Add a button which will update the GUI (could be useful if the SMF gets
 % changed outside of the open GUI).
-ExtraButtonsInitPos = UIControlInitPos .* [0, 1, 1, 1];
+ExtraButtonsInitPos = UIControlInitPos .* [0, 0, 1, 1];
 uicontrol(GUIParent, 'Style', 'pushbutton', 'String', 'Refresh GUI', ...
     'Units', 'normalized', 'Position', ExtraButtonsInitPos, ...
     'Callback', @propertiesToGUI);
@@ -160,15 +194,30 @@ propertiesToGUI()
                 % array. If it is, it should have 2 elements (we assume
                 % here that the first element is something like a pop-up
                 % menu and the second element is the control whose string
-                % we'll update).
+                % we'll update). If the current field is in the
+                % SpecialFields list defined at the top of this code, we'll
+                % do something different on a case by case basis.
+                CurrentFieldName = [PropertyNames{nn}, ...
+                    '.', PropertyFields{mm}];
                 if iscell(UIControls{nn}{mm})
-                    UIControls{nn}{mm}{2}.String = ...
-                        num2str(ClassProperty.(PropertyFields{mm}) ...
-                        .(UIControls{nn}{mm}{1}.String{...
-                        UIControls{nn}{mm}{1}.Value}));
+                    if ismember(CurrentFieldName, SpecialFields)
+                        if strcmp(CurrentFieldName, 'Data.FileName')
+                            UIControls{nn}{mm}{1}.String = ...
+                                ClassProperty.(PropertyFields{mm});
+                        end
+                    else
+                        UIControls{nn}{mm}{2}.String = ...
+                            num2str(ClassProperty.(PropertyFields{mm}) ...
+                            .(UIControls{nn}{mm}{1}.String{...
+                            UIControls{nn}{mm}{1}.Value}));
+                    end
                 else
-                    UIControls{nn}{mm}.String = ...
-                        num2str(ClassProperty.(PropertyFields{mm}));
+                    if ismember(CurrentFieldName, SpecialFields)
+                        % Placeholder block.
+                    else
+                        UIControls{nn}{mm}.String = ...
+                            num2str(ClassProperty.(PropertyFields{mm}));
+                    end
                 end
             end
         end
@@ -226,6 +275,25 @@ propertiesToGUI()
         % property of the calling uicontrol.
         AssociatedUIControl.String = num2str(...
             obj.(PropertyName).(FieldName).(Source.String{Source.Value}));
+    end
+
+    function selectFiles(~, ~)
+        % This is a callback function for the SMF.Data.FileName file
+        % selection button of the GUI. This callback will call uiputfile()
+        % to allow the user to select a set of files.
+        
+        % Create the file selection dialog.
+        [FileName, FileDir] = uigetfile('Y:\', 'Multiselect', 'on');
+        if (isequal(FileName, 0) || isequal(FileDir, 0))
+            return
+        end
+        
+        % Update obj with these newly selected files.
+        obj.Data.FileDir = FileDir;
+        obj.Data.FileName = FileName.';
+        
+        % Update the GUI.
+        propertiesToGUI();
     end
 
     function exportSMF(~, ~)
