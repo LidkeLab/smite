@@ -1,5 +1,5 @@
 function  [ZStruct]=createZernikeStruct(SZ,Radius,NMax)
-%createZernikeStruct Creates a createZernikeStruct
+%createZernikeStruct Creates a createZernikeStruct.
 %
 %   ZStruct contains pre-computed images for quick expansion and sum
 %

@@ -1,5 +1,5 @@
 function [PSF,PSFStruct] = scalarPSF(PSFStruct)
-%scalarPSF PSF stack based on a scalar model with OTF Rescaling
+%scalarPSF PSF stack based on a scalar model with OTF rescaling.
 %   The PSF is generated using the following model:
 %   PSF = |F[OTF]|^2
 %   % more...

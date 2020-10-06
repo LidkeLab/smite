@@ -1,5 +1,5 @@
 function [Image]=zernikeImage(NollIndex,SZ,Radius,R,Theta,Mask)
-%zernikeImage Generate a Zernike Polynomical Image from Noll Coefficient
+%zernikeImage Generate a Zernike Polynomical Image from Noll Coefficient.
 %
 %
 %   Noll ordering is used as a linear index.

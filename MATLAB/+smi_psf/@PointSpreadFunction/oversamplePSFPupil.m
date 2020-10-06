@@ -1,10 +1,5 @@
 function [PSF,PSFStruct_OS] = oversamplePFSPupil(PSFStruct,Sampling)
 %oversamplePFSPupil Resamples a PSF to smaller pixels.  
-%   Detailed explanation goes here. Yes, detailed. All help 
-%   must have the same format. This tempate describes what is required in
-%   the help and also defines a formatting convention.  Check the
-%   formatting of your function using 'doc SMA_Core', 
-%   'help SMA_Core.helpTemplate' and 'doc SMA_Core.helpTemplate'
 %  
 % INPUTS:
 %   PSFStruct:      PSF Structure. Must contain 'Pupil' field. 

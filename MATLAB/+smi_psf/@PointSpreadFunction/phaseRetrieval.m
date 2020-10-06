@@ -1,5 +1,5 @@
 function [PSFStruct,PSF]=phaseRetrieval(PSFStruct,Data,MaxZCMag,MaxZCPhase)
-%phaseRetrieval phaseRetrieval using GS Algorithm
+%phaseRetrieval Phase retrieval using GS Algorithm.
 %
 %   The PSF is generated using the following model:
 %   PSF = |F[OTF]|^2

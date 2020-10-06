@@ -1,5 +1,5 @@
 function [PSFStruct]=phaseRetrievalEM(PSFStruct,Data)
-%phaseRetrieval phaseRetrieval plus EM to optimize NA, Lambda
+%phaseRetrievalEM Phase retrieval plus EM to optimize NA, Lambda.
 %
 %   The PSF is generated using the following model:
 %   PSF = |F[OTF]|^2

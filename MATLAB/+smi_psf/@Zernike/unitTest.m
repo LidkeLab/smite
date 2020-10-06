@@ -1,5 +1,5 @@
 function unitTest
-% Test functionality of the Zernike polynomial portion of the class.
+%unitTest Test functionality of the Zernike polynomial portion of the class.
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

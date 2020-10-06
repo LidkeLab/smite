@@ -1,5 +1,5 @@
 function [Report] = oversamplePFSPupil_unitTest(PSFStruct,Sampling)
-%oversamplePFSPupil_unitTest Test and Demonstrate oversamplePFSPupil
+%oversamplePFSPupil_unitTest Test and Demonstrate oversamplePFSPupil.
 
 Report = 0;
 

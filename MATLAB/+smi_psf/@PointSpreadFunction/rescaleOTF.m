@@ -1,5 +1,5 @@
 function [OTFVector]=rescaleOTF(PSF,Data)
-%rescaleOTF phaseRetrieval using GS Algorithm
+%rescaleOTF OTF rescaling.
 %
 % INPUTS:
 %    PSF         PSF image stack

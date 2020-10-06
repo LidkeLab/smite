@@ -1,5 +1,5 @@
 function [Image]=zernikeSum(NollCoefs,ZStruct)
-%zernikeSum Generate an image from Noll Coefficients
+%zernikeSum Generate an image from Noll Coefficients,
 %
 %
 %   Noll ordering is used as a linear index.

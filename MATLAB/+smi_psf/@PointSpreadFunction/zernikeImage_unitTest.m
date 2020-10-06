@@ -1,5 +1,5 @@
 function [Report]=zernikeImage_unitTest()
-%zernikeImage_unitTest tests zernikeImage functionality.
+%zernikeImage_unitTest Tests zernikeImage functionality.
 
 Report = 0;
 

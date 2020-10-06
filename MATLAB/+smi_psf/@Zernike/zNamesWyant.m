@@ -1,5 +1,5 @@
 function names = zNamesWyant(ll)
-% Classical names for Zernike indices ll (Wyant ordering).
+%zNamesWyant Classical names for Zernike indices ll (Wyant ordering).
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

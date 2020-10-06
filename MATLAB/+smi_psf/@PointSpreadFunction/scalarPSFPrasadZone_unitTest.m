@@ -1,5 +1,5 @@
 function [Report]=scalarPSFPrasadZone_unitTest()
-%scalarPSFPrasadZone_unitTest tests scalarPSFPrasadZone functionality.
+%scalarPSFPrasadZone_unitTest Test scalarPSFPrasadZone functionality.
 
 Report = 0;
 

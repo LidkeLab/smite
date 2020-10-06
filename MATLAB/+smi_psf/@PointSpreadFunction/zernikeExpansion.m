@@ -1,5 +1,5 @@
 function [NollCoef,ImageZ]=zernikeExpansion(Image,ZStruct)
-%zernikeExpansion Expand Image into Zernike Moments
+%zernikeExpansion Expand Image into Zernike Moments.
 %
 %
 %   Noll ordering is used as a linear index.

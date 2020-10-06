@@ -1,6 +1,5 @@
 classdef PointSpreadFunction < handle
 %PointSpreadFunction Create and Quantify Point Spread Functions
-%   Detailed explanation goes here
 %
 %   Notes on Zernike Coeffiencts:  
 %       We will use the Noll Linear Ordering Scheme.  Conversion from M,N
@@ -13,6 +12,9 @@ classdef PointSpreadFunction < handle
 %   Statistics Toolbox
 %   Parallel Procesing Toolbox
 %   NVidia GPU
+%
+% SEE ALSO:
+%   smi_psf.Zernike
     
     properties
         Lambda              %Emission wavelength (micron)

@@ -1,5 +1,5 @@
 function [N, M] = zNoll2NM(NollIndex)
-% Convert Zernike index l into (n, m) (Noll ordering).
+%zNoll2NM Convert Zernike index l into (n, m) (Noll ordering).
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

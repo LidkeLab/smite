@@ -1,6 +1,9 @@
 classdef Zernike < handle
 
 %Zernike includes low-level Zernike polynomial static functions.
+%
+% SEE ALSO:
+%   smi_psf.PointSpreadFunction
 
 % Created by
 %    Michael Wester, 2020, Lidkelab.

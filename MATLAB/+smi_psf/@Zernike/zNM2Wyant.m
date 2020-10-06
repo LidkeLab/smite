@@ -1,5 +1,5 @@
 function l = zNM2Wyant(n, m)
-% Convert Zernike indices (n, m) into l (Wyant ordering).
+%zNM2Wyant Convert Zernike indices (n, m) into l (Wyant ordering).
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

@@ -1,5 +1,5 @@
 function names = zNamesNoll(ll)
-% Classical names for Zernike indices ll (Noll ordering).
+%zNamesNoll Classical names for Zernike indices ll (Noll ordering).
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

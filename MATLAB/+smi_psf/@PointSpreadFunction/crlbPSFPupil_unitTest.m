@@ -1,5 +1,5 @@
 function  [CRLB]=crlbPSFPupil_unitTest()
-%crlbPSFPupil_unitTest tests crlbPSFPupil functionality.
+%crlbPSFPupil_unitTest Tests crlbPSFPupil functionality.
 %
 % REQUIRES:
 %   Parallel Procesing Toolbox

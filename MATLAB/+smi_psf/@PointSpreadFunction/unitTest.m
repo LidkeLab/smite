@@ -1,5 +1,5 @@
 function unitTest()
-%unitTest tests various functionality.
+%unitTest Tests various functionality.
 
    fprintf('crlbPSFPupil_unitTest ...\n');
    try

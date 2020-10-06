@@ -1,5 +1,5 @@
 function [Report]=optimPSFZernike_unitTest()  
-%optimPSFZernike_unitTest tests optimPSFZernike functionality.
+%optimPSFZernike_unitTest Tests optimPSFZernike functionality.
 %
 % OUTPUTS:
 %   Report

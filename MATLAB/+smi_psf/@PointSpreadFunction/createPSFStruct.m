@@ -1,5 +1,5 @@
 function  [PSFStruct]=createPSFStruct()
-%createPSFStruct Creates a default PSF Structure
+%createPSFStruct Creates a default PSF Structure.
 %
 %   PSFStruct is a compact representation of a PSF
 %

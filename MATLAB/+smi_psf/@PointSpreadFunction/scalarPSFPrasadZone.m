@@ -1,5 +1,5 @@
 function [PSF,PSFStruct]=scalarPSFPrasadZone(PSFStruct,L)
-%scalarPSFPrasadZone PSF stack based on a scalar model Prasad Zones 
+%scalarPSFPrasadZone PSF stack based on a scalar model Prasad Zones. 
 %   The PSF is generated using the following model:
 %   PSF = |F[OTF]|^2
 %   % more...

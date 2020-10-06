@@ -1,5 +1,5 @@
 function [Model,Data]=psfROIStack(PSF,XYSamPerPix,ZSamPerUnit,SZ,SMD,NoiseIm) 
-%psfROIStack generates boxes of the data containing single particles (blobs).
+%psfROIStack Generates boxes of the data containing single particles (blobs).
 %
 %psfROIStack() gets the size of the boxes, the structure SMD, which
 %contains the X, Y, Z positions, photons and the background of the boxes,

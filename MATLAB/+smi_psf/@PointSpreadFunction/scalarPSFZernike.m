@@ -1,5 +1,5 @@
 function [PSF,P] =scalarPSFZernike(PSFStruct)
-%scalarPSFZernike PSF stack from Zernike Coefficients based on a scalar model with OTF Rescaling
+%scalarPSFZernike PSF stack from Zernike Coefficients based on a scalar model with OTF Rescaling.
 %   The PSF is generated using the following model:
 %   PSF = |F[OTF]|^2
 %   % more...

@@ -1,5 +1,5 @@
 function nZ = zNZWyant(n)
-% Number of Zernike polynomials up through order n (Wyant ordering).
+%nNZWyant Number of Zernike polynomials up through order n (Wyant ordering).
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.

@@ -1,5 +1,5 @@
 function psfROIStack_unitTest()
-%psfROIStack_unitTest tests psfROIStack functionality.
+%psfROIStack_unitTest Tests psfROIStack functionality.
 
 SMD.X = rand([1,100000])*5+5;
 SMD.Y = rand([1,100000])*5+5;

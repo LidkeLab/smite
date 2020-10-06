@@ -1,5 +1,5 @@
 function gui(obj) %#ok<*INUSD>
-%gui is the beginnings of a GUI for dealing with PSF data.
+%gui The beginnings of a GUI for dealing with PSF data.
 
 xsz=400;
 ysz=500;

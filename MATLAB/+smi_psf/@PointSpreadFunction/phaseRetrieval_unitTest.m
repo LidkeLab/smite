@@ -1,5 +1,5 @@
 function [PSFStruct]=phaseRetrieval_unitTest()
-%phaseRetrieval phaseRetrieval_unitTest using GS Algorithm
+%phaseRetrieval_unitTest Tests phaseRetrieval using GS Algorithm.
 
 %%
 %close all
