@@ -17,8 +17,8 @@ classdef SingleMoleculeFitting < handle
 % SMF:  Fields that are structures: 
 %
 % Data:             {LoadData}
-%   FileName:       File name (char array or cell array of char array)
-%   FileDir:        File directory (char array or cell array of char array)
+%   FileName:       File name (cell array of char array)
+%   FileDir:        File directory (char array)
 %   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
 %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
@@ -116,7 +116,7 @@ classdef SingleMoleculeFitting < handle
             % Class constructor used to set default property values.
                         
             %Data
-            obj.Data.FileName='';
+            obj.Data.FileName={''};
             obj.Data.FileDir='';
             obj.Data.ResultsDir='';
             obj.Data.CameraType='EMCCD';
@@ -178,8 +178,8 @@ classdef SingleMoleculeFitting < handle
             % Define some useful notes for these fields to use in the GUI.
             % NOTE: Sub-structs (e.g., SMF.Fitting.ZFitStruct, should only
             %       have one note pertaining to the overall structure!).
-            obj.SMFFieldNotes.Data.FileName = 'char array, cell array';
-            obj.SMFFieldNotes.Data.FileDir = 'char array, cell array';
+            obj.SMFFieldNotes.Data.FileName = 'cell array';
+            obj.SMFFieldNotes.Data.FileDir = 'char array';
             obj.SMFFieldNotes.Data.ResultsDir = 'char array';
             obj.SMFFieldNotes.Data.CameraType = 'EMCCD, SCMOS';
             obj.SMFFieldNotes.Data.CameraGain = 'ADU / e-';
@@ -260,6 +260,9 @@ classdef SingleMoleculeFitting < handle
                         || iscell(DataInput.FileName))
                     error(['''SMF.Data.FileName'' must be of type ', ...
                         'char, string, or cell.'])
+                elseif (ischar(DataInput.FileName) ...
+                        || isstring(DataInput.FileName))
+                    DataInput.FileName = {DataInput.FileName};
                 end
             end
             if isfield(DataInput, 'FileDir')
