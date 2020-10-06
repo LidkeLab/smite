@@ -198,7 +198,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Thresholding.On = 'logical';
             obj.SMFFieldNotes.Thresholding.MaxXY_SE = 'pixels';
             obj.SMFFieldNotes.Thresholding.MaxZ_SE = 'pixels';
-            obj.SMFFieldNotes.Thresholding.MinPValue = '[0, 1]';
+            obj.SMFFieldNotes.Thresholding.MinPValue = ...
+                'number between 0 and 1';
             obj.SMFFieldNotes.Thresholding.MinPSFSigma = 'pixels';
             obj.SMFFieldNotes.Thresholding.MaxPSFSigma = 'pixels';
             obj.SMFFieldNotes.Thresholding.MinPhotons = 'photons';
@@ -206,7 +207,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.FrameConnection.On = 'logical';
             obj.SMFFieldNotes.FrameConnection.MaxSeparation = 'pixels'; 
             obj.SMFFieldNotes.FrameConnection.MaxFrameGap = 'frames';
-            obj.SMFFieldNotes.FrameConnection.LoS = '[0, 1]';
+            obj.SMFFieldNotes.FrameConnection.LoS = ...
+                'number between 0 and 1';
             obj.SMFFieldNotes.DriftCorrection.On = 'logical';
             obj.SMFFieldNotes.DriftCorrection.BFRegistration = 'logical';
             obj.SMFFieldNotes.DriftCorrection.L_intra = 'pixels';
@@ -409,9 +411,11 @@ classdef SingleMoleculeFitting < handle
                 end
             end
             if isfield(ThresholdingInput, 'MinPValue')
-                if ~isnumeric(ThresholdingInput.MinPValue)
+                if ~(isnumeric(ThresholdingInput.MinPValue) ...
+                        && (ThresholdingInput.MinPValue <= 1) ...
+                        && (ThresholdingInput.MinPValue >= 0))
                     error(['''SMF.Thresholding.MinPValue'' ', ...
-                        'must be numeric.'])
+                        'must be a number in the interval [0, 1].'])
                 end
             end
             if isfield(ThresholdingInput, 'MinPSFSigma')
@@ -471,8 +475,11 @@ classdef SingleMoleculeFitting < handle
                 end
             end
             if isfield(FCInput, 'LoS')
-                if ~isnumeric(FCInput.LoS)
-                    error('''SMF.FrameConnection.LoS'' must be numeric.')
+                if ~(isnumeric(FCInput.LoS) ...
+                        && (FCInput.LoS <= 1) ...
+                        && (FCInput.LoS >= 0))
+                    error(['''SMF.FrameConnection.LoS'' ', ...
+                        'must be a number in the interval [0, 1].'])
                 end
             end
             
