@@ -416,7 +416,7 @@ propertiesToGUI()
         
         % Update obj with these newly selected files.
         obj.Data.FileDir = FileDir;
-        obj.Data.FileName = FileName.';
+        obj.Data.FileName = FileName;
         
         % Update the GUI.
         propertiesToGUI();
