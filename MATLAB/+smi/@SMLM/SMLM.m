@@ -5,26 +5,27 @@ classdef SMLM < handle
     %
     %
     
+    % =========================================================================
     properties
         SMF
-        Preset  %   {'TIRF','Sequential'} good idea?
-        Data    %   Current dataset or used for manual setting of data
-        DataType% {'File','UserDefined'} ?
-        FileName    %String or Cell array of strings
+        Preset      % {'TIRF', 'Sequential'} good idea?
+        Data        % Current dataset or used for manual setting of data
+        DataType    % {'File', 'UserDefined'} ?
+        FileName    % String or Cell array of strings
         DataDir
         ResultsDir  % (Default = 'DataDir/../Results/FileName/) same as Seq
-        
-        
     end
+    % =========================================================================
     
+    % =========================================================================
     properties (Access=protected)
         DC  % DriftCorrection class object used internally
         SMD % SMD structure with final analysis results
         NDataSets %
-        
-    end
+    end % properties (Access=protected)
+    % =========================================================================
     
-    
+    % =========================================================================
     methods
         function obj=SMLM(SMF,Filename)
             % SMLM
@@ -88,7 +89,7 @@ classdef SMLM < handle
         
         
         function [Dataset, SMF]=loadDataset(obj,SMF,DataSetIndex)
-        % loadDataset load a dataset and convert to photons
+        % loadDataset loads a dataset and converts to photons
         % set obj.Data   
         [~, Dataset, SMF] = smi_core.LoadData(SMF,DataSetIndex);
         end
@@ -102,6 +103,14 @@ classdef SMLM < handle
         
         end
         
-    end
+    end % methods
+    % =========================================================================
+
+
+    % =========================================================================
+    methods(Static)
+        Success = unitTest();
+    end % methods(Static)
+    % =========================================================================
     
 end
