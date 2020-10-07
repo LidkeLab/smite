@@ -588,6 +588,21 @@ classdef SingleMoleculeFitting < handle
             end
         end
         
+        function importSMF(obj, SMFStruct)
+            %importSMF imports fields from SMF into the class instance obj.
+            % This method will take the fields given in the structure array
+            % SMFStruct and set them to the corresponding class properties
+            % in obj.
+            
+            % Update class properties based on fields in SMFStruct.
+            InputFields = fieldnames(SMFStruct);
+            ClassFields = fieldnames(obj);
+            ValidFields = InputFields(ismember(InputFields, ClassFields));
+            for ff = 1:numel(ValidFields)
+                obj.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
+            end
+        end
+        
         [GUIParent] = gui(obj, GUIParent);
                         
     end
@@ -599,17 +614,15 @@ classdef SingleMoleculeFitting < handle
             % SMFStruct and set them to the corresponding class properties,
             % i.e., it creates an SMF class instance from an input
             % SMFStruct.
+            % NOTE: This is basically a static wrapper for the non-static
+            %       method importSMF(), which needed to be non-static due
+            %       to its intended usage in the GUI.
             
             % Create an instance of the SingleMoleculeFitting class.
             SMF = smi_core.SingleMoleculeFitting;
             
             % Update class properties based on fields in SMFStruct.
-            InputFields = fieldnames(SMFStruct);
-            ClassFields = fieldnames(SMF);
-            ValidFields = InputFields(ismember(InputFields, ClassFields));
-            for ff = 1:numel(ValidFields)
-                SMF.(ValidFields{ff}) = SMFStruct.(ValidFields{ff});
-            end
+            SMF.importSMF(SMFStruct)
         end
         
         [SMFPadded, PaddedFields] = padSMF(SMF, SMFPadding, ...
