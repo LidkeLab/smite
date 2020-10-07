@@ -5,6 +5,7 @@ classdef SMLM < handle
     %
     %
     
+    % =========================================================================
     properties
         SMF
         Preset      % {'TIRF', 'Sequential'} good idea?
@@ -13,18 +14,18 @@ classdef SMLM < handle
         FileName    % String or Cell array of strings
         DataDir
         ResultsDir  % (Default = 'DataDir/../Results/FileName/) same as Seq
-        
-        
     end
+    % =========================================================================
     
+    % =========================================================================
     properties (Access=protected)
         DC  % DriftCorrection class object used internally
         SMD % SMD structure with final analysis results
         NDataSets %
-        
-    end
+    end % properties (Access=protected)
+    % =========================================================================
     
-    
+    % =========================================================================
     methods
         function obj=SMLM(SMF,Filename)
             % SMLM
@@ -102,6 +103,14 @@ classdef SMLM < handle
         
         end
         
-    end
+    end % methods
+    % =========================================================================
+
+
+    % =========================================================================
+    methods(Static)
+        Success = unitTest();
+    end % methods(Static)
+    % =========================================================================
     
 end

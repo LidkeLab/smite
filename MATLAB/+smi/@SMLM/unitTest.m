@@ -12,7 +12,7 @@ function Success = unitTest()
 % start unitTest
 Success = 0;
 fprintf(['Running smi.SMLM.unitTest.\n', ...
-         'Testing all smi.SMLM functionality ...\n']);
+         'Testing all smi.SMLM functionality.\n']);
 
 %% Test loading various datatypes.
 fprintf('\nTesting loading of various datatypes.\n')
@@ -22,7 +22,7 @@ file1 = [saveName, '1.mat'];
 file2 = [saveName, '2.mat'];
 
 % Create SMF structure.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.FileDir      = tempdir;
 %SMF.DataVariable      = 'Data';
 SMF.Data.CameraType   = 'EMCCD';
@@ -131,7 +131,7 @@ h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 %% Test complete data flow
 fprintf('\nTesting 2D analysis.\n');
 % Create SMF structure.
-SMF = smi_core.SingleMoleculeFitting.createSMF();
+SMF = smi_core.SingleMoleculeFitting();
 % Cannot save in folders inside tempdir, so everything must be saved in tempdir
 % directly.
 SMF.Data.FileDir          = tempdir;
