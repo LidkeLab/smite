@@ -7,11 +7,17 @@ function gui(obj, GUIParent)
 % NOTE: I've tried to write this to accomodate changes to the properties
 %       and property sub-fields of the smi_core.SingleMoleculeFitting 
 %       class, but several pieces of this GUI probably still won't work
-%       correctly if major changes are made.  For example, the selected
-%       figure size of the default GUIParent might not be big enough to
-%       accomodate the addition of large numbers of sub-fields to one of
-%       the properties (the result would be GUI controls outside of the
-%       viewable part of the figure!).
+%       correctly if major changes are made. In writing this GUI this way,
+%       there are a few things to keep in mind for future changes to SMF:
+%           Scalar fields will automatically be given an edit box uicontrol
+%           Logical fields will automatically be given a checkbox uicontrol
+%           Fields whose behavior is unique should be added to the
+%               hard-coded list 'SpecialFields'.  GUI elements for these
+%               fields have to be manually defined below and their behavior
+%               modified in propertiesToGUI, guiToProperties, and perhaps
+%               in other nested functions.
+%           Fields that don't fit any of the categories above may or may
+%               not work without change to the code below. 
 %
 % INPUTS:
 %   GUIParent: The 'Parent' of this GUI, e.g., a figure handle.
@@ -24,7 +30,8 @@ function gui(obj, GUIParent)
 % Define a list of 'special' fields which are treated differently below
 % (i.e., we want to manually create special GUI elements for these fields
 % below).
-SpecialFields = {'Data.FileName', 'Fitting.ZFitStruct'};
+SpecialFields = {'Data.FileName', 'Data.CameraType', ...
+    'Fitting.FitType', 'Fitting.ZFitStruct', 'Tracking.Method'};
 
 % Create a figure handle for the GUI if needed. 
 if ~(exist('GUIParent', 'var') && ~isempty(GUIParent) ...
@@ -61,7 +68,10 @@ for ff = 1:NSMFFields
     
     % Create the edit boxes for simple properties (e.g., scalar
     % properties) and their associated labels, filling the edit boxes with
-    % initial values if appropriate.
+    % initial values if appropriate. Logical scalars will be given a
+    % checkbox style uicontrol instead of an edit box. Other items
+    % contained in the SpecialFields list hard-coded above will be treated
+    % differently on a case-by-case basis.
     TopPosition = PropertyTabs{ff}.InnerPosition(2) ...
         + PropertyTabs{ff}.InnerPosition(4);
     for ss = 1:NSubfields
@@ -70,7 +80,7 @@ for ff = 1:NSMFFields
         % sense in that case).  If the field is a 'struct', we'll make a
         % 'popupmenu' style uicontrol for the fields.  If the field is in
         % the list of special fields defined at the top of this code, we'll
-        % define it's GUI elements on a case by case basis.
+        % define it's GUI elements on a case-by-case basis.
         % NOTE: Some numbers were added to positions arbitrarily to 
         %       improve appearance.  
         CurrentYPosition = TopPosition - TextInitPos(4) ...
@@ -99,15 +109,27 @@ for ff = 1:NSMFFields
                     'Position', UIControlInitPos ...
                     + [UIControlInitPos(3), CurrentYPosition, 0, 0], ...
                     'Callback', @selectFiles);
-                
-                % Define the location of an additional note (the note
-                % contained in obj.SMFPropertyNames, to be used below).
-                NotePosition = TextInitPos ...
-                    + [UIControls{ff}{ss}{2}.Position(1)...
-                    + UIControls{ff}{ss}{2}.Position(3), ...
-                    CurrentYPosition, TextInitPos(3), 0];
+            elseif strcmp(CurrentSubfieldName, 'Data.CameraType')
+                % Add a pop-up menu for the CameraType options.
+                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'popupmenu', ...
+                    'String', {'EMCCD', 'SCMOS'}, ...
+                    'Units', 'normalized', ...
+                    'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0], ...
+                    'Callback', @guiToProperties);
+            elseif strcmp(CurrentSubfieldName, 'Fitting.FitType')
+                % Add a pop-up menu for the FitType options.
+                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'popupmenu', ...
+                    'String', {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'}, ...
+                    'Units', 'normalized', ...
+                    'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0], ...
+                    'Callback', @guiToProperties);
             elseif strcmp(CurrentSubfieldName, 'Fitting.ZFitStruct')
-                % Add an edit box associated with this pop-up menu.
+                % Add an edit box associated with the pop-up menu defined
+                % below.
                 SubSubfields = fieldnames(CurrentSubfield);
                 UIControls{ff}{ss}{2} = uicontrol(PropertyTabs{ff}, ...
                     'Style', 'edit', 'Units', 'normalized',...
@@ -128,24 +150,45 @@ for ff = 1:NSMFFields
                     UIControls{ff}{ss}{2}, ...
                     obj.SMFPropertyNames{ff}, ...
                     SubfieldNames{ff}{ss}});
-                
-                % Define the location of an additional note (the note
-                % contained in obj.SMFPropertyNames, to be used below).
-                NotePosition = TextInitPos ...
-                    + [UIControls{ff}{ss}{2}.Position(1)...
-                    + UIControls{ff}{ss}{2}.Position(3), ...
-                    CurrentYPosition, TextInitPos(3), 0];
+            elseif strcmp(CurrentSubfieldName, 'Tracking.Method')
+                % Add a pop-up menu for the tracking method options.
+                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'popupmenu', ...
+                    'String', {'SMA_SPT'}, ...
+                    'Units', 'normalized', ...
+                    'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0], ...
+                    'Callback', @guiToProperties);
             end
         else
-            % Make the edit box (the default behavior for property fields).
-            UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
-                'Style', 'edit', 'String', num2str(CurrentSubfield), ...
-                'Units', 'normalized', 'Position', UIControlInitPos ...
-                + [0, CurrentYPosition, 0, 0], ...
-                'Callback', @guiToProperties);
-            
-            % Define the location of an additional note (the note
-            % contained in obj.SMFPropertyNames, to be used below).
+            % If this field is a logical type, we'll make a checkbox
+            % instead of an edit box.
+            if islogical(CurrentSubfield)
+                % Make the check box.
+                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'checkbox', 'Value', CurrentSubfield,...
+                    'Units', 'normalized', 'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0], ...
+                    'Callback', @guiToProperties);
+            else
+                % Make the edit box (the default behavior for property 
+                % fields).
+                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
+                    'Style', 'edit', 'String', num2str(CurrentSubfield),...
+                    'Units', 'normalized', 'Position', UIControlInitPos ...
+                    + [0, CurrentYPosition, 0, 0], ...
+                    'Callback', @guiToProperties);
+            end
+        end
+        
+        % Define the location of an additional note (the note contained in 
+        % obj.SMFPropertyNames, to be used below).
+        if iscell(UIControls{ff}{ss})
+            NotePosition = TextInitPos ...
+                + [UIControls{ff}{ss}{end}.Position(1)...
+                + UIControls{ff}{ss}{end}.Position(3), ...
+                CurrentYPosition, TextInitPos(3), 0];
+        else
             NotePosition = TextInitPos ...
                 + [UIControls{ff}{ss}.Position(1) ...
                 + UIControls{ff}{ss}.Position(3), ...
@@ -204,22 +247,43 @@ propertiesToGUI()
                 % menu and the second element is the control whose string
                 % we'll update). If the current field is in the
                 % SpecialFields list defined at the top of this code, we'll
-                % do something different on a case by case basis.
+                % do something different on a case-by-case basis.
                 CurrentFieldName = [PropertyNames{nn}, ...
                     '.', PropertyFields{mm}];
                 if ismember(CurrentFieldName, SpecialFields)
                     if strcmp(CurrentFieldName, 'Data.FileName')
+                        % Data.FileName is just a cell array of strings,
+                        % which is exactly what we set the uicontrol string
+                        % to.
                         UIControls{nn}{mm}{1}.String = ...
                             ClassProperty.(PropertyFields{mm});
+                    elseif any(strcmp(CurrentFieldName, ...
+                            {'Data.CameraType', 'Fitting.FitType', ...
+                            'Tracking.Method'}))
+                        % All of these fields are defined by the item
+                        % selected in a pop-up menu.
+                        UIControls{nn}{mm}.Value = ...
+                            find(strcmp(UIControls{nn}{mm}.String, ...
+                            ClassProperty.(PropertyFields{mm})));
                     elseif strcmp(CurrentFieldName, 'Fitting.ZFitStruct')
+                        % Fitting.ZFitStruct is defined by an edit box, but
+                        % the property the edit box changes is specified by
+                        % a pop-up menu.
                         UIControls{nn}{mm}{2}.String = ...
                             num2str(ClassProperty.(PropertyFields{mm}) ...
                             .(UIControls{nn}{mm}{1}.String{...
                             UIControls{nn}{mm}{1}.Value}));
                     end
                 else
-                    UIControls{nn}{mm}.String = ...
-                        num2str(ClassProperty.(PropertyFields{mm}));
+                    % Logical fields are defined by a checkbox, and we
+                    % don't really care to update the 'string' of those
+                    % uicontrols.
+                    PropertyValue = ClassProperty.(PropertyFields{mm});
+                    if islogical(PropertyValue)
+                        UIControls{nn}{mm}.Value = PropertyValue;
+                    else
+                        UIControls{nn}{mm}.String = num2str(PropertyValue);
+                    end
                 end
             end
         end
@@ -252,10 +316,20 @@ propertiesToGUI()
                         % UIControls{nn}{mm}{1}.String.
                         obj.(PropertyNames{nn}).(PropertyFields{mm}) = ...
                             UIControls{nn}{mm}{1}.String;
+                    elseif any(strcmp(CurrentPropertyName, ...
+                            {'Data.CameraType', 'Fitting.FitType', ...
+                            'Tracking.Method'}))
+                        % All of these fields are defined by the item
+                        % selected in a pop-up menu, with the string for
+                        % those items being exactly the value we want to
+                        % set for the class property.
+                        obj.(PropertyNames{nn}).(PropertyFields{mm}) = ...
+                            UIControls{nn}{mm}.String{...
+                            UIControls{nn}{mm}.Value};
                     elseif strcmp(CurrentPropertyName, ...
                             'Fitting.ZFitStruct')
-                        % Data.ZFitStruct has several sub-fields which we
-                        % will set according to the current state of 
+                        % Fitting.ZFitStruct has several sub-fields which
+                        % we will set according to the current state of 
                         % UIControls{nn}{mm}{1}.
                         CurrentPropertyValue = obj.(PropertyNames{nn}) ...
                             .(PropertyFields{mm}) ...
@@ -264,18 +338,18 @@ propertiesToGUI()
                         obj.(PropertyNames{nn}).(PropertyFields{mm}) ...
                             .(UIControls{nn}{mm}{1}.String{...
                             UIControls{nn}{mm}{1}.Value}) = ...
-                            processUserInput(...
-                            UIControls{nn}{mm}{2}.String, ...
+                            processUserInput(UIControls{nn}{mm}{2}, ...
                             CurrentPropertyValue);
                     end
                 else
                     % This is the default behavior for non-special fields:
                     % property is updated based on a single input in an 
-                    % edit box.
+                    % edit box or based on the value of a checkbox (for
+                    % logicals).
                     CurrentPropertyValue = ...
                         obj.(PropertyNames{nn}).(PropertyFields{mm});
                     obj.(PropertyNames{nn}).(PropertyFields{mm}) = ...
-                        processUserInput(UIControls{nn}{mm}.String, ...
+                        processUserInput(UIControls{nn}{mm}, ...
                         CurrentPropertyValue);
                 end
             end
@@ -362,35 +436,37 @@ propertiesToGUI()
         save(fullfile(FilePath, FileName), 'SMF')
     end
 
-    function [ProcessedInput] = processUserInput(UserInput, ...
+    function [ProcessedInput] = processUserInput(UIControl, ...
             CurrentPropertyValue)
-        % This function will process a user input to an edit box uicontrol
-        % so that it can be set as a property value (e.g., converting a
-        % string like '12' to the number 12).
+        % This function will process a user input to various uicontrols and
+        % processes that input as appropriate (this is meant to be a giant
+        % block of if/else statements depending on several things,
+        % including property type and uicontrol type).
         
         % Process the input based on the existing property value.
         if isnumeric(CurrentPropertyValue)
+            % Numeric properties are expected to always be modified through
+            % an edit box uicontrol.
             % NOTE: If properties should be a specific type, that should be
             %       taken care of in a set method inside 
             %       SingleMoleculeFitting.m
             % NOTE: I'm using str2num() here instead of, e.g., str2double()
             %       because str2num('') = [], but str2double('') = NaN (in
             %       MATLAB 2020b at least).
-            ProcessedInput = str2num(UserInput);
+            ProcessedInput = str2num(UIControl.String);
         elseif islogical(CurrentPropertyValue)
-            % Logical fields aren't numeric, even if they were set to
-            % something like logical(1). I'm keeping this separate from
-            % above condition because I anticipate the treatment of
-            % numerics above to change.
+            % Logical fields are set by checkbox uicontrols, meaning that
+            % we care about the 'value' of the uicontrol (not its
+            % 'string').
             % NOTE: str2num() works nicely on logicals, e.g.,
             %       str2num('true') will be a logical (not numeric).
-            ProcessedInput = str2num(UserInput);
+            ProcessedInput = logical(UIControl.Value);
         else
             % Note that some of the fields might be cell arrays, e.g., file
             % names.  If the user has input a string to the corresponding
             % edit box then we'll just assume they want to overwrite the
             % existing cell array.
-            ProcessedInput = UserInput;
+            ProcessedInput = UIControl.String;
         end
     end
 
