@@ -21,7 +21,7 @@ classdef SMLM < handle
     properties (Access=protected)
         DC  % DriftCorrection class object used internally
         SMD % SMD structure with final analysis results
-        NDataSets %
+        NDatasets %
     end % properties (Access=protected)
     % =========================================================================
     
@@ -51,9 +51,9 @@ classdef SMLM < handle
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
-% Where does obj.NDataSets come from?  Actually, the for loop should operate on
+% Where does obj.NDatasets come from?  Actually, the for loop should operate on
 % a list so can exclude a bad dataset, for example.
-            for nn=1:obj.NDataSets
+            for nn=1:obj.NDatasets
                 SMDnn=obj.analyzeDataset(nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
             end
