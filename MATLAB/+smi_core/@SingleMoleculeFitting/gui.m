@@ -38,8 +38,8 @@ end
 
 % Generate some tabs in the GUI, one per class property.
 NSMFFields = numel(obj.SMFPropertyNames);
-TabGroup = uitabgroup(GUIParent, 'Position', [0, 0.1, 1, 0.9], ...
-    'Units', 'pixels');
+TabGroup = uitabgroup(GUIParent, 'Units', 'normalized', ...
+    'Position', [0, 0.1, 1, 0.9]);
 PropertyTabs = cell(NSMFFields, 1);
 for ff = 1:NSMFFields
     PropertyTabs{ff} = uitab(TabGroup, ...
