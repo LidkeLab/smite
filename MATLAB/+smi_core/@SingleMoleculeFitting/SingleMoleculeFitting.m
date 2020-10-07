@@ -20,6 +20,7 @@ classdef SingleMoleculeFitting < handle
 %   FileName:       File name (cell array of char array)
 %   FileDir:        File directory (char array)
 %   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
+%   AnalysisID:     ID tagged onto saved results (char array)(Default='')
 %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
@@ -121,6 +122,7 @@ classdef SingleMoleculeFitting < handle
             obj.Data.FileName={''};
             obj.Data.FileDir='';
             obj.Data.ResultsDir='';
+            obj.Data.AnalysisID='';
             obj.Data.CameraType='EMCCD';
             obj.Data.CameraGain=1;
             obj.Data.CameraOffset=0;
@@ -183,6 +185,7 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.FileName.Units = 'cell array';
             obj.SMFFieldNotes.Data.FileDir.Units = 'char array';
             obj.SMFFieldNotes.Data.ResultsDir.Units = 'char array';
+            obj.SMFFieldNotes.Data.AnalysisID.Units = 'char array';
             obj.SMFFieldNotes.Data.CameraType.Units = 'EMCCD, SCMOS';
             obj.SMFFieldNotes.Data.CameraGain.Units = 'ADU / e-';
             obj.SMFFieldNotes.Data.CameraOffset.Units = 'ADU';
@@ -244,6 +247,9 @@ classdef SingleMoleculeFitting < handle
                 'Name of the directory containing the raw data file(s)';
             obj.SMFFieldNotes.Data.ResultsDir.Tip = ...
                 'Name of the directory in which results will be saved';
+            obj.SMFFieldNotes.Data.AnalysisID.Tip = ...
+                sprintf(['Optional identifier to be tagged onto\n', ...
+                'the filenames of saved results.']);
             obj.SMFFieldNotes.Data.CameraType.Tip = ...
                 'Type of camera used to collect the raw data';
             obj.SMFFieldNotes.Data.CameraGain.Tip = ...
@@ -251,11 +257,11 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.CameraOffset.Tip = ...
                 'Offset of the camera used to collect the raw data';
             obj.SMFFieldNotes.Data.CameraReadNoise.Tip = ...
-                ['Variance of the read-noise of the camera used to ', ...
-                'collect the raw data'];
+                sprintf(['Variance of the read-noise of the camera\n', ...
+                'used to collect the raw data']);
             obj.SMFFieldNotes.Data.FrameRate.Tip = ...
-                ['Acquisition frame rate of the camera used to ', ...
-                'collect the raw data'];
+                sprintf(['Acquisition frame rate of the camera used\n', ...
+                'to collect the raw data']);
             obj.SMFFieldNotes.Data.PixelSize.Tip = ...
                 sprintf(['Pixel size of the camera used to collect\n', ...
                 'the raw data, back-projected to the objective\n', ...
@@ -417,6 +423,13 @@ classdef SingleMoleculeFitting < handle
                 if ~(ischar(DataInput.ResultsDir) ...
                         || isstring(DataInput.ResultsDir))
                     error(['''SMF.Data.ResultsDir'' must be of type ', ...
+                        'char or string.'])
+                end
+            end
+            if isfield(DataInput, 'AnalysisID')
+                if ~(ischar(DataInput.AnalysisID) ...
+                        || isstring(DataInput.AnalysisID))
+                    error(['''SMF.Data.AnalysisID'' must be of type ', ...
                         'char or string.'])
                 end
             end
