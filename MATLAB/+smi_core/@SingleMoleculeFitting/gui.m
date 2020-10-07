@@ -207,25 +207,19 @@ propertiesToGUI()
                 % do something different on a case by case basis.
                 CurrentFieldName = [PropertyNames{nn}, ...
                     '.', PropertyFields{mm}];
-                if iscell(UIControls{nn}{mm})
-                    if ismember(CurrentFieldName, SpecialFields)
-                        if strcmp(CurrentFieldName, 'Data.FileName')
-                            UIControls{nn}{mm}{1}.String = ...
-                                ClassProperty.(PropertyFields{mm});
-                        end
-                    else
+                if ismember(CurrentFieldName, SpecialFields)
+                    if strcmp(CurrentFieldName, 'Data.FileName')
+                        UIControls{nn}{mm}{1}.String = ...
+                            ClassProperty.(PropertyFields{mm});
+                    elseif strcmp(CurrentFieldName, 'Fitting.ZFitStruct')
                         UIControls{nn}{mm}{2}.String = ...
                             num2str(ClassProperty.(PropertyFields{mm}) ...
                             .(UIControls{nn}{mm}{1}.String{...
                             UIControls{nn}{mm}{1}.Value}));
                     end
                 else
-                    if ismember(CurrentFieldName, SpecialFields)
-                        % Placeholder block.
-                    else
-                        UIControls{nn}{mm}.String = ...
-                            num2str(ClassProperty.(PropertyFields{mm}));
-                    end
+                    UIControls{nn}{mm}.String = ...
+                        num2str(ClassProperty.(PropertyFields{mm}));
                 end
             end
         end
@@ -273,13 +267,16 @@ propertiesToGUI()
                             processUserInput(...
                             UIControls{nn}{mm}{2}.String, ...
                             CurrentPropertyValue);
-                    else
-                        CurrentPropertyValue = ...
-                            obj.(PropertyNames{nn}).(PropertyFields{mm});
-                        obj.(PropertyNames{nn}).(PropertyFields{mm}) = ...
-                            processUserInput(UIControls{nn}{mm}.String, ...
-                            CurrentPropertyValue);
                     end
+                else
+                    % This is the default behavior for non-special fields:
+                    % property is updated based on a single input in an 
+                    % edit box.
+                    CurrentPropertyValue = ...
+                        obj.(PropertyNames{nn}).(PropertyFields{mm});
+                    obj.(PropertyNames{nn}).(PropertyFields{mm}) = ...
+                        processUserInput(UIControls{nn}{mm}.String, ...
+                        CurrentPropertyValue);
                 end
             end
         end
@@ -321,7 +318,7 @@ propertiesToGUI()
 
     function importSMF(~, ~)
         % This function will ask the user to select the desired SMF (saved
-        % in a .mat file) and then call obj.reloadSMF() to load the
+        % in a .mat file) and then call obj.importSMF() to load the
         % properties stored in that SMF.
         
         % Ask the user to select the saved SMF and load it.
@@ -335,7 +332,12 @@ propertiesToGUI()
         % have all properties set, so it could make sense that the user
         % still wanted some of the manually entered GUI fields to be kept.
         guiToProperties();
-        [SMF] = reloadSMF(SMFStruct);
+        
+        % Update obj with the fields present in the loaded SMF.
+        obj.importSMF(SMF)
+        
+        % Update the GUI to reflect potential changes.
+        propertiesToGUI();
     end
 
     function exportSMF(~, ~)
