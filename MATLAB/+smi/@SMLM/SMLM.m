@@ -7,10 +7,10 @@ classdef SMLM < handle
     
     properties
         SMF
-        Preset  %   {'TIRF','Sequential'} good idea?
-        Data    %   Current dataset or used for manual setting of data
-        DataType% {'File','UserDefined'} ?
-        FileName    %String or Cell array of strings
+        Preset      % {'TIRF', 'Sequential'} good idea?
+        Data        % Current dataset or used for manual setting of data
+        DataType    % {'File', 'UserDefined'} ?
+        FileName    % String or Cell array of strings
         DataDir
         ResultsDir  % (Default = 'DataDir/../Results/FileName/) same as Seq
         
@@ -88,7 +88,7 @@ classdef SMLM < handle
         
         
         function [Dataset, SMF]=loadDataset(obj,SMF,DataSetIndex)
-        % loadDataset load a dataset and convert to photons
+        % loadDataset loads a dataset and converts to photons
         % set obj.Data   
         [~, Dataset, SMF] = smi_core.LoadData(SMF,DataSetIndex);
         end
