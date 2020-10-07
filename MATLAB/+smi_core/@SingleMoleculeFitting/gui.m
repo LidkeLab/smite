@@ -62,21 +62,31 @@ if ~(exist('GUIParent', 'var') && ~isempty(GUIParent) ...
         'Position', [DefaultFigurePosition(1:2), 490, 300]);
 end
 
-% Generate some tabs in the GUI, one per class property.
+% Generate some tabs in the GUI, one per class property. While doing so,
+% determine how many fields will be in each tab (we'll use this info. to
+% scale certain GUI objects).
 NSMFFields = numel(obj.SMFPropertyNames);
 TabGroup = uitabgroup(GUIParent, 'Units', 'normalized', ...
     'Position', [0, 0.1, 1, 0.9]);
 PropertyTabs = cell(NSMFFields, 1);
+NFieldsMax = 0;
 for ff = 1:NSMFFields
+    % Create the tab.
     PropertyTabs{ff} = uitab(TabGroup, ...
         'Title', obj.SMFPropertyNames{ff}, 'units', 'normalized');
+    
+    % Determine how many fields will be represented in the current tab.
+    NFieldsMax = max(NFieldsMax, ...
+        numel(fieldnames(obj.(obj.SMFPropertyNames{ff}))));
 end
 
 % Populate each tab with useful ui features, e.g., edit boxes.
 % NOTE: I've moved this into a separate loop over fields just to clean up
 %       the code a bit.
-TextInitPos = [0, 0, 0.25, 0.08];
-UIControlInitPos = [TextInitPos(1)+TextInitPos(3), 0, 0.25, 0.1];
+TabHeight = PropertyTabs{1}.Position(4) - PropertyTabs{1}.Position(2);
+TextInitPos = [0, 0, 0.25, (TabHeight/NFieldsMax)*0.8];
+UIControlInitPos = [TextInitPos(1)...
+    + TextInitPos(3), 0, 0.25, TabHeight / NFieldsMax];
 UIControls = cell(NSMFFields, 1);
 SubfieldNames = UIControls;
 for ff = 1:NSMFFields
@@ -266,6 +276,17 @@ uicontrol(GUIParent, 'Style', 'pushbutton', 'String', 'Export SMF', ...
     'Position', ExtraButtonsInitPos ...
     + [ExtraButtonsInitPos(1) + 2*ExtraButtonsInitPos(3), 0, 0, 0],...
     'Callback', @exportSMF);
+
+% Add a button which can reset the SMF to the default values.
+uicontrol(GUIParent, 'Style', 'pushbutton', 'String', 'Reset SMF', ...
+    'Tooltip', ...
+    sprintf(['This button allows you to reset the current settings\n', ...
+    'to their default values defined in\n', ...
+    'smi_core.SingleMoleculeFitting.m']), ...
+    'Units', 'normalized', ...
+    'Position', ExtraButtonsInitPos ...
+    + [ExtraButtonsInitPos(1) + 3*ExtraButtonsInitPos(3), 0, 0, 0],...
+    'Callback', @resetSMF);
 
 % Call PropertiesToGUI here, just as a safeguard (this isn't going to do
 % anything unless code has been revised above).
@@ -475,6 +496,27 @@ propertiesToGUI()
         
         % Save the SMF in the desired location.
         save(fullfile(FilePath, FileName), 'SMF')
+    end
+
+    function resetSMF(~, ~)
+        % This function will reset the current class instance obj to all
+        % default values. This is actually done by creating a new instance
+        % of the class and importing it using obj.importSMF().
+        
+        % Ask the user if they are sure they want to reset the SMF.
+        Response = questdlg(['Are you sure you want to reset the SMF ', ...
+            'properties to their defaults?'], 'Warning', ...
+            'yes', 'no', 'no');
+        if strcmp(Response, 'no')
+            return
+        end
+        
+        % Proceed to reset the SMF properties.
+        SMFDefault = smi_core.SingleMoleculeFitting;
+        obj.importSMF(SMFDefault);
+        
+        % Update the GUI to reflect the changes.
+        propertiesToGUI();
     end
 
     function [ProcessedInput] = processUserInput(UIControl, ...
