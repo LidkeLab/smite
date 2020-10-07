@@ -83,17 +83,17 @@ fprintf(['Loading and analyzing data saved as ics files.\n', ...
 SMF.Data.FileName = {file1, file2};
 % Create smi.SMLM object.
 SMLMobj = smi.SMLM(SMF);
-%try
+try
     %  Analyze all datasets.
     SMLMobj.analyzeAll();
     clear SMLMobj
-%catch ME
-%    delete(fullfile(tempdir,[saveName '.*']));
-%    fprintf('Caught following error during smi.SMLM.unitTest:\n')
-%    disp(ME.identifier)
-%    disp(ME.message);
-%    Success(2) = 0;
-%end
+catch ME
+    delete(fullfile(tempdir,[saveName '.*']));
+    fprintf('Caught following error during smi.SMLM.unitTest:\n')
+    disp(ME.identifier)
+    disp(ME.message);
+    Success(2) = 0;
+end
 fprintf('Loading and analyzing data saved as ics file done.\n');
 delete(fullfile(tempdir, [saveName, '.*']));
 

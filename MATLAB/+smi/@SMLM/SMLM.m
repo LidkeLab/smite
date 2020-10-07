@@ -29,6 +29,7 @@ classdef SMLM < handle
     methods
         function obj=SMLM(SMF,Filename)
             % SMLM
+            obj.SMF = SMF;
         end
         
         function fullAnalysis(obj)
@@ -50,6 +51,8 @@ classdef SMLM < handle
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
+% Where does obj.NDatasets come from?  Actually, the for loop should operate on
+% a list so can exclude a bad dataset, for example.
             for nn=1:obj.NDatasets
                 SMDnn=obj.analyzeDataset(nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
