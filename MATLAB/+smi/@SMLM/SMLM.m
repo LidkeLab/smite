@@ -21,10 +21,9 @@ classdef SMLM < handle
     properties (Access=protected)
         DC  % DriftCorrection class object used internally
         SMD % SMD structure with final analysis results
-        NDatasets %
     end % properties (Access=protected)
     % =========================================================================
-    
+
     % =========================================================================
     methods
         function obj=SMLM(SMF,Filename)
@@ -48,19 +47,20 @@ classdef SMLM < handle
         function analyzeAll(obj)
             % analyzeAll loops over dataset and creates SMD
             
+            datasetList = [1, 2]; %obj.SMF.Data.DatasetList;
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
-% Where does obj.NDatasets come from?  Actually, the for loop should operate on
-% a list so can exclude a bad dataset, for example.
-            for nn=1:obj.NDatasets
+            for nn=datasetList
                 SMDnn=obj.analyzeDataset(nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
             end
             
             % Inter-dataset drift correction.
-            fprintf('Drift correcting (inter-datastet) ...\n');
-            obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
+            if numel(datasetList) > 1
+               fprintf('Drift correcting (inter-datastet) ...\n');
+               obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
+            end
         end
         
         
@@ -102,13 +102,10 @@ classdef SMLM < handle
         % gaussblobs, drift image, fits/frame, NumConnected hist,
         % Driftcorrection plots, precision hist, intensity hist,
         % mat file with SMD and SMF files. 
-        
-        
         end
-        
+
     end % methods
     % =========================================================================
-
 
     % =========================================================================
     methods(Static)
