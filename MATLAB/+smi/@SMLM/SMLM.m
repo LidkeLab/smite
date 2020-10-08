@@ -67,7 +67,7 @@ classdef SMLM < handle
         function SMD=analyzeDataset(obj,DataSetIndex)
         % analyzeDataset Load and analyze one dataset    
             
-            obj.SMF=smi_core.SingleMoleculeFitting.createSMF();
+            obj.SMF=smi_core.SingleMoleculeFitting();
             fprintf('Loading dataset %d ...\n', DataSetIndex);
             [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DataSetIndex);
             
