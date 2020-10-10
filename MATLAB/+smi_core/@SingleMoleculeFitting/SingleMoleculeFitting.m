@@ -21,12 +21,36 @@ classdef SingleMoleculeFitting < handle
 %   FileDir:        File directory (char array)
 %   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
 %   AnalysisID:     ID tagged onto saved results (char array)(Default='')
+%   FileType:       Type of data specified by FileName. If using a custom 
+%                   extension, you must set this field manually to the true 
+%                   underlying file type (e.g., if using a .mat file saved 
+%                   as exFile.spt, set obj.Data.FileType = 'mat')
+%                   (char array)(Default set to extension of FileName{1})
+%   DataVariable:   Name of variable saved in FileName which contains the
+%                   raw data. (char array)(Default='sequence')
+%   NDatasets:      Total number of datasets in FileName. 
+%                   (scalar, int32)(Default=int32([]))
+%   DatasetList:    List of datasets of the raw data to be analyzed.
+%                   (array of int32)(Default=int32([]))
+%   DatasetMods: Cell array containing datasets to be used/excluded from
+%                analysis (Mods <-> modifiers). This is meant to be the
+%                user-facing lists which define DatasetList, meaning that 
+%                this is what would be set in the GUI. DatasetMods{1} will 
+%                contain an array of the "inclusion" dataset numbers and 
+%                DatasetMods{2} will contain an array of the "exclusion" 
+%                datasets. DatasetList will be set elsewhere (e.g., 
+%                smi_core.LoadData) to include the set
+%                   (1:NDatasets intersection DatasetMods{1}) ...
+%                   intersection (1:NDatasets drop DatasetMods{2}) 
+%                unless DatasetMods{1} is empty, in which case the first
+%                parantheses term is dropped. 
+%                (char array of int32)(Default={[]; []})
 %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
 %   FrameRate:      Data Collection Frame Rate (1/s) 
-%   PixelSize:      Camera back-projected pixel size (micron)   
+%   PixelSize:      Camera back-projected pixel size (micrometers)   
 %
 % BoxFinding:       {FindROI}
 %   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
@@ -93,11 +117,9 @@ classdef SingleMoleculeFitting < handle
     end
     
     properties (Access = protected)
-        % NOTE: I've created these protected property specifically to be 
-        %       used in the GUI. While this is annoying, I think it will be
-        %       more future-proofed: if we want to add other properties to
-        %       SingleMoleculeFitting that aren't meant to be accessible in
-        %       the GUI, this gives us a way to exclude those.
+        % Current version of the SingleMoleculeFitting class/structs.
+        % NOTE: Should stay 1.0 until we decide as a group to change it!
+        SMFVersion = 1.0;
         
         % This is a cell array of class property names to be present in GUI
         SMFPropertyNames = {'Data', 'BoxFinding', 'Fitting', ...
@@ -123,6 +145,11 @@ classdef SingleMoleculeFitting < handle
             obj.Data.FileDir='';
             obj.Data.ResultsDir='';
             obj.Data.AnalysisID='';
+            obj.Data.FileType='';
+            obj.Data.DataVariable='sequence';
+            obj.Data.NDatasets=[];
+            obj.Data.DatasetList=[];
+            obj.Data.DatasetMods={[]; []};
             obj.Data.CameraType='EMCCD';
             obj.Data.CameraGain=1;
             obj.Data.CameraOffset=0;
@@ -186,6 +213,11 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.FileDir.Units = 'char array';
             obj.SMFFieldNotes.Data.ResultsDir.Units = 'char array';
             obj.SMFFieldNotes.Data.AnalysisID.Units = 'char array';
+            obj.SMFFieldNotes.Data.FileType.Units = 'char array';
+            obj.SMFFieldNotes.Data.DataVariable.Units = 'char array';
+            obj.SMFFieldNotes.Data.NDatasets.Units = 'integer';
+            obj.SMFFieldNotes.Data.DatasetList.Units = 'integer array';
+            obj.SMFFieldNotes.Data.DatasetMods.Units = '';
             obj.SMFFieldNotes.Data.CameraType.Units = 'EMCCD, SCMOS';
             obj.SMFFieldNotes.Data.CameraGain.Units = 'ADU / e-';
             obj.SMFFieldNotes.Data.CameraOffset.Units = 'ADU';
@@ -250,6 +282,24 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.AnalysisID.Tip = ...
                 sprintf(['Optional identifier to be tagged onto\n', ...
                 'the filenames of saved results.']);
+            obj.SMFFieldNotes.Data.FileType.Tip = ...
+                sprintf(['Underlying type of the raw data file,\n' ...
+                'e.g., ''mat'', ''h5'', ...']);
+            obj.SMFFieldNotes.Data.DataVariable.Tip = ...
+                'Name of variable in raw data file(s) containing the data';
+            obj.SMFFieldNotes.Data.NDatasets.Tip = ...
+                'Total number of datasets in the raw data file(s)';
+            obj.SMFFieldNotes.Data.DatasetList.Tip = ...
+                'Array specifying the dataset number(s) to be analyzed';
+            obj.SMFFieldNotes.Data.DatasetMods.Tip = ...
+                sprintf(['DatasetMods{1} (Include Datasets) is a set\n',...
+                'of integers specifying which datasets should be\n', ...
+                'included in the analysis. This can be set to empty\n', ...
+                'to include all datasets.\n', ...
+                'DatasetMods{2} (Exclude Datasets) is a set\n', ...
+                'of integers specifying which datasets should be\n', ...
+                'strictly excluded from the analysis. This set takes\n',...
+                'precedence over the inclusion set']);
             obj.SMFFieldNotes.Data.CameraType.Tip = ...
                 'Type of camera used to collect the raw data';
             obj.SMFFieldNotes.Data.CameraGain.Tip = ...
@@ -373,19 +423,6 @@ classdef SingleMoleculeFitting < handle
                     'Please revise in SingleMoleculeFitting.m'])
             end
         end
-        
-        function [SMFStruct] = packageSMF(obj)
-            %packageSMF converts class instance obj to a structure array.
-            % This method will convert the class instance into a structure
-            % array by setting all class properties as fields in the
-            % structure array.
-            
-            % Generate the output SMFStruct.
-            ClassFields = fieldnames(obj);
-            for ff = 1:numel(ClassFields)
-                SMFStruct.(ClassFields{ff}) = obj.(ClassFields{ff});
-            end
-        end
                 
         function set.Data(obj, DataInput)
             % This is a set method for the class property Data.
@@ -404,6 +441,14 @@ classdef SingleMoleculeFitting < handle
                         < size(DataInput.FileName, 2))
                     % I prefer column arrays so I'll transpose if needed.
                     DataInput.FileName = DataInput.FileName.';
+                end
+                
+                % Attempt to set obj.Data.FileType, if needed.
+                if (isfield(obj.Data, 'FileType') ...
+                        && isempty(obj.Data.FileType) ...
+                        && isempty(DataInput.FileType))
+                    [~, ~, FileType] = fileparts(DataInput.FileName{1});
+                    DataInput.FileType = FileType(2:end);
                 end
             end
             if isfield(DataInput, 'FileDir')
@@ -431,6 +476,57 @@ classdef SingleMoleculeFitting < handle
                         || isstring(DataInput.AnalysisID))
                     error(['''SMF.Data.AnalysisID'' must be of type ', ...
                         'char or string.'])
+                end
+            end
+            if isfield(DataInput, 'FileType')
+                if ~(ischar(DataInput.FileType) ...
+                        || isstring(DataInput.FileType))
+                    error(['''SMF.Data.FileType'' must be of type ', ...
+                        'char or string.'])
+                end
+            end
+            if isfield(DataInput, 'DataVariable')
+                if ~(ischar(DataInput.DataVariable) ...
+                        || isstring(DataInput.DataVariable))
+                    error(['''SMF.Data.DataVariable'' must be of type ',...
+                        'char or string.'])
+                end
+            end
+            if isfield(DataInput, 'NDatasets')
+                if (isfield(obj.Data, 'NDatasets') ...
+                        && ~isempty(DataInput.NDatasets) ...
+                        && mod(DataInput.NDatasets, 1))
+                    error('''SMF.Data.NDatasets must be an integer.')
+                end
+            end
+            if isfield(DataInput, 'DatasetList')
+                if (~isempty(DataInput.DatasetList) ...
+                        && any(mod(DataInput.DatasetList, 1)))
+                    % NOTE: This condition allows obj.Data.DatasetList to
+                    %       be set to empty, which may cause issues
+                    %       depending on how it's used.
+                    error(['''SMF.Data.DatasetList must be an array ', ...
+                        'of integers.'])
+                end
+            end
+            if isfield(DataInput, 'DatasetMods')
+                if (~isempty(DataInput.DatasetMods{1}) ...
+                        && any(mod(DataInput.DatasetMods{1}, 1)))
+                    error(['''SMF.Data.DatasetMods{1}'' ', ...
+                        'must be an array of integers']);
+                elseif (size(DataInput.DatasetMods{1}, 1) ...
+                        > size(DataInput.DatasetMods{1}, 2))
+                    % Row arrays work nicely for use in for loops.
+                    DataInput.DatasetMods{1} = DataInput.DatasetMods{1}.';
+                end
+                if (~isempty(DataInput.DatasetMods{2}) ...
+                        && any(mod(DataInput.DatasetMods{2}, 1)))
+                    error(['''SMF.Data.DatasetMods{2}'' ', ...
+                        'must be an array of integers']);
+                elseif (size(DataInput.DatasetMods{2}, 1) ...
+                        > size(DataInput.DatasetMods{2}, 2))
+                    % Row arrays work nicely for use in for loops.
+                    DataInput.DatasetMods{2} = DataInput.DatasetMods{2}.';
                 end
             end
             if isfield(DataInput, 'CameraType')
@@ -734,6 +830,21 @@ classdef SingleMoleculeFitting < handle
                 obj.Tracking.(InputFields{ff}) = ...
                     TrackingInput.(InputFields{ff});
             end
+        end
+        
+                
+        function [SMFStruct] = packageSMF(obj)
+            %packageSMF converts class instance obj to a structure array.
+            % This method will convert the class instance into a structure
+            % array by setting all class properties as fields in the
+            % structure array.
+            
+            % Generate the output SMFStruct.
+            ClassFields = fieldnames(obj);
+            for ff = 1:numel(ClassFields)
+                SMFStruct.(ClassFields{ff}) = obj.(ClassFields{ff});
+            end
+            SMFStruct.SMFVersion = obj.SMFVersion;
         end
         
         function importSMF(obj, SMFStruct)
