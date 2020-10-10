@@ -26,7 +26,7 @@ file2 = [saveName, '2.mat'];
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.FileDir      = tempdir;
-%SMF.DataVariable      = 'Data';
+%SMF.Data.DataVariable = 'Data';
 SMF.Data.CameraType   = 'EMCCD';
 SMF.Data.CameraGain   = 1;
 SMF.Data.CameraOffset = 0;
