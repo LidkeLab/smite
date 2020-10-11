@@ -49,6 +49,7 @@ classdef SingleMoleculeFitting < handle
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
+%   CalibrationFilePath: Path to the camera calibration file (Default='')
 %   FrameRate:      Data Collection Frame Rate (1/s) 
 %   PixelSize:      Camera back-projected pixel size (micrometers)   
 %
@@ -154,6 +155,7 @@ classdef SingleMoleculeFitting < handle
             obj.Data.CameraGain=1;
             obj.Data.CameraOffset=0;
             obj.Data.CameraReadNoise=0;
+            obj.Data.CalibrationFilePath='';
             obj.Data.FrameRate=1;
             obj.Data.PixelSize=0.1;
             
@@ -217,11 +219,13 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.DataVariable.Units = 'char array';
             obj.SMFFieldNotes.Data.NDatasets.Units = 'integer';
             obj.SMFFieldNotes.Data.DatasetList.Units = 'integer array';
-            obj.SMFFieldNotes.Data.DatasetMods.Units = '';
+            obj.SMFFieldNotes.Data.DatasetMods.Units = 'integer array';
             obj.SMFFieldNotes.Data.CameraType.Units = 'EMCCD, SCMOS';
             obj.SMFFieldNotes.Data.CameraGain.Units = 'ADU / e-';
             obj.SMFFieldNotes.Data.CameraOffset.Units = 'ADU';
             obj.SMFFieldNotes.Data.CameraReadNoise.Units = 'ADU^2';
+            obj.SMFFieldNotes.Data.CalibrationFilePath.Units = ...
+                'char array';
             obj.SMFFieldNotes.Data.FrameRate.Units = ...
                 'frames / second';
             obj.SMFFieldNotes.Data.PixelSize.Units = 'micrometers';
@@ -288,7 +292,9 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.DataVariable.Tip = ...
                 'Name of variable in raw data file(s) containing the data';
             obj.SMFFieldNotes.Data.NDatasets.Tip = ...
-                'Total number of datasets in the raw data file(s)';
+                sprintf(['Total number of datasets in the raw\n', ...
+                'data file(s). Note that this field cannot be set\n', ...
+                'by the user.']);
             obj.SMFFieldNotes.Data.DatasetList.Tip = ...
                 'Array specifying the dataset number(s) to be analyzed';
             obj.SMFFieldNotes.Data.DatasetMods.Tip = ...
@@ -309,6 +315,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.CameraReadNoise.Tip = ...
                 sprintf(['Variance of the read-noise of the camera\n', ...
                 'used to collect the raw data']);
+            obj.SMFFieldNotes.Data.CalibrationFilePath.Tip = ...
+                'Path to the camera calibration file to be used.';
             obj.SMFFieldNotes.Data.FrameRate.Tip = ...
                 sprintf(['Acquisition frame rate of the camera used\n', ...
                 'to collect the raw data']);
@@ -548,6 +556,13 @@ classdef SingleMoleculeFitting < handle
             if isfield(DataInput, 'CameraReadNoise')
                 if ~isnumeric(DataInput.CameraReadNoise)
                     error('''SMF.Data.CameraReadNoise'' must be numeric.')
+                end
+            end
+            if isfield(DataInput, 'CalibrationFilePath')
+                if ~(ischar(DataInput.CalibrationFilePath) ...
+                        || isstring(DataInput.CalibrationFilePath))
+                    error(['''SMF.Data.CalibrationFilePath'' must ', ...
+                        'be of type char or string'])
                 end
             end
             if isfield(DataInput, 'FrameRate')
