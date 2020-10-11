@@ -33,8 +33,12 @@ function gui(obj, GUIParent)
 %           Fields whose behavior is unique should be added to the
 %               hard-coded list 'SpecialFields'.  GUI elements for these
 %               fields have to be manually defined below and their behavior
-%               modified in propertiesToGUI, guiToProperties, and perhaps
-%               in other nested functions.
+%               modified in propertiesToGUI(), guiToProperties(), and 
+%               perhaps in other places (look for usage of the variable
+%               'SpecialFields' and the method ismember()). Note that you
+%               should update and use the nested function
+%               'processUserInput()' inside of propertiesToGUI() when
+%               appropriate.
 %           Fields that don't fit any of the categories above may or may
 %               not work without change to the code below.
 %       If you would like special behavior for a field, you must add that
