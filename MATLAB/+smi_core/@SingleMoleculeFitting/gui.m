@@ -599,8 +599,9 @@ propertiesToGUI()
 
     function resetSMF(~, ~)
         % This function will reset the current class instance obj to all
-        % default values. This is actually done by creating a new instance
-        % of the class and importing it using obj.importSMF().
+        % default values. This is done after first asking the user if they
+        % are sure they want to proceed (accidentally clicking this would
+        % be very annoying!).
         
         % Ask the user if they are sure they want to reset the SMF.
         Response = questdlg(['Are you sure you want to reset the SMF ', ...
@@ -611,8 +612,7 @@ propertiesToGUI()
         end
         
         % Proceed to reset the SMF properties.
-        SMFDefault = smi_core.SingleMoleculeFitting;
-        obj.importSMF(SMFDefault);
+        obj.resetSMF();
         
         % Update the GUI to reflect the changes.
         propertiesToGUI();

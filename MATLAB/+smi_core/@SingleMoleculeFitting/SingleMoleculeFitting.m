@@ -877,6 +877,17 @@ classdef SingleMoleculeFitting < handle
             end
         end
         
+        function resetSMF(obj)
+            %resetSMF resets all SMF fields to their default values.
+            % This method will overwrite all properties of the class
+            % instance obj with their default values defined by the class
+            % constructor. This is done by creating a new instance of the
+            % SMF class and then importing those properties to the current
+            % instance obj using importSMF().
+            SMFDefault = smi_core.SingleMoleculeFitting;
+            obj.importSMF(SMFDefault);
+        end
+        
         [GUIParent] = gui(obj, GUIParent);
                         
     end
