@@ -39,12 +39,16 @@ classdef SingleMoleculeFitting < handle
 %                contain an array of the "inclusion" dataset numbers and 
 %                DatasetMods{2} will contain an array of the "exclusion" 
 %                datasets. DatasetList will be set elsewhere (e.g., 
-%                smi_core.LoadData) to include the set
-%                   (1:NDatasets intersection DatasetMods{1}) ...
-%                   intersection (1:NDatasets drop DatasetMods{2}) 
+%                smi_core.LoadData) to include the set 
+%                   intersect(intersect(1:NDatasets, DatasetMods{1}), ...
+%                   setdiff(1:NDatasets, DatasetMods{2})) 
 %                unless DatasetMods{1} is empty, in which case the first
-%                parantheses term is dropped. 
-%                (char array of int32)(Default={[]; []})
+%                parantheses term is dropped. For example, if 
+%                NDatasets = 20, and you only want to analyze datasets 1:5, 
+%                you can set DatasetMods{1} = 1:5. If you further decide to
+%                exclude datsaets 2 and 4, you could set 
+%                DatasetMods{2} = [2, 4]. 
+%                (int32 array)(Default={[]; []})
 %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
