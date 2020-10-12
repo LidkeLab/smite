@@ -94,7 +94,7 @@ classdef SMLM < handle
         function [Dataset, SMF]=loadDataset(obj,SMF,DataSetIndex)
         % loadDataset loads a dataset and converts to photons
         % set obj.Data   
-        switch SMF.FileType;
+        switch SMF.Data.FileType;
             case 'mat'
                 [~, Dataset, SMF] = ...
                     smi_core.LoadData(SMF,SMF.DataVariable,DataSetIndex);
