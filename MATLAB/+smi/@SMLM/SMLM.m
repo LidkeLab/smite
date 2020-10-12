@@ -97,7 +97,7 @@ classdef SMLM < handle
         switch SMF.Data.FileType;
             case 'mat'
                 [~, Dataset, SMF] = ...
-                    smi_core.LoadData(SMF,SMF.DataVariable,DataSetIndex);
+                    smi_core.LoadData(SMF,SMF.Data.DataVariable,DataSetIndex);
             case 'h5'
                 [~, Dataset, SMF] = smi_core.LoadData(SMF,DataSetIndex);
         end % switch
