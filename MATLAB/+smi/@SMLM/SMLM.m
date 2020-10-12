@@ -34,7 +34,7 @@ classdef SMLM < handle
         function fullAnalysis(obj)
             % fullAnalysis Analyze all data and save results
             
-            %analyzeAll
+            obj.analyzeAll();
             
             %saveResults
             
