@@ -9,7 +9,7 @@ function Success = unitTest()
 %   Parallel Procesing Toolbox
 %   NVidia GPU
 
-% -----------------------------------------------------------------------------
+%% ----------------------------------------------------------------------------
 
 % start unitTest
 Success(1) = 1;
@@ -67,39 +67,39 @@ end
 fprintf('Loading and analyzing data saved as mat file done.\n');
 delete(fullfile(tempdir, [saveName, '.*']));
 
-% -----------------------------------------------------------------------------
+%% ----------------------------------------------------------------------------
+
+%Success(2) = 1;
+%% Save datasets as ics files.
+%fprintf('\nSaving data as ics files.\n')
+%file1 = [saveName '1.ics'];
+%file2 = [saveName '2.ics'];
+%writeim(SimData1,fullfile(tempdir,file1));
+%writeim(SimData2,fullfile(tempdir,file2));
+%% Try running smi.SMLM.  If it fails, delete files before returning error,
+%fprintf(['Loading and analyzing data saved as ics files.\n', ...
+%         '   (Only doing box finding and fitting.)\n']);
+%% Update SMF object.
+%SMF.Data.FileName = {file1, file2};
+%% Create smi.SMLM object.
+%SMLMobj = smi.SMLM(SMF);
+%try
+%    %  Analyze all datasets.
+%    SMLMobj.analyzeAll();
+%    clear SMLMobj
+%catch ME
+%    delete(fullfile(tempdir,[saveName '.*']));
+%    fprintf('Caught following error during smi.SMLM.unitTest:\n')
+%    disp(ME.identifier)
+%    disp(ME.message);
+%    Success(2) = 0;
+%end
+%fprintf('Loading and analyzing data saved as ics file done.\n');
+%delete(fullfile(tempdir, [saveName, '.*']));
+
+%% ----------------------------------------------------------------------------
 
 Success(2) = 1;
-% Save datasets as ics files.
-fprintf('\nSaving data as ics files.\n')
-file1 = [saveName '1.ics'];
-file2 = [saveName '2.ics'];
-writeim(SimData1,fullfile(tempdir,file1));
-writeim(SimData2,fullfile(tempdir,file2));
-% Try running smi.SMLM.  If it fails, delete files before returning error,
-fprintf(['Loading and analyzing data saved as ics files.\n', ...
-         '   (Only doing box finding and fitting.)\n']);
-% Update SMF object.
-SMF.Data.FileName = {file1, file2};
-% Create smi.SMLM object.
-SMLMobj = smi.SMLM(SMF);
-try
-    %  Analyze all datasets.
-    SMLMobj.analyzeAll();
-    clear SMLMobj
-catch ME
-    delete(fullfile(tempdir,[saveName '.*']));
-    fprintf('Caught following error during smi.SMLM.unitTest:\n')
-    disp(ME.identifier)
-    disp(ME.message);
-    Success(2) = 0;
-end
-fprintf('Loading and analyzing data saved as ics file done.\n');
-delete(fullfile(tempdir, [saveName, '.*']));
-
-% -----------------------------------------------------------------------------
-
-Success(3) = 1;
 % Save datasets as h5 files.
 fprintf('\nSaving data as h5 files.\n')
 h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
@@ -123,14 +123,14 @@ catch ME
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier)
     disp(ME.message);
-    Success(3) = 0;
+    Success(2) = 0;
 end
 fprintf('Loading and analyzing data saved as h5 file done.\n');
 delete(fullfile(tempdir,[saveName '*.*']));
 
-% -----------------------------------------------------------------------------
+%% ----------------------------------------------------------------------------
 
-Success(4) = 1;
+Success(3) = 1;
 %% Simulate and save realistic SMLM data.
 fprintf('\nSimulating realistic 2D SMLM data\n');
 [SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
@@ -182,11 +182,11 @@ try
    SMLMobj.exportFileType='txt';
    SMLMobj.exportResults();
 catch ME
-    delete(fullfile(tempdir, [saveName '.*']));
-    fprintf('Caught following error during smi.SMLM.unitTest:\n')
-    disp(ME.identifier)
-    disp(ME.message);
-    Success(4) = 0;
+   delete(fullfile(tempdir, [saveName '.*']));
+   fprintf('Caught following error during smi.SMLM.unitTest:\n')
+   disp(ME.identifier)
+   disp(ME.message);
+   Success(3) = 0;
 end
 % delete object and data
 clear SMLMobj

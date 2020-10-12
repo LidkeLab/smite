@@ -48,6 +48,7 @@ classdef SMLM < handle
             % analyzeAll loops over dataset and creates SMD
             
             datasetList = [1, 2]; %obj.SMF.Data.DatasetList;
+
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];

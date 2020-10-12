@@ -102,3 +102,4 @@ smite <- sma-core-alpha
  @SMLM/
   gui				SMA_SR.SMA_SR
   testFit			SMA_SR.SMA_SR
+  unitTest			SMA_SR.unitTest
