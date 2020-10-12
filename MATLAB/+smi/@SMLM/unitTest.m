@@ -182,11 +182,11 @@ try
    SMLMobj.exportFileType='txt';
    SMLMobj.exportResults();
 catch ME
-    delete(fullfile(tempdir, [saveName '.*']));
-    fprintf('Caught following error during smi.SMLM.unitTest:\n')
-    disp(ME.identifier)
-    disp(ME.message);
-    Success(4) = 0;
+   delete(fullfile(tempdir, [saveName '.*']));
+   fprintf('Caught following error during smi.SMLM.unitTest:\n')
+   disp(ME.identifier)
+   disp(ME.message);
+   Success(4) = 0;
 end
 % delete object and data
 clear SMLMobj
