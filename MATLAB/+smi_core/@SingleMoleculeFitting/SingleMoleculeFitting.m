@@ -48,7 +48,7 @@ classdef SingleMoleculeFitting < handle
 %                you can set DatasetMods{1} = 1:5. If you further decide to
 %                exclude datsaets 2 and 4, you could set 
 %                DatasetMods{2} = [2, 4]. 
-%                (int32 array)(Default={[]; []})
+%                (cell array of int32 arrays)(Default={[]; []})
 %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
 %   CameraGain:     Camera Gain, scalar or image (Default=1)
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
