@@ -35,8 +35,8 @@ SMF.Data.CameraOffset = 0;
 
 % Simulate two small datasets.
 fprintf('Simulating data.\n')
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 10);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 10);
+[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 100);
+[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 100);
 
 % Save datasets as mat files.
 fprintf('\nSaving data as mat files.\n')
