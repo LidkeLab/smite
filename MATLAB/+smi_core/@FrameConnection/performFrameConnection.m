@@ -53,9 +53,29 @@ end
 % Initialize several new fields in SMD and SMDCombined.
 SMD = obj.SMD; % temporary local variable
 SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
-SMDCombined = smi_core.SingleMoleculeData.createSMD();
+SMDCombined = SMD;
+
+% Delete several fields from the initialized SMDCombined to ensure they
+% don't interfere with the analysis.
 SMDCombined.NCombined = [];
 SMDCombined.ConnectID = [];
+SMDCombined.X = [];
+SMDCombined.Y = [];
+SMDCombined.X_SE = [];
+SMDCombined.Y_SE = [];
+SMDCombined.Z = [];
+SMDCombined.Z_SE = [];
+SMDCombined.FrameNum = [];
+SMDCombined.Photons = [];
+SMDCombined.Bg = [];
+SMDCombined.LogLikelihood = [];
+SMDCombined.DatasetNum = [];
+SMDCombined.PSFSigma = [];
+SMDCombined.PSFSigma_SE = [];
+SMDCombined.PSFSigmaX = [];
+SMDCombined.PSFSigmaY = [];
+SMDCombined.PSFSigmaX_SE = [];
+SMDCombined.PSFSigmaY_SE = [];
 
 % Loop through each dataset and perform the frame connection process.
 % NOTE: Since numel(unique(obj.SMD.DatasetNum)) is typically small (e.g.,
@@ -150,6 +170,10 @@ for nn = unique(SMD.DatasetNum)
         SMDCombined.Z_SE = [SMDCombined.Z_SE; OutputCoordsSE(:, 3)];
     end
 end
+
+% Add zeros to the ThreshFlag of SMDCombined (we should never be keeping
+% localizations in SMDCombined which have non-zero ThreshFlag).
+SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
 
 % Add a new field (IndSMD) to SMDCombined that specifies which indices of 
 % SMD were used to generate each entry.

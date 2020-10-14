@@ -40,7 +40,6 @@ classdef FrameConnection < handle
             % SMD structure and/or "unwrap" an SMF structure to set the
             % available class properties.
             
-
             % Set a default for the AutoRun flag, which specifies whether
             % or not we should attempt to perform frame-connection
             % immediately (i.e., perform frame-connection in this
