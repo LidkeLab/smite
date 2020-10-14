@@ -83,7 +83,7 @@ classdef SMLM < handle
             fprintf('Generating localizations ...\n');
             [SMD] = LD.genLocalizations();
 
-            % Define NDatasets and DatasetNum from the dataset count.
+            % Define NDatasets, and DatasetNum from the dataset count.
             SMD.NDatasets  = 1;
             SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
             
