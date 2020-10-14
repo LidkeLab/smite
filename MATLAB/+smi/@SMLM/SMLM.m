@@ -34,7 +34,7 @@ classdef SMLM < handle
         function fullAnalysis(obj)
             % fullAnalysis Analyze all data and save results
             
-            %analyzeAll
+            obj.analyzeAll();
             
             %saveResults
             
@@ -47,13 +47,16 @@ classdef SMLM < handle
         function analyzeAll(obj)
             % analyzeAll loops over dataset and creates SMD
             
-            datasetList = [1, 2]; %obj.SMF.Data.DatasetList;
+            % Define the list of datasets to be processed.
+            %obj.SMF = smi_core.LoadData.setDatasetList(obj.SMF).
+            %datasetList = obj.SMF.Data.DatasetList;
+            datasetList = [1, 2];
 
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
-            for nn=datasetList
-                SMDnn=obj.analyzeDataset(nn);
+            for nn=1:numel(datasetList)
+                SMDnn = obj.analyzeDataset(datasetList(nn), nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
             end
             
@@ -65,16 +68,24 @@ classdef SMLM < handle
         end
         
         
-        function SMD=analyzeDataset(obj,DataSetIndex)
+        function SMD=analyzeDataset(obj,DatasetIndex,DatasetCount)
         % analyzeDataset Load and analyze one dataset    
+
+            if ~exist('DatasetCount', 'var')
+                DatasetCount = 1;
+            end
             
-            fprintf('Loading dataset %d ...\n', DataSetIndex);
-            [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DataSetIndex);
+            fprintf('Loading dataset %d ...\n', DatasetIndex);
+            [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
             
             % Generate localizations from the current Dataset.
             LD = smi_core.LocalizeData(Dataset, obj.SMF);
             fprintf('Generating localizations ...\n');
             [SMD] = LD.genLocalizations();
+
+            % Define NDatasets, and DatasetNum from the dataset count.
+            SMD.NDatasets  = 1;
+            SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
             
             % Perform frame-connection on localizations in SMD.
             if obj.SMF.FrameConnection.On 
@@ -86,15 +97,21 @@ classdef SMLM < handle
             % Intra-dataset drift correction.
             if obj.SMF.DriftCorrection.On 
                 fprintf('Drift correcting (intra-datastet) ...\n');
-                SMD = obj.DC.driftCorrectKNNIntra(SMD, DataSetIndex);
+                SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
             end
         end
         
         
-        function [Dataset, SMF]=loadDataset(obj,SMF,DataSetIndex)
+        function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
         % loadDataset loads a dataset and converts to photons
         % set obj.Data   
-        [~, Dataset, SMF] = smi_core.LoadData(SMF,DataSetIndex);
+        switch SMF.Data.FileType;
+            case 'mat'
+                [~, Dataset, SMF] = ...
+                    smi_core.LoadData(SMF,SMF.Data.DataVariable,DatasetIndex);
+            case 'h5'
+                [~, Dataset, SMF] = smi_core.LoadData(SMF,DatasetIndex);
+        end % switch
         end
         
         function saveResults(obj)
