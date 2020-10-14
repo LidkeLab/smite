@@ -58,7 +58,7 @@ function gui(obj, GUIParent)
 % Define a list of 'special' fields which are treated differently below
 % (i.e., we want to manually create special GUI elements for these fields
 % below).
-SpecialFields = {'Data.FileName', 'Data.CameraType', 'Data.NDatasets', ...
+SpecialFields = {'Data.FileName', 'Data.CameraType', ...
     'Data.DatasetMods', 'Data.CalibrationFilePath', ...
     'Fitting.FitType', 'Fitting.ZFitStruct', 'Tracking.Method'};
 
@@ -161,17 +161,6 @@ for ff = 1:NSMFFields
                     'Position', UIControlInitPos ...
                     + [0, CurrentYPosition, 0, 0], ...
                     'Callback', @guiToProperties);
-            elseif strcmp(CurrentSubfieldName, 'Data.NDatasets')
-                % Data.NDatasets should not be modified by the user
-                % directly, so we'll just display it's value (in a disabled
-                % edit box instead of as a text box for the sake of
-                % improving appearance.
-                UIControls{ff}{ss} = uicontrol(PropertyTabs{ff}, ...
-                    'Style', 'edit', 'String', num2str(CurrentSubfield),...
-                    'Tooltip', CurrentFieldNote.Tip, ...
-                    'Enable', 'off', ...
-                    'Units', 'normalized', 'Position', UIControlInitPos ...
-                    + [0, CurrentYPosition, 0, 0]);
             elseif strcmp(CurrentSubfieldName, 'Data.DatasetMods')
                 % Add a pop-up menu for the dataset modifier options.
                 UIControls{ff}{ss}{1} = uicontrol(PropertyTabs{ff}, ...
@@ -377,11 +366,6 @@ propertiesToGUI()
                         % which is exactly what we set the uicontrol string
                         % to.
                         UIControls{nn}{mm}{1}.String = CurrentField;
-                    elseif strcmp(CurrentFieldName, 'Data.NDatasets')
-                        % The control for Data.NDatasets is a disabled edit 
-                        % box whose string can be updated directly by the 
-                        % value of Data.NDatasets.
-                        UIControls{nn}{mm}.String = CurrentField;
                     elseif strcmp(CurrentFieldName, 'Data.DatasetMods')
                         % Data.DatasetMods has a pop-up menu defining which
                         % index of itself should be displayed (e.g.,

@@ -28,8 +28,6 @@ classdef SingleMoleculeFitting < handle
 %                   (char array)(Default set to extension of FileName{1})
 %   DataVariable:   Name of variable saved in FileName which contains the
 %                   raw data. (char array)(Default='sequence')
-%   NDatasets:      Total number of datasets in FileName. 
-%                   (scalar, int32)(Default=int32([]))
 %   DatasetList:    List of datasets of the raw data to be analyzed.
 %                   (array of int32)(Default=int32([]))
 %   DatasetMods: Cell array containing datasets to be used/excluded from
@@ -152,7 +150,6 @@ classdef SingleMoleculeFitting < handle
             obj.Data.AnalysisID='';
             obj.Data.FileType='';
             obj.Data.DataVariable='sequence';
-            obj.Data.NDatasets=[];
             obj.Data.DatasetList=[];
             obj.Data.DatasetMods={[]; []};
             obj.Data.CameraType='EMCCD';
@@ -221,7 +218,6 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.AnalysisID.Units = 'char array';
             obj.SMFFieldNotes.Data.FileType.Units = 'char array';
             obj.SMFFieldNotes.Data.DataVariable.Units = 'char array';
-            obj.SMFFieldNotes.Data.NDatasets.Units = 'integer';
             obj.SMFFieldNotes.Data.DatasetList.Units = 'integer array';
             obj.SMFFieldNotes.Data.DatasetMods.Units = 'integer array';
             obj.SMFFieldNotes.Data.CameraType.Units = 'EMCCD, SCMOS';
@@ -295,10 +291,6 @@ classdef SingleMoleculeFitting < handle
                 'e.g., ''mat'', ''h5'', ...']);
             obj.SMFFieldNotes.Data.DataVariable.Tip = ...
                 'Name of variable in raw data file(s) containing the data';
-            obj.SMFFieldNotes.Data.NDatasets.Tip = ...
-                sprintf(['Total number of datasets in the raw\n', ...
-                'data file(s). Note that this field cannot be set\n', ...
-                'by the user.']);
             obj.SMFFieldNotes.Data.DatasetList.Tip = ...
                 'Array specifying the dataset number(s) to be analyzed';
             obj.SMFFieldNotes.Data.DatasetMods.Tip = ...
@@ -502,13 +494,6 @@ classdef SingleMoleculeFitting < handle
                         || isstring(DataInput.DataVariable))
                     error(['''SMF.Data.DataVariable'' must be of type ',...
                         'char or string.'])
-                end
-            end
-            if isfield(DataInput, 'NDatasets')
-                if (isfield(obj.Data, 'NDatasets') ...
-                        && ~isempty(DataInput.NDatasets) ...
-                        && mod(DataInput.NDatasets, 1))
-                    error('''SMF.Data.NDatasets must be an integer.')
                 end
             end
             if isfield(DataInput, 'DatasetList')
