@@ -16,6 +16,13 @@ function [SMD] = catSMD(SMD1, SMD2)
 %       SpecialFields which are treated differently towards the end of this
 %       method (their treatment will be different on a case-by-case basis).
 %
+% NOTE: When SMD1 and SMD2 are frame connected SMD's (e.g., the output
+%       SMDCombined from the frame connection codes), the field 'IndSMD' is
+%       only meaningful if you are also concatenating the corresponding
+%       pre- frame connected SMD's.  As in, IndSMD after concatenation of
+%       two SMDCombined's now refers to indices in the corresponding
+%       concatenated pre- frame connection SMD's.
+%
 % INPUTS:
 %   SMD1: A Single Molecule Data structure.
 %   SMD2: A Single Molecule Data structure.
