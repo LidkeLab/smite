@@ -62,7 +62,8 @@ StackableFields = {'XBoxCorner', 'YBoxCorner', ...
 %       for loop below. In fact, not all of the "special" fields are even
 %       in this list, e.g., PSFSigma is also treated differently in some
 %       cases, but not included in this list.
-SpecialFields = {'DriftX', 'DriftY', 'DriftZ', 'NDatasets'};
+SpecialFields = {'DriftX', 'DriftY', 'DriftZ', 'NDatasets', ...
+    'ConnectID', 'IndSMD'};
 
 % Create a list of fields present in each of SMD1 and SMD2.
 FieldNames1 = fieldnames(SMD1);
@@ -164,6 +165,20 @@ if (SMD.NDatasets ~= (SMD1.NDatasets+SMD2.NDatasets))
         'expectations: SMD.NDatasets set to ', ...
         'numel(unique(SMD.DatasetNum))'])
 end
+
+% Define the outputs SMD.ConnectID and SMD.IndSMD ensuring consistency
+% (their values represent indices which lose meaning after concatenation).
+% NOTE: While this might make more sense to put at the top of this code, I 
+%       wanted to do it this way (with 'ConnectID' and 'IndSMD' added to
+%       'SpecialFields') so that it's more clear to readers that something
+%       special is being done with these fields.
+MaxConnectIDSMD1 = max(SMD1.ConnectID);
+MaxIndSMD1 = max(cell2mat(SMD1.IndSMD));
+SMD2.ConnectID = SMD2.ConnectID + MaxConnectIDSMD1;
+SMD2.IndSMD = cellfun(@(X) X + MaxIndSMD1, SMD2.IndSMD, ...
+    'UniformOutput', false);
+SMD.ConnectID = [SMD1.ConnectID; SMD2.ConnectID];
+SMD.IndSMD = [SMD1.IndSMD; SMD2.IndSMD];
 
 
 end

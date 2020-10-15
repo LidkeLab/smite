@@ -39,6 +39,9 @@ classdef SingleMoleculeData
     %   PValue:         p-value of fit
     %   LogLikelihood:  Log likelihood of fit
     %   ConnectID:      Identifies the same emitter accross multiple frames
+    %   IndSMD:         Indices in original SMD corresponding to frame
+    %                   connected localizations (e.g., indices in SMD
+    %                   corresponding to localizations in SMDCombined).
     %   ThreshFlag:     Indicates a valid fit.  0=valid.  See SMA_Core.ThresholdSM
     %   DriftX:         X drift relative to first frame (Pixels) (NFrames x NDatasets)
     %   DriftY:         Y drift relative to first frame (Pixels) (NFrames x NDatasets)
@@ -85,6 +88,7 @@ classdef SingleMoleculeData
             SMD.PValue=[];
             SMD.LogLikelihood=[];
             SMD.ConnectID=[];
+            SMD.IndSMD={};
             SMD.ThreshFlag=[];
             SMD.DriftX=[];
             SMD.DriftY=[];
