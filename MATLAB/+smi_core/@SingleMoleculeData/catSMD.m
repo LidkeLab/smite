@@ -7,13 +7,14 @@ function [SMD] = catSMD(SMD1, SMD2)
 % output SMD.  Scalar fields which are not consistent are stored in the
 % output SMD concatenated in a cell array.
 %
-% NOTE: There is a hard-coded set of vector fields below called
-%       VectorFields!!!  If these are changed in SingleMoleculeData.m (or
-%       if they are used differently than usual in some context), this
-%       set of fields may need to be revised. Similarly, there is a set of
-%       "special" fields defined by SpecialFields which are treated
-%       differently towards the end of this method (their treatment will be
-%       different on a case-by-case basis).
+% NOTE: There is a hard-coded set of fields below called StackableFields,
+%       which are the fields that can be safely concatenated as 
+%       SMD.Example = [SMD1.Example; SMD2.Example]. If these are changed in 
+%       SingleMoleculeData.m (or if they are used differently than usual in
+%       some context), this set of fields may need to be revised. 
+%       Similarly, there is a set of "special" fields defined by 
+%       SpecialFields which are treated differently towards the end of this
+%       method (their treatment will be different on a case-by-case basis).
 %
 % INPUTS:
 %   SMD1: A Single Molecule Data structure.
@@ -41,11 +42,11 @@ elseif isempty(SMD2)
     return
 end
 
-% Define which SMD fields are vector fields vs. scalar fields.
+% Define which SMD fields can be stacked directly (see note at top of code)
 % NOTE: We could just check which fields are numeric vectors with 
 %       (numel() > 1), but that convenience limits us to SMD structures 
 %       with more than one localization.
-VectorFields = {'XBoxCorner', 'YBoxCorner', ...
+StackableFields = {'XBoxCorner', 'YBoxCorner', ...
     'X', 'Y', 'Z', ...
     'X_SE', 'Y_SE', 'Z_SE', ...
     'Photons', 'Photons_SE', ...
@@ -53,7 +54,7 @@ VectorFields = {'XBoxCorner', 'YBoxCorner', ...
     'PSFSigma', 'PSFSigmaX', 'PSFSigmaY', ...
     'PSFSigma_SE', 'PSFSigmaX_SE', 'PSFSigmaY_SE', ...
     'PValue', 'LogLikelihood', 'ThreshFlag', ...
-    'DatasetNum', 'FrameNum', 'ConnectID'};
+    'NCombined', 'IndSMD', 'DatasetNum', 'FrameNum', 'ConnectID'};
 
 % Define a set of "special" fields in SMD: these fields are treated
 % differently on a case-by-case basis towards the end of this method.
@@ -104,23 +105,23 @@ end
 AllFieldNames = unique([FieldNames1; FieldNames2]);
 SharedFields = AllFieldNames(ismember(AllFieldNames, FieldNames1) ...
     & ismember(AllFieldNames, FieldNames2));
-IsVectorField = ismember(SharedFields, VectorFields);
+IsStackable = ismember(SharedFields, StackableFields);
 IsSpecialField = ismember(SharedFields, SpecialFields);
 for ff = 1:numel(SharedFields)
     % Place the current field in the output SMD, concatenating when
     % appropriate.
     CurrentField = SharedFields{ff};
-    if IsVectorField(ff)
-        % Vector fields should be concatenated directly.
+    if IsStackable(ff)
+        % Stackable fields should be concatenated directly.
         SMD.(CurrentField) = [SMD1.(CurrentField); SMD2.(CurrentField)];
     elseif isequal(SMD1.(CurrentField), SMD2.(CurrentField))
-        % We want to ensure non-vector fields are consistent with one
+        % We want to ensure non-stackable fields are consistent with one
         % another before setting the output field.
         SMD.(CurrentField) = SMD1.(CurrentField);
     elseif ~IsSpecialField(ff)
-        % This appears to be a non-vector field, but the field is not equal
-        % in SMD1 and SMD2; we will trust the user and concatenate these
-        % two as though it were a vector field.
+        % This appears to be a non-stackable field, but the field is not
+        % equal in SMD1 and SMD2; we will trust the user and concatenate
+        % these two as though it were a vector field.
         warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
             'SMD field ''%s'' is different in each of ', ...
             'SMD1 and SMD2, attempting to concatenate.'], CurrentField)
@@ -160,7 +161,8 @@ SMD.NDatasets = numel(unique(SMD.DatasetNum));
 if (SMD.NDatasets ~= (SMD1.NDatasets+SMD2.NDatasets))
     warning(['smi_core.SingleMoleculeData.catSMD() - ', ...
         'Concatenated SMD field ''NDatasets'' may not match ', ...
-        'expectations: SMD.NDatsets set to numel(unique(SMD.DatasetNum))'])
+        'expectations: SMD.NDatasets set to ', ...
+        'numel(unique(SMD.DatasetNum))'])
 end
 
 
