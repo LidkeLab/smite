@@ -1,4 +1,4 @@
-function [SMDCombined, SMD] = performFrameConnection(obj, ConnectIDStart)
+function [SMDCombined, SMD] = performFrameConnection(obj)
 %performFrameConnection is the "run" method of the FrameConnection class.
 %
 % This method is intended to be used as the main "run" method of the
@@ -25,11 +25,6 @@ function [SMDCombined, SMD] = performFrameConnection(obj, ConnectIDStart)
 % INPUTS:
 %   obj: An instance of the class smi_core/FrameConnection with all fields
 %        populated with meaningful entries.
-%   ConnectIDStart: The previous maximum connect ID value (this input would
-%                   exist in the context of there being another SMD 
-%                   external to this method, to which the output 
-%                   SMDCombined will be concatenated). 
-%                   (Scalar int)(Default = 0)
 %
 % OUTPUTS:
 %   SMDCombined: SMDCombined contains the "frame-connected" localizations,
@@ -42,13 +37,6 @@ function [SMDCombined, SMD] = performFrameConnection(obj, ConnectIDStart)
 %   David J. Schodt (Lidke Lab, 2020)
 %       based on a code written Hanieh Mazloom-Farsibaf
 
-
-% Define defaults if needed.
-if (~exist('ConnectIDStart', 'var') || isempty(ConnectIDStart))
-    ConnectIDStart = uint32(0);
-else
-    ConnectIDStart = uint32(ConnectIDStart);
-end
 
 % Initialize several new fields in SMD and SMDCombined.
 SMD = obj.SMD; % temporary local variable
@@ -181,15 +169,9 @@ NLocTotal = numel(SMDCombined.ConnectID);
 IndSMD = cell(NLocTotal, 1);
 for ii = 1:NLocTotal
     IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ...
-        SMDCombined.ConnectID(ii))) + ConnectIDStart;
+        SMDCombined.ConnectID(ii)));
 end
 SMDCombined.IndSMD = IndSMD;
-
-% Update some fields in SMDCombined and SMD based on the (optional) user
-% input ConnectIDStart.
-% NOTE: This correction was made to SMDCombined.IndSMD in code above.
-SMDCombined.ConnectID = SMDCombined.ConnectID + ConnectIDStart;
-SMD.ConnectID = SMD.ConnectID + ConnectIDStart;
 
 % Store the updated SMD and SMDCombined in obj.
 obj.SMDCombined = SMDCombined;
