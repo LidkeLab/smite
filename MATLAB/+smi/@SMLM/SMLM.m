@@ -146,7 +146,7 @@ classdef SMLM < handle
         SMD = obj.SMD;
         SMF = obj.SMF;
         fprintf('Saving SMD and SMF structures ...\n');
-        save(fullfile(ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
+        save(fullfile(obj.SMF.Data.ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
         end
 
     end % methods
