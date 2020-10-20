@@ -91,7 +91,6 @@ classdef SMLM < handle
             % Perform frame-connection on localizations in SMD.
             if obj.SMF.FrameConnection.On 
                 FC = smi_core.FrameConnection(SMD, obj.SMF);
-                fprintf('Frame connecting ...\n');
                 [SMD] = FC.performFrameConnection();
             end
             

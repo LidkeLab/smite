@@ -159,6 +159,10 @@ for nn = unique(SMD.DatasetNum)
     end
 end
 
+% A helpful print on how localizations were collapsed.
+fprintf('Frame connecting: %d -> %d localizations\n', ...
+        numel(SMD), numel(SMDCombined.X));
+
 % Add zeros to the ThreshFlag of SMDCombined (we should never be keeping
 % localizations in SMDCombined which have non-zero ThreshFlag).
 SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
@@ -176,8 +180,5 @@ SMDCombined.IndSMD = IndSMD;
 % Store the updated SMD and SMDCombined in obj.
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
-
-fprintf('Frame connecting: %d -> %d localizations\n', ...
-        numel(SMD), numel(SMDCombined.X));
 
 end
