@@ -29,10 +29,9 @@ classdef ChannelRegistration < handle
     end
     
     methods (Static)
-        applyImageTransform()
-        applyCoordTransform()
-        visualizeImageTransform()
-        visualizeCoordTransform()
+        transformImages()
+        transformCoords()
+        visualizeTransform()
     end
     
     methods (Static, Hidden)
@@ -42,6 +41,9 @@ classdef ChannelRegistration < handle
         
         findImageTransform()
         findCoordTransform()
+        visualizeImageTransform()
+        visualizeCoordTransform()
+        
     end
     
     
