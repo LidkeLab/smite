@@ -35,20 +35,20 @@ classdef SMLM < handle
             % fullAnalysis Analyze all data and save results
             
             obj.analyzeAll();
-            
-            %saveResults
-            
-            
+            obj.saveResults();
             
             %save
             
         end
-        
+
+        % ---------------------------------------------------------------------
+
         function analyzeAll(obj)
-            % analyzeAll loops over dataset and creates SMD
+            % analyzeAll loops over dataset and creates SMD.
             
             % Define the list of datasets to be processed.
-            %obj.SMF = smi_core.LoadData.setDatasetList(obj.SMF).
+            %obj.SMF.Data.DatasetList = ...
+            %    smi_core.LoadData.setDatasetList(obj.SMF).
             %datasetList = obj.SMF.Data.DatasetList;
             datasetList = [1, 2];
 
@@ -67,6 +67,7 @@ classdef SMLM < handle
             end
         end
         
+        % ---------------------------------------------------------------------
         
         function SMD=analyzeDataset(obj,DatasetIndex,DatasetCount)
         % analyzeDataset Load and analyze one dataset    
@@ -100,8 +101,9 @@ classdef SMLM < handle
                 SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
             end
         end
-        
-        
+
+        % ---------------------------------------------------------------------
+
         function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
         % loadDataset loads a dataset and converts to photons
         % set obj.Data   
@@ -113,12 +115,29 @@ classdef SMLM < handle
                 [~, Dataset, SMF] = smi_core.LoadData(SMF,DatasetIndex);
         end % switch
         end
-        
+
+        % ---------------------------------------------------------------------
+
         function saveResults(obj)
-        % saveResults Save all results and plots in subfolder
+        % saveResults saves all results and plots in subfolder.
         % gaussblobs, drift image, fits/frame, NumConnected hist,
         % Driftcorrection plots, precision hist, intensity hist,
         % mat file with SMD and SMF files. 
+        if isempty(obj.SMD)
+            error('No SMD results structure found to save!');
+        end
+
+        [~, f, ~] = fileparts(obj.SMF.Data.DatasetList{1});
+        if isempty(obj.SMF.Data.AnalysisID)
+            fn = [f, '_Results.mat'];
+        else
+            fnextend = strcat('_Results_', obj.SMF.Data.AnalysisID, '.mat');
+            fn = [f, fnextend];
+        end
+
+        SMD = obj.SMD;
+        SMF = obj.SMF;
+        save(fullfile(ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
         end
 
     end % methods
