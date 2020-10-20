@@ -12,6 +12,21 @@ classdef ChannelRegistration < handle
         
         % Filename(s) of the fiducial data file(s) (cell array of char)
         FiducialFilePath
+        
+        % Type of data used to compute transform (char)(Default = 'coords')
+        % OPTIONS: 
+        %   'coords': localizations (defined by (x, y) coordinates) are
+        %             used to find the transform.
+        %   'images': images are used directly to find the transform.
+        TransformationBasis char = 'coords';
+        
+        % Type of transform to be computed (char array)(Default = 'lwm')
+        % OPTIONS:
+        %   If TransformationBasis = 'coords', this can be set to any of
+        %       the transformationType options defined in doc fitgeotrans
+        %   If TransformationBasis = 'images', this can be set to any of
+        %       the transformType options defined in doc imregtform
+        TransformationType char = 'lwm';
     end
     
     properties (SetAccess = protected)
