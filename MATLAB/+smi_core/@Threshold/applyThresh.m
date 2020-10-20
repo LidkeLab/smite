@@ -12,8 +12,6 @@ function [SMR] = applyThresh(SMD)
 %Created by
 %   Michael J. Wester (2020) and Sandeep Pallikkuth, Lidke Lab, 2017.
 
-   fprintf('-> Applying threshold ...\n');
-
    SMR = SMD;
 
    SMD_FNames = fieldnames(SMD);

@@ -177,5 +177,7 @@ SMDCombined.IndSMD = IndSMD;
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
 
+fprintf('Frame connecting: %d -> %d localizations\n', ...
+        numel(SMD), numel(SMDCombined.X));
 
 end
