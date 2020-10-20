@@ -29,6 +29,15 @@ classdef SMLM < handle
         function obj=SMLM(SMF,Filename)
             % SMLM
             obj.SMF = SMF;
+            if exist('FileName', 'var')
+                if iscell(FileName)
+                    obj.FileName = Filename;
+                else
+                    obj.FileName = {Filename};
+                end
+            else
+                obj.FileName = SMF.Data.FileName;
+            end
         end
         
         function fullAnalysis(obj)
@@ -126,7 +135,7 @@ classdef SMLM < handle
             error('No SMD results structure found to save!');
         end
 
-        [~, f, ~] = fileparts(obj.SMF.Data.DatasetList(1));
+        [~, f, ~] = fileparts(obj.FileName{1});
         if isempty(obj.SMF.Data.AnalysisID)
             fn = [f, '_Results.mat'];
         else
