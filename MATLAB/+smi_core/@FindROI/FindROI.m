@@ -92,10 +92,14 @@ classdef FindROI < handle
             % and YBoxCorner are modified in the SMD structure.
             %
             % INPUTS
-            %   SMD     SMD data structure (Optional)
+            %   SMD      SMD data structure (Optional)
             %
             % OUTPUTS
-            %   ROIs:   Stack of N 2D subregions (BoxSize x BoxSize x N)
+            %   ROIStack Stack of N 2D subregions (BoxSize x BoxSize x N)
+            %   SMD      SMD data structure based on input SMD structure if
+            %            provided, or newly created.  Fields defined here are:
+            %               XBoxCorner, YBoxCorner, FrameNum, NFrames, XSize,
+            %               YSize, NDims (findROI assumes 2D)
             
             %Create SMD if needed
             if nargin<2
@@ -181,6 +185,10 @@ classdef FindROI < handle
             SMD.XBoxCorner = StartCol;
             SMD.YBoxCorner = StartRow;
             SMD.FrameNum = ZInd;
+            SMD.NFrames = ZSize;
+            SMD.XSize = XSize;
+            SMD.YSize = YSize;
+            SMD.NDims = 2;
         end
         
         function showOverlay(obj)
