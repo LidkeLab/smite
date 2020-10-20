@@ -49,8 +49,8 @@ classdef SMLM < handle
             % Define the list of datasets to be processed.
             %obj.SMF.Data.DatasetList = ...
             %    smi_core.LoadData.setDatasetList(obj.SMF).
-            %datasetList = obj.SMF.Data.DatasetList;
-            datasetList = [1, 2];
+            obj.SMF.Data.DatasetList = [1, 2];
+            datasetList = obj.SMF.Data.DatasetList;
 
             % DriftCorrection class object is also used in analyzeDataset
             obj.DC = smi_core.DriftCorrection(obj.SMF);
@@ -126,7 +126,7 @@ classdef SMLM < handle
             error('No SMD results structure found to save!');
         end
 
-        [~, f, ~] = fileparts(obj.SMF.Data.DatasetList{1});
+        [~, f, ~] = fileparts(obj.SMF.Data.DatasetList(1));
         if isempty(obj.SMF.Data.AnalysisID)
             fn = [f, '_Results.mat'];
         else
