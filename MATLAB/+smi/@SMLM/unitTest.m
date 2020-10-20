@@ -16,7 +16,7 @@ Success(1) = 1;
 fprintf(['Running smi.SMLM.unitTest.\n', ...
          'Testing all smi.SMLM functionality.\n']);
 
-%% Test loading various datatypes.
+% Test loading various datatypes.
 fprintf('\nTesting loading of various datatypes.\n')
 
 saveName = 'SMLM_testData';
@@ -101,7 +101,7 @@ delete(fullfile(tempdir,[saveName, '*.*']));
 %% ----------------------------------------------------------------------------
 
 Success(3) = 1;
-%% Simulate and save realistic SMLM data.
+% Simulate and save realistic SMLM data.
 fprintf('\nSimulating realistic 2D SMLM data\n');
 [SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
 [SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
@@ -112,7 +112,7 @@ h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
 h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimData2));
 h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 
-%% Test complete data flow
+% Test complete data flow
 fprintf('\nTesting 2D analysis.\n');
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();

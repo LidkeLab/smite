@@ -177,7 +177,7 @@ SMDCombined.IndSMD = IndSMD;
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
 
-% A helpful print on how localizations were collapsed.
+% A helpful print enumerating how many localizations were collapsed here.
 fprintf('Frame connecting: %d -> %d localizations\n', ...
         numel(SMD.X), numel(SMDCombined.X));
 
