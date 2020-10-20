@@ -35,8 +35,8 @@ SMF.Data.CameraOffset = 0;
 
 % Simulate two small datasets.
 fprintf('Simulating data.\n')
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 100);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(100, 100);
+[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 100);
+[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 100);
 
 % Save datasets as mat files.
 fprintf('\nSaving data as mat files.\n')
@@ -135,22 +135,22 @@ SMLMobj = smi.SMLM(SMF);
 try
    % fullFit: fitting -> thresholding -> frame connection -> drift correction
    SMLMobj.fullAnalysis();
-   % generate output plots
-   fprintf('Generating output plots.\n');
-   SMLMobj.genPlots();
-   % generate color overlay
-   fprintf('Generating color overlay.\n');
-   %SMLMobj.SMD.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay
-   %SMLMobj.SMR.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay
-   DatasetNum = 1;
-   SMLMobj.genBlobOverlay(DatasetNum);
-   % save
-   SMLMobj.save();
-   SMLMobj.saveResults();
-   SMLMobj.exportFileType='Excel';
-   SMLMobj.exportResults();
-   SMLMobj.exportFileType='txt';
-   SMLMobj.exportResults();
+%  % generate output plots
+%  fprintf('Generating output plots.\n');
+%  SMLMobj.genPlots();
+%  % generate color overlay
+%  fprintf('Generating color overlay.\n');
+%  %SMLMobj.SMD.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay
+%  %SMLMobj.SMR.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay
+%  DatasetNum = 1;
+%  SMLMobj.genBlobOverlay(DatasetNum);
+%  % save
+%  SMLMobj.save();
+%  SMLMobj.saveResults();
+%  SMLMobj.exportFileType='Excel';
+%  SMLMobj.exportResults();
+%  SMLMobj.exportFileType='txt';
+%  SMLMobj.exportResults();
 catch ME
    delete(fullfile(tempdir, [saveName '.*']));
    fprintf('Caught following error during smi.SMLM.unitTest:\n')
