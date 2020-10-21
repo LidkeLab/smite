@@ -1,4 +1,4 @@
-function NDatasets = get.countNDatasets(SMF)
+function NDatasets = countNDatasets(SMF)
 % countNDatasets counts the number of datasets in SMF.Data.FileName .
 %
 % INPUT:
