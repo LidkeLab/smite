@@ -24,14 +24,13 @@ classdef LoadData < handle
     % CITATION:
     %   Sandeep Pallikkuth, Lidke Lab, 2020
     
-   
     properties (SetAccess = 'protected')
         FileType           % Filetype determined from SMF.Data.FileName
         FullFileName       % Full file path
     end
     
     methods
-        function [obj,Data,SMF] = LoadData(SMF,varargin)
+        function [obj,Data,SMF] = loadData(SMF,varargin)
             % INPUT
             %    SMF - single molecule fitting structure
             %    varargin - input parameters, different for each file type:
