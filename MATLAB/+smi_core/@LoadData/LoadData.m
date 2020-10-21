@@ -90,7 +90,7 @@ classdef LoadData < handle
         function [Data]=loadDataMat(FullFileName,varargin)
             % static method for loading .mat file/s
             % INPUT
-            %    FullFileName - full path to datafile, must be h5
+            %    FullFileName - full path to datafile, must be mat
             %    varargin - input parameters
             %           MatVarName, name of matlab variable containing the data
             %            DatasetNum, number indicating the file in
@@ -158,6 +158,11 @@ classdef LoadData < handle
             end
             
             DatasetIdx = varargin{1};
+            
+            % FullFileName may be a cell array.
+            if iscell(FullFileName)
+                FullFileName = FullFileName{1};
+            end
             HD5Info = h5info(FullFileName);
             
             % Define a flag to indicate the .h5 file structure: 0 indicates
