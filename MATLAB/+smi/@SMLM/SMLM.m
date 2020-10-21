@@ -56,8 +56,7 @@ classdef SMLM < handle
             % analyzeAll loops over dataset and creates SMD.
             
             % Define the list of datasets to be processed.
-            %obj.SMF.Data.DatasetList = ...
-            %    smi_core.LoadData.setDatasetList(obj.SMF).
+            % obj.SMF = smi_core.LoadData.setSMFDatasetList(obj.SMF).
             obj.SMF.Data.DatasetList = [1, 2];
             datasetList = obj.SMF.Data.DatasetList;
 
