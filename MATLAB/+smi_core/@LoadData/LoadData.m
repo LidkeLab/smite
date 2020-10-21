@@ -30,6 +30,10 @@ classdef LoadData < handle
     end
     
     methods
+        function obj = LoadData()
+        % Constructor.
+        end
+
         function [obj,Data,SMF] = loadData(obj,SMF,varargin)
             % INPUT
             %    SMF - single molecule fitting structure
