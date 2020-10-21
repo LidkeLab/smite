@@ -114,14 +114,13 @@ classdef SMLM < handle
         function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
         % loadDataset loads a dataset and converts to photons
         % set obj.Data   
+        LD = smi_core.LoadData;
         switch SMF.Data.FileType;
             case 'mat'
-                [~, Dataset, SMF] = ...
-                    smi_core.LoadData.loadData(SMF, SMF.Data.DataVariable, ...
-                                               DatasetIndex);
+                [~, Dataset, SMF] = LD.loadData(SMF, SMF.Data.DataVariable, ...
+                                                DatasetIndex);
             case 'h5'
-                [~, Dataset, SMF] = ...
-                    smi_core.LoadData.loadData(SMF, DatasetIndex);
+                [~, Dataset, SMF] = LD.loadData(SMF, DatasetIndex);
         end % switch
         end
 
