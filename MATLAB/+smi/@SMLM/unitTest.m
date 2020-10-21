@@ -79,7 +79,12 @@ h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 % Try running smi.SMLM.  If it fails, delete files before returning error,
 fprintf(['Loading and analyzing data saved as h5 files.\n', ...
          '   (Only doing box finding and fitting.)\n']);
-% Update SMF object.
+% Create SMF structure.
+SMF = smi_core.SingleMoleculeFitting();
+SMF.Data.FileDir      = tempdir;
+SMF.Data.CameraType   = 'EMCCD';
+SMF.Data.CameraGain   = 1;
+SMF.Data.CameraOffset = 0;
 SMF.Data.FileName = {[saveName, '.h5']};
 %SMF.RawImageSize = [size(SimData1,1),size(SimData1,2)];
 % Create smi.SMLM object.
