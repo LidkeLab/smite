@@ -53,11 +53,10 @@ classdef LoadData < handle
                 % determining FileTye from SMF entries of FileName
                 if iscell(SMF.Data.FileName)
                     obj.FileType=SMF.Data.FileName{1}(end-2:end);
-                    obj.FullFileName=fullfile(SMF.Data.FileDir,SMF.Data.FileName{1});
                 else
                     obj.FileType = SMF.Data.FileName(end-2:end);
-                    obj.FullFileName=fullfile(SMF.Data.FileDir,SMF.Data.FileName);
                 end
+                obj.FullFileName=fullfile(SMF.Data.FileDir,SMF.Data.FileName);
             else
                 % If Filename entry not present in SMF, option to choose
                 % the file/s
