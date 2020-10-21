@@ -82,6 +82,7 @@ fprintf(['Loading and analyzing data saved as h5 files.\n', ...
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.FileDir      = tempdir;
+SMF.Data.FileName     = {[saveName '.h5']};
 SMF.Data.CameraType   = 'EMCCD';
 SMF.Data.CameraGain   = 1;
 SMF.Data.CameraOffset = 0;
