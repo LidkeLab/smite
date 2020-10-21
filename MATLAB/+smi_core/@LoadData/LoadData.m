@@ -241,8 +241,7 @@ classdef LoadData < handle
             Data=single(h5read(FullFileName,DataName));
         end
 
-        function DatasetList = setSMFDatasetList(SMF);
-        function NDatasets = countNDatasets(SMF);
+        DatasetList = setSMFDatasetList(SMF);
+        NDatasets = countNDatasets(SMF);
     end
 end
-
