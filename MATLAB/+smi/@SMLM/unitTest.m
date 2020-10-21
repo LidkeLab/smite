@@ -17,7 +17,7 @@ fprintf(['Running smi.SMLM.unitTest.\n', ...
          'Testing all smi.SMLM functionality.\n']);
 
 % Test loading various datatypes.
-fprintf('\nTesting loading of various datatypes.\n')
+fprintf('Testing loading of various datatypes.\n')
 
 saveName = 'SMLM_testData';
 file1 = [saveName, '1.mat'];
@@ -35,11 +35,11 @@ SMF.Data.CameraOffset = 0;
 
 % Simulate two small datasets.
 fprintf('Simulating data.\n')
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 100);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 100);
+[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 250);
+[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 250);
 
 % Save datasets as mat files.
-fprintf('\nSaving data as mat files.\n')
+fprintf('Saving data as mat files.\n')
 Data = SimData1;
 save(fullfile(tempdir, file1), 'Data');
 Data = SimData2;
@@ -105,7 +105,7 @@ Success(3) = 1;
 fprintf('\nSimulating realistic 2D SMLM data\n');
 [SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
 [SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
-fprintf('\nSaving realistic SMSR data.\n');
+fprintf('Saving realistic SMSR data.\n');
 saveName = 'SMLM_testData';
 h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
 h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
@@ -113,7 +113,7 @@ h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimD
 h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 
 % Test complete data flow
-fprintf('\nTesting 2D analysis.\n');
+fprintf('Testing 2D analysis.\n');
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
 % Cannot save in folders inside tempdir, so everything must be saved in tempdir
