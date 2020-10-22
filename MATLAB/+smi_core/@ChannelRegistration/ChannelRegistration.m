@@ -2,16 +2,32 @@ classdef ChannelRegistration < handle
     %ChannelRegistration contains methods for channel registration.
     % This class contains methods for performing channel registration and
     % methods used to interpret/visualize the results.
+    %
+    % REQUIRES:
+    %   MATLAB Image Processing Toolbox
     
     % Created by:
     %   David J. Schodt (Lidke Lab, 2020)
     
+    
     properties
-        % Directory containing the fiducial file(s) (cell array of char)
+        % Variable in FiducialFileNames containing the raw data (char)
+        DataVariable = 'sequence';
+        
+        % Directory containing the fiducial file(s) (char)
         FiducialFileDir
         
-        % Filename(s) of the fiducial data file(s) (cell array of char)
-        FiducialFilePath
+        % Filenames of the fiducial data files (cell array of char)
+        % FiducialFileNames{1} is always assumed to be the "fixed" or
+        % "reference" file, meaning that FiducialFileNames{n>1} will all be
+        % registered with respepct to FiducialFileNames{1}.
+        FiducialFileNames
+        
+        % Single molecule fitting structure (see SingleMoleculeFitting)
+        % This SMF structure is used to find localizations in the fiducial
+        % files specified by FiducialFilePath.  If 
+        % TransformationBasis = 'images' this is not needed.
+        SMF struct
         
         % Type of data used to compute transform (char)(Default = 'coords')
         % OPTIONS: 
@@ -35,11 +51,27 @@ classdef ChannelRegistration < handle
     end
     
     methods
-        function [obj] = ChannelRegistration()
+        function [obj] = ChannelRegistration(...
+                FiducialFileDir, FiducialFileNames, SMF)
             %ChannelRegistration class constructor.
+            % The inputs can be used to set class properties if desired.
+            
+            % Set inputs to class properties if needed.
+            if (exist('FiducialFileDir', 'var') ...
+                    && ~isempty(FiducialFileDir))
+                obj.FiducialFileDir = FiducialFileDir;
+            end
+            if (exist('FiducialFileNames', 'var') ...
+                    && ~isempty(FiducialFileNames))
+                obj.FiducialFileNames = FiducialFileNames;
+            end
+            if (exist('SMF', 'var') && ~isempty(SMF))
+                obj.SMF = SMF;
+            end
+            
         end
         
-        findTransform(obj)
+        [RegistrationTransform] = findTransform(obj);
         
     end
     
