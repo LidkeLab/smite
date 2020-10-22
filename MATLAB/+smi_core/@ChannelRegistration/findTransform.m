@@ -12,6 +12,14 @@ function [RegistrationTransform] = findTransform()
 %   David J. Schodt (Lidke Lab, 2020)
 
 
+% Load the fiducial data.
+LoadData = smi_core.LoadData;
+NFiducials = numel(obj.FiducialFileNames);
+FiducialImages = cell(NFiducials, 1);
+for ii = 1:NFiducials
+    [~, FiducialImages{ii}] = LoadData.loadData(obj.SMF);
+end
+
 % Proceed based on the setting of obj.TransformationBasis (which defines
 % whether or not we need to find localizations from the fiducial data).
 if strcmp(obj.TransformationBasis, 'coords')
