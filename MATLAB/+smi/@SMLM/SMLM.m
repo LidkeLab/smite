@@ -81,12 +81,12 @@ classdef SMLM < handle
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
             for nn=1:numel(obj.DatasetList)
-                SMDnn = obj.analyzeDataset(datasetList(nn), nn);
+                SMDnn = obj.analyzeDataset(obj.DatasetList(nn), nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
             end
 
             % Inter-dataset drift correction.
-            if numel(datasetList) > 1
+            if numel(obj.DatasetList) > 1
                fprintf('Drift correcting (inter-datastet) ...\n');
                obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
             end
