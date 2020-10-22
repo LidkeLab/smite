@@ -34,7 +34,7 @@ classdef LoadData < handle
         % Constructor.
         end
 
-        function [obj,Data,SMF] = loadData(obj,SMF,varargin)
+        function [obj,Data,SMF] = loadRawData(obj,SMF,varargin)
             % INPUT
             %    SMF - single molecule fitting structure
             %    varargin - input parameters, different for each file type:

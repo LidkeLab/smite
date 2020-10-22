@@ -116,10 +116,11 @@ classdef SMLM < handle
         LD = smi_core.LoadData;
         switch SMF.Data.FileType;
             case 'mat'
-                [~, Dataset, SMF] = LD.loadData(SMF, SMF.Data.DataVariable, ...
-                                                DatasetIndex);
+                [~, Dataset, SMF] = ...
+                    LD.loadRawData(SMF, SMF.Data.DataVariable, DatasetIndex);
+
             case 'h5'
-                [~, Dataset, SMF] = LD.loadData(SMF, DatasetIndex);
+                [~, Dataset, SMF] = LD.loadRawData(SMF, DatasetIndex);
         end % switch
         end
 
