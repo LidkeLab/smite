@@ -196,7 +196,7 @@ classdef SimSMLM < handle
                     % time when the particle goes off and third column gives the time
                     % when particle photobleaches.
                     OnOffPairs(NPairs,1)=T;
-                    D=exprnd(1/obj.K_OffToOn); %Generate blink duratrion
+                    D=exprnd(1/obj.K_OnToOff); %Generate blink duratrion
                     OnOffPairs(NPairs,2)=min(T+D,obj.NFrames); %The On-time plus the duration gives the off-time.
                     OnOffPairs(NPairs,3)= rand > (obj.K_OnToOff/(obj.K_OnToOff+obj.K_OnToBleach)); %fluorophore bleaches
                     %if this condition met.
