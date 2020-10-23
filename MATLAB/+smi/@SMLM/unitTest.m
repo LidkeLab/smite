@@ -135,15 +135,13 @@ SMF.Thresholding.MaxSE_XY = 0.1;
 SMF.FrameConnection.On    = true;
 SMF.DriftCorrection.On    = true;
 %SMF.RawImageSize = [size(SimData1,1),size(SimData1,2)];
+fprintf('-> ResultsDir = %s\n', SMF.Data.ResultsDir);
 % Create smi.SMLM object.
 %SMLMobj = smi.SMLM('nogui');
 SMLMobj = smi.SMLM(SMF);
 try
    % fullFit: fitting -> thresholding -> frame connection -> drift correction
    SMLMobj.fullAnalysis();
-%  % generate output plots
-%  fprintf('Generating output plots.\n');
-%  SMLMobj.genPlots();
 %  % generate color overlay
 %  fprintf('Generating color overlay.\n');
 %  %SMLMobj.SMD.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay

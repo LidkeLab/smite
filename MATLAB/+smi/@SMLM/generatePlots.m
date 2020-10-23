@@ -15,9 +15,9 @@ function generatePlots(obj, ShowPlots)
 % Created by:
 %    Hanieh Mazloom-Farsibaf, Marjolein Meddens Apr 2017 (Keith A. Lidke's lab)
 
-fprintf('Generating plots ...\n');
+fprintf('Generating output plots ...\n');
 
-if ~exist('ShowPlots'm 'var')
+if ~exist('ShowPlots', 'var')
    ShowPlots = false;
 end
 
