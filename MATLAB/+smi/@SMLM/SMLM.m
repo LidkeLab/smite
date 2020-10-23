@@ -48,6 +48,8 @@ classdef SMLM < handle
 
             obj.analyzeAll();
             obj.saveResults();
+            ShowPlots = false;
+            obj.generatePlots(ShowPlots);
 
             %save
 
@@ -56,10 +58,12 @@ classdef SMLM < handle
         % ---------------------------------------------------------------------
 
         function testFit(obj, DatasetIndex)
-           %testFit performs detailed analysis and feedback of one dataset.
+            %testFit performs detailed analysis and feedback of one dataset.
 
-           obj.DatasetList = DatasetIndex;
-           obj.analyzeAll();
+            obj.DatasetList = DatasetIndex;
+            obj.analyzeAll();
+            ShowPlots = true;
+            obj.generatePlots(ShowPlots);
 
         end
 
@@ -166,6 +170,10 @@ classdef SMLM < handle
         fprintf('Saving SMD and SMF structures ...\n');
         save(fullfile(obj.SMF.Data.ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
         end
+
+        % ---------------------------------------------------------------------
+
+        generatePlots(obj, ShowPlots);
 
     end % methods
     % =========================================================================
