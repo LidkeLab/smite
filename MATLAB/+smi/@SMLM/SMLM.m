@@ -14,6 +14,7 @@ classdef SMLM < handle
         FileName    % String or Cell array of strings
         DataDir
         ResultsDir  % (Default = 'DataDir/../Results/FileName/) same as Seq
+        PlotDo = [] % Plots to generate (all by default)
     end
     % =========================================================================
 
@@ -27,6 +28,7 @@ classdef SMLM < handle
 
     % =========================================================================
     methods
+
         function obj=SMLM(SMF,Filename)
             % SMLM
             obj.SMF = SMF;
@@ -49,7 +51,7 @@ classdef SMLM < handle
             obj.analyzeAll();
             obj.saveResults();
             ShowPlots = false;
-            obj.generatePlots(ShowPlots);
+            obj.generatePlots(ShowPlots, obj.PlotDo);
 
             %save
 
@@ -63,7 +65,7 @@ classdef SMLM < handle
             obj.DatasetList = DatasetIndex;
             obj.analyzeAll();
             ShowPlots = true;
-            obj.generatePlots(ShowPlots);
+            obj.generatePlots(ShowPlots, obj.PlotDo);
 
         end
 
