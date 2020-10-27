@@ -45,6 +45,15 @@ classdef SMLM < handle
 
         % ---------------------------------------------------------------------
 
+        function setSMD(obj, SMD)
+        % Interface to set the SMD property of the object.
+
+           obj.SMD = SMD;
+
+        end
+
+        % ---------------------------------------------------------------------
+
         function fullAnalysis(obj)
             % fullAnalysis analyzes all data and saves results.
 

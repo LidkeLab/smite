@@ -58,17 +58,17 @@ end
 
 if matches("X_SE", PlotDo)
    %create X_SE histogram
-   plotAndSaveHist('X_SE','X standard error')
+   plotAndSaveHist('X_SE','X std error')
 end
 
 if matches("Y_SE", PlotDo)
    %create Y_SE histogram
-   plotAndSaveHist('Y_SE','Y standard error')
+   plotAndSaveHist('Y_SE','Y std error')
 end
 
 if matches("Z_SE", PlotDo)
    %create Z_SE histogram
-   plotAndSaveHist('Z_SE','Z standard error')
+   plotAndSaveHist('Z_SE','Z std error')
 end
 
 if matches("NCombined", PlotDo)
@@ -125,7 +125,7 @@ SRImageZoom = 10;
 
 if matches("DriftIm", PlotDo)
    % Drift image
-   [~, DriftImRGB] = smi_vis.driftImage(SMD, SRImageZoom);
+   [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, SRImageZoom);
    dipshow(DriftImRGB);
    FileName = [BaseName '_DriftImage.png'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
@@ -134,7 +134,7 @@ end
 
 if matches("GaussIm", PlotDo)
    % Gaussian image
-   [GaussIm] = smi_vis.gaussianImage(SMD, SRImageZoom);
+   [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, SRImageZoom);
    dipshow(GaussIm);
    FileName = [BaseName '_GaussImage.png'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
@@ -143,7 +143,7 @@ end
 
 if matches("HistIm", PlotDo)
    % Histogram image
-   [~, HistImRGB] = smi_vis.histogramImage(SMD, SRImageZoom);
+   [~, HistImRGB] = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
    dipshow(HistImRGB);
    FileName = [BaseName '_HistImage.png'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
@@ -154,9 +154,9 @@ end
     function plotAndSaveHist(FieldName,HistName)
         if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
             Vector_in=SMD.(FieldName);
-            FigH = smi_vis.plotHistogram(Vector_in,HistName);
+            FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
             [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
-            FileName = [BaseName '_' HistName '_Hist.png'];
+            FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
             saveas(FigH,(fullfile(PlotSaveDir,FileName)),'png');
             if ~ShowPlots; close(gcf); end
         end
