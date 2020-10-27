@@ -173,14 +173,15 @@ classdef SMLM < handle
 
         % ---------------------------------------------------------------------
 
-        generatePlots(obj, ShowPlots);
+        generatePlots(obj, ShowPlots)
 
     end % methods
     % =========================================================================
 
     % =========================================================================
     methods(Static)
-        Success = unitTest();
+        [FigHandle] = plotCumDrift(SMD, FieldName)
+        Success = unitTest()
     end % methods(Static)
     % =========================================================================
 

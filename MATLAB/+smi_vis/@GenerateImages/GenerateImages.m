@@ -10,6 +10,7 @@ classdef GenerateImages
 % driftImage generates 2D histogram image from SR data.
 % gaussianImage creates gaussian-blob image from SR data.
 % histogramImage generates 2D histogram image from SR data.
+% plotHistogram creates a histogram of a field from an SMD structure.
 % scaleBar creates a scale bar of desired length on the input image.
 %
 % REQUIRES:
@@ -35,6 +36,7 @@ methods(Static)
    [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
    [GaussIm] = gaussianImage(SMR, SRImageZoom)
    [HistIm, RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
+   [FigHandle] = plotHistograms(Vector_in, Hist_Name)
    [ImageOut, Image] = scalebar(Image, PixelSize, Length, Location)
 
    % Unit tests.

@@ -1,4 +1,4 @@
-function generatePlots(obj, ShowPlots)
+function generatePlots(obj, ShowPlots, PlotDo)
 %generatePlots creates all histograms and plots for an SMD structure.
 %
 % INPUT:
@@ -6,11 +6,17 @@ function generatePlots(obj, ShowPlots)
 %       obj.SMD     Single Molecule Data structure
 %       obj.SMF     Single Molecule Fitting structure
 %    ShowPlots:  Flag for showing plots on the screen (Default = false)
+%    PlotDo:     Plots to make chosen from the following list:
+%                "Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE",
+%                "NCombined", "DriftX", "DriftY", "DriftZ", "Fit_Frame",
+%                "DriftIm", "GaussIm", "HistIm"
+%                (Default is to make all plots)
 %
 % OUTPUT:
-%    The figures are saved in given directory or only show the histogram
 %    The figures are saved in .png format in the given directory
-%    PlotSaveDir Path to save plot in .png format (Default=obj.SaveDir)
+%
+% REQUIRES:
+%    Dipimage toolbox (http://www.diplib.org/)
 
 % Created by:
 %    Hanieh Mazloom-Farsibaf, Marjolein Meddens Apr 2017 (Keith A. Lidke's lab)
@@ -21,91 +27,150 @@ if ~exist('ShowPlots', 'var')
    ShowPlots = false;
 end
 
+if ~exist('PlotDo', 'var') || isempty(PlotDo)
+   PlotDo = ["Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE", ...
+             "NCombined", "DriftX", "DriftY", "DriftZ", "Fit_Frame", ...
+             "DriftIm", "GaussIm", "HistIm"];
+end
+
+% PlotSaveDir is the path to the directory for saving plots in .png format
 PlotSaveDir = obj.SMF.Data.ResultsDir;
 SMD = obj.SMD;
 
-%create Photons histogram
-plotAndSaveHist('Photons','Intensity')
+if matches("Photons", PlotDo)
+   %create Photons histogram
+   plotAndSaveHist('Photons','Intensity')
+end
 
-%create Bg histogram
-plotAndSaveHist('Bg','Background')
+if matches("Bg", PlotDo)
+   %create Bg histogram
+   plotAndSaveHist('Bg','Background')
+end
 
-%create PSFSigma histogram
-plotAndSaveHist('PSFSigma','PSFSigma')
+if matches("PSFSigma", PlotDo)
+   plotAndSaveHist('PSFSigma','PSFSigma')
+end
 
-%create Pvalue histogram
-plotAndSaveHist('Pvalue','P value')
+if matches("Pvalue", PlotDo)
+   %create Pvalue histogram
+   plotAndSaveHist('Pvalue','P value')
+end
 
-%create X_SE histogram
-plotAndSaveHist('X_SE','X standard error')
+if matches("X_SE", PlotDo)
+   %create X_SE histogram
+   plotAndSaveHist('X_SE','X standard error')
+end
 
-%create Y_SE histogram
-plotAndSaveHist('Y_SE','Y standard error')
+if matches("Y_SE", PlotDo)
+   %create Y_SE histogram
+   plotAndSaveHist('Y_SE','Y standard error')
+end
 
-%create Z_SE histogram
-plotAndSaveHist('Z_SE','Z standard error')
+if matches("Z_SE", PlotDo)
+   %create Z_SE histogram
+   plotAndSaveHist('Z_SE','Z standard error')
+end
 
-%create Number of Connected localization histogram
-plotAndSaveHist('NCombined','Connected emitters')
+if matches("NCombined", PlotDo)
+   %create Number of Connected localization histogram
+   plotAndSaveHist('NCombined','Connected emitters')
+end
 
 %cumulative of DriftX, DriftY
-if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && isfield(SMD,'DriftY') && ~isempty(SMD.DriftY)
-        plotAndSaveCum('DriftX','Drift in X direction')
-        plotAndSaveCum('DriftY','Drift in Y direction')
-            if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ)
-
-        plotAndSaveCum('DriftZ','Drift in Z direction')
-            end 
+if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
+   isfield(SMD,'DriftY') && ~isempty(SMD.DriftY)
+   if matches("DriftX", PlotDo)
+      plotAndSaveCum('DriftX','Drift in X direction')
+   end
+   if matches("DriftY", PlotDo)
+      plotAndSaveCum('DriftY','Drift in Y direction')
+   end
+   if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ) && matches("DriftZ",PlotDo)
+      plotAndSaveCum('DriftZ','Drift in Z direction')
+   end 
 end
 
-% Number of localizations per frame
-for jj=1:max(SMD.DatasetNum)
-    for ii=1:max(SMD.FrameNum)
-        idx=find(SMD.FrameNum==ii & SMD.DatasetNum==jj);
-        Nloc_frame{jj}(ii)=length(idx);
-    end
-end
-if length(Nloc_frame)==1
-    Fit_Frame = Nloc_frame{1};
-end
-for ii=1:length(Nloc_frame)-1
-    Fit_Frame=cat(2,Nloc_frame{ii},Nloc_frame{ii+1});
+% BaseName is used to label plot files.
+[~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+
+if matches("Fit_Frame", PlotDo)
+   % Number of localizations per frame
+   for jj=1:max(SMD.DatasetNum)
+       for ii=1:max(SMD.FrameNum)
+           idx=find(SMD.FrameNum==ii & SMD.DatasetNum==jj);
+           Nloc_frame{jj}(ii)=length(idx);
+       end
+   end
+   if length(Nloc_frame)==1
+       Fit_Frame = Nloc_frame{1};
+   end
+   for ii=1:length(Nloc_frame)-1
+       Fit_Frame=cat(2,Nloc_frame{ii},Nloc_frame{ii+1});
+   end
+
+   % plot fits per frame
+   figure;
+   Frames=1:length(Fit_Frame);
+   plot(Frames,Fit_Frame);
+   xlabel('Frames');
+   ylabel('Number of Fits');
+   title('Number of fits per frame');
+   FileName = [BaseName '_FitsPerFrame.png'];
+   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+
+   if ~ShowPlots; close(gcf); end
 end
 
-% plot fit per frame
-figure;
-Frames=1:length(Fit_Frame);
-plot(Frames,Fit_Frame);
-xlabel('Frames');
-ylabel('Number of Fits');
-title('Number of fits per frame');
-            [~,BaseName,~] = fileparts(obj.FileList{1});
-FileName = [BaseName '_FitsPerFrame.png'];
-if ~isempty(PlotSaveDir)
-    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
-end
-if ~ShowPlots; close(gcf); end
+SRImageZoom = 10;
 
-% nested function for plotting and saving histograms
+if matches("DriftIm", PlotDo)
+   % Drift image
+   [~, DriftImRGB] = smi_vis.driftImage(SMD, SRImageZoom);
+   dipshow(DriftImRGB);
+   FileName = [BaseName '_DriftImage.png'];
+   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+   if ~ShowPlots; close(gcf); end
+end
+
+if matches("GaussIm", PlotDo)
+   % Gaussian image
+   [GaussIm] = smi_vis.gaussianImage(SMD, SRImageZoom);
+   dipshow(GaussIm);
+   FileName = [BaseName '_GaussImage.png'];
+   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+   if ~ShowPlots; close(gcf); end
+end
+
+if matches("HistIm", PlotDo)
+   % Histogram image
+   [~, HistImRGB] = smi_vis.histogramImage(SMD, SRImageZoom);
+   dipshow(HistImRGB);
+   FileName = [BaseName '_HistImage.png'];
+   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+   if ~ShowPlots; close(gcf); end
+end
+
+    % nested function for plotting and saving histograms
     function plotAndSaveHist(FieldName,HistName)
         if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
             Vector_in=SMD.(FieldName);
-            FigH = obj.plotHistograms(Vector_in,HistName);
-            [~,BaseName,~] = fileparts(obj.FileList{1});
+            FigH = smi_vis.plotHistogram(Vector_in,HistName);
+            [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
             FileName = [BaseName '_' HistName '_Hist.png'];
             saveas(FigH,(fullfile(PlotSaveDir,FileName)),'png');
             if ~ShowPlots; close(gcf); end
         end
     end
 
-% nested function for plotting and saving cumulative Drift
+    % nested function for plotting and saving cumulative Drift
     function plotAndSaveCum(FieldName,CumName)
         if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
             FigH = obj.plotCumDrift(SMD,FieldName);
-            [~,BaseName,~] = fileparts(obj.FileList{1});
+            [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
             FileName = [BaseName '_' CumName '_Cum.png'];
             saveas(FigH,(fullfile(PlotSaveDir,FileName)),'png');
             if ~ShowPlots; close(gcf); end
         end
     end
+
 end
