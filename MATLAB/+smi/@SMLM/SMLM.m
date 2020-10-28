@@ -184,7 +184,7 @@ classdef SMLM < handle
 
         % ---------------------------------------------------------------------
 
-        generatePlots(obj, ShowPlots)
+        generatePlots(obj, ShowPlots, PlotDo)
 
     end % methods
     % =========================================================================
