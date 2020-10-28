@@ -81,13 +81,13 @@ end
 if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    isfield(SMD,'DriftY') && ~isempty(SMD.DriftY)
    if matches("DriftX", PlotDo)
-      plotAndSaveCum('DriftX','Drift in X direction')
+      plotAndSaveCum('DriftX','DriftX')
    end
    if matches("DriftY", PlotDo)
-      plotAndSaveCum('DriftY','Drift in Y direction')
+      plotAndSaveCum('DriftY','DriftY')
    end
    if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ) && matches("DriftZ",PlotDo)
-      plotAndSaveCum('DriftZ','Drift in Z direction')
+      plotAndSaveCum('DriftZ','DriftZ')
    end 
 end
 
