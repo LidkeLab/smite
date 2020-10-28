@@ -139,11 +139,11 @@ fprintf('-> ResultsDir = %s\n', SMF.Data.ResultsDir);
 % Create smi.SMLM object.
 %SMLMobj = smi.SMLM('nogui');
 SMLMobj = smi.SMLM(SMF);
-fprintf('Files produced in %s:\n', SMF.Data.ResultsDir);
-dir(fullfile(SMF.Data.ResultsDir, [saveName, '*.*']))
 try
    % fullFit: fitting -> thresholding -> frame connection -> drift correction
    SMLMobj.fullAnalysis();
+   fprintf('Files produced in %s:\n', SMF.Data.ResultsDir);
+   dir(fullfile(SMF.Data.ResultsDir, [saveName, '*.*']))
 %  % generate color overlay
 %  fprintf('Generating color overlay.\n');
 %  %SMLMobj.SMD.FitBoxSize = SMLMobj.BoxSize;   % needed for genBlobOverlay
