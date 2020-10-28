@@ -8,9 +8,10 @@ function generatePlots(obj, ShowPlots, PlotDo)
 %    ShowPlots:  Flag for showing plots on the screen (Default = false)
 %    PlotDo:     Plots to make chosen from the following list:
 %                "Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE",
-%                "NCombined", "DriftX", "DriftY", "DriftZ", "Fit_Frame",
+%                "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame",
 %                "DriftIm", "GaussIm", "HistIm"
 %                (Default is to make all plots)
+%                For example, PlotDo = ["Pvalue", "FitFrame", DriftIm"]
 %
 % OUTPUT:
 %    The figures are saved in .png format in the given directory
@@ -29,7 +30,7 @@ end
 
 if ~exist('PlotDo', 'var') || isempty(PlotDo)
    PlotDo = ["Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE", ...
-             "NCombined", "DriftX", "DriftY", "DriftZ", "Fit_Frame", ...
+             "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame", ...
              "DriftIm", "GaussIm", "HistIm"];
 end
 
@@ -93,7 +94,7 @@ end
 % BaseName is used to label plot files.
 [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
 
-if matches("Fit_Frame", PlotDo)
+if matches("FitFrame", PlotDo)
    % Number of localizations per frame
    for jj=1:max(SMD.DatasetNum)
        for ii=1:max(SMD.FrameNum)
@@ -102,16 +103,16 @@ if matches("Fit_Frame", PlotDo)
        end
    end
    if length(Nloc_frame)==1
-       Fit_Frame = Nloc_frame{1};
+       FitFrame = Nloc_frame{1};
    end
    for ii=1:length(Nloc_frame)-1
-       Fit_Frame=cat(2,Nloc_frame{ii},Nloc_frame{ii+1});
+       FitFrame=cat(2,Nloc_frame{ii},Nloc_frame{ii+1});
    end
 
    % plot fits per frame
    figure;
-   Frames=1:length(Fit_Frame);
-   plot(Frames,Fit_Frame);
+   Frames=1:length(FitFrame);
+   plot(Frames,FitFrame);
    xlabel('Frames');
    ylabel('Number of Fits');
    title('Number of fits per frame');
