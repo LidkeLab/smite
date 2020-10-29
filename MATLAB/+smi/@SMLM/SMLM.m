@@ -95,6 +95,7 @@ classdef SMLM < handle
             % DriftCorrection class object is also used in analyzeDataset.
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
+            fprintf('Processing %d datasets ...\n', numel(obj.DatasetList));
             for nn=1:numel(obj.DatasetList)
                 SMDnn = obj.analyzeDataset(obj.DatasetList(nn), nn);
                 obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
