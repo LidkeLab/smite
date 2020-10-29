@@ -63,6 +63,7 @@ classdef SMLM < handle
             obj.generatePlots(ShowPlots, obj.PlotDo);
 
             %save
+            fprintf('Done fullAnalysis.\n');
 
         end
 
@@ -75,6 +76,7 @@ classdef SMLM < handle
             obj.analyzeAll();
             ShowPlots = true;
             obj.generatePlots(ShowPlots, obj.PlotDo);
+            fprintf('Done testFit.\n');
 
         end
 
