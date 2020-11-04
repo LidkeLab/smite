@@ -13,7 +13,7 @@ PSFSigma=[];
 
 for mm=1:NLabels
     %genBlinks() makes the blinking events.
-    Temp=genBlinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState);
+    Temp=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState);
     IntArray(mm,:)=Temp';
     %Finding the frames where the particle was ON. Note that the
     %particle might not be on at all and this would be an empty
@@ -42,7 +42,7 @@ for mm=1:NLabels
     % NoiseIm = Bg*ones(SZ); Noise factor will be included later in Data. 
     
     %Nested function to generate blinking events.
-    function IvsT=genBlinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
+    function IvsT=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
     %genBlinks() generates blinking time trace for a single
     %particle over the given number of the frames considering
     %the parameters K_OffToOn, K_OnToOff and K_OnToBleach.
