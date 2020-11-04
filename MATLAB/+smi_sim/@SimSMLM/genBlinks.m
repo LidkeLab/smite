@@ -40,6 +40,7 @@ for mm=1:NLabels
     SMD_Model.PSFSigma = PSFSigma*ones([length(Photons),1]);
     
     % NoiseIm = Bg*ones(SZ); Noise factor will be included later in Data. 
+end
     
     %Nested function to generate blinking events.
     function IvsT=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
@@ -104,10 +105,10 @@ for mm=1:NLabels
             end
         end
     end
-    end
-end
-end
+
+    end % Blinks
+end % genBlinks
 
 %Calling SimSMLM.gaussBlobImage() to generate the blobs.
-[Model] = SimSMLM.gaussBlobImage(SZ,NFrames,SMD_Model,Bg,0,0);
+%[Model] = SimSMLM.gaussBlobImage(SZ,NFrames,SMD_Model,Bg,0,0);
 
