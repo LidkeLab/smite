@@ -1,4 +1,4 @@
-function [SMD_True] = SimStar(obj,NWings)
+function [SMD_True] = simStar(obj,NWings)
     
     % This function simulates the Siemen star and returns the frames
     % with particles distributed uniformaly on the wings of the star.
@@ -65,8 +65,8 @@ function [SMD_True] = SimStar(obj,NWings)
     DInd = find(X==0);
     X(DInd)=[];
     Y(DInd)=[];
-    LabelCoords(:,1)=X*R+obj.SZ/2;
-    LabelCoords(:,2)=Y*R+obj.SZ/2;
+    LabelCoords(:,1)=X.*R+obj.SZ/2;
+    LabelCoords(:,2)=Y.*R+obj.SZ/2;
     LabelCoords = LabelCoords*obj.ZoomFactor;
     obj.SZ = obj.SZ*obj.ZoomFactor;
     NLabels=length(LabelCoords); % Number of the generated particles.

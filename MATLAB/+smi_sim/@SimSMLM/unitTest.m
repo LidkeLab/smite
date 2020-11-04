@@ -11,7 +11,7 @@ function unitTest()
    obj.EmissionRate=1000;
    obj.Bg=15;
    obj.PSFSigma=1.3;
-   [SMD_Model] = obj.genBlinks(1,0.005,0.2,10,'Equib')
+   [SMD_Model] = SimSMLM.genBlinks(1,0.005,0.2,10,'Equib')
    dipshow(SMD_Model)
 
 end
