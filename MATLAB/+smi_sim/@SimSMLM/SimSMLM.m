@@ -26,7 +26,7 @@ classdef SimSMLM < handle
         
         [SMD_True] = simStar(obj,NWings)
 
-    end % methods
+    end 
 
     methods(Static)
 
@@ -34,7 +34,7 @@ classdef SimSMLM < handle
         [SMD_Model] = genBlinks(SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
         unitTest()
 
-    end % methods(Static)
+    end 
     
 end
 
