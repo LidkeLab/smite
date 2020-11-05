@@ -6,7 +6,7 @@ Y=[];
 Z=[];
 FrameNum=[];
 Bg=[];
-PSFSigma=[];
+
 
 % The following loop iterates over each particle to generate the blinking
 % events for them.
@@ -31,13 +31,11 @@ for mm=1:obj.NLabels
     end
     SMD_Model.X = X;
     SMD_Model.Y = Y;
-    if isscalar(PSFSigma)
-        SMD_Model.Z = [];
-    end
+    SMD_Model.Z = [];
     SMD_Model.FrameNum = FrameNum;
     SMD_Model.Photons = Photons;
     SMD_Model.Bg = 0;
-    SMD_Model.PSFSigma = PSFSigma*ones([length(Photons),1]);
+
     
     % NoiseIm = Bg*ones(SZ); Noise factor will be included later in Data. 
 end
