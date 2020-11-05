@@ -5,6 +5,7 @@ X=[];
 Y=[];
 Z=[];
 FrameNum=[];
+PSFSigma=[];
 Bg=[];
 
 
@@ -31,13 +32,14 @@ for mm=1:obj.NLabels
     end
     SMD_Model.X = X;
     SMD_Model.Y = Y;
-    SMD_Model.Z = [];
+    if isscalar (obj.PSFSigma) 
+        SMD_Model.Z = [];
+        SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
+    end
     SMD_Model.FrameNum = FrameNum;
     SMD_Model.Photons = Photons;
     SMD_Model.Bg = 0;
 
-    
-    % NoiseIm = Bg*ones(SZ); Noise factor will be included later in Data. 
 end
     
     %Nested function to generate blinking events.
@@ -107,5 +109,3 @@ end
     end % Blinks
 end % genBlinks
 
-%Calling SimSMLM.gaussBlobImage() to generate the blobs.
-%[Model] = SimSMLM.gaussBlobImage(SZ,NFrames,SMD_Model,Bg,0,0);
