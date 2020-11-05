@@ -63,6 +63,7 @@ function [SMD_True] = simStar(obj,NWings)
     
     % Delete those particles from the list that are not inside any wing.
     DInd = find(X==0);
+    DInd = find(Y==0);
     X(DInd)=[];
     Y(DInd)=[];
     LabelCoords(:,1)=X.*R+obj.SZ/2;
@@ -78,8 +79,8 @@ function [SMD_True] = simStar(obj,NWings)
     % signifies the ith particle is ON in the jth frame.
     
     %Saving the generated data in the structure SMD.
-    SMD_True.X = LabelCoords(:,1);
-    SMD_True.Y = LabelCoords(:,2);
+    SMD_True.X = LabelCoords(:,1)+1;
+    SMD_True.Y = LabelCoords(:,2)+1;
     if isscalar(obj.PSFSigma)
         SMD_True.Z = [];
     end
