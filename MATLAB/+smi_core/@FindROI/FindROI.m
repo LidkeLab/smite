@@ -123,7 +123,7 @@ classdef FindROI < handle
             %Number of frames in each chunk.
             ZSize = size(obj.Data,3);
             ZChunkSize = floor(ZSize/NLoops);
-            obj.LocalMaxIm = zeros(size(obj.Data));
+            LocalMaxIm_Temp = zeros(size(obj.Data));
             
             %The loop sends one chunk of data at each iteration to the gpu.
             for ii = 1:NLoops
@@ -144,8 +144,10 @@ classdef FindROI < handle
                 [SubLocalMax]=smi_core.FindROI.localMax(D_A,LMKernelSize,MinVal);
                 
                 %Collect Results
-                obj.LocalMaxIm(:,:,ZStart:ZEnd) = gather(SubLocalMax);
+                LocalMaxIm_Temp(:,:,ZStart:ZEnd) = SubLocalMax;
             end
+            wait(g);
+            obj.LocalMaxIm=LocalMaxIm_Temp;
             
             %Finding coordinates of the local maxima
             XSize = size(obj.Data,2);
