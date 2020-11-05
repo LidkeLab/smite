@@ -34,6 +34,5 @@ classdef SimSMLM < handle
 
     end 
 
-    
 end
 
