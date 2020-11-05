@@ -114,7 +114,7 @@ classdef FindROI < handle
             LMKernelSize=obj.BoxSize-obj.BoxOverlap;
             
             %Break data into chunks that fit in GPU memory
-            NCopies=4; %for out of place operations
+            NCopies=6; %for out of place operations
             NBytesPerPixel=4; %single float
             NElem = numel(obj.Data);
             g = gpuDevice;
