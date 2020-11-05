@@ -84,4 +84,7 @@ function [SMD_True] = simStar(obj,NWings)
     if isscalar(obj.PSFSigma)
         SMD_True.Z = [];
     end
+
+    obj.LabelCoords = LabelCoords;
+    obj.NLabels = NLabels;
 end

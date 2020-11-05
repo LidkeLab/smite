@@ -1,4 +1,4 @@
-function [SMD_Model] = genBlinks(SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
+function [SMD_Model] = genBlinks(obj,SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
 %Making empty vectors that will be filled later.
 Photons=[];
 X=[];
@@ -11,7 +11,7 @@ PSFSigma=[];
 % The following loop iterates over each particle to generate the blinking
 % events for them.
 
-for mm=1:NLabels
+for mm=1:obj.NLabels
     %genBlinks() makes the blinking events.
     Temp=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState);
     IntArray(mm,:)=Temp';
@@ -22,11 +22,11 @@ for mm=1:NLabels
     FrameNumIndiv = find(Temp~=0);
     if ~isempty(FrameNumIndiv)
         FrameNum = cat(1,FrameNum,FrameNumIndiv);
-        Indiv = EmissionRate*Temp(FrameNumIndiv);
+        Indiv = obj.EmissionRate*Temp(FrameNumIndiv);
         Photons = cat(1,Photons,Indiv);
-        Indiv(:,1)=LabelCoords(mm,1);
+        Indiv(:,1)=obj.LabelCoords(mm,1);
         X = cat(1,X,Indiv);
-        Indiv(:,1)=LabelCoords(mm,2);
+        Indiv(:,1)=obj.LabelCoords(mm,2);
         Y = cat(1,Y,Indiv);
     end
     SMD_Model.X = X;
@@ -111,4 +111,3 @@ end % genBlinks
 
 %Calling SimSMLM.gaussBlobImage() to generate the blobs.
 %[Model] = SimSMLM.gaussBlobImage(SZ,NFrames,SMD_Model,Bg,0,0);
-

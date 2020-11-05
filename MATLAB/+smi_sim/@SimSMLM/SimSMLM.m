@@ -19,19 +19,23 @@ classdef SimSMLM < handle
         EmissionRate     % Emission rate (Intensity) of photons (photons/frame)
         Bg               % Background Count Rate (counts/pixel)
         PSFSigma         % Point Spread Function Sigma size (Pixels).
-        
+    end
+
+    properties(SetAccess = protected)
+        LabelCoords
+        NLabels
     end
     
     methods 
         
         [SMD_True] = simStar(obj,NWings)
+        % Call the genBlinks() function to generate the model
+        [SMD_Model] = genBlinks(obj,SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
 
     end 
 
     methods(Static)
 
-        % Call the genBlinks() function to generate the model
-        [SMD_Model] = genBlinks(SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
         unitTest()
 
     end 
