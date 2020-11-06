@@ -34,5 +34,11 @@ classdef SimSMLM < handle
 
     end 
 
+    methods(Static)
+
+        unitTest()
+
+    end
+
 end
 
