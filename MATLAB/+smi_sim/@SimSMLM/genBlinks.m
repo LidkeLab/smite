@@ -21,7 +21,7 @@ for mm=1:obj.NLabels
     %array. In this case, we won't have any FrameNum, Photons or
     %found positions for this particle.
     FrameNumIndiv = find(Temp~=0);
-    if ~isempty(FrameNumIndiv)
+    if ~isempty(FrameNumIndiv) 
         FrameNum = cat(1,FrameNum,FrameNumIndiv);
         Indiv = obj.EmissionRate*Temp(FrameNumIndiv);
         Photons = cat(1,Photons,Indiv);

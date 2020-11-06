@@ -18,7 +18,7 @@ function unitTest()
    % To generate the blobs, execute the following:
    % smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames,SMD,Background,Density,VarianceIm)
    % In order to generate blobs, I set following parameters:
-   [Model] = smi_sim.GaussBlobs.gaussBlobImage(256,100,SMD_Model,0,0,0)
+   [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NFrames,SMD_Model,0,0,0)
    dipshow(Model)
 end
 
