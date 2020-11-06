@@ -1,4 +1,4 @@
-function [SMDCombined, SMD] = performFrameConnection(obj)
+function [SMDCombined, SMD, OutputMessage] = performFrameConnection(obj)
 %performFrameConnection is the "run" method of the FrameConnection class.
 %
 % This method is intended to be used as the main "run" method of the
@@ -32,46 +32,49 @@ function [SMDCombined, SMD] = performFrameConnection(obj)
 %   SMD: obj.SMD but with the field 'ConnectID' populated (see
 %        smi_core.FrameConnection.findConnected() for a careful description
 %        of 'ConnectID'.
+%   OutputMessage: A summary message that describes how many localizations
+%                  in SMD were collapsed into localizations in SMDCombined.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
 %       based on a code written Hanieh Mazloom-Farsibaf
 
 
-% Initialize several new fields in SMD and SMDCombined.
+% Make a local copy of obj.SMD (accessing obj.SMD.(...) inside a loop can
+% sometimes be slower than accessing SMD.(...)).
 SMD = obj.SMD; % temporary local variable
-SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
-SMDCombined = SMD;
 
-% Delete several fields from the initialized SMDCombined to ensure they
-% don't interfere with the analysis.
-SMDCombined.NCombined = [];
-SMDCombined.ConnectID = [];
-SMDCombined.X = [];
-SMDCombined.Y = [];
-SMDCombined.X_SE = [];
-SMDCombined.Y_SE = [];
-SMDCombined.Z = [];
-SMDCombined.Z_SE = [];
-SMDCombined.FrameNum = [];
-SMDCombined.Photons = [];
-SMDCombined.Bg = [];
-SMDCombined.LogLikelihood = [];
-SMDCombined.DatasetNum = [];
-SMDCombined.PSFSigma = [];
-SMDCombined.PSFSigma_SE = [];
-SMDCombined.PSFSigmaX = [];
-SMDCombined.PSFSigmaY = [];
-SMDCombined.PSFSigmaX_SE = [];
-SMDCombined.PSFSigmaY_SE = [];
+% Initialize some temporary arrays (these are arrays like X, Y, ... which
+% are concatenated inside of the main for loop below, and later stored in
+% the output 'SMDCombined').
+NCombined = [];
+ConnectID = [];
+X = [];
+Y = [];
+X_SE = [];
+Y_SE = [];
+Z = [];
+Z_SE = [];
+FrameNum = [];
+Photons = [];
+Bg = [];
+LogLikelihood = [];
+DatasetNum = [];
+PSFSigma = [];
+PSFSigma_SE = [];
+PSFSigmaX = [];
+PSFSigmaY = [];
+PSFSigmaX_SE = [];
+PSFSigmaY_SE = [];
 
 % Loop through each dataset and perform the frame connection process.
 % NOTE: Since numel(unique(obj.SMD.DatasetNum)) is typically small (e.g.,
 %       < 100) I don't anticipate any benefit to making local copies of any
 %       arrays from SMD (as opposed to accessing them from SMD
 %       inside the loop, as I'm doing here).
-InputExtras = []; % extra inputs sent to c_FrameConnect.mex*
+InputExtras = [];
 InputExtrasSE = [];
+SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
 MaxConnectID = max(SMD.ConnectID);
 for nn = unique(SMD.DatasetNum)
     % Isolate all valid localizations in the nn-th dataset and typecast
@@ -117,47 +120,60 @@ for nn = unique(SMD.DatasetNum)
         InputExtras, InputExtrasSE, InputPhotonsBgLogL, ...
         obj.MaxSeparation, obj.MaxFrameGap, MaxConnectID);
     
-    % Store the outputs from c_FrameConnect.mex* in their appropriate place
-    % in the class objects.
-    SMDCombined.X = [SMDCombined.X; OutputCoords(:, 1)];
-    SMDCombined.Y = [SMDCombined.Y; OutputCoords(:, 2)];
-    SMDCombined.X_SE = [SMDCombined.X_SE; OutputCoordsSE(:, 1)];
-    SMDCombined.Y_SE = [SMDCombined.Y_SE; OutputCoordsSE(:, 2)];
-    SMDCombined.NCombined = [SMDCombined.NCombined; NConnected];
-    SMDCombined.FrameNum = [SMDCombined.FrameNum; OutputFrames];
-    SMDCombined.Photons = [SMDCombined.Photons; ...
-        OutputPhotonsBgLogL(:, 1)];
-    SMDCombined.Bg = [SMDCombined.Bg; ...
-        OutputPhotonsBgLogL(:, 2)];
-    SMDCombined.LogLikelihood = [SMDCombined.LogLikelihood; ...
-        OutputPhotonsBgLogL(:, 3)];
-    SMDCombined.ConnectID = [SMDCombined.ConnectID; ...
-        OutputConnectIDCombined];
-    SMDCombined.DatasetNum = [SMDCombined.DatasetNum; ...
-        nn*ones(numel(OutputFrames), 1, 'uint32')];
+    % Update 'SMD' to contain the current connection information.
     SMD.ConnectID(CurrentBool) = OutputConnectID;
     MaxConnectID = max(OutputConnectID);
     
+    % Store the outputs from c_FrameConnect.mex* in temporary arrays (these
+    % arrays will later be copied into the 'SMDCombined' output).
+    X = [X; OutputCoords(:, 1)];
+    Y = [Y; OutputCoords(:, 2)];
+    X_SE = [X_SE; OutputCoordsSE(:, 1)];
+    Y_SE = [Y_SE; OutputCoordsSE(:, 2)];
+    NCombined = [NCombined; NConnected];
+    FrameNum = [FrameNum; OutputFrames];
+    Photons = [Photons; OutputPhotonsBgLogL(:, 1)];
+    Bg = [Bg; OutputPhotonsBgLogL(:, 2)];
+    LogLikelihood = [LogLikelihood; OutputPhotonsBgLogL(:, 3)];
+    ConnectID = [ConnectID; OutputConnectIDCombined];
+    DatasetNum = [DatasetNum; nn*ones(numel(OutputFrames), 1, 'uint32')];
+    
     % Store some FitType dependent outputs if needed.
-    if strcmpi(obj.FitType, 'XYNBS')
-        SMDCombined.PSFSigma = [SMDCombined.PSFSigma; ...
-            OutputExtras];
-        SMDCombined.PSFSigma_SE = [SMDCombined.PSFSigma_SE; ...
-            OutputExtrasSE];
-    elseif strcmpi(obj.FitType, 'XYNBSXSY')
-        SMDCombined.PSFSigmaX = [SMDCombined.PSFSigmaX; ...
-            OutputExtras(:, 1)];
-        SMDCombined.PSFSigmaY = [SMDCombined.PSFSigmaY; ...
-            OutputExtras(:, 2)];
-        SMDCombined.PSFSigmaX_SE = [SMDCombined.PSFSigmaX_SE; ...
-            OutputExtrasSE(:, 1)];
-        SMDCombined.PSFSigmaY_SE = [SMDCombined.PSFSigmaY_SE; ...
-            OutputExtrasSE(:, 2)];
-    elseif strcmpi(obj.FitType, 'XYZNB')
-        SMDCombined.Z = [SMDCombined.Z; OutputCoords(:, 3)];
-        SMDCombined.Z_SE = [SMDCombined.Z_SE; OutputCoordsSE(:, 3)];
+    switch obj.FitType
+        case 'XYNBS'
+            PSFSigma = [PSFSigma; OutputExtras];
+            PSFSigma_SE = [PSFSigma_SE; OutputExtrasSE];
+        case 'XYNBSXSY'
+            PSFSigmaX = [PSFSigmaX; OutputExtras(:, 1)];
+            PSFSigmaY = [PSFSigmaY; OutputExtras(:, 2)];
+            PSFSigmaX_SE = [PSFSigmaX_SE; OutputExtrasSE(:, 1)];
+            PSFSigmaY_SE = [PSFSigmaY_SE; OutputExtrasSE(:, 2)];
+        case 'XYZNB'
+            Z = [Z; OutputCoords(:, 3)];
+            Z_SE = [Z_SE; OutputCoordsSE(:, 3)];
     end
 end
+
+% Store the temporary arrays from the main loop above into 'SMDCombined'.
+SMDCombined.NCombined = NCombined;
+SMDCombined.ConnectID = ConnectID;
+SMDCombined.X = X;
+SMDCombined.Y = Y;
+SMDCombined.X_SE = X_SE;
+SMDCombined.Y_SE = Y_SE;
+SMDCombined.Z = Z;
+SMDCombined.Z_SE = Z_SE;
+SMDCombined.FrameNum = FrameNum;
+SMDCombined.Photons = Photons;
+SMDCombined.Bg = Bg;
+SMDCombined.LogLikelihood = LogLikelihood;
+SMDCombined.DatasetNum = DatasetNum;
+SMDCombined.PSFSigma = PSFSigma;
+SMDCombined.PSFSigma_SE = PSFSigma_SE;
+SMDCombined.PSFSigmaX = PSFSigmaX;
+SMDCombined.PSFSigmaY = PSFSigmaY;
+SMDCombined.PSFSigmaX_SE = PSFSigmaX_SE;
+SMDCombined.PSFSigmaY_SE = PSFSigmaY_SE;
 
 % Add zeros to the ThreshFlag of SMDCombined (we should never be keeping
 % localizations in SMDCombined which have non-zero ThreshFlag).
@@ -177,8 +193,9 @@ SMDCombined.IndSMD = IndSMD;
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
 
-% A helpful print enumerating how many localizations were collapsed here.
-fprintf('Frame connecting: %d -> %d localizations\n', ...
+% A helpful message enumerating how many localizations were collapsed here.
+OutputMessage = sprintf('Frame connecting: %d -> %d localizations\n', ...
         numel(SMD.X), numel(SMDCombined.X));
+    
 
 end
