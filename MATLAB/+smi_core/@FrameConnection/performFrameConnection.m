@@ -154,7 +154,10 @@ for nn = unique(SMD.DatasetNum)
     end
 end
 
-% Store the temporary arrays from the main loop above into 'SMDCombined'.
+% Store the temporary arrays from the main loop above into 'SMDCombined'
+% (as well as some other things we'd like to carry along from SMD).
+SMDCombined = smi_core.SingleMoleculeData.createSMD();
+SMDCombined.NDatasets = SMD.NDatasets;
 SMDCombined.NCombined = NCombined;
 SMDCombined.ConnectID = ConnectID;
 SMDCombined.X = X;
