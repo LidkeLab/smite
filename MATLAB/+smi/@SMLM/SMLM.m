@@ -105,7 +105,7 @@ classdef SMLM < handle
 
             % Inter-dataset drift correction.
             if numel(obj.DatasetList) > 1
-               fprintf('Drift correcting (inter-datastet) ...\n');
+               fprintf('Drift correcting (inter-dataset) ...\n');
                obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
             end
         end
@@ -134,7 +134,8 @@ classdef SMLM < handle
             % Perform frame-connection on localizations in SMD.
             if obj.SMF.FrameConnection.On
                 FC = smi_core.FrameConnection(SMD, obj.SMF);
-                [SMD] = FC.performFrameConnection();
+                [SMD, ~, OutputMessage] = FC.performFrameConnection();
+                fprintf('%s', OutputMessage);
             end
 
             % Intra-dataset drift correction.
