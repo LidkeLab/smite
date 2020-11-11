@@ -140,7 +140,7 @@ classdef SMLM < handle
 
             % Intra-dataset drift correction.
             if obj.SMF.DriftCorrection.On
-                fprintf('Drift correcting (intra-datastet) ...\n');
+                fprintf('Drift correcting (intra-dataset) ...\n');
                 SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
             end
         end
