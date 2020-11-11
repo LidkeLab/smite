@@ -157,6 +157,7 @@ end
 % Store the temporary arrays from the main loop above into 'SMDCombined'
 % (as well as some other things we'd like to carry along from SMD).
 SMDCombined = smi_core.SingleMoleculeData.createSMD();
+SMDCombined.NDims = SMD.NDims;
 SMDCombined.NDatasets = SMD.NDatasets;
 SMDCombined.NFrames = SMD.NFrames;
 SMDCombined.XSize = SMD.XSize;
