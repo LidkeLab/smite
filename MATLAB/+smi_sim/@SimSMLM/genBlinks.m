@@ -7,7 +7,7 @@ Z=[];
 FrameNum=[];
 PSFSigma=[];
 Bg=[];
-
+IntArray = zeros(obj.NLabels, NFrames);
 
 % The following loop iterates over each particle to generate the blinking
 % events for them.
