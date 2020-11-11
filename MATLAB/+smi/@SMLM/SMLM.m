@@ -7,14 +7,11 @@ classdef SMLM < handle
 
     % =========================================================================
     properties
-        SMF
-        Preset      % {'TIRF', 'Sequential'} good idea?
-        Data        % Current dataset or used for manual setting of data
-        DataType    % {'File', 'UserDefined'} ?
-        FileName    % String or Cell array of strings
-        DataDir
-        ResultsDir  % (Default = 'DataDir/../Results/FileName/) same as Seq
+        SMF         % Single Molecule Fitting structure
         PlotDo = [] % Plots to generate (all by default)
+%       Preset      % {'TIRF', 'Sequential'} good idea?
+%       Data        % Current dataset or used for manual setting of data
+%       DataType    % {'File', 'UserDefined'} ?
     end
     % =========================================================================
 
@@ -29,18 +26,9 @@ classdef SMLM < handle
     % =========================================================================
     methods
 
-        function obj=SMLM(SMF,Filename)
+        function obj=SMLM(SMF)
             % SMLM
             obj.SMF = SMF;
-            if exist('FileName', 'var')
-                if iscell(FileName)
-                    obj.FileName = Filename;
-                else
-                    obj.FileName = {Filename};
-                end
-            else
-                obj.FileName = SMF.Data.FileName;
-            end
         end
 
         % ---------------------------------------------------------------------
@@ -172,7 +160,7 @@ classdef SMLM < handle
             error('No SMD results structure found to save!');
         end
 
-        [~, f, ~] = fileparts(obj.FileName{1});
+        [~, f, ~] = fileparts(obj.SMF.Data.FileName{1});
         if isempty(obj.SMF.Data.AnalysisID)
             fn = [f, '_Results.mat'];
         else

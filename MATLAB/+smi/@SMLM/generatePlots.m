@@ -9,7 +9,7 @@ function generatePlots(obj, ShowPlots, PlotDo)
 %    PlotDo:     Plots to make chosen from the following list:
 %                "Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE",
 %                "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame",
-%                "DriftIm", "GaussIm", "HistIm"
+%                "DriftIm", "GaussIm", "HistIm", "Drift"
 %                (Default is to make all plots)
 %                For example, PlotDo = ["Pvalue", "FitFrame", DriftIm"]
 %
@@ -31,7 +31,7 @@ end
 if ~exist('PlotDo', 'var') || isempty(PlotDo)
    PlotDo = ["Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE", ...
              "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame", ...
-             "DriftIm", "GaussIm", "HistIm"];
+             "DriftIm", "GaussIm", "HistIm", "Drift"];
 end
 
 % PlotSaveDir is the path to the directory for saving plots in .png format
@@ -128,7 +128,7 @@ if matches("DriftIm", PlotDo)
    % Drift image
    [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, SRImageZoom);
    dipshow(DriftImRGB);
-   FileName = [BaseName '_DriftImage.png'];
+   FileName = [BaseName '_DriftImage'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
    if ~ShowPlots; close(gcf); end
 end
@@ -137,7 +137,7 @@ if matches("GaussIm", PlotDo)
    % Gaussian image
    [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, SRImageZoom);
    dipshow(GaussIm);
-   FileName = [BaseName '_GaussImage.png'];
+   FileName = [BaseName '_GaussImage'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
    if ~ShowPlots; close(gcf); end
 end
@@ -146,7 +146,17 @@ if matches("HistIm", PlotDo)
    % Histogram image
    [~, HistImRGB] = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
    dipshow(HistImRGB);
-   FileName = [BaseName '_HistImage.png'];
+   FileName = [BaseName '_HistImage'];
+   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+   if ~ShowPlots; close(gcf); end
+end
+
+if matches("Drift", PlotDo)
+   % Estimated 2D or 3D drift
+   DC = smi_core.DriftCorrection;
+   DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
+   figDC = DC.plotDriftCorrection(SMD, 'A');
+   FileName = [BaseName '_DriftCorrection'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
    if ~ShowPlots; close(gcf); end
 end
