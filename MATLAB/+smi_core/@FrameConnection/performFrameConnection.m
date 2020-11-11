@@ -158,6 +158,9 @@ end
 % (as well as some other things we'd like to carry along from SMD).
 SMDCombined = smi_core.SingleMoleculeData.createSMD();
 SMDCombined.NDatasets = SMD.NDatasets;
+SMDCombined.NFrames = SMD.NFrames;
+SMDCombined.XSize = SMD.XSize;
+SMDCombined.YSize = SMD.YSize;
 SMDCombined.NCombined = NCombined;
 SMDCombined.ConnectID = ConnectID;
 SMDCombined.X = X;
