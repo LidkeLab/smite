@@ -7,20 +7,36 @@ function generatePlots(obj, ShowPlots, PlotDo)
 %       obj.SMF     Single Molecule Fitting structure
 %    ShowPlots:  Flag for showing plots on the screen (Default = false)
 %    PlotDo:     Plots to make chosen from the following list:
-%                "Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE",
-%                "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame",
-%                "DriftIm", "GaussIm", "HistIm", "Drift"
+%                "Photons"     intensity (estimated photons) histogram
+%                "Bg"          background intensity histogram
+%                "PSFSigma"    sigma of 2D Gaussian PSF model histogram
+%                "PValue"      P-value of fit histogram
+%                "X_SE"        standard error in estimated X position histogram
+%                "Y_SE"        standard error in estimated Y position histogram
+%                "Z_SE"        standard error in estimated Z position histogram
+%                "NCombined"   number of connection localizations histogram
+%                "DriftX"      cumulative x-drift
+%                "DriftY"      cumulative y-drift
+%                "DriftZ"      cumulative z-drift
+%                "Drift"       estimated 2D or 3D drift
+%                "FitFrame"    number of fits per frame
+%                "DriftIm"     2D drift image from SR data
+%                "GaussIm"     2D Gaussian blob image from SR data
+%                "HistIm"      2D histogram image from SR data
 %                (Default is to make all plots)
-%                For example, PlotDo = ["Pvalue", "FitFrame", DriftIm"]
+%                For example, PlotDo = ["PValue", "FitFrame", DriftIm"]
+%                NOTE: plots will only be produced if there is corresponding
+%                      data in the SMD structure!
 %
 % OUTPUT:
-%    The figures are saved in .png format in the given directory
+%    The figures are saved in .png format in the given SMF.Data.ResultsDir
 %
 % REQUIRES:
 %    Dipimage toolbox (http://www.diplib.org/)
 
 % Created by:
 %    Hanieh Mazloom-Farsibaf, Marjolein Meddens Apr 2017 (Keith A. Lidke's lab)
+%    Michael J Wester (2020)
 
 fprintf('Generating output plots ...\n');
 
@@ -29,9 +45,9 @@ if ~exist('ShowPlots', 'var')
 end
 
 if ~exist('PlotDo', 'var') || isempty(PlotDo)
-   PlotDo = ["Photons", "Bg", "PSFSigma", "Pvalue", "X_SE", "Y_SE", "Z_SE", ...
-             "NCombined", "DriftX", "DriftY", "DriftZ", "FitFrame", ...
-             "DriftIm", "GaussIm", "HistIm", "Drift"];
+   PlotDo = ["Photons", "Bg", "PSFSigma", "PValue", "X_SE", "Y_SE", "Z_SE", ...
+             "NCombined", "DriftX", "DriftY", "DriftZ", "Drift", "FitFrame",...
+             "DriftIm", "GaussIm", "HistIm"];
 end
 
 % PlotSaveDir is the path to the directory for saving plots in .png format
@@ -52,9 +68,9 @@ if matches("PSFSigma", PlotDo)
    plotAndSaveHist('PSFSigma','PSFSigma')
 end
 
-if matches("Pvalue", PlotDo)
-   %create Pvalue histogram
-   plotAndSaveHist('Pvalue','P value')
+if matches("PValue", PlotDo)
+   %create PValue histogram
+   plotAndSaveHist('PValue','P value')
 end
 
 if matches("X_SE", PlotDo)
