@@ -77,7 +77,7 @@ if matches("NCombined", PlotDo)
    plotAndSaveHist('NCombined','Connected emitters')
 end
 
-%cumulative of DriftX, DriftY
+%cumulative of DriftX, DriftY {, DriftZ} and total drift
 if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    isfield(SMD,'DriftY') && ~isempty(SMD.DriftY)
    if matches("DriftX", PlotDo)
@@ -89,6 +89,18 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ) && matches("DriftZ",PlotDo)
       plotAndSaveCum('DriftZ','DriftZ')
    end 
+
+   % Estimated 2D or 3D drift
+   if matches("Drift", PlotDo)
+      DC = smi_core.DriftCorrection;
+      DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
+      figDC = DC.plotDriftCorrection(SMD, 'A');
+      FileName = [BaseName '_DriftCorrection'];
+      saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
+      if ~ShowPlots; close(gcf); end
+   end
+end
+
 end
 
 % BaseName is used to label plot files.
@@ -147,16 +159,6 @@ if matches("HistIm", PlotDo)
    [~, HistImRGB] = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
    dipshow(HistImRGB);
    FileName = [BaseName '_HistImage'];
-   saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
-   if ~ShowPlots; close(gcf); end
-end
-
-if matches("Drift", PlotDo)
-   % Estimated 2D or 3D drift
-   DC = smi_core.DriftCorrection;
-   DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
-   figDC = DC.plotDriftCorrection(SMD, 'A');
-   FileName = [BaseName '_DriftCorrection'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
    if ~ShowPlots; close(gcf); end
 end
