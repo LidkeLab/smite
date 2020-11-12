@@ -101,8 +101,6 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    end
 end
 
-end
-
 % BaseName is used to label plot files.
 [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
 
