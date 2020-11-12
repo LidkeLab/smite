@@ -63,6 +63,7 @@ classdef SingleMoleculeFitting < handle
 % Fitting           {GaussMLE}
 %   PSFSigma:   Initial or fixed Sigma of 2D Gaussian PSF Model (Pixels)(Default=1)
 %   FitType:    See fit class for options  (Default='XYNB')
+%   NParams:    Number of fitting parameters (auto-set based on FitType)
 %   Iterations: Newton Raphson iterations (Default=20)
 %   ZFitStruct: Structure for astigmatic fitting:
 %       Ax:         Astigmatism fit parameter (see GaussMLE)         
@@ -74,7 +75,7 @@ classdef SingleMoleculeFitting < handle
 %
 % Thresholding      {ThresholdFits,SRA}
 %   On              Perform thresholding? (Default=true)
-%   MaxSE_XY:       Maximum allowed precision in x,y (Pixels)(Default=.2)
+%   MaxXY_SE:       Maximum allowed precision in x,y (Pixels)(Default=.2)
 %   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
 %   LoS:            Minimum accepted p-value from fit (Default=.01)
 %   MinPSFSigma:    Minimum PSF Sigma from fit (Pixels)(Default=.5);
@@ -168,6 +169,7 @@ classdef SingleMoleculeFitting < handle
             %Fitting
             obj.Fitting.PSFSigma=1;
             obj.Fitting.FitType='XYNB';
+            obj.Fitting.NParams=4;
             obj.Fitting.Iterations=20;
             obj.Fitting.ZFitStruct.Ax=[];
             obj.Fitting.ZFitStruct.Ay=[];
@@ -235,6 +237,7 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Fitting.PSFSigma.Units = 'pixels';
             obj.SMFFieldNotes.Fitting.FitType.Units = ...
                 'XYNB, XYNBS, XYNBSXSY, XYZNB';
+            obj.SMFFieldNotes.Fitting.NParams.Units = '(not set by user)';
             obj.SMFFieldNotes.Fitting.Iterations.Units = '';
             obj.SMFFieldNotes.Fitting.ZFitStruct.Units = 'see GaussMLE';
             obj.SMFFieldNotes.Thresholding.On.Units = 'logical';
@@ -330,6 +333,9 @@ classdef SingleMoleculeFitting < handle
                 'See GaussMLE for usage';
             obj.SMFFieldNotes.Fitting.FitType.Tip = ...
                 'See GaussMLE for usage';
+            obj.SMFFieldNotes.Fitting.NParams.Tip = ...
+                sprintf(['Number of fitting parameters.  This is\n', ...
+                'set automatically based on the FitType.']);
             obj.SMFFieldNotes.Fitting.Iterations.Tip = ...
                 'See GaussMLE for usage';
             obj.SMFFieldNotes.Fitting.ZFitStruct.Tip = ...
@@ -612,11 +618,35 @@ classdef SingleMoleculeFitting < handle
                     error('''SMF.Fitting.PSFSigma'' must be numeric.')
                 end
             end
-            if (isfield(FittingInput, 'FitType') ...
-                    && ~ismember(FittingInput.FitType, ...
-                    {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'}))
-                error(['SMF.Fitting.FitType must be one of ', ...
-                    'XYNB, XYNBS, XYNBSXSY, or XYZNB'])
+            if isfield(FittingInput, 'FitType')
+                if ismember(FittingInput.FitType, ...
+                    {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'})
+                    % Set the NParams field automatically based on this
+                    % selection.
+                    switch FittingInput.FitType
+                        case 'XYNB'
+                            FittingInput.NParams = 4;
+                        case {'XYNBS', 'XYZNB'}
+                            FittingInput.NParams = 5;
+                        case 'XYNBSXSY'
+                            FittingInput.NParams = 6;
+                    end
+                else
+                    error(['SMF.Fitting.FitType must be one of ', ...
+                        'XYNB, XYNBS, XYNBSXSY, or XYZNB'])
+                end
+            end
+            if isfield(FittingInput, 'NParams')
+                % Set the NParams field automatically based on the FitType,
+                % regardless of what the user tried to enter.
+                switch FittingInput.FitType
+                    case 'XYNB'
+                        FittingInput.NParams = 4;
+                    case {'XYNBS', 'XYZNB'}
+                        FittingInput.NParams = 5;
+                    case 'XYNBSXSY'
+                        FittingInput.NParams = 6;
+                end
             end
             if isfield(FittingInput, 'Iterations')
                 if mod(FittingInput.Iterations, 1)
