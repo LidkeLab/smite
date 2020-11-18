@@ -3,13 +3,13 @@ function [SMD_True] = simStar(obj,NWings)
     % This function simulates the Siemen star and returns the frames
     % with particles distributed uniformaly on the wings of the star.
     
-    % INPUTS:
+    % INPUT:
     
     % NWings: The number of wings of the Siemen's star.
     
     % OUTPUTS:
     
-    % [SMD]: This is a structure with the following fields:
+    % [SMD_True]: This is a structure with the following fields:
     
     % SMD_True.X: The X-positions of particles generated randomly.
     % (Number of the generated particles x 1)(Pixels)
@@ -20,23 +20,6 @@ function [SMD_True] = simStar(obj,NWings)
     % SMD_True.Z: The Z-positions of particles generated randomly
     % (Number of the generated particles x 1), (um)
     
-    % [Model]: The frames of the model (Row x Column x NFrames).
-    
-    % SMD_Model.X: The X-positions of the particles seen on the frames.
-    % (Number of the seen particles x 1),(Pixels)
-    
-    % SMD_Model.Y: The Y-positions of the particles seen on the frames.
-    % (Number of the seen particles x 1),(Pixels)
-    
-    % SMD_Model.Z: The Z-positions of particles (um)
-    
-    % SMD_Model.Photons: The intensity of the particles.
-    % (Number of the seen particles x 1),(Photon counts)
-    
-    % SMD_Model.FrameNum:The frames that the particles have been detected.
-    % (Number of the seen particles x 1)
-    
-    % SMD_Model.Bg: The background noise (1x1)(Photon counts)
     
     R = obj.SZ/3; %The length of the wing is a third of the size of the frame
     

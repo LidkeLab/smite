@@ -1,5 +1,56 @@
 function [SMD_Model] = genBlinks(obj,SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
-%Making empty vectors that will be filled later.
+
+%This function generates the blinking time trace for a single particle 
+%over the given number of the frames considering the input parameters and
+%returns the SMD_Model. 
+
+ % INPUTS:
+ 
+ % [SMD_True]: This is a structure with the following three fields:
+ 
+ % SMD_True.X: The X-positions of particles generated randomly.
+ % (Number of the generated particles x 1)(Pixels)
+    
+ % SMD_True.Y: The Y-positions of particles generated randomly
+ % (Number of the generated particles x 1),(Pixels)
+    
+ % SMD_True.Z: The Z-positions of particles generated randomly
+ % (Number of the generated particles x 1), (um)
+ 
+ % K_OnToOff: Fluorophore turns Off from On state (1 frames^-1)
+ 
+ % K_OffToOn: Fluorophore return to On state from Off state (0.0005 frames^-1)
+ 
+ % K_OnToBleach: Fluorophore bleached out (1/5 frames^-1)
+ 
+ % NFrames: Number of frames (pixels x pixels)
+ 
+ % StartState: A string which determine if the particle starts on or
+ % starts randomly on or off. It can be either 'on' or 'Equib'.
+ 
+ % OUTPUTS:
+ 
+ % [SMD_Model]: This is a structure with the following fields:
+ 
+ % SMD_Model.X: The X-positions of the particles seen on the frames.
+ % (Number of the seen particles x 1),(Pixels)
+    
+ % SMD_Model.Y: The Y-positions of the particles seen on the frames.
+ % (Number of the seen particles x 1),(Pixels)
+    
+ % SMD_Model.Z: The Z-positions of particles (um)
+    
+ % SMD_Model.Photons: The intensity of the particles.
+ % (Number of the seen particles x 1),(Photon counts)
+    
+ % SMD_Model.FrameNum:The frames that the particles have been detected.
+ % (Number of the seen particles x 1)
+ 
+ % SMD_Model.PSFSigma: Point Spread Function Sigma size (Pixels)
+ 
+ % SMD_Model.Bg: Background Count Rate (counts/pixel), this will be empty.
+
+% First making empty vectors that will be filled later.
 Photons=[];
 X=[];
 Y=[];
@@ -39,7 +90,6 @@ for mm=1:obj.NLabels
     SMD_Model.FrameNum = FrameNum;
     SMD_Model.Photons = Photons;
     SMD_Model.Bg = 0;
-
 end
     
     %Nested function to generate blinking events.
