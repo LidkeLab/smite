@@ -174,6 +174,8 @@ SMDCombined.FrameNum = FrameNum;
 SMDCombined.Photons = Photons;
 SMDCombined.Bg = Bg;
 SMDCombined.LogLikelihood = LogLikelihood;
+SMDCombined.PValue = smi_core.GaussMLE.pValue(...
+    obj.NParams, obj.BoxSize, LogLikelihood);
 SMDCombined.DatasetNum = DatasetNum;
 SMDCombined.PSFSigma = PSFSigma;
 SMDCombined.PSFSigma_SE = PSFSigma_SE;

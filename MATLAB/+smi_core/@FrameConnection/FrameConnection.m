@@ -21,10 +21,12 @@ classdef FrameConnection < handle
     
     
     properties
+        BoxSize(1, 1) double = 7; % (Pixels)(Default = 7) see GaussMLE
         FitType = 'XYNB'; % (Default = 'XYNB') see GaussMLE class
         LoS(1, 1) double = 0.01; % (Default = 0.01), Level of Significance
         MaxFrameGap(1, 1) uint32 = 5; % (Frames)(Default = 5)
         MaxSeparation(1, 1) double = 1; % (Pixels)(Default = 1)
+        NParams(1, 1) double = 4; % (Default = 4) see GaussMLE
         SMD % see SingleMoleculeData class
     end
     
@@ -64,7 +66,9 @@ classdef FrameConnection < handle
                 SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
                 
                 % Set the desired SMF fields to class properties.
+                obj.BoxSize = SMF.BoxFinding.BoxSize;
                	obj.FitType = SMF.Fitting.FitType;
+                obj.NParams = SMF.Fitting.NParams;
                 obj.LoS = SMF.FrameConnection.LoS;
                 obj.MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
                 obj.MaxSeparation = SMF.FrameConnection.MaxSeparation;
