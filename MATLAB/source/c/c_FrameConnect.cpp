@@ -220,7 +220,6 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
     P_Add_new = (float*)mxCalloc(N*NDim_Add, sizeof(float));
     for (ii = 0; ii<N*NDim_Add; ii++) {
         P_Add_new[ii] = P_Add[ii];
-//     mexPrintf("ii=%d and P_ADd_new{ii}==%g \n",ii,P_Add_new[ii]);
     }
     //keep track of number of points used
     N_combined = (unsigned int*)mxCalloc(N, sizeof(unsigned int));
@@ -236,57 +235,52 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
             
     //keep track of intial frame number
     FN_new = (unsigned int*)mxCalloc(N, sizeof(unsigned int));
-    for (ii = 0; ii<N; ii++)FN_new[ii] = FrameNum[ii];
+    for (ii = 0; ii<N; ii++)
+    {
+        FN_new[ii] = FrameNum[ii];
+    }
     
     cnt = 0;
     //Logic in loop requires monotonically increasing frame number
-    
     int Clustercnt = MaxConID+1;
-//     mexPrintf("Max Connect ID %d and CurrentID %d\n",MaxConID,Clustercnt);
 
     //Main loop for combination
-    for (ii = 0; ii<N - 1; ii++){
+    for (ii = 0; ii < N-1; ii++)
+    {
         CurrentFrame = (int)FN_new[ii];
-//         mexPrintf("current localization is %d\n",ii);
-//         mexPrintf("current connetID is %d\n",Clustercnt);
-//         mexPrintf("CurrentFrame is %d\n",CurrentFrame);
-//       
-//Clustercnt++;
-        for (jj = ii + 1; jj<N; jj++){
-//             mexPrintf("Considering  jj %d and X_jj %g Y_jj %g and Connect ID of jj %d\n",jj,X_new[jj],X_new[N+jj],ConnectID[jj]);
-//            mexPrintf("Considering  jj %d and SE_X_jj %g and SE_Y_jj %g\n",jj,SE_new[jj],SE_new[N+jj]);
-
+        for (jj = ii + 1; jj < N; jj++)
+        {
             //fast reject on frame gap
             if ((int)FN_new[jj]>(CurrentFrame + MaxFrameGap))
             {
-//                 mexPrintf("Considering %d and %d Frame Gap \n",ii,jj);
                 break;
             }
             if ((int)FN_new[jj] == CurrentFrame)
             {
-//                 mexPrintf("Considering %d and %d same Frame \n",ii,jj);
                 continue;
             }
+            
             //fast rejection on distance.  This is linear distance in each dimension.
             cont = 0;
             for (nn = 0; nn<NDim; nn++)
-                if (fabs(X_new[nn*N + jj] - X_new[nn*N + ii])>MaxDistance) cont++;
+            {
+                if (fabs(X_new[nn*N + jj]-X_new[nn*N + ii]) > MaxDistance) 
+                {
+                    cont++;
+                }
+            }
             if (cont)
             {
-//                 mexPrintf("Considering %d and %d Max Dis \n",ii,jj);
-                
                 continue;
             }
+            
             //fast rejection on euclidian distance
             tmp = 0;
             for (nn = 0; nn<NDim; nn++) tmp += powf(X_new[nn*N + jj] - X_new[nn*N + ii], 2);
             if (sqrt(tmp) > MaxDistance)
             {
-//                 mexPrintf("Considering %d and %d Max r \n",ii,jj);
-                
                 continue;
             }
-            //mexPrintf("Considering %d and %d\n",ii,jj);
             
             //make temp arrays for position and standard error
             for (nn = 0; nn < NDim; nn++) Xtmp1[nn] = X_new[nn*N + ii];
@@ -294,16 +288,10 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
             for (nn = 0; nn < NDim; nn++) SEtmp1[nn] = SE_new[nn*N + ii];
             for (nn = 0; nn < NDim; nn++) SEtmp2[nn] = SE_new[nn*N + jj];
            
-//             mexPrintf("Considering %d and %d , X of ii %g, X of jj %g Y of ii %g, Y of jj %g\n ",ii,jj,Xtmp1[0],Xtmp2[0],Xtmp1[1],Xtmp2[1]);
-//             mexPrintf("Considering %d and %d , SE_X of ii %g, SE_X of jj %g SE_Y of ii %g, SE_Y of jj %g\n ",ii,jj,SEtmp1[0],SEtmp2[0],SEtmp1[1],SEtmp2[1]);
-
             //calculate p-value
             PValue = pvalue(Xtmp1, SEtmp1, Xtmp2, SEtmp2, NDim, Xtmpout, SEtmpout);
-//             mexPrintf("Considering %d and %d , p_value %g, \n",ii,jj,PValue);
             //reject on PValue
             if (PValue<LOS) continue;
-            
-//             mexPrintf("Considering %d and %d , p_value %g, LOS %g\n",ii,jj,PValue, LOS);
             
             //We have passed all tests, so now combine points into later coordinate and null previous
             for (nn = 0; nn < NDim; nn++){
@@ -312,7 +300,7 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
                 X_new[nn*N + ii] = 0;
                 SE_new[nn*N + ii] = 0;
             }
-//             mexPrintf("considering ii=%d and Photon==%g and bg=%g\n",ii,P_Add_new[0*N+ii],P_Add_new[1*N+ii]);
+            
             //sum parameter_Add (in this case photons and background) and null previous
             for (nn = 0; nn < NDim_Add; nn++){
                 P_Add_new[nn*N+jj] += P_Add_new[nn*N+ii];
@@ -331,7 +319,6 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
                 //calculate weighted average
                 out = Weighted_ave(P_Avetmp1, P_AveSEtmp1, P_Avetmp2, P_AveSEtmp2, NDim_Ave,P_Avetmpout, P_AveSEtmpout);
                 
-                
                 //We have passed all tests, so now combine points into later coordinate and null previous
                 for (nn = 0; nn < NDim_Ave; nn++){
                     P_Ave_new[nn*N + jj] = P_Avetmpout[nn];
@@ -346,43 +333,55 @@ if (mxGetM(prhs[4]) != 0 && mxGetN(prhs[4]) != 0){
             N_combined[ii] = 0;
             
             //Propogate cluster ID
-            if ((ConnectID[ii] == 0) && (ConnectID[jj] == 0)) {//neither are in cluster already
-                ConnectID[ii] = Clustercnt;   ConnectID[jj] = Clustercnt; Clustercnt++;
+            if ((ConnectID[ii] == 0) && (ConnectID[jj] == 0)) 
+            {//neither are in cluster already
+                ConnectID[ii] = Clustercnt;   
+                ConnectID[jj] = Clustercnt; 
+                Clustercnt++;
             }
-            
-            if ((ConnectID[ii] == 0) && (ConnectID[jj]>0))  //jj is already in cluster - this can happen sometimes
+            else if ((ConnectID[ii] == 0) && (ConnectID[jj]>0))
+            {
+                //jj is already in cluster - this can happen sometimes
                 ConnectID[ii] = ConnectID[jj];
-            
-            if ((ConnectID[jj] == 0) && (ConnectID[ii]>0))
-                ConnectID[jj] = ConnectID[ii];
-            
-            if ((ConnectID[jj] > 0) && (ConnectID[ii] > 0))// this is rare, but want to combine all with same cluster ID
-            {// we'll use cluster number from ii.
-                for (kk = 0; kk < jj; kk++) if (ConnectID[kk] == ConnectID[jj]) ConnectID[kk] = ConnectID[ii];
+            }
+            else if ((ConnectID[jj] == 0) && (ConnectID[ii]>0))
+            {
                 ConnectID[jj] = ConnectID[ii];
             }
-            
-            
-//             mexPrintf("ii: %d jj: %d ConnectID: %d Clustercnt: %d NCombined: %d\n", ii,jj,ConnectID[ii], Clustercnt,N_combined[jj]);
+            else if ((ConnectID[jj] > 0) && (ConnectID[ii] > 0))
+            {
+                // this is rare, but want to combine all with same cluster ID
+                // we'll use cluster number from ii.
+                int NewID = (ConnectID[ii]<ConnectID[jj]) 
+                    ? ConnectID[ii]:ConnectID[jj];
+                for (kk = 0; kk <= jj; kk++)
+                {
+                    if (ConnectID[kk] == ConnectID[jj])
+                    {
+                        ConnectID[kk] = NewID;
+                    }
+                }
+                
+                // Decrement the Clustercnt: we've now combined two clusters.
+                --Clustercnt;
+            }
             
             FN_new[ii] = 0;
-            
             cnt++;
             break;// I guess this is wrong!
         }
     }
 
-//     mexPrintf("Currecnt Clustercnt: %d \n", Clustercnt);
     //assign cluster id to singletons
     for (ii = 0; ii<N; ii++)
     {
-//         mexPrintf("Number of Localization %d \n",N);
-        if (ConnectID[ii] == 0){ ConnectID[ii] = Clustercnt; Clustercnt++; }
-//            mexPrintf("Localization %d and Currecnt Connect ID: %d \n",ii, ConnectID[ii]);
-
+        if (ConnectID[ii] == 0)
+        {
+            ConnectID[ii] = Clustercnt; 
+            Clustercnt++;
+        }
     }
-//             mexPrintf("last Clustercnt: %d \n", Clustercnt);
-            
+    
     //Create ouput arrays
     int NumOut = N - cnt;
     outsize[0] = NumOut;

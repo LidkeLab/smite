@@ -190,13 +190,13 @@ SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
 
 % Add a new field (IndSMD) to SMDCombined that specifies which indices of 
 % SMD were used to generate each entry.
-%NLocTotal = numel(SMDCombined.ConnectID);
-%IndSMD = cell(NLocTotal, 1);
-%for ii = 1:NLocTotal
-%    IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ...
-%        SMDCombined.ConnectID(ii)));
-%end
-%SMDCombined.IndSMD = IndSMD;
+NLocTotal = numel(SMDCombined.ConnectID);
+IndSMD = cell(NLocTotal, 1);
+for ii = 1:NLocTotal
+   IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ...
+       SMDCombined.ConnectID(ii)));
+end
+SMDCombined.IndSMD = IndSMD;
 
 % Store the updated SMD and SMDCombined in obj.
 obj.SMDCombined = SMDCombined;
