@@ -5,6 +5,8 @@ function [SMD_True] = simStar(obj,NWings)
     
     % INPUT:
     
+    % obj: The object of the SimSMLM() class.
+    
     % NWings: The number of wings of the Siemen's star.
     
     % OUTPUTS:

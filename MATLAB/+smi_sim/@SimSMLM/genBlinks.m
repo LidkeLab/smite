@@ -1,10 +1,12 @@
-function [SMD_Model] = genBlinks(obj,SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
+function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
 
-%This function generates the blinking time trace for a single particle 
+%This function generates the blinking time traces for a single particle 
 %over the given number of the frames considering the input parameters and
-%returns the SMD_Model. 
+%returns the SMD_Model structure. 
 
  % INPUTS:
+ 
+ % obj: The object of the SimSMLM() class.
  
  % [SMD_True]: This is a structure with the following three fields:
  
@@ -16,14 +18,6 @@ function [SMD_Model] = genBlinks(obj,SMD_True,K_OnToOff,K_OffToOn,K_OnToBleach,N
     
  % SMD_True.Z: The Z-positions of particles generated randomly
  % (Number of the generated particles x 1), (um)
- 
- % K_OnToOff: Fluorophore turns Off from On state (1 frames^-1)
- 
- % K_OffToOn: Fluorophore return to On state from Off state (0.0005 frames^-1)
- 
- % K_OnToBleach: Fluorophore bleached out (1/5 frames^-1)
- 
- % NFrames: Number of frames (pixels x pixels)
  
  % StartState: A string which determine if the particle starts on or
  % starts randomly on or off. It can be either 'on' or 'Equib'.
@@ -58,14 +52,27 @@ Z=[];
 FrameNum=[];
 PSFSigma=[];
 Bg=[];
-IntArray = zeros(obj.NLabels, NFrames);
+IntArray = zeros(obj.NLabels, obj.NFrames);
 
-% The following loop iterates over each particle to generate the blinking
-% events for them.
+%The following loop iterates over each particle to generate the blinking
+%events for them.
 
 for mm=1:obj.NLabels
-    %genBlinks() makes the blinking events.
-    Temp=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState);
+    Temp=Blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,obj.NFrames,StartState);
+    
+    %Blinks() makes the blinking events. It takes the following inputs:
+    
+    %K_OnToOff: Fluorophore turns Off from On state (default:1 frames^-1)
+ 
+    %K_OffToOn: Fluorophore return to On state from Off state (default:0.0005 frames^-1)
+ 
+    %K_OnToBleach: Fluorophore bleaches (default:1/5 frames^-1)
+ 
+    %NFrames: Number of frames (pixels x pixels)
+    
+    %StartState: A string which determine if the particle starts on or
+    %starts randomly on or off. It can be either 'on' or 'Equib'.
+    
     IntArray(mm,:)=Temp';
     %Finding the frames where the particle was ON. Note that the
     %particle might not be on at all and this would be an empty
@@ -94,11 +101,11 @@ end
     
     %Nested function to generate blinking events.
     function IvsT=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
-    %genBlinks() generates blinking time trace for a single
+    %Blinks() generates blinking time trace for a single
     %particle over the given number of the frames considering
     %the parameters K_OffToOn, K_OnToOff and K_OnToBleach.
     
-    NPairs=0; %Number of the times that the particle goes on.
+    NTime=0; %Number of the times that the particle goes on.
     
     %Based on the input 'StartState' the particle can start in the
     %on-state or it can be started randomly in either on-state or
@@ -122,33 +129,36 @@ end
     %goes on, goes off and photobleach.
     
     while T<NFrames
-        NPairs=NPairs+1;
-        % OnOffPairs is an array of 3 columns, where the first column gives
+        NTime=NTime+1;
+        % TRate (Time rate) is an array of 3 columns, where the first column gives
         % the times when the particle goes on, the second column gives the
         % time when the particle goes off and third column gives the time
         % when particle photobleaches.
-        OnOffPairs(NPairs,1)=T;
-        D=exprnd(1/K_OnToOff); %Generate blink duratrion
-        OnOffPairs(NPairs,2)=min(T+D,NFrames); %The On-time plus the duration gives the off-time.
-        OnOffPairs(NPairs,3)= rand > (K_OnToOff/(K_OnToOff+K_OnToBleach)); %fluorophore bleaches
-        %if this is condition met.
+        TRate(NTime,1)=T;
+        D=exprnd(1/(K_OnToOff+K_OnToBleach)); %Generate blink duratrion
+        TRate(NTime,2)=min(T+D,NFrames); %The On-time plus the duration gives the off-time.
+        if rand > (K_OnToOff/(K_OnToOff+K_OnToBleach)) %fluorophore bleaches
+           TRate(NTime,3)=rand;
+           break;
+        end
+        %if this condition is met.
         T=T+D+exprnd(1/K_OffToOn); %Advance to the next blinking event.
     end
     
     %Turn blinking events to I vs T
     IvsT=zeros(NFrames,1);
-    for nn=1:NPairs
-        StartT=floor(OnOffPairs(nn,1))+1; %index for start frame
-        EndT=min(NFrames,floor(OnOffPairs(nn,2))+1); %index for start frame
+    for nn=1:NTime
+        StartT=floor(TRate(nn,1))+1; %index for start frame
+        EndT=min(NFrames,floor(TRate(nn,2))+1); %index for start frame
         if StartT==EndT %Blinking happens within one frame
-            IvsT(StartT)=OnOffPairs(nn,2)-OnOffPairs(nn,1);
+            IvsT(StartT)=TRate(nn,2)-TRate(nn,1);
         else
             %This for-loop goes over the frames where the particle is on.
             for ii=StartT:EndT
                 if ii==StartT
-                    IvsT(ii)=StartT-OnOffPairs(nn,1);
+                    IvsT(ii)=StartT-TRate(nn,1);
                 elseif ii==EndT
-                    IvsT(ii)=1-(EndT-OnOffPairs(nn,2));
+                    IvsT(ii)=1-(EndT-TRate(nn,2));
                 else
                     IvsT(ii)=1;
                 end
