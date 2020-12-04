@@ -31,6 +31,7 @@ classdef SimSMLM < handle
         [SMD_True] = simStar(obj,NWings)
         % Call the genBlinks() function to generate the model
         [SMD_Model] = genBlinks(obj,SMD_True,StartState)
+        [Data] = genNoisyData(obj,Model)
 
     end 
 

@@ -137,8 +137,8 @@ end
         TRate(NTime,1)=T;
         D=exprnd(1/(K_OnToOff+K_OnToBleach)); %Generate blink duratrion
         TRate(NTime,2)=min(T+D,NFrames); %The On-time plus the duration gives the off-time.
-        if rand > (K_OnToOff/(K_OnToOff+K_OnToBleach)) %fluorophore bleaches
-           TRate(NTime,3)=rand;
+        if rand() > (K_OnToOff/(K_OnToOff+K_OnToBleach)) %fluorophore bleaches
+           TRate(NTime,3)=rand();
            break;
         end
         %if this condition is met.
