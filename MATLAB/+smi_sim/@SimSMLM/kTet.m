@@ -43,5 +43,6 @@ function SMD_True = kTet(k, center, radius, startAngle)
    %SMD_True = smi_core.SingleMoleculeData.createSMD();
    SMD_True.X = x;
    SMD_True.Y = y;
+   SMD_True.Z = [];
 
 end
