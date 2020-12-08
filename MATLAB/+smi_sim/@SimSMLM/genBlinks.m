@@ -39,6 +39,13 @@ function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
     
  % SMD_Model.FrameNum:The frames that the particles have been detected.
  % (Number of the seen particles x 1)
+
+ % SMD_Model.NFrames:The number of frames that the particles have been detected.
+
+ % SMD_Model.DatasetNum:The dataset (1) that corresponds to the the FrameNum.
+ % (Number of the seen particles x 1)
+
+ % SMD_Model.NDatasets: 1
  
  % SMD_Model.PSFSigma: Point Spread Function Sigma size (Pixels)
  
@@ -97,8 +104,11 @@ for mm=1:NLabels
         SMD_Model.Z = [];
         SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
     end
-    SMD_Model.FrameNum = FrameNum;
-    SMD_Model.Photons = Photons;
+    SMD_Model.FrameNum   = FrameNum;
+    SMD_Model.NFrames    = numel(FrameNum);
+    SMD_Model.DatasetNum = ones(size(FrameNum));
+    SMD_Model.NDatasets  = 1;
+    SMD_Model.Photons    = Photons;
     SMD_Model.Bg = 0;
 end
     
