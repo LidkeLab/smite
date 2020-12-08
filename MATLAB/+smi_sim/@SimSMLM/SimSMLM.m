@@ -21,10 +21,10 @@ classdef SimSMLM < handle
         PSFSigma         % Point Spread Function Sigma size (Pixels).
     end
 
-    properties(SetAccess = protected)
-        LabelCoords
-        NLabels
-    end
+    %properties(SetAccess = protected)
+    %    LabelCoords
+    %    NLabels
+    %end
     
     methods 
         

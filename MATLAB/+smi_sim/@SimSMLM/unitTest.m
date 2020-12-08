@@ -1,6 +1,5 @@
 function unitTest()
 
-   clear
    obj=smi_sim.SimSMLM();
    obj.SZ = 256;
    obj.Rho=30;
@@ -12,6 +11,7 @@ function unitTest()
    obj.EmissionRate=1000;
    obj.Bg=15;
    obj.PSFSigma=1.3;
+
    [SMD_True] = obj.simStar(16);
    [SMD_Model] = obj.genBlinks(SMD_True,'Equib'); 
    

@@ -45,6 +45,7 @@ function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
  % SMD_Model.Bg: Background Count Rate (counts/pixel), this will be empty.
 
 % First making empty vectors that will be filled later.
+NLabels = numel(SMD_True.X);
 Photons=[];
 X=[];
 Y=[];
@@ -52,12 +53,12 @@ Z=[];
 FrameNum=[];
 PSFSigma=[];
 Bg=[];
-IntArray = zeros(obj.NLabels, obj.NFrames);
+IntArray = zeros(NLabels, obj.NFrames);
 
 %The following loop iterates over each particle to generate the blinking
 %events for them.
 
-for mm=1:obj.NLabels
+for mm=1:NLabels
     Temp=Blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,obj.NFrames,StartState);
     
     %Blinks() makes the blinking events. It takes the following inputs:
@@ -83,9 +84,11 @@ for mm=1:obj.NLabels
         FrameNum = cat(1,FrameNum,FrameNumIndiv);
         Indiv = obj.EmissionRate*Temp(FrameNumIndiv);
         Photons = cat(1,Photons,Indiv);
-        Indiv(:,1)=obj.LabelCoords(mm,1);
+        %Indiv(:,1)=obj.LabelCoords(mm,1);
+        Indiv(:,1)=SMD_True.X(mm);
         X = cat(1,X,Indiv);
-        Indiv(:,1)=obj.LabelCoords(mm,2);
+        %Indiv(:,1)=obj.LabelCoords(mm,2);
+        Indiv(:,1)=SMD_True.Y(mm);
         Y = cat(1,Y,Indiv);
     end
     SMD_Model.X = X;

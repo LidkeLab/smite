@@ -70,6 +70,6 @@ function [SMD_True] = simStar(obj,NWings)
         SMD_True.Z = [];
     end
 
-    obj.LabelCoords = LabelCoords;
-    obj.NLabels = NLabels;
+    %obj.LabelCoords = LabelCoords;
+    %obj.NLabels = NLabels;
 end
