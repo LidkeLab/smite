@@ -3,6 +3,11 @@ function DC_fig = plotDriftCorrection(obj, SMD, option)
 % stucture for 2D or 3D data.  The plot is color coded so as to indicate the
 % drift correction as a function of time.
 %
+% The computed drift for each dataset is plotted with a tapering line segment
+% indicating increasing frame number (so increasing time), while all the frames
+% in the entire image are color coded from blue to red, again indicating the
+% direction of increasing time.
+%
 % INPUTS:
 %    SMD:         A structure with fields:
 %       X             x-coordinates (Nx1) where N is total number of points
@@ -13,9 +18,13 @@ function DC_fig = plotDriftCorrection(obj, SMD, option)
 %       NDatasets     number of datasets
 %       DriftX        found x-drift (NFrames x NDatasets)
 %       DriftY        found y-drift (NFrames x NDatasets)
-%       DriftZ        found z drift (NFrames x NDatasets) [OPTIONAL]
+%       DriftZ        found z-drift (NFrames x NDatasets) [OPTIONAL]
 %    option       [OPTIONAL] type of drift correction plot to make:
-%                     'A' - absolute, 'R' - relative, '1' - initial absolute
+%                     'A' - absolute drift predicted per dataset/frame number
+%                     'R' - relative (with respect to the previous) drift
+%                           predicted per dataset/frame number
+%                     '1' - initial values only of the absolute drift predicted
+%                           per dataset
 %                     (Default = 'A')
 %    obj:         [class properties]
 %       PixelSizeZUnit pixel size in um (Default = 0.1)
@@ -24,10 +33,10 @@ function DC_fig = plotDriftCorrection(obj, SMD, option)
 %                     dataset (see driftCorrectKNN)
 %
 % OUTPUTS:
-%    DC_fig       figure handle
+%    DC_fig       figure handle to the drift correction plot
 
 % Created by
-%    Michael J. Wester (Lidke Lab 2018)
+%    Michael J. Wester (Lidke Lab 2020)
 
    if ~isfield(SMD, 'DriftX') | isempty(SMD.DriftX)
       error('SMD.DriftX either missing or empty, so DriftCorrection plot unavailable!');
