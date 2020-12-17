@@ -47,7 +47,6 @@ classdef ChannelRegistration < handle
         % This is only used when TransformationType = 'polynomial'.
         PolynomialDegree(1, 1) ...
             {mustBeMember(PolynomialDegree, [2, 3, 4])} = 2;
-            
         
         % Auto-scale fiducial images (boolean)(Default = 1)
         % This flag lets this class do a somewhat arbitrary scaling of the
@@ -118,7 +117,8 @@ classdef ChannelRegistration < handle
         applyTransform()
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
-        transformImages()
+        [TransformedImages] = transformImages(Images, ...
+            RegistrationTransform)
         [TransformedCoordinates] = transformCoords(Coordinates, ...
             RegistrationTransform);
         visualizeTransform()
