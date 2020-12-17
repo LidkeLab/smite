@@ -71,7 +71,7 @@ end
 FrameNum = length(X);
 Model = zeros(SZ,SZ,FrameNum,'single');
 Nelem =SZ*SZ*FrameNum;
-kc = parallel.gpu.CUDAKernel('cuda_PSFSample3DBlob.ptx','cuda_PSFSample3DBlob.cu','cuda_PSFSample3DBlob');
+kc = parallel.gpu.CUDAKernel('smi_cuda_PSFSample3DBlob.ptx','smi_cuda_PSFSample3DBlob.cu','cuda_PSFSample3DBlob');
 %gpuDevice gives the info of your hardware, like the available
 %memory (TotalMemory).
 g = gpuDevice;

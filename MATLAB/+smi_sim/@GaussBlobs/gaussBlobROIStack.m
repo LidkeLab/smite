@@ -28,8 +28,8 @@ function [Model,Data] = gaussBlobROIStack(SZ,SMD,VarianceIm,Covariance,PixType)
 %   Statistics and Machine Learning Toolbox
 %   Parallel Processing Toolbox
 %   NVidia GPU
-%   cuda_gaussBlobROIStack.ptx
-%   cuda_gaussBlobROIStack.cu
+%   smi_cuda_gaussBlobROIStack.ptx
+%   smi_cuda_gaussBlobROIStack.cu
 % 
 % CITATION:
 %   Marjolein Meddens 2017, Lidke Lab
@@ -87,8 +87,8 @@ end
 Model = zeros(SZ,SZ,NFrames,'single');
 
 % create cuda kernels
-k_sample = parallel.gpu.CUDAKernel('cuda_gaussBlobROIStack.ptx','cuda_gaussBlobROIStack.cu','kernel_guassiansampleblobs');
-k_integ = parallel.gpu.CUDAKernel('cuda_gaussBlobROIStack.ptx','cuda_gaussBlobROIStack.cu','kernel_guassianintegrateblobs');
+k_sample = parallel.gpu.CUDAKernel('smi_cuda_gaussBlobROIStack.ptx','smi_cuda_gaussBlobROIStack.cu','kernel_guassiansampleblobs');
+k_integ  = parallel.gpu.CUDAKernel('smi_cuda_gaussBlobROIStack.ptx','smi_cuda_gaussBlobROIStack.cu','kernel_guassianintegrateblobs');
 
 %gpuDevice gives GPU hardware info
 g = gpuDevice;

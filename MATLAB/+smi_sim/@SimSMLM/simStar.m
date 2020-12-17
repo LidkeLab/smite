@@ -5,6 +5,8 @@ function [SMD_True] = simStar(obj,NWings)
     
     % INPUT:
     
+    % obj: The object of the SimSMLM() class.
+    
     % NWings: The number of wings of the Siemen's star.
     
     % OUTPUTS:
@@ -62,12 +64,12 @@ function [SMD_True] = simStar(obj,NWings)
     % signifies the ith particle is ON in the jth frame.
     
     %Saving the generated data in the structure SMD.
-    SMD_True.X = LabelCoords(:,1)+1;
-    SMD_True.Y = LabelCoords(:,2)+1;
+    SMD_True.X = LabelCoords(:,1);
+    SMD_True.Y = LabelCoords(:,2);
     if isscalar(obj.PSFSigma)
         SMD_True.Z = [];
     end
 
-    obj.LabelCoords = LabelCoords;
-    obj.NLabels = NLabels;
+    %obj.LabelCoords = LabelCoords;
+    %obj.NLabels = NLabels;
 end

@@ -15,8 +15,8 @@
 %   MATLAB 2014a or later versions
 %   Parallel Procesing Toolbox
 %   NVidia GPU
-%   cuda_gaussBlobROIStack.ptx
-%   cuda_gaussBlobROIStack.cu
+%   smi_cuda_gaussBlobROIStack.ptx
+%   smi_cuda_gaussBlobROIStack.cu
 
 
 properties 

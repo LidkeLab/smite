@@ -17,8 +17,8 @@ classdef FindROI < handle
     %   MATLAB 2014a or later versions
     %   Parallel Procesing Toolbox
     %   NVidia GPU
-    %   cuda_FindROI.ptx
-    %   cuda_FindROI.cu
+    %   smi_cuda_FindROI.ptx
+    %   smi_cuda_FindROI.cu
     %
     % CITATION:
     %   Ian T. Young, Lucas J. van Vliet,
@@ -230,8 +230,8 @@ classdef FindROI < handle
         %   MATLAB 2014a or later versions
         %   Parallel Procesing Toolbox
         %   NVidia GPU
-        %   cuda_FindROI.ptx
-        %   cuda_FindROI.cu
+        %   smi_cuda_FindROI.ptx
+        %   smi_cuda_FindROI.cu
         %
         % CITATION:
         %   Ian T. Young, Lucas J. van Vliet,
@@ -255,7 +255,7 @@ classdef FindROI < handle
         B = 1 - (B1+B2+B3)/B0;
         
         %Creating GPU CUDA kernel objects from PTX and CU code
-        K_Gauss = parallel.gpu.CUDAKernel('cuda_FindROI.ptx','cuda_FindROI.cu','kernel_gaussMajor');
+        K_Gauss = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_gaussMajor');
         
         %Calling the gpu code to apply Gaussian filter along major
         %This is an in-place operation
@@ -297,11 +297,11 @@ classdef FindROI < handle
         %   MATLAB 2014a or later versions
         %   Parallel Procesing Toolbox
         %   NVidia GPU
-        %   cuda_FindROI.ptx
-        %   cuda_FindROI.cu
+        %   smi_cuda_FindROI.ptx
+        %   smi_cuda_FindROI.cu
         
-            K_LM1 = parallel.gpu.CUDAKernel('cuda_FindROI.ptx','cuda_FindROI.cu','kernel_LocalMaxFirstPass');
-            K_LM2 = parallel.gpu.CUDAKernel('cuda_FindROI.ptx','cuda_FindROI.cu','kernel_LocalMaxSecondPass');
+            K_LM1 = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_LocalMaxFirstPass');
+            K_LM2 = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_LocalMaxSecondPass');
             
             %Make out-of-place storage and final image
             TempStack=gpuArray(Stack);

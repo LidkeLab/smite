@@ -12,7 +12,7 @@
 #[a, b] = system('nvcc -ptx cuda_gaussMLEv2\cuda_gaussMLEv2.cu -o  ../../ptx/cuda_gaussMLEv2.ptx')
 #copyfile('cuda_gaussMLEv2\cuda_gaussMLEv2.cu','../../ptx/cuda_gaussMLEv2.cu')
 
-BASE = cuda_gaussMLEv2
+BASE = smi_cuda_gaussMLEv2
 
 SRCS = $(BASE).cu *.cuh *.h
 OBJS = $(BASE).ptx

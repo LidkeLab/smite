@@ -21,6 +21,9 @@ function SMD_True = kTet(k, center, radius, startAngle)
       error('kTet: k must be an integer > 0');
    end
 
+   x = zeros(k, 1);
+   y = zeros(k, 1);
+
    kTetAngle = (2 * pi) / k;
    % Start the k-tet at a random location along the circle's circumference.
    if exist('startAngle', 'var')
@@ -40,5 +43,6 @@ function SMD_True = kTet(k, center, radius, startAngle)
    SMD_True = smi_core.SingleMoleculeData.createSMD();
    SMD_True.X = x;
    SMD_True.Y = y;
+   SMD_True.Z = [];
 
 end
