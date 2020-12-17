@@ -8,12 +8,12 @@ function [CulledCoordinates] = performManualCull(RawData, Coordinates)
 % INPUTS:
 %   RawData: Stack of images that will be plotted and have coordinates 
 %            overlain. (numeric array, MxNx2)
-%   Coordinates: Stack of paired coordinates. (numeric array, PxQx2)
+%   Coordinates: Stack of paired coordinates. (numeric array, Px2x2)
 %
 % OUTPUTS:
 %   CulledCoordinates: Subset of the input Coordinates containing only
 %                      those points which weren't culled.
-%                      (numeric array, RxSx2, R,S<=P,Q)
+%                      (numeric array, Qx2x2, Q<=P)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)

@@ -119,7 +119,8 @@ classdef ChannelRegistration < handle
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
         transformImages()
-        transformCoords()
+        [TransformedCoordinates] = transformCoords(Coordinates, ...
+            RegistrationTransform);
         visualizeTransform()
     end
     
@@ -128,8 +129,6 @@ classdef ChannelRegistration < handle
         % it's nice to hide them from view (so they don't distract the
         % user).
         
-        findImageTransform()
-        findCoordTransform()
         [PairMap12, PairMap21] = pairCoordinates(Coords1, Coords2, ...
             SeparationThreshold);
         [CulledCoordinates] = performManualCull(RawData, Coordinates);
