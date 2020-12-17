@@ -19,9 +19,9 @@ else % Linux/MacOS
    setenv('PATH', [getenv('PATH') ':/usr/local/cuda-10.1/bin']);
 end
 
-%% cuda_gaussMLEv2
+%% smi_cuda_gaussMLEv2
 clc
-cuda_dir = 'cuda_gaussMLEv2';
+cuda_dir = 'smi_cuda_gaussMLEv2';
 fprintf('Compiling %s ...\n', cuda_dir);
 addpath(cuda_dir);
 
@@ -30,9 +30,9 @@ addpath(cuda_dir);
                         fullfile('..', '..', 'ptx', [cuda_dir, '.ptx'])))
 copyfile(fullfile(cuda_dir, [cuda_dir, '.cu']), fullfile('..', '..', 'ptx'));
 
-%% cuda_FindROI
+%% smi_cuda_FindROI
 
-cuda_dir = 'cuda_FindROI';
+cuda_dir = 'smi_cuda_FindROI';
 fprintf('Compiling %s ...\n', cuda_dir);
 addpath(cuda_dir);
 
@@ -41,9 +41,9 @@ addpath(cuda_dir);
                         fullfile('..', '..', 'ptx', [cuda_dir, '.ptx'])))
 copyfile(fullfile(cuda_dir, [cuda_dir, '.cu']), fullfile('..', '..', 'ptx'));
 
-%% cuda_gaussBlobROIStack
+%% smi_cuda_gaussBlobROIStack
 
-cuda_dir = 'cuda_gaussBlobROIStack';
+cuda_dir = 'smi_cuda_gaussBlobROIStack';
 fprintf('Compiling %s ...\n', cuda_dir);
 addpath(cuda_dir);
 
@@ -53,4 +53,14 @@ addpath(cuda_dir);
 copyfile(fullfile(cuda_dir, [cuda_dir, '.cu']), fullfile('..', '..', 'ptx'));
 copyfile(fullfile(cuda_dir, [cuda_dir, '.m']),  fullfile('..', '..', 'ptx'));
 
+%% smi_cuda_PSFSample3DBlob
 
+cuda_dir = 'smi_cuda_PSFSample3DBlob';
+fprintf('Compiling %s ...\n', cuda_dir);
+addpath(cuda_dir);
+
+[s, r] = system(sprintf('nvcc -ptx %s -o %s\n',                ...
+                        fullfile(cuda_dir, [cuda_dir, '.cu']), ...
+                        fullfile('..', '..', 'ptx', [cuda_dir, '.ptx'])))
+                    
+copyfile(fullfile(cuda_dir, [cuda_dir, '.cu']), fullfile('..', '..', 'ptx'));

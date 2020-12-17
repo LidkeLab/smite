@@ -15,8 +15,8 @@ classdef GaussMLE < handle
     %   MATLAB 2014a or later versions
     %   Parallel Procesing Toolbox
     %   NVidia GPU
-    %   cuda_FindROI.ptx
-    %   cuda_FindROI.cu
+    %   smi_cuda_FindROI.ptx
+    %   smi_cuda_FindROI.cu
     %
     % CITATION:
     %   Smith, C., Joseph, N., Rieger, B. et al.
@@ -116,8 +116,8 @@ classdef GaussMLE < handle
         % REQUIRES:
         %       Parallel Computing Toolbox
         %       NVidia GPU
-        %       cuda_gaussMLEv2.cu
-        %       cuda_gaussMLEv2.ptx
+        %       smi_cuda_gaussMLEv2.cu
+        %       smi_cuda_gaussMLEv2.ptx
         %
         
         if nargin<2
@@ -146,7 +146,7 @@ classdef GaussMLE < handle
                 KernelID=['_SCMOS' KernelID(2:end)];
         end
         
-        k = parallel.gpu.CUDAKernel('cuda_gaussMLEv2.ptx','cuda_gaussMLEv2.cu',KernelID);
+        k = parallel.gpu.CUDAKernel('smi_cuda_gaussMLEv2.ptx','smi_cuda_gaussMLEv2.cu',KernelID);
         
         N=size(obj.Data,3);
         SZ=size(obj.Data,1);
