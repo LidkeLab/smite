@@ -1,5 +1,5 @@
-function [TransformedCoordinates] = transformCoords(Coordinates, ...
-    RegistrationTransform)
+function [TransformedCoordinates] = transformCoords(...
+    RegistrationTransform, Coordinates)
 %transformCoords transforms a set of coordinates with the given transform.
 % This method will transform the coordinates given in Coordinates using the
 % transform in RegistrationTransform.  The way this is done will depend on
@@ -7,10 +7,10 @@ function [TransformedCoordinates] = transformCoords(Coordinates, ...
 % are applied differently than affine transforms).
 %
 % INPUTS:
-%   Coordinates: Array of coordinates (Mx2 numeric array)
 %   RegistrationTransform: A MATLAB tform object containing information
 %                          about the transformation to be used 
 %                          (tform object)
+%   Coordinates: Array of coordinates (Mx2 numeric array)
 %
 % OUTPUTS: 
 %   TransformedCoordinates: Input Coordinates transformed using

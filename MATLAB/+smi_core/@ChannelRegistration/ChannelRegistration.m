@@ -116,24 +116,27 @@ classdef ChannelRegistration < handle
     methods (Static)
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
-        [TransformedImages] = transformImages(Images, ...
-            RegistrationTransform)
-        [TransformedCoordinates] = transformCoords(Coordinates, ...
-            RegistrationTransform);
-        visualizeTransform()
+        [TransformedCoordinates] = transformCoords(...
+            RegistrationTransform, Coordinates);
+        [TransformedImages] = transformImages(...
+            RegistrationTransform, Images)
+        [PlotFigure] = visualizeCoordTransform(PlotFigure, ...
+            RegistrationTransform, FrameSize, GridSpacing);
+        [PlotAxes] = visualizeImageTransform(PlotAxes, ...
+            RegistrationTransform, FrameSize, GridSpacing);
+        [SquaredError] = estimateRegistrationError(...
+            RegistrationTransform, Coords1, Coords2);
+        [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
+            SquaredError, Coords1, Coords2, FOV, GridSpacing)
     end
     
     methods (Static, Hidden)
         % These methods aren't expected to be used directly by the user, so
         % it's nice to hide them from view (so they don't distract the
         % user).
-        
         [PairMap12, PairMap21] = pairCoordinates(Coords1, Coords2, ...
             SeparationThreshold);
         [CulledCoordinates] = performManualCull(RawData, Coordinates);
-        visualizeImageTransform()
-        visualizeCoordTransform()
-        
     end
     
     
