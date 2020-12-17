@@ -114,7 +114,6 @@ classdef ChannelRegistration < handle
     end
     
     methods (Static)
-        applyTransform()
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
         [TransformedImages] = transformImages(Images, ...
