@@ -4,30 +4,21 @@ classdef ChannelRegistration < handle
     % methods used to interpret/visualize the results.
     %
     % REQUIRES:
-    %   MATLAB Image Processing Toolbox
+    %   MATLAB Image Processing Toolbox 2013b or later
     
     % Created by:
     %   David J. Schodt (Lidke Lab, 2020)
     
     
     properties
-        % Variable in FiducialFileNames containing the raw data (char)
-        DataVariable = 'sequence';
-        
-        % Directory containing the fiducial file(s) (char)
-        FiducialFileDir
-        
-        % Filenames of the fiducial data files (cell array of char)
-        % FiducialFileNames{1} is always assumed to be the "fixed" or
-        % "reference" file, meaning that FiducialFileNames{n>1} will all be
-        % registered with respepct to FiducialFileNames{1}.
-        FiducialFileNames
-        
         % Single molecule fitting structure (see SingleMoleculeFitting)
         % This SMF structure is used to find localizations in the fiducial
         % files specified by FiducialFilePath.  If 
         % TransformationBasis = 'images' this is not needed.
-        SMF struct
+        SMF
+        
+        % Coords used to compute transforms (cell array of numeric array)
+        Coordinates cell
         
         % Type of data used to compute transform (char)(Default = 'coords')
         % OPTIONS: 
@@ -41,13 +32,47 @@ classdef ChannelRegistration < handle
         %   If TransformationBasis = 'coords', this can be set to any of
         %       the transformationType options defined in doc fitgeotrans
         %   If TransformationBasis = 'images', this can be set to any of
-        %       the transformType options defined in doc imregtform
+        %       the transformType options defined in doc imregtform.
         TransformationType char = 'lwm';
+        
+        % Threshold for pairing localizations (Pixels)(Default = inf)
+        % This only matters when TransformationBasis = 'coords'.
+        SeparationThreshold(1, 1) = inf;
+        
+        % # of neighbor points used to compute transform (Default = 10)
+        % This is only used when TransformationType = 'lwm'
+        NNeighborPoints(1, 1) {mustBeInteger} = 10;
+        
+        % Degree of polynomial for 'polynomial' tform (Default = 2)
+        % This is only used when TransformationType = 'polynomial'.
+        PolynomialDegree(1, 1) ...
+            {mustBeMember(PolynomialDegree, [2, 3, 4])} = 2;
+            
+        
+        % Auto-scale fiducial images (boolean)(Default = 1)
+        % This flag lets this class do a somewhat arbitrary scaling of the
+        % fiducial images in an attempt to simplify the code usage.  This
+        % allows us to avoid gain/offset correcting the data, which might
+        % be annoying in some cases (as in, it's nice to just use the
+        % default SMF instead of having to tweak parameters just for this
+        % code).
+        AutoscaleFiducials(1, 1) logical = 1;
+        
+        % Manually cull localization pairs (boolean)(Default = 1)
+        % This flag lets the user manually cull the paired localizations
+        % used to produce the transform (this is only applicable for
+        % TransformationBasis = 'coords').
+        ManualCull(1, 1) logical = 1;
     end
     
     properties (SetAccess = protected)
-        % Transform computed from the fiducial files (tform object)
-        RegistrationTransform
+        % Computed transformation(s) (cell array of tform objects)
+        % Each element corresponds to a transform w.r.t. the fiducial in
+        % obj.SMF.Data.FileName{1}, as in, RegistrationTransform{3} is a
+        % registration between obj.SMF.Data.FileName{3} and 
+        % obj.SMF.Data.FileName{1}.
+        % RegistrationTransform{1} will either be empty or meaningless.
+        RegistrationTransform cell
     end
     
     methods
@@ -55,27 +80,44 @@ classdef ChannelRegistration < handle
                 FiducialFileDir, FiducialFileNames, SMF)
             %ChannelRegistration class constructor.
             % The inputs can be used to set class properties if desired.
+            %
+            % INPUTS:
+            %   FiducialFileDir: Name of directory containing the fiducial
+            %                    files. (char array/string)
+            %   FiducialFileNames: Filename(s) of the files containing the
+            %                      fiducial images. 
+            %                      (cell array of char/string).
             
             % Set inputs to class properties if needed.
+            if (exist('SMF', 'var') && ~isempty(SMF))
+                obj.SMF = SMF;
+            else
+                % Set a (mostly) default SMF, with a few tweaks that tend
+                % to help out for several types of fiducial images.
+                obj.SMF = smi_core.SingleMoleculeFitting;
+                obj.SMF.Fitting.FitType = 'XYNBS';
+            end
             if (exist('FiducialFileDir', 'var') ...
                     && ~isempty(FiducialFileDir))
-                obj.FiducialFileDir = FiducialFileDir;
+                obj.SMF.Data.FileDir = FiducialFileDir;
             end
             if (exist('FiducialFileNames', 'var') ...
                     && ~isempty(FiducialFileNames))
-                obj.FiducialFileNames = FiducialFileNames;
+                obj.SMF.Data.FileName = FiducialFileNames;
             end
-            if (exist('SMF', 'var') && ~isempty(SMF))
-                obj.SMF = SMF;
-            end
+
             
         end
         
         [RegistrationTransform] = findTransform(obj);
-        
+        exportTransform(obj)
+        gui(obj) % import files, show stuff, ...
     end
     
     methods (Static)
+        applyTransform()
+        [PlotAxes, LineHandles] = ...
+            plotCoordsOnData(PlotAxes, RawData, Coordinates);
         transformImages()
         transformCoords()
         visualizeTransform()
@@ -88,6 +130,9 @@ classdef ChannelRegistration < handle
         
         findImageTransform()
         findCoordTransform()
+        [PairMap12, PairMap21] = pairCoordinates(Coords1, Coords2, ...
+            SeparationThreshold);
+        [CulledCoordinates] = performManualCull(RawData, Coordinates);
         visualizeImageTransform()
         visualizeCoordTransform()
         
