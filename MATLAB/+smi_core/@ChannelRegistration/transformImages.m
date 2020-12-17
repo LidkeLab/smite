@@ -1,5 +1,5 @@
-function [TransformedImages] = transformImages(Images, ...
-    RegistrationTransform)
+function [TransformedImages] = transformImages(...
+    RegistrationTransform, Images)
 %transformImages transforms a set of images with the given transform.
 % This method will transform the images given in Images using the
 % transform in RegistrationTransform.
@@ -8,10 +8,10 @@ function [TransformedImages] = transformImages(Images, ...
 %       imwarp().
 %
 % INPUTS:
-%   Images: A stack of images to be transformed (MxNxP numeric array)
 %   RegistrationTransform: A MATLAB tform object containing information
 %                          about the transformation to be used 
 %                          (tform object)
+%   Images: A stack of images to be transformed (MxNxP numeric array)
 %
 % OUTPUTS: 
 %   TransformedImages: Input Images transformed usingRegistrationTransform
