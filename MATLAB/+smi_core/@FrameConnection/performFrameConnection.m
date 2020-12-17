@@ -78,7 +78,7 @@ SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
 MaxConnectID = max(SMD.ConnectID);
 for nn = unique(SMD.DatasetNum)
     % Isolate all valid localizations in the nn-th dataset and typecast
-    % certain arrays for c_FrameConnect.mex* .
+    % certain arrays for smi_c_FrameConnection.mex* .
     CurrentBool = ((SMD.DatasetNum==nn) & (SMD.ThreshFlag==0));
     if ~any(CurrentBool)
         % All localizations in this dataset were thresholded out.
@@ -111,11 +111,11 @@ for nn = unique(SMD.DatasetNum)
                 single(SMD.Z_SE(CurrentBool))];
     end
     
-    % Perform the frame-connection using c_FrameConnect.mex*.
+    % Perform the frame-connection using smi_c_FrameConnection.mex*.
     [OutputCoords, OutputCoordsSE, NConnected, OutputFrames, ...
         OutputExtras, OutputExtrasSE, OutputPhotonsBgLogL, ...
         OutputConnectID, OutputConnectIDCombined] = ...
-        c_FrameConnect(obj.LoS, ...
+        smi_c_FrameConnection(obj.LoS, ...
         InputCoords, InputCoordsSE, InputFrameNum, ...
         InputExtras, InputExtrasSE, InputPhotonsBgLogL, ...
         obj.MaxSeparation, obj.MaxFrameGap, MaxConnectID);
@@ -124,8 +124,8 @@ for nn = unique(SMD.DatasetNum)
     SMD.ConnectID(CurrentBool) = OutputConnectID;
     MaxConnectID = max(OutputConnectID);
     
-    % Store the outputs from c_FrameConnect.mex* in temporary arrays (these
-    % arrays will later be copied into the 'SMDCombined' output).
+    % Store the outputs from smi_c_FrameConnection.mex* in temporary arrays
+    % (these arrays will later be copied into the 'SMDCombined' output).
     X = [X; OutputCoords(:, 1)];
     Y = [Y; OutputCoords(:, 2)];
     X_SE = [X_SE; OutputCoordsSE(:, 1)];

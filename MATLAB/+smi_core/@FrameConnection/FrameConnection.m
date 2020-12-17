@@ -14,7 +14,7 @@ classdef FrameConnection < handle
     %   [~, SMD, SMDCombined] = smi_core.FrameConnection(SMD, SMF, 1);
     %
     % REQUIRES:
-    %   c_FrameConnect.mex*
+    %   smi_c_FrameConnection.mex*
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
