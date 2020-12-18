@@ -64,7 +64,8 @@ for ii = 1:NDatasets
     for jj = 1:NPoints(ii)
         LineHandles{ii}(jj) = line(PlotAxes, ...
             Coordinates{ii}(jj, 1)-0.5, Coordinates{ii}(jj, 2)-0.5, ...
-            'Marker', MarkerOptions(ii), 'Color', LineColors(jj, :));
+            'Marker', MarkerOptions(ii), 'Color', LineColors(jj, :), ...
+            'LineWidth', 1.5);
     end
 end
 

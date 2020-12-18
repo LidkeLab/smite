@@ -2,7 +2,8 @@ function [RegistrationTransform] = findTransform(obj)
 %findTransform finds a channel registration transform.
 % This method will find a channel registration transform object that is
 % intended to register coordinates from/features in the fiducial files
-% specified by obj.FiducialFileNames.
+% specified by obj.FiducialFileNames.  
+% 
 %
 % OUTPUTS:
 %   RegistrationTransform: A cell array of MATLAB tform objects (this
@@ -31,6 +32,7 @@ for ii = 2:NFiducials
         LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, ii);
     FiducialImages(:, :, ii) = mean(TempImage, 3);
 end
+obj.FiducialImages = FiducialImages;
 
 % Perform the gain and offset correction on each of the fiducial images
 % (this probably doesn't matter for image transforms, but I'm going to do
@@ -101,26 +103,17 @@ switch obj.TransformationBasis
             end
             
             % Compute the transform.
-            % NOTE: Some of these transforms can only be applied as an
-            %       inverse so we want to switch the order of the "moving"
-            %       and "fixed" points so as to ensure the first fiducial
-            %       never gets transformed (for consistency).
             switch obj.TransformationType
                 case 'lwm'
                     RegistrationTransform{ii} = fitgeotrans(...
-                        FinalCoordinates{ii}(:, :, 1), ...
                         FinalCoordinates{ii}(:, :, 2), ...
+                        FinalCoordinates{ii}(:, :, 1), ...
                         obj.TransformationType, obj.NNeighborPoints);
                 case 'polynomial'
                     RegistrationTransform{ii} = fitgeotrans(...
-                        FinalCoordinates{ii}(:, :, 1), ...
                         FinalCoordinates{ii}(:, :, 2), ...
+                        FinalCoordinates{ii}(:, :, 1), ...
                         obj.TransformationType, obj.PolynomialDegree);
-                case 'pwl'
-                    RegistrationTransform{ii} = fitgeotrans(...
-                        FinalCoordinates{ii}(:, :, 1), ...
-                        FinalCoordinates{ii}(:, :, 2), ...
-                        obj.TransformationType);
                 otherwise
                     RegistrationTransform{ii} = fitgeotrans(...
                         FinalCoordinates{ii}(:, :, 2), ...

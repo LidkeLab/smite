@@ -1,5 +1,6 @@
 function [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
-    RegistrationTransform, Coords1, Coords2, FOV, GridSpacing)
+    RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
+    FOV, GridSpacing)
 %visualizeRegistrationError visualizes the error in RegistrationTransform
 % This method will plot the error of RegistrationTransform.  This is done
 % by finding the registration error as the root mean square difference
@@ -8,23 +9,23 @@ function [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
 % interpolating between the points to produce a smooth heat map type image
 % estimate of the error. 
 %
-% NOTE: Coords2 will always be the set of coordinates that will be
-%       transformed.
+% NOTE: For some transforms, we have to treat FixedCoordinates as the
+%       moving pair (forward transforms don't exist for some transforms).  
 %
 % NOTE: Default values can be used (when available) by setting the
 %       corresponding input to [].  For example, 
-%       visualizeCoordTransform([], TForm, FrameSize) will use a default
-%       value for PlotAxes.
+%       visualizeRegistrationError([], TForm, Coords1, Coords2) will use a
+%       default value for PlotAxes.
 %
 % INPUTS:
 %   PlotAxes: Axes in which we will make the plots. (Default = gca())
 %   RegistrationTransform: RegistrationTransform is a MATLAB tform object
 %                          describing the transform to be visualized.
 %                          (tform object)
-%   Coords1: Coordinates of points in the first fiducial.
-%            (Nx2 numeric array)
-%   Coords2: Coordinates of points in the second fiducial that will be
-%            transformed by RegistrationTransform. (Nx2 numeric array)
+%   MovingCoordinates: Coordinates of points in the second fiducial.
+%                      (Nx2 numeric array)
+%   FixedCoordinates: Coordinates of points in the first fiducial.
+%                     (Nx2 numeric array)
 %   FOV: Field of view in which we will estimate the error.
 %        (Pixels)(1x4, [XStart, YStart, XEnd, YEnd])
 %        (Default set to encompass all points in Coords1)
@@ -42,15 +43,17 @@ function [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
 
 
 % Set default parameters and modify inputs.
-Coords1 = double(Coords1);
-Coords2 = double(Coords2);
+FixedCoordinates = double(FixedCoordinates);
+MovingCoordinates = double(MovingCoordinates);
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes) ...
         || ~isvalid(PlotAxes))
     PlotAxes = gca();
 end
 if (~exist('FOV', 'var') || isempty(FOV))
-    FOV = [floor(min(Coords1(:, 2))), floor(min(Coords1(:, 1))), ...
-        ceil(max(Coords1(:, 2))), ceil(max(Coords1(:, 1)))];
+    FOV = [floor(min(FixedCoordinates(:, 2))), ...
+        floor(min(FixedCoordinates(:, 1))), ...
+        ceil(max(FixedCoordinates(:, 2))), ...
+        ceil(max(FixedCoordinates(:, 1)))];
 end
 if (~exist('GridSpacing', 'var') || isempty(GridSpacing))
     GridSpacing = 1;
@@ -58,11 +61,12 @@ end
 
 % Compute the squared difference between Coords1 and transformed Coords2.
 SquaredError = smi_core.ChannelRegistration.estimateRegistrationError(...
-    RegistrationTransform, Coords1, Coords2);
+    RegistrationTransform, MovingCoordinates, FixedCoordinates);
 
 % Create an interpolant function handle for our registration error.
 InterpolantFunction = scatteredInterpolant(...
-    Coords1(:, 1), Coords1(:, 2), double(SquaredError), ...
+    FixedCoordinates(:, 1), FixedCoordinates(:, 2), ...
+    double(SquaredError), ...
     'natural', 'linear');
 
 % Estimate the squared error on a grid.
@@ -87,7 +91,7 @@ ColorBar.Label.String = 'Squared error (Pixels^2)';
 
 % Plot the true points as a reference.
 hold(PlotAxes, 'on');
-line(PlotAxes, Coords1(:, 1), Coords1(:, 2), ...
+line(PlotAxes, FixedCoordinates(:, 1), FixedCoordinates(:, 2), ...
     'Color', 'k', 'Marker', '.', 'LineStyle', 'none')
 
 

@@ -20,6 +20,9 @@ classdef ChannelRegistration < handle
         % Coords used to compute transforms (cell array of numeric array)
         Coordinates cell
         
+        % Fiducial images (numeric array, MxPxNFiducials)
+        FiducialImages {mustBeFloat}
+        
         % Type of data used to compute transform (char)(Default = 'coords')
         % OPTIONS: 
         %   'coords': localizations (defined by (x, y) coordinates) are
@@ -39,9 +42,9 @@ classdef ChannelRegistration < handle
         % This only matters when TransformationBasis = 'coords'.
         SeparationThreshold(1, 1) = inf;
         
-        % # of neighbor points used to compute transform (Default = 10)
+        % # of neighbor points used to compute transform (Default = 12)
         % This is only used when TransformationType = 'lwm'
-        NNeighborPoints(1, 1) {mustBeInteger} = 10;
+        NNeighborPoints(1, 1) {mustBeInteger} = 12;
         
         % Degree of polynomial for 'polynomial' tform (Default = 2)
         % This is only used when TransformationType = 'polynomial'.
@@ -116,8 +119,8 @@ classdef ChannelRegistration < handle
     methods (Static)
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
-        [TransformedCoordinates] = transformCoords(...
-            RegistrationTransform, Coordinates);
+        [MovingCoordinates, FixedCoordinates] = transformCoords(...
+            RegistrationTransform, MovingCoordinates, FixedCoordinates);
         [TransformedImages] = transformImages(...
             RegistrationTransform, Images)
         [PlotFigure] = visualizeCoordTransform(PlotFigure, ...
@@ -127,7 +130,11 @@ classdef ChannelRegistration < handle
         [SquaredError] = estimateRegistrationError(...
             RegistrationTransform, Coords1, Coords2);
         [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
-            SquaredError, Coords1, Coords2, FOV, GridSpacing)
+            RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
+            FOV, GridSpacing)
+        [PlotAxes] = visualizeRegistrationResults(PlotAxes, ...
+            RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
+            MovingImage, FixedImage);
     end
     
     methods (Static, Hidden)
@@ -137,6 +144,8 @@ classdef ChannelRegistration < handle
         [PairMap12, PairMap21] = pairCoordinates(Coords1, Coords2, ...
             SeparationThreshold);
         [CulledCoordinates] = performManualCull(RawData, Coordinates);
+        [TransformedCoordinates] = transformCoordsDirect(...
+            RegistrationTransform, Coordinates);
     end
     
     
