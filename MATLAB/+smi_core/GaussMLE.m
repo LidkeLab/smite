@@ -193,7 +193,7 @@ classdef GaussMLE < handle
                     switch obj.FitType
                         case {'XYNB','XYNBS','XYNBSXSY'}
                             [P, CRLB,LL] = feval(k,SubData,BoxCorners,VarianceImage,...
-                                mean(Sigma),SZ,size(VarianceImage,1),obj.Iterations,...
+                                mean(obj.PSFSigma),SZ,size(VarianceImage,1),obj.Iterations,...
                                 d_Parameters,d_CRLBs,d_LogLikelihood,NFitsActual);
                         case 'XYZNB'
                             Z0=zeros(NFitsActual,1,'single');
@@ -224,16 +224,16 @@ classdef GaussMLE < handle
         switch obj.FitType
             case 'XYNB'
             case 'XYNBS'
-                Results.Sigma=Params_out(:,5);
-                Results.Sigma_SE=sqrt(CRLB_out(:,5));
+                Results.PSFSigma=Params_out(:,5);
+                Results.PSFSigma_SE=sqrt(CRLB_out(:,5));
             case 'XYZNB'
                 Results.Z=Params_out(:,5);
                 Results.Z_SE=sqrt(CRLB_out(:,5));
             case 'XYNBSXSY'
-                Results.SigmaY=Params_out(:,5);
-                Results.SigmaX=Params_out(:,6);
-                Results.SigmaY_SE=sqrt(CRLB_out(:,5));
-                Results.SigmaX_SE=sqrt(CRLB_out(:,6));
+                Results.PSFSigmaY=Params_out(:,5);
+                Results.PSFSigmaX=Params_out(:,6);
+                Results.PSFSigmaY_SE=sqrt(CRLB_out(:,5));
+                Results.PSFSigmaX_SE=sqrt(CRLB_out(:,6));
         end
         Results.LogLikelihood=LL_out;
         
