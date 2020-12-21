@@ -4,8 +4,8 @@ function [MovingCoordinates, FixedCoordinates] = transformCoords(...
 % This method transforms the input coordinates, with the set being
 % transformed depending on the type of transform.  The purpose of this
 % method is to eliminate the guesswork needed when applying the transform
-% (e.g., 'lwm' doesn't have a forward transform, so it has to be applied to
-% the fixed coordinates to do what we want it to).
+% (e.g., 'lwm' doesn't have a forward transform, so we have to do
+% "reverse" the effect of that transform). 
 %
 % INPUTS:
 %   RegistrationTransform: RegistrationTransform is a MATLAB tform object
@@ -35,24 +35,14 @@ if ismember(class(RegistrationTransform), ...
         {'images.geotrans.LocalWeightedMeanTransformation2D', ...
         'images.geotrans.PolynomialTransformation2D', ...
         'images.geotrans.PiecewiseLinearTransformation2D'})
-    % None of these transforms have a transformPointsForward()
-    % implementation, so we must use the inverse on our reference points
-    % (We could just compute the transform treating the reference as
-    % moving, but then the transform can't be applied to our raw data since
-    % MATLAB doesn't have an inverse of imwarp().  For SPT, it's nice to
-    % have transformed raw data for use in movies.)
-    % NOTE: Since the moving images are transformed forward, but fixed
-    %       coordinates are transformed in the inverse, we get an 
-    %       additional offset that we need to subtract!
-    FixedCoordinatesTrans = ...
-        smi_core.ChannelRegistration.transformCoordsDirect(...
-        RegistrationTransform, FixedCoordinates);
-    TempMoving = ...
+    % Since these transforms only have the transformPointsInverse() method,
+    % we'll need to "reverse" the transform at each point (i.e., use the
+    % inverse transform, see how far points moved, and then move the
+    % initial points the same amount in the opposite direction).
+    MovingCoordinatesTransformed = ...
         smi_core.ChannelRegistration.transformCoordsDirect(...
         RegistrationTransform, MovingCoordinates);
-    Offset = TempMoving - MovingCoordinates;
-    FixedCoordinates = FixedCoordinatesTrans - Offset;
-    MovingCoordinates = MovingCoordinates - Offset;
+    MovingCoordinates = 2*MovingCoordinates - MovingCoordinatesTransformed;
 else
     MovingCoordinates = ...
         smi_core.ChannelRegistration.transformCoordsDirect(...

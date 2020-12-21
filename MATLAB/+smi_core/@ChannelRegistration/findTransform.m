@@ -4,7 +4,6 @@ function [RegistrationTransform] = findTransform(obj)
 % intended to register coordinates from/features in the fiducial files
 % specified by obj.FiducialFileNames.  
 % 
-%
 % OUTPUTS:
 %   RegistrationTransform: A cell array of MATLAB tform objects (this
 %                          will be the same cell array stored in
