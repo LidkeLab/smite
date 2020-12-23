@@ -65,7 +65,7 @@ end
 % whether or not we need to find localizations from the fiducial data).
 RegistrationTransform = cell(NFiducials, 1);
 switch obj.TransformationBasis
-    case 'coords'
+    case 'coordinates'
         % Use smi_core.LocalizeData to find localizations in the fiducial
         % images.
         LocalizeData = smi_core.LocalizeData([], obj.SMF);
@@ -99,6 +99,8 @@ switch obj.TransformationBasis
             if obj.ManualCull
                 [FinalCoordinates{ii}] = obj.performManualCull(...
                     FiducialImages, PairedCoordinates);
+            else
+                FinalCoordinates{ii} = PairedCoordinates;
             end
             
             % Compute the transform.
@@ -129,6 +131,9 @@ switch obj.TransformationBasis
                 ScaledData(:, :, ii), ScaledData(:, :, 1), ...
                 obj.TransformationType, Optimizer, Metric);
         end
+    otherwise
+        fprintf(['Unrecognized transformation basis:\n', ...
+            'obj.TransformationBasis = %s'], obj.TransformationBasis)
 end
 obj.RegistrationTransform = RegistrationTransform;
 

@@ -5,7 +5,7 @@ function exportTransform(obj, FileDir, FileName)
 %
 % INPUTS:
 %   FileDir: Directory in which we'll save the transform information.
-%            (char array/string)(Default = pwd())
+%            (char array/string)(Default = obj.SMF.Data.FileDir)
 %   FileName: Name of the .mat file we'll save. 
 %             (char array/string)
 %             (Default = 'RegistrationTransform' plus a string containing 
@@ -17,7 +17,7 @@ function exportTransform(obj, FileDir, FileName)
 
 % Set defaults if needed.
 if (~exist('FileDir', 'var') || isempty(FileDir))
-    FileDir = pwd();
+    FileDir = obj.SMF.Data.FileDir;
 end
 if (~exist('FileName', 'var') || isempty(FileName))
     CurrentTime = cellstr(num2str(round(clock().')));
