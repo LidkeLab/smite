@@ -23,12 +23,13 @@ classdef ChannelRegistration < handle
         % Fiducial images (numeric array, MxPxNFiducials)
         FiducialImages {mustBeFloat}
         
-        % Type of data used to compute transform (char)(Default = 'coords')
+        % Data used to compute transform (char)(Default = 'coordinates')
         % OPTIONS: 
-        %   'coords': localizations (defined by (x, y) coordinates) are
-        %             used to find the transform.
+        %   'coordinates': localizations (defined by (x, y) coordinates) 
+        %                  are used to find the transform.
         %   'images': images are used directly to find the transform.
-        TransformationBasis char = 'coords';
+        TransformationBasis char {mustBeMember(TransformationBasis, ...
+            {'coordinates', 'images'})} = 'coordinates';
         
         % Type of transform to be computed (char array)(Default = 'lwm')
         % OPTIONS:
@@ -44,7 +45,8 @@ classdef ChannelRegistration < handle
         
         % # of neighbor points used to compute transform (Default = 12)
         % This is only used when TransformationType = 'lwm'
-        NNeighborPoints(1, 1) {mustBeInteger} = 12;
+        NNeighborPoints(1, 1) {mustBeInteger, ...
+            mustBeGreaterThan(NNeighborPoints, 5)} = 12;
         
         % Degree of polynomial for 'polynomial' tform (Default = 2)
         % This is only used when TransformationType = 'polynomial'.
@@ -77,6 +79,18 @@ classdef ChannelRegistration < handle
         RegistrationTransform cell
     end
     
+    properties (Hidden, SetAccess = protected)
+        % These properties are used for convenience internally (e.g., for
+        % use in the GUI) and shouldn't be modified.
+        
+        TransformationBasisOptions cell = {'coordinates', 'images'};
+        CoordTransformOptions cell = {'nonreflective similarity', ...
+            'similarity', 'affine', 'projective', 'polynomial', 'pwl', ...
+            'lwm'};
+        ImageTransformOptions cell = {'translation', 'rigid', ...
+            'similarity', 'affine'};
+        
+    end
     methods
         function [obj] = ChannelRegistration(...
                 FiducialFileDir, FiducialFileNames, SMF)
@@ -111,9 +125,15 @@ classdef ChannelRegistration < handle
             
         end
         
+        function set.SMF(obj, SMFInput)
+            % This is a set method for the SMF to ensure a valid SMF is
+            % provided.
+            obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMFInput);
+        end
+        
         [RegistrationTransform] = findTransform(obj);
         exportTransform(obj)
-        gui(obj)
+        gui(obj, GUIParent)
     end
     
     methods (Static)
