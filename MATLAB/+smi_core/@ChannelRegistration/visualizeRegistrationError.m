@@ -28,7 +28,7 @@ function [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
 %                     (Nx2 numeric array)
 %   FOV: Field of view in which we will estimate the error.
 %        (Pixels)(1x4, [XStart, YStart, XEnd, YEnd])
-%        (Default set to encompass all points in Coords1)
+%        (Default is set to encompass all points in FixedCoordinates)
 %   GridSpacing: Spacing of a grid made across FrameSize.  The grid will
 %                consist of points
 %                [0:GridSpacing:FrameSize(1), 0:GridSpacing:FrameSize(2)] 
@@ -49,17 +49,18 @@ if (~exist('PlotAxes', 'var') || isempty(PlotAxes) ...
         || ~isvalid(PlotAxes))
     PlotAxes = gca();
 end
-if (~exist('FOV', 'var') || isempty(FOV))
-    FOV = [floor(min(FixedCoordinates(:, 2))), ...
-        floor(min(FixedCoordinates(:, 1))), ...
-        ceil(max(FixedCoordinates(:, 2))), ...
-        ceil(max(FixedCoordinates(:, 1)))];
-end
 if (~exist('GridSpacing', 'var') || isempty(GridSpacing))
     GridSpacing = 1;
 end
+if (~exist('FOV', 'var') || isempty(FOV))
+    FOV = [floor(min(FixedCoordinates(:, 1))-GridSpacing), ...
+        floor(min(FixedCoordinates(:, 2))-GridSpacing), ...
+        ceil(max(FixedCoordinates(:, 1))+GridSpacing), ...
+        ceil(max(FixedCoordinates(:, 2))+GridSpacing)];
+end
 
-% Compute the squared difference between Coords1 and transformed Coords2.
+% Compute the squared difference between FixedCoordinates and transformed 
+% MovingCoordinates.
 SquaredError = smi_core.ChannelRegistration.estimateRegistrationError(...
     RegistrationTransform, MovingCoordinates, FixedCoordinates);
 
@@ -70,26 +71,26 @@ InterpolantFunction = scatteredInterpolant(...
     'natural', 'linear');
 
 % Estimate the squared error on a grid.
-[XGrid, YGrid] = meshgrid(...
-    (FOV(1)-GridSpacing):GridSpacing:(FOV(3)+GridSpacing), ...
-    (FOV(2)-GridSpacing):GridSpacing:(FOV(4)+GridSpacing));
+[XGrid, YGrid] = ...
+    meshgrid(FOV(1):GridSpacing:FOV(3), FOV(2):GridSpacing:FOV(4));
 SquaredErrorGrid = InterpolantFunction(XGrid(:), YGrid(:));
 
 % Display the grid of estimated squared errors.
 SquaredErrorGrid = reshape(SquaredErrorGrid, size(XGrid));
-ImshowCorrection = [-0.5, 0.5];
+ImshowCorrection = [0.5, -0.5];
 imshow(SquaredErrorGrid, [], 'Parent', PlotAxes, ...
     'XData', FOV([1, 3])+ImshowCorrection, ...
     'YData', FOV([2, 4])+ImshowCorrection)
 colormap(PlotAxes, 'parula')
 title(PlotAxes, ...
-    'Squared registration error estimated in full field of view')
+    'Squared registration error (interpolated) in full field of view')
 xlabel(PlotAxes, 'X (pixels)')
 ylabel(PlotAxes, 'Y (pixels)')
+axis(PlotAxes, 'tight')
 ColorBar = colorbar(PlotAxes);
 ColorBar.Label.String = 'Squared error (Pixels^2)';
 
-% Plot the true points as a reference.
+% Plot the true points as a visual reference.
 hold(PlotAxes, 'on');
 line(PlotAxes, FixedCoordinates(:, 1), FixedCoordinates(:, 2), ...
     'Color', 'k', 'Marker', '.', 'LineStyle', 'none')

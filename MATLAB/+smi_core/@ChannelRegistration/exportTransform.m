@@ -1,15 +1,14 @@
-function exportTransform(obj, FileDir, FileName)
+function exportTransform(obj, FileName, FileDir)
 %exportTransform exports transform information into a .mat file.
 % This method will save a bunch of relevant class fields into a .mat file
 % in the specified location.
 %
 % INPUTS:
-%   FileDir: Directory in which we'll save the transform information.
-%            (char array/string)(Default = obj.SMF.Data.FileDir)
-%   FileName: Name of the .mat file we'll save. 
-%             (char array/string)
+%   FileName: Name of the .mat file we'll save. (char array/string)
 %             (Default = 'RegistrationTransform' plus a string containing 
 %             time)
+%   FileDir: Directory in which we'll save the transform information.
+%            (char array/string)(Default = obj.SMF.Data.FileDir)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -30,8 +29,9 @@ RegistrationTransform = obj.RegistrationTransform;
 Coordinates = obj.Coordinates;
 NNeighborPoints = obj.NNeighborPoints;
 PolynomialDegree = obj.PolynomialDegree;
+SMF = obj.SMF;
 save(fullfile(FileDir, FileName), 'RegistrationTransform', ...
-    'Coordinates', 'NNeighborPoints', 'PolynomialDegree')
+    'Coordinates', 'NNeighborPoints', 'PolynomialDegree', 'SMF')
 
 
 end

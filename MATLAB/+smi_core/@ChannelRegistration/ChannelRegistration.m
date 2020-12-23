@@ -132,7 +132,7 @@ classdef ChannelRegistration < handle
         end
         
         [RegistrationTransform] = findTransform(obj);
-        exportTransform(obj)
+        exportTransform(obj, FileName, FileDir)
         gui(obj, GUIParent)
     end
     
