@@ -21,11 +21,11 @@ SMD_Data.Y=SMD_Data.Y_SE+randn(size(SMD_Data.Y_SE)).*SMD_Data.Y_SE;
 
 SMD_Data.Photons=SMD_Model.Photons;
 
-SMD_Data.PSFSigma=obj.PSFSigma;
+SMD_Data.PSFSigma=SMD_Model.PSFSigma;
 
 SMD_Data.FrameNum=SMD_Model.FrameNum;
 
-SMD_Data.Bg=obj.Bg*ones(size(obj.SZ));
+SMD_Data.Bg=obj.Bg.*ones(obj.SZ);
 
 end
 
