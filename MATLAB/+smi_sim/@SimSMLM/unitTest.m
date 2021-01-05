@@ -3,7 +3,7 @@ function unitTest()
    obj=smi_sim.SimSMLM();
    obj.SZ = 256;
    obj.Rho=30;
-   obj.NFrames=10;
+   obj.NFrames=5;
    obj.ZoomFactor=1;
    obj.K_OnToOff=1;
    obj.K_OffToOn=0.005;
@@ -14,13 +14,15 @@ function unitTest()
 
    [SMD_True] = obj.simStar(16);
    [SMD_Model] = obj.genBlinks(SMD_True,'Equib'); 
+   [SMD_Data] = genNoisySMD(obj,SMD_Model);
    
    % To generate the blobs without noise, execute the following:
    [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NFrames,SMD_Model,0,0,0);
    dipshow(Model)
    
     % To generate the blobs having poisson noise, execute the following:
-   [Data] = obj.genNoisyData(Model);
+   %[Data] = obj.genNoisyData(Model);
+   [Data] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NFrames,SMD_Data,obj.Bg,0,0);
    dipshow(Data)
     
 end
