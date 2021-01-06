@@ -29,7 +29,7 @@ SMD_Data.PSFSigma=SMD_Model.PSFSigma;
 
 %SMD_Data.FrameNum=SMD_Model.FrameNum;
 
-SMD_Data.Bg=obj.Bg.*ones(obj.SZ);
+SMD_Data.Bg=obj.Bg.*ones([length(SMD_Model.Photons),1]);
 
 end
 
