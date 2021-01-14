@@ -20,6 +20,7 @@ classdef SMLM < handle
         DatasetList = [] % List of datasets to be analyzed
         DC               % DriftCorrection class object used internally
         SMD              % SMD structure with final analysis results
+        SMDPreThresh     % Keeps track of why localizations were filtered out
     end % properties (Access=protected)
     % =========================================================================
 
@@ -85,6 +86,9 @@ classdef SMLM < handle
             % DriftCorrection class object is also used in analyzeDataset.
             obj.DC = smi_core.DriftCorrection(obj.SMF);
             obj.SMD=[];
+            obj.SMDPreThresh.X=[];
+            obj.SMDPreThresh.Y=[];
+            obj.SMDPreThresh.ThreshFlag=[];
             fprintf('Processing %d datasets ...\n', numel(obj.DatasetList));
             for nn=1:numel(obj.DatasetList)
                 SMDnn = obj.analyzeDataset(obj.DatasetList(nn), nn);
@@ -114,6 +118,12 @@ classdef SMLM < handle
             LD = smi_core.LocalizeData(Dataset, obj.SMF);
             fprintf('Generating localizations ...\n');
             [SMD] = LD.genLocalizations();
+
+            % Keep track of why localizations were filtered out.
+            obj.SMDPreThresh.X = [obj.SMDPreThresh.X; LD.SMDPreThresh.X];
+            obj.SMDPreThresh.Y = [obj.SMDPreThresh.Y; LD.SMDPreThresh.Y];
+            obj.SMDPreThresh.ThreshFlag = ...
+               [obj.SMDPreThresh.ThreshFlag; LD.SMDPreThresh.ThreshFlag];
 
             % Define NDatasets, and DatasetNum from the dataset count.
             SMD.NDatasets  = 1;
