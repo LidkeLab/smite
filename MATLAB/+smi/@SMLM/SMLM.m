@@ -101,7 +101,7 @@ classdef SMLM < handle
                obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
             end
 
-            THR = smi.Threshold;
+            THR = smi_core.Threshold;
             THR.rejectedLocalizations(obj.SMDPreThresh, '');
         end
 
