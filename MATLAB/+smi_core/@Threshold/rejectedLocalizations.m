@@ -1,6 +1,6 @@
 function rejectedLocalizations(obj, SMD, options, SaveDir)
 % Produce plots of accepted and rejected localization fits,
-% individually by % reason rejected and combined by number of reasons rejected
+% individually by reason rejected and combined by number of reasons rejected
 % or by major reason rejected.
 %
 % INPUT:
@@ -11,7 +11,7 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
 %                       the reason for rejection.  See setThreshFlag for
 %                       further details.
 %    options   [OPTIONAL] string indicating which plots to produce or all if
-%                         omitted or empty:
+%                         omitted:
 %              'R'  rejected due to individual reasons (X,Y,Z; Photons; ...
 %              'N'  rejected for the indicated number of reasons
 %              'M'  rejected for the indicated major reasons
@@ -20,7 +20,7 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
 %Created by
 %    Michael Wester (Lidkelab 2020)
 
-   if ~exist('options', 'var') | isempty(options)
+   if ~exist('options', 'var')
       options = 'RNM';
    end
    Rplot = contains(options, 'R');

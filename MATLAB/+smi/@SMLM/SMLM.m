@@ -100,6 +100,9 @@ classdef SMLM < handle
                fprintf('Drift correcting (inter-dataset) ...\n');
                obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
             end
+
+            THR = smi.Threshold;
+            THR.rejectedLocalizations(obj.SMDPreThresh, '');
         end
 
         % ---------------------------------------------------------------------
