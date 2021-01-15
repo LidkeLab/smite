@@ -121,6 +121,7 @@ end
 [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
 
 if matches("FitFrame", PlotDo)
+   Nloc_frame = [];
    % Number of localizations per frame
    for jj=1:max(SMD.DatasetNum)
        for ii=1:max(SMD.FrameNum)
