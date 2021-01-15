@@ -122,6 +122,7 @@ end
 
 if matches("FitFrame", PlotDo)
    Nloc_frame = [];
+   FitFrame = [];
    % Number of localizations per frame
    for jj=1:max(SMD.DatasetNum)
        for ii=1:max(SMD.FrameNum)
