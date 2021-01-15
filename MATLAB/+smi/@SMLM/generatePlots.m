@@ -55,7 +55,7 @@ PlotSaveDir = obj.SMF.Data.ResultsDir;
 SMD = obj.SMD;
 
 if isempty(SMD.X)
-   warning('No localization data to plot!');
+   fprintf('No localization data to plot!\n');
    return;
 end
 
