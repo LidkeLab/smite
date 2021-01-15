@@ -59,41 +59,41 @@ if isempty(SMD.X)
    return;
 end
 
-if matches("Photons", PlotDo)
+if ismember("Photons", PlotDo)
    %create Photons histogram
    plotAndSaveHist('Photons','Intensity')
 end
 
-if matches("Bg", PlotDo)
+if ismember("Bg", PlotDo)
    %create Bg histogram
    plotAndSaveHist('Bg','Background')
 end
 
-if matches("PSFSigma", PlotDo)
+if ismember("PSFSigma", PlotDo)
    plotAndSaveHist('PSFSigma','PSFSigma')
 end
 
-if matches("PValue", PlotDo)
+if ismember("PValue", PlotDo)
    %create PValue histogram
    plotAndSaveHist('PValue','P value')
 end
 
-if matches("X_SE", PlotDo)
+if ismember("X_SE", PlotDo)
    %create X_SE histogram
    plotAndSaveHist('X_SE','X std error')
 end
 
-if matches("Y_SE", PlotDo)
+if ismember("Y_SE", PlotDo)
    %create Y_SE histogram
    plotAndSaveHist('Y_SE','Y std error')
 end
 
-if matches("Z_SE", PlotDo)
+if ismember("Z_SE", PlotDo)
    %create Z_SE histogram
    plotAndSaveHist('Z_SE','Z std error')
 end
 
-if matches("NCombined", PlotDo)
+if ismember("NCombined", PlotDo)
    %create Number of Connected localization histogram
    plotAndSaveHist('NCombined','Connected emitters')
 end
@@ -101,18 +101,18 @@ end
 %cumulative of DriftX, DriftY {, DriftZ} and total drift
 if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    isfield(SMD,'DriftY') && ~isempty(SMD.DriftY)
-   if matches("DriftX", PlotDo)
+   if ismember("DriftX", PlotDo)
       plotAndSaveCum('DriftX','DriftX')
    end
-   if matches("DriftY", PlotDo)
+   if ismember("DriftY", PlotDo)
       plotAndSaveCum('DriftY','DriftY')
    end
-   if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ) && matches("DriftZ",PlotDo)
+   if isfield(SMD,'DriftZ') && ~isempty(SMD.DriftZ) && ismember("DriftZ",PlotDo)
       plotAndSaveCum('DriftZ','DriftZ')
    end 
 
    % Estimated 2D or 3D drift
-   if matches("Drift", PlotDo)
+   if ismember("Drift", PlotDo)
       DC = smi_core.DriftCorrection;
       DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
       figDC = DC.plotDriftCorrection(SMD, 'A');
@@ -125,7 +125,7 @@ end
 % BaseName is used to label plot files.
 [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
 
-if matches("FitFrame", PlotDo)
+if ismember("FitFrame", PlotDo)
    Nloc_frame = [];
    FitFrame = [];
    % Number of localizations per frame
@@ -157,7 +157,7 @@ end
 
 SRImageZoom = 10;
 
-if matches("DriftIm", PlotDo)
+if ismember("DriftIm", PlotDo)
    % Drift image
    [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, SRImageZoom);
    dipshow(DriftImRGB);
@@ -166,7 +166,7 @@ if matches("DriftIm", PlotDo)
    if ~ShowPlots; close(gcf); end
 end
 
-if matches("GaussIm", PlotDo)
+if ismember("GaussIm", PlotDo)
    % Gaussian image
    [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, SRImageZoom);
    dipshow(GaussIm);
@@ -175,7 +175,7 @@ if matches("GaussIm", PlotDo)
    if ~ShowPlots; close(gcf); end
 end
 
-if matches("HistIm", PlotDo)
+if ismember("HistIm", PlotDo)
    % Histogram image
    [~, HistImRGB] = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
    dipshow(HistImRGB);
