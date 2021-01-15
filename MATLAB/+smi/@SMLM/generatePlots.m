@@ -54,6 +54,11 @@ end
 PlotSaveDir = obj.SMF.Data.ResultsDir;
 SMD = obj.SMD;
 
+if isempty(SMD.X)
+   warning('No localization data to plot!');
+   return;
+end
+
 if matches("Photons", PlotDo)
    %create Photons histogram
    plotAndSaveHist('Photons','Intensity')
