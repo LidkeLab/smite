@@ -22,31 +22,31 @@ classdef DataToPhotons < handle
     
     
     properties
-        % obj.RawData converted to units of photons (numeric array)
-        CorrectedData
+        % obj.RawData converted to units of photons (float array)
+        CorrectedData {mustBeFloat(CorrectedData)}
         
-        % obj.CameraReadNoise converted to units of photons (numeric array)
-        CorrectedReadNoise
+        % obj.CameraReadNoise converted to units of photons (float array)
+        CorrectedReadNoise {mustBeFloat(CorrectedReadNoise)}
         
-        % Data that is to be gain/offset corrected (numeric array)
-        RawData 
+        % Data that is to be gain/offset corrected (float array)
+        RawData {mustBeFloat(RawData)}
         
-        % Region of interest of the raw data (numeric array)
+        % Region of interest of the raw data (float array)
         % (see obj.convertToPhotons() for details/usage)
-        RawDataROI
+        RawDataROI {mustBeFloat(RawDataROI)}
         
-        % Gain of the camera used to collect RawData (numeric array)
-        CameraGain
+        % Gain of the camera used to collect RawData (float array)
+        CameraGain {mustBeFloat(CameraGain)}
         
-        % Offset of the camera used to collect RawData (numeric array)
-        CameraOffset
+        % Offset of the camera used to collect RawData (float array)
+        CameraOffset {mustBeFloat(CameraOffset)}
         
-        % Read noise of the camera used to collect Raw Data (numeric array)
-        CameraReadNoise
+        % Read noise of the camera used to collect Raw Data (float array)
+        CameraReadNoise {mustBeFloat(CameraReadNoise)}
         
-        % Region of interest of the gain/offset arrays (numeric array)
+        % Region of interest of the gain/offset arrays (float array)
         % (see obj.convertToPhotons() for details/usage)
-        CalibrationROI
+        CalibrationROI {mustBeFloat(CalibrationROI)}
     end
     
     methods
