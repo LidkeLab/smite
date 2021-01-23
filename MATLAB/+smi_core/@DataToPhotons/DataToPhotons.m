@@ -12,17 +12,92 @@ classdef DataToPhotons < handle
     %   SMF.Data.CameraReadNoise (see SingleMoleculeFitting class for
     %   details), you can convert RawData and CameraReadNoise to units of
     %   photons and photons^2, respectively, as follows:
-    %       [RawDataConverted, CameraReadNoiseConverted] = ...
-    %           smi_core.DataToPhotons.convertToPhotons(RawData, SMF, ...
-    %           RawDataROI, CalibrationROI);
-    %   (see convertToPhotons() for detailed descriptions/usage of
-    %   RawDataROI and CalibrationROI)
+    %       [~, RawDataConverted, CameraReadNoiseConverted] = ...
+    %           smi_core.DataToPhotons(SMF, ...
+    %           RawData, RawDataROI, CalibrationROI, true);
+    %   Alternatively, you can prepare the class for usage (and set class
+    %   parameters immediately) as follows:
+    %       DTP = smi_core.DataToPhotons(SMF, ...
+    %           RawData, RawDataROI, CalibrationROI);
     
     
     properties
+        % obj.RawData converted to units of photons (numeric array)
+        CorrectedData
+        
+        % obj.CameraReadNoise converted to units of photons (numeric array)
+        CorrectedReadNoise
+        
+        % Data that is to be gain/offset corrected (numeric array)
+        RawData 
+        
+        % Region of interest of the raw data (numeric array)
+        % (see obj.convertToPhotons() for details/usage)
+        RawDataROI
+        
+        % Gain of the camera used to collect RawData (numeric array)
+        CameraGain
+        
+        % Offset of the camera used to collect RawData (numeric array)
+        CameraOffset
+        
+        % Read noise of the camera used to collect Raw Data (numeric array)
+        CameraReadNoise
+        
+        % Region of interest of the gain/offset arrays (numeric array)
+        % (see obj.convertToPhotons() for details/usage)
+        CalibrationROI
     end
     
     methods
+        function [obj, Data, ReadNoise] = DataToPhotons(SMF, ...
+                RawData, RawDataROI, CalibrationROI, AutoRun)
+            %DataToPhotons is the class constructor.
+            
+            % Set defaults if needed.
+            if (~exist('AutoRun', 'var') || isempty(AutoRun))
+                AutoRun = 0;
+            end
+                        
+            % Set class properties based on the inputs.
+            AllFieldsSet = true;
+            if (exist('SMF', 'var') && ~isempty(SMF))
+                % Reload the SMF to ensure it has all required properties.
+                SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMF);
+                
+                % Set the desired SMF fields to class properties.
+                obj.CameraGain = SMF.Data.CameraGain;
+                obj.CameraOffset = SMF.Data.CameraOffset;
+                obj.CameraReadNoise = SMF.Data.CameraReadNoise;
+            else
+                AllFieldsSet = false;
+            end
+            if (exist('RawData', 'var') && ~isempty(RawData))
+                obj.RawData = RawData;
+            else
+                AllFieldsSet = false;
+            end
+            if (exist('RawDataROI', 'var') && ~isempty(RawDataROI))
+                obj.RawDataROI = RawDataROI;
+            else
+                AllFieldsSet = false;
+            end
+            if (exist('CalibrationROI', 'var') && ~isempty(CalibrationROI))
+                obj.CalibrationROI = CalibrationROI;
+            else
+                AllFieldsSet = false;
+            end
+            
+            % Run obj.convertToPhotons() if requested.
+            if (AutoRun && AllFieldsSet)
+                [Data, ReadNoise] = obj.convertToPhotons(obj.RawData, ...
+                    obj.CameraGain, obj.CameraOffset, ...
+                    obj.CameraReadNoise, ...
+                    obj.RawDataROI, obj.CalibrationROI);
+                obj.CorrectedData = Data;
+                obj.CorrectedReadNoise = ReadNoise;
+            end
+        end
     end
     
     methods (Static)

@@ -24,7 +24,7 @@ function [Data, ReadNoise] = convertToPhotons(RawData, ...
 %   CameraReadNoise: An array specifying the camera noise.
 %                    (ADU^2)(dimensions must match CameraGain)
 %   RawDataROI: The region of interest (ROI) of the input RawData on the
-%               camera. 
+%               camera.
 %               (Pixels)([YStart, XStart, YEnd, XEnd])
 %               (Default = [], meaning RawData is centered w.r.t. 
 %               CameraGain/OffsetImage, or that CameraGain/OffsetImage are

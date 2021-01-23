@@ -5,17 +5,18 @@ function [Success] = unitTest()
 %
 % INPUTS:
 %
-% OUTPUTS: 
+% OUTPUTS:
 %   Success: A boolean array whose elements indicate success/failure of
 %            various methods of the DataToPhotons class. (Boolean)
 %            Success(1): method convertToPhotons(), RawData is gain and
 %                        offset corrected succesfully for non-scalar gain
 %                        and offset.
-%            Success(2): method convertToPhotons(), the input read-noise 
-%                        (given as a variance) is succesfully converted to 
+%            Success(2): method convertToPhotons(), the input read-noise
+%                        (given as a variance) is succesfully converted to
 %                        units of photons^2 for non-scalar gain and offset.
 %            Success(3): Same as Success(1) for scalar gain.
 %            Success(4): Same as Success(2) for scalar offset.
+%            Success(5): Test of the class constructor.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -48,7 +49,7 @@ SMD.Bg = zeros(5*NFrames, 1);
     SMD, Background);
 
 % Add read noise to the simulated data and then convert to ADU.
-% NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted 
+% NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted
 %       to keep ReadNoiseVariance in units of ADU^2 for unit consistency.
 ReadNoiseVariancePhotons = CameraReadNoise ./ (CameraGain.^2);
 DataWithReadNoise = Data ...
@@ -81,7 +82,7 @@ ROIBottomLeft = [min(IndicesBottomLeft), max(IndicesBottomLeft)];
 
 % Test the gain/offset corrections in convertToPhotons() in the corner test
 % quadrants.
-Success = zeros(2, 1, 'logical');
+Success = zeros(5, 1, 'logical');
 CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
 CorrectedData = zeros(FrameSizeFull, FrameSizeFull, NFrames, 'single');
 CorrectedNoise = zeros(FrameSizeFull, 'single');
@@ -126,7 +127,7 @@ Success(2) = (Success(2) ...
 % Repeat the above tests for scalar gain and offset (the quadrants no
 % longer matter in this case so we can just test the entire image).
 % Add read noise to the simulated data and then convert to ADU.
-% NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted 
+% NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted
 %       to keep ReadNoiseVariance in units of ADU^2 for unit consistency.
 CameraGain = mean(CameraGain(:));
 CameraOffset = mean(CameraOffset(:));
@@ -142,6 +143,22 @@ RawData = CameraGain.*DataWithScalarReadNoise + CameraOffset;
 Success(3) = all(abs(CorrectedData(:)-DataWithScalarReadNoise(:)) < 0.1);
 Success(4) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
 
-
+% Test the class constructor functions.
+SMF = smi_core.SingleMoleculeFitting;
+SMF.Data.CameraGain = CameraGain;
+SMF.Data.CameraOffset = CameraOffset;
+SMF.Data.CameraReadNoise = CameraReadNoise;
+try
+    [DTP, CorrectedData, CorrectedReadNoise] = ...
+        smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
+        ROIBottomRight, CalibrationROI, 1);
+    [DTP] = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
+        ROIBottomRight, CalibrationROI, 0);
+    Success(5) = true;
+catch MException
+    warning('error message: %s', ...
+        MException.identifier, MException.message)
 end
 
+
+end
