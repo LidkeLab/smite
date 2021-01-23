@@ -53,6 +53,13 @@ classdef DataToPhotons < handle
         function [obj, Data, ReadNoise] = DataToPhotons(SMF, ...
                 RawData, RawDataROI, CalibrationROI, AutoRun)
             %DataToPhotons is the class constructor.
+            % This constructor has several optional inputs which are set to
+            % class properties.  If you provide all inputs (e.g., SMF,
+            % RawData, ...) and set AutoRun = 1, this class will
+            % automatically run obj.convertToPhotons() on your data.  The
+            % results will be stored in the appropriate class properties,
+            % but you can also retrieve them by specifying 2nd and 3rd
+            % outputs from this constructor.
             
             % Set defaults if needed.
             if (~exist('AutoRun', 'var') || isempty(AutoRun))
