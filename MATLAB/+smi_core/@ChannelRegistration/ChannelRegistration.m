@@ -18,11 +18,50 @@ classdef ChannelRegistration < handle
         SMF
         
         % Coords used to compute transforms (cell array of numeric array)
+        % NOTE: The ordering of these coordinates will follow that
+        %       described below for the ordering of RegistrationTransform
         Coordinates cell
         
-        % Fiducial images (numeric array, MxPxNFiducials)
+        % Fiducial images (numeric array, MxP(xNFiducials))
         FiducialImages {mustBeFloat}
         
+        % Format guiding the fiducial ROIs to be used (Default = [1])
+        % (see obj.convertSplitFormatToROIs() for a more complete
+        % description).
+        % NOTE: If you wish to manually set obj.FiducialROI, you must set
+        %       obj.SplitFormat = [].
+        SplitFormat {mustBeInteger(SplitFormat)} = 1;
+        
+        % Fiducial ROIs used in transforms ([YStart, XStart, YEnd, XEnd])
+        % NOTE: In its current usuage, FiducialROI is set automatically in
+        %       findTransform(), or manually by the user.
+        % NOTE: If you wish to manually define this array, you must set
+        %       obj.SplitFormat = [].  Otherwise, the ROI splitting scheme
+        %       defined by obj.SplitFormat takes precedent.
+        % OPTIONS:
+        %   If size(FiducialROI, 1) == 1, each image in FiducialImages will 
+        %       be truncated to the ROI specified by FiducialROI before 
+        %       computing the transform.
+        %   If size(FiducialROI, 1) > 1, the image found in in 
+        %       SMF.Data.FileName{1} will be split up into
+        %       the ROIs defined by each row of FiducialROI.  Each row of
+        %       FiducialROI must specify an equal size ROI.  
+        %       FiducialROI(1, :) will be treated as the "reference" (or 
+        %       "fixed") fiducial, meaning all other ROIs will be
+        %       transformed w.r.t. FiducialROI(1, :).  Furthermore, the
+        %       properties 'Coordinates' and 'RegistrationTransform' will
+        %       follow the same ordering as FiducialROI.
+        %   If FiducialROI is not set by the user, it will be given a 
+        %       default depending on how many files are specified by
+        %       obj.SMF.Data.FileName.  If there is only one file, 
+        %       FiducialROI will be set by default s.t. the image in the 
+        %       one file will be split in two along its columns.  If there 
+        %       are multiple files, 
+        %       FiducialROI = [1, 1, size(FiducialImages(:, :, 1))]
+        %       where FiducialImages will contain the image stored in the
+        %       file obj.SMF.Data.FileName.
+        FiducialROI(:, 4) {mustBeInteger(FiducialROI)}
+                        
         % Data used to compute transform (char)(Default = 'coordinates')
         % OPTIONS: 
         %   'coordinates': localizations (defined by (x, y) coordinates) 
@@ -71,11 +110,17 @@ classdef ChannelRegistration < handle
     
     properties (SetAccess = protected)
         % Computed transformation(s) (cell array of tform objects)
-        % Each element corresponds to a transform w.r.t. the fiducial in
-        % obj.SMF.Data.FileName{1}, as in, RegistrationTransform{3} is a
-        % registration between obj.SMF.Data.FileName{3} and 
-        % obj.SMF.Data.FileName{1}.
-        % RegistrationTransform{1} will either be empty or meaningless.
+        % RegistrationTransform will be organized differently depending on
+        % the usage of FiducialROI:
+        % If size(FiducialROI, 1) == 1, then each fiducial was provided as a 
+        %   separate image, in which case each element corresponds to a
+        %   transform w.r.t. the fiducial in obj.SMF.Data.FileName{1}. For
+        %   example, RegistrationTransform{3} is a registration between
+        %   obj.SMF.Data.FileName{3} and obj.SMF.Data.FileName{1}.
+        % If size(FiducialROI, 1) > 1, only one fiducial image was provided,
+        %   but it will be split into different ROIs.  In this case,
+        %   RegistrationTransform{n} will be the transform between the ROI
+        %   defined by FiducialROI(n, :) and FiducialROI(1, :).
         RegistrationTransform cell
     end
     
@@ -89,8 +134,12 @@ classdef ChannelRegistration < handle
             'lwm'};
         ImageTransformOptions cell = {'translation', 'rigid', ...
             'similarity', 'affine'};
-        
+        SplitFormatOptions cell = {[1, 2], [1; 2], [1, 3; 2, 4]};
+        SplitFormatOptionsChar cell = ...
+            {'[1, 2]', '[1; 2]', '[1, 3; 2, 4]'};
+                
     end
+    
     methods
         function [obj] = ChannelRegistration(...
                 FiducialFileDir, FiducialFileNames, SMF)
@@ -122,7 +171,6 @@ classdef ChannelRegistration < handle
                 obj.SMF.Data.FileName = FiducialFileNames;
             end
 
-            
         end
         
         function set.SMF(obj, SMFInput)
@@ -168,6 +216,7 @@ classdef ChannelRegistration < handle
         [CulledCoordinates] = performManualCull(RawData, Coordinates);
         [TransformedCoordinates] = transformCoordsDirect(...
             RegistrationTransform, Coordinates);
+        [SplitROIs] = convertSplitFormatToROIs(FullROI, SplitFormat)
     end
     
     

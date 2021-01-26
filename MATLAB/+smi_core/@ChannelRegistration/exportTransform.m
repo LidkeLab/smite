@@ -27,11 +27,20 @@ end
 % Save the registration information.
 RegistrationTransform = obj.RegistrationTransform;
 Coordinates = obj.Coordinates;
+FiducialROI = obj.FiducialROI;
+SplitFormat = obj.SplitFormat;
+TransformationBasis = obj.TransformationBasis;
+TransformationType = obj.TransformationType;
+SeparationThreshold = obj.SeparationThreshold;
 NNeighborPoints = obj.NNeighborPoints;
 PolynomialDegree = obj.PolynomialDegree;
 SMF = obj.SMF;
+AutoscaleFiducials = obj.AutoscaleFiducials;
 save(fullfile(FileDir, FileName), 'RegistrationTransform', ...
-    'Coordinates', 'NNeighborPoints', 'PolynomialDegree', 'SMF')
+    'Coordinates',  'FiducialROI', 'SplitFormat', ...
+    'TransformationBasis', 'TransformationType', ...
+    'SeparationThreshold', 'NNeighborPoints', 'PolynomialDegree', ...
+    'SMF', 'AutoscaleFiducials')
 
 
 end
