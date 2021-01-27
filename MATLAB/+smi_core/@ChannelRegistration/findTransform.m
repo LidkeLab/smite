@@ -149,7 +149,8 @@ switch obj.TransformationBasis
         for ii = 2:NFiducials
             % Pair the coordinates.
             Coords2 = [FiducialSMD{ii}.X, FiducialSMD{ii}.Y];
-            PairMap12 = obj.pairCoordinates(Coords1, Coords2);
+            PairMap12 = obj.pairCoordinates(Coords1, Coords2, ...
+                obj.SeparationThreshold);
             
             % Define PairedCoordinates{ii} as a 3D array, with the
             % third dimension corresponding to the fiducial number.
