@@ -23,7 +23,7 @@ classdef ChannelRegistration < handle
         Coordinates cell
         
         % Fiducial images (numeric array, MxP(xNFiducials))
-        FiducialImages {mustBeFloat}
+        FiducialImages {mustBeNumeric(FiducialImages)}
         
         % Format guiding the fiducial ROIs to be used (Default = [1])
         % (see obj.convertSplitFormatToROIs() for a more complete
