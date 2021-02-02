@@ -37,11 +37,11 @@ function [SMDMoving, SMDFixed] = transformSMD(...
 % Call transformCoords on the input SMDs.
 MovingCoordinates = [SMDMoving.X, SMDMoving.Y];
 FixedCoordinates = [SMDFixed.X, SMDFixed.Y];
-[MovingCoordinates, FixedCoordinates] = ...
+MovingCoordsTransformed = ...
     smi_core.ChannelRegistration.transformCoords(...
-    RegistrationTransform, MovingCoordinates, FixedCoordinates);
-SMDMoving.X = MovingCoordinates(:, 1);
-SMDMoving.Y = MovingCoordinates(:, 2);
+    RegistrationTransform, MovingCoordinates);
+SMDMoving.X = MovingCoordsTransformed(:, 1);
+SMDMoving.Y = MovingCoordsTransformed(:, 2);
 SMDFixed.X = FixedCoordinates(:, 1);
 SMDFixed.Y = FixedCoordinates(:, 2);
 
