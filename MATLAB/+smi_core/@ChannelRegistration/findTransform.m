@@ -17,85 +17,14 @@ function [RegistrationTransform] = findTransform(obj)
 %   David J. Schodt (Lidke Lab, 2020)
 
 
-% Load the first fiducial file and set obj.FiducialROI to a default if
-% needed.
-% NOTE: I'll be averaging over the "time" dimension of all fiducials used.
-NFiles = numel(obj.SMF.Data.FileName);
-LoadData = smi_core.LoadData;
-[~, TempImage] = ...
-    LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, 1);
-TempImage = mean(TempImage, 3);
-ImageSize = size(TempImage);
-FullROI = [1, 1, ImageSize(1:2)];
-if isempty(obj.SplitFormat)
-    % When obj.SplitFormat is empty, the user must manually define
-    % obj.FiducialROI!
-    if isempty(obj.FiducialROI)
-        error(['findTransform(): If you set obj.SplitFormat = [], ', ...
-            'you must also manually define obj.FiducialROI'])
-    end
-else
-    % We must define (or re-define) obj.FiducialROI based on
-    % obj.SplitFormat and the number of files present.
-    if (NFiles == 1)
-        % Split the file into the specified ROIs.
-        if (obj.SplitFormat == 1)
-            % In this case, the user hasn't selected an appropriate
-            % SplitFormat for the single file case, so we'll define a
-            % (hopefully) useful default.
-            if (ImageSize(1) > ImageSize(2))
-                obj.SplitFormat = [1; 2];
-            else
-                obj.SplitFormat = [1, 2];
-            end
-            warning(['findTransform(): obj.SplitFormat ', ...
-                'reset to [%i, %i]'], ...
-                obj.SplitFormat(1), obj.SplitFormat(2))
-        end
-        obj.FiducialROI = obj.convertSplitFormatToROIs(...
-            FullROI, obj.SplitFormat);
-    elseif (NFiles > 1)
-        % For multiple files, we'll set FiducialROI s.t. each image is used
-        % in it's entirety.  If one of the images is too small, everything
-        % will crash, but I'll assume that's the users fault!
-        obj.SplitFormat = 1;
-        obj.FiducialROI = FullROI;
-    else
-        error('findTransform(): no files defined in obj.SMF.Data.FileName')
-    end
+% Load the fiducial images (if needed). If the fiducials are already
+% present, we should make sure obj.FiducialROI is set.
+if isempty(obj.FiducialImages)
+    obj.loadFiducials();
+elseif isempty(obj.FiducialROI)
+    obj.FiducialROI =  [1, 1, size(obj.FiducialImages, [1, 2])];
 end
-
-% Load the remaining fiducial images/split the fiducial into the specified
-% ROIs for later use.
-NROIs = size(obj.FiducialROI, 1);
-if (NROIs == 1)
-    % All fiducial images are stored in separate files, so we'll have to
-    % load them one at a time.
-    NFiducials = NFiles;
-    FiducialImages = zeros([obj.FiducialROI(1, 3:4), NFiducials]);
-    FiducialImages(:, :, 1) = TempImage(...
-        obj.FiducialROI(1):obj.FiducialROI(3), ...
-        obj.FiducialROI(2):obj.FiducialROI(4));
-    for ii = 2:NFiducials
-        [~, TempImage] = ...
-            LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, ii);
-        FiducialImages(:, :, ii) = mean(...
-            TempImage(obj.FiducialROI(1):obj.FiducialROI(3), ...
-        obj.FiducialROI(2):obj.FiducialROI(4), :), ...
-        3);
-    end
-else
-    % There is only one fiducial image, which we'll need to split by ROI.
-    NFiducials = NROIs;
-    FiducialImages = zeros(...
-        [obj.FiducialROI(1, 3:4)-obj.FiducialROI(1, 1:2)+1, NFiducials]);
-    for ii = 1:NFiducials
-        FiducialImages(:, :, ii) = TempImage(...
-            obj.FiducialROI(ii, 1):obj.FiducialROI(ii, 3), ...
-            obj.FiducialROI(ii, 2):obj.FiducialROI(ii, 4));
-    end
-end
-obj.FiducialImages = FiducialImages;
+NFiducials = size(obj.FiducialImages, 3);
 
 % Perform the gain and offset correction on each of the fiducial images
 % (this probably doesn't matter for image transforms, but I'm going to do
@@ -104,9 +33,9 @@ obj.FiducialImages = FiducialImages;
 % instead of doing a proper gain/offset correction.
 if obj.AutoscaleFiducials
     % Perform a full-scale histogram stretch on each image.
-    ScaledData = FiducialImages;
+    ScaledData = obj.FiducialImages;
     for ii = 1:NFiducials
-        CurrentImage = FiducialImages(:, :, ii);
+        CurrentImage = obj.FiducialImages(:, :, ii);
         ScaledData(:, :, ii) = ...
             (CurrentImage-min(CurrentImage(:))) ...
             ./ max(max(CurrentImage-min(CurrentImage(:))));
@@ -120,7 +49,7 @@ else
     % NOTE: We'll need to update this in the future to specify RawDataROI
     %       and CalibrationROI.
     [ScaledData] = smi_core.DataToPhotons.convertToPhotons(...
-        FiducialImages, ...
+        obj.FiducialImages, ...
         obj.SMF.Data.CameraGain, obj.SMF.Data.CameraOffset, ...
         []);
 end
@@ -163,7 +92,7 @@ switch obj.TransformationBasis
             % might be some non-sensical pairings/localizations).
             if obj.ManualCull
                 [FinalCoordinates{ii}] = obj.performManualCull(...
-                    FiducialImages, PairedCoordinates);
+                    obj.FiducialImages, PairedCoordinates);
             else
                 FinalCoordinates{ii} = PairedCoordinates;
             end

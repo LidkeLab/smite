@@ -4,6 +4,8 @@ classdef ChannelRegistration < handle
     % methods used to interpret/visualize the results.
     %
     % REQUIRES:
+    %   MATLAB 2019b or later (some newer method inputs are used, e.g.,
+    %       size(Image, [1, 2]) wasn't allowed pre-2019b).
     %   MATLAB Image Processing Toolbox 2013b or later
     
     % Created by:
@@ -160,6 +162,7 @@ classdef ChannelRegistration < handle
                 % Set a (mostly) default SMF, with a few tweaks that tend
                 % to help out for several types of fiducial images.
                 obj.SMF = smi_core.SingleMoleculeFitting;
+                obj.SMF.BoxFinding.MinPhotons = 100;
                 obj.SMF.Fitting.FitType = 'XYNBS';
             end
             if (exist('FiducialFileDir', 'var') ...
@@ -180,6 +183,7 @@ classdef ChannelRegistration < handle
         end
         
         [RegistrationTransform] = findTransform(obj);
+        loadFiducials(obj)
         exportTransform(obj, FileName, FileDir)
         gui(obj, GUIParent)
     end
@@ -205,6 +209,7 @@ classdef ChannelRegistration < handle
         [PlotAxes] = visualizeRegistrationResults(PlotAxes, ...
             RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
             MovingImage, FixedImage);
+        unitTest()
     end
     
     methods (Static, Hidden)
