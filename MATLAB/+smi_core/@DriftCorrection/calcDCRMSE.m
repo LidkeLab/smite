@@ -50,13 +50,13 @@ function [dist1, rmse1, dist2, rmse2, nnfig] = ...
    % --------------------------------------------------------------------------
 
 %  % Drift corrected image.
-%  DCimage = SMA_DriftCorrect.histogramImage(SMD, SRImageZoom);
+%  DCimage = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
 
 %  % True image.
 %  SMD_True = SMD;
 %  SMD_True.X = X_True;
 %  SMD_True.Y = Y_True;
-%  TrueImage = SMA_DriftCorrect.histogramImage(SMD_True, SRImageZoom);
+%  TrueImage = smi_vis.GenerateImages.histogramImage(SMD_True, SRImageZoom);
 
 %  % Reconstructed original image.
 %  X_unDC = zeros(N, 1, 'single');
@@ -70,7 +70,7 @@ function [dist1, rmse1, dist2, rmse2, nnfig] = ...
 %  SMD_unDC = SMD;
 %  SMD_unDC.X = X_unDC;
 %  SMD_unDC.Y = Y_unDC;
-%  unDCimage = SMA_DriftCorrect.histogramImage(SMD_unDC, SRImageZoom);
+%  unDCimage = smi_vis.GenerateImages.histogramImage(SMD_unDC, SRImageZoom);
 
 %  % Residual image.
 %  residual = abs(DCimage - TrueImage);

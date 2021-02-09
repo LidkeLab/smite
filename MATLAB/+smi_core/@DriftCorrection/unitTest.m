@@ -236,8 +236,10 @@ Statistics2.N_particles_per_dataset = n_particles / (n_frames / FpD);
 Statistics2.N_NaNs = n_nans;
 Statistics2.Consistency_un = consistency_un;
 Statistics2.Consistency_in = consistency_in;
-Statistics2.Dist = dist;
-Statistics2.RMSE = rmse;
+Statistics2.Dist1 = dist1;
+Statistics2.RMSE1 = rmse1;
+Statistics2.Dist2 = dist2;
+Statistics2.RMSE2 = rmse2;
 Statistics2.DriftX_mean = x_drift;
 Statistics2.DriftY_mean = y_drift;
 Statistics2.DriftX_True = PpFX;
@@ -590,8 +592,9 @@ z_drift_true = PpFZ .* (1 : n_frames) * PixelSizeZUnit;
 % Compute the RMSE between the pre-drift data and the drift corrected
 % post-drift data.
 [dist1, rmse1, dist2, rmse2, ~] = ...
-   SMA_DriftCorrect.calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
-                               x_drift_true, y_drift_true, z_drift_true);
+   smi_core.DriftCorrection.calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
+                                       x_drift_true, y_drift_true,  ...
+                                       z_drift_true);
 fprintf('average distance between true and DC locations = %f nm\n', dist1);
 fprintf('RMSE1            between true and DC locations = %f nm\n', rmse1);
 fprintf('average distance between true and DC curves    = %f nm\n', dist2);
@@ -626,8 +629,10 @@ Statistics3.N_particles_per_dataset = n_particles / (n_frames / FpD);
 Statistics3.N_NaNs = n_nans;
 Statistics3.Consistency_un = consistency_un;
 Statistics3.Consistency_in = consistency_in;
-Statistics3.Dist = dist;
-Statistics3.RMSE = rmse;
+Statistics3.Dist1 = dist1;
+Statistics3.RMSE1 = rmse1;
+Statistics3.Dist2 = dist2;
+Statistics3.RMSE2 = rmse2;
 Statistics3.n_local  = n_local;
 Statistics3.n_blinks = n_blinks;
 Statistics3.DriftX_mean = x_drift;

@@ -1,10 +1,9 @@
 function [SMR] = applyThresh(SMD, Verbose)
 %   applyThresh applies ThreshFlag to perform thresholding on SMD,
-%   where SMD can be any appropriate coordinate containing structure of the
-%   SMA_SR-class.
+%   where SMD can be any appropriate smite coordinate containing structure.
 %
 % INPUT:
-%   SMD       object of SMA_SR-class
+%   SMD       smite coordinate containing structure
 %   Verbose   [OPTIONAL, Default = 1] verbosity level
 %
 % OUTPUT:
