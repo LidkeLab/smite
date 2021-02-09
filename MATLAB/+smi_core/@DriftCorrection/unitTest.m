@@ -1,3 +1,4 @@
+function [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 % unitTest tests smi_core.DriftCorrection.driftCorrectKNN.
 % Synthetic data is created by smlmData.m, which then has drift imposed upon
 % it.  This data is then drift corrected by driftCorrectKNN, producing a SMD
