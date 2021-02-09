@@ -45,7 +45,7 @@ function [dist1, rmse1, dist2, rmse2, nnfig] = ...
       Y_True(nans) = [];
    end
    N = numel(SMD.X);
-   Nframes = SMD.Nframes;
+   Nframes = SMD.NFrames;
 
    % --------------------------------------------------------------------------
 
