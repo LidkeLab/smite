@@ -10,14 +10,14 @@ function success = unitTest()
     %  The routine then runs through each field of SMD dataset to check
     %  if the flag value for the field at each localization is set correct.
     %
-    %  OUTPUT: success (0 if passed; 1 if failed)
+    %  OUTPUT: success (1 if passed; 0 if failed)
 
     %Created by
     %  Sandeep Pallikkuth, Lidkelab 2017
     % Revised Michael Wester 2020.
     %  ---------------------------------------------------------------------
 
-    success=0;
+    success=1;
 
     %SMD.NFiles=1; %Create a SMD structure
     PSFSigma=1;
@@ -125,7 +125,7 @@ function success = unitTest()
                 binvar=fliplr(dec2bin(FNThresh(i),32));
                 j=strmatch(MM2FN{nn},FNames,'exact');
                 if binvar(j)==0
-                    success=1;
+                    success=0;
                 end
             end
         end
