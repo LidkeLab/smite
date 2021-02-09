@@ -1,4 +1,3 @@
-function [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 % unitTest tests smi_core.DriftCorrection.driftCorrectKNN.
 % Synthetic data is created by smlmData.m, which then has drift imposed upon
 % it.  This data is then drift corrected by driftCorrectKNN, producing a SMD
@@ -197,14 +196,19 @@ dipshow(correctedDriftIm)
 DC_fig = DC.plotDriftCorrection(SMD);
 figure(DC_fig);
 
-% Plot the residual between the pre-drift data and the drift corrected
+% Compute absolute drift in pixels per frame.
+x_drift_true = PpFX .* (1 : n_frames);
+y_drift_true = PpFY .* (1 : n_frames);
+
+% Compute the RMSE between the pre-drift data and the drift corrected
 % post-drift data.
-[residual, dist, rmse, nnfig] = DC.calcDCResidual(SMD, X_True, Y_True);
-%dipshow(residual);
-fprintf('average distance between true and DC locations = %f nm\n', ...
-        dist * P2nm);
-fprintf('RMSE             between true and DC locations = %f nm\n', ...
-        rmse * P2nm);
+[dist1, rmse1, dist2, rmse2, ~] = ...
+   smi_core.DriftCorrection.calcDCRMSE(SMD, X_True, Y_True, [], ...
+                                       x_drift_true, y_drift_true, []);
+fprintf('average distance between true and DC locations = %f nm\n', dist1);
+fprintf('RMSE1            between true and DC locations = %f nm\n', rmse1);
+fprintf('average distance between true and DC curves    = %f nm\n', dist2);
+fprintf('RMSE2            between true and DC curves    = %f nm\n', rmse2);
 
 % Compare computed vs. true drift.
 base = 0;
@@ -324,14 +328,19 @@ dipshow(correctedDriftIm)
 DC_fig = DC.plotDriftCorrection(SMD);
 figure(DC_fig);
 
-% Plot the residual between the pre-drift data and the drift corrected
+% Compute absolute drift in pixels per frame.
+x_drift_true = PpFX .* (1 : n_frames);
+y_drift_true = PpFY .* (1 : n_frames);
+
+% Compute the RMSE between the pre-drift data and the drift corrected
 % post-drift data.
-[residual, dist, rmse, nnfig] = DC.calcDCResidual(SMD, X_True, Y_True);
-%dipshow(residual);
-fprintf('average distance between true and DC locations = %f nm\n', ...
-        dist * P2nm);
-fprintf('RMSE             between true and DC locations = %f nm\n', ...
-        rmse * P2nm);
+[dist1, rmse1, dist2, rmse2, ~] = ...
+   smi_core.DriftCorrection.calcDCRMSE(SMD, X_True, Y_True, [], ...
+                                       x_drift_true, y_drift_true, []);
+fprintf('average distance between true and DC locations = %f nm\n', dist1);
+fprintf('RMSE1            between true and DC locations = %f nm\n', rmse1);
+fprintf('average distance between true and DC curves    = %f nm\n', dist2);
+fprintf('RMSE2            between true and DC curves    = %f nm\n', rmse2);
 
 % Compare computed vs. true drift.
 base = 0;
@@ -572,11 +581,20 @@ view([-66, 12])
 hold off
 %saveas(gcf, '3Dsim_DC', 'png');
 
-% Plot the residual between the pre-drift data and the drift corrected
+% Compute absolute drift in pixels (um for z) per frame.
+x_drift_true = PpFX .* (1 : n_frames);
+y_drift_true = PpFY .* (1 : n_frames);
+z_drift_true = PpFZ .* (1 : n_frames) * PixelSizeZUnit;
+
+% Compute the RMSE between the pre-drift data and the drift corrected
 % post-drift data.
-[residual, dist, rmse, nnfig] = DC.calcDCResidual(SMD, X_True, Y_True);
-fprintf('average distance between true and DC locations = %f\n', dist);
-fprintf('RMSE             between true and DC locations = %f\n', rmse);
+[dist1, rmse1, dist2, rmse2, ~] = ...
+   SMA_DriftCorrect.calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
+                               x_drift_true, y_drift_true, z_drift_true);
+fprintf('average distance between true and DC locations = %f nm\n', dist1);
+fprintf('RMSE1            between true and DC locations = %f nm\n', rmse1);
+fprintf('average distance between true and DC curves    = %f nm\n', dist2);
+fprintf('RMSE2            between true and DC curves    = %f nm\n', rmse2);
 
 % Compare computed vs. true drift.
 base = 0;
