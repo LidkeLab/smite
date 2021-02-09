@@ -12,7 +12,7 @@ function [SMR] = applyThresh(SMD, Verbose)
 %Created by
 %   Michael J. Wester (2020) and Sandeep Pallikkuth, Lidke Lab, 2017.
 
-   If ~exist('Verbose', 'var')
+   if ~exist('Verbose', 'var')
       Verbose = 1;
    end
 
