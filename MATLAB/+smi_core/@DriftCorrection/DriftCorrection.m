@@ -51,6 +51,8 @@ properties
    NDatasets      = [];
    % If non-empty, override the collected value of number of frames per dataset
    NFrames        = [];
+   % Verbosity level
+   Verbose        = 1;
 
 end % properties
 % =============================================================================

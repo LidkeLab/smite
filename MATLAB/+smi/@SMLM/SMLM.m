@@ -12,6 +12,7 @@ properties
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
     %       DataType    % {'File', 'UserDefined'} ?
+    Verbose = 1 % Verbosity level
 end
 % =========================================================================
 

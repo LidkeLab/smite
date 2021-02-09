@@ -46,6 +46,7 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
 %                     is false and the current value for Init_inter is zero, so
 %                     the two are in conflict.  BFRegistration will take
 %                     precedence
+%      Verbose        verbosity level (Default = 1)
 %
 % OUTPUTS:
 %   SMD:         SMD data structure with updated fields:
@@ -90,6 +91,7 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    DriftParams.TolFun_inter   = obj.TolFun_inter;
    DriftParams.TolX_inter     = obj.TolX_inter;
    DriftParams.Init_inter     = obj.Init_inter;
+   DriftParams.Verbose        = obj.Verbose;
    % Override value for Init_inter from obj if BFRegistration is false and the
    % current value for Init_inter is zero, so the two are in conflict.
    % BFRegistration will take precedence.
@@ -122,6 +124,7 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    TolFun_inter = DriftParams.TolFun_inter;
    TolX_inter   = DriftParams.TolX_inter;
    Init_inter   = DriftParams.Init_inter;
+   Verbose      = DriftParams.Verbose;
 
    Statistics.Ndims          = Ndims;
    Statistics.PixelSizeZUnit = PixelSizeZUnit;
@@ -180,7 +183,7 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
       else
          [P, ~, exitflag, output] = ...
             fminsearch(@minD_inter, P0, options, NS, XY2, Ndims, L_inter);
-         if exitflag ~= 1
+         if exitflag ~= 1 && Verbose >= 1
             fprintf( ...
                'driftCorrectKNN fminsearch on minD_inter exitflag = %d\n', ...
                     exitflag);
