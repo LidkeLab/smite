@@ -23,7 +23,7 @@ function success = unitTest()
     PSFSigma=1;
 
     % Create default SMF structure.
-    SMF = smi_core.SingleMoleculeFitting.createSMF();
+    SMF = smi_core.SingleMoleculeFitting();
 
     %Data=SMA_Sim.gaussBlobImage();
     Data=smi_sim.GaussBlobs.gaussBlobImage();
