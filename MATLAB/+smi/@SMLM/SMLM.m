@@ -8,7 +8,7 @@ classdef SMLM < handle
 % =========================================================================
 properties
     SMF         % Single Molecule Fitting structure
-    PlotDo = [] % Plots to generate (all by default)
+    PlotDo = [] % Plots to generate (all by default);see generatePlots comments
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
     %       DataType    % {'File', 'UserDefined'} ?

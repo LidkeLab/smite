@@ -26,6 +26,7 @@ classdef LocalizeData < handle
         ZFitStruct % (struct array) see GaussMLE class
         MinMax % (struct array), see Threshold class for usage
         ScaledData % (float array)(Photons) Gain/offset corrected data
+        Verbose = 1 % verbosity level
     end
     
     properties (SetAccess = 'protected')
