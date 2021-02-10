@@ -39,6 +39,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 %                     with brightfield registration, while final drift works
 %                     well generally (but the optimization process may not
 %                     converge quite as quickly) (Default = SMD.NFrames)
+%      Verbose        verbosity level (Default = 1)
 %
 % OUTPUTS:
 %   SMD:         SMD data structure with updated fields:
@@ -83,6 +84,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
    DriftParams.TolFun_inter   = obj.TolFun_inter;
    DriftParams.TolX_inter     = obj.TolX_inter;
    DriftParams.Init_inter     = obj.Init_inter;
+   DriftParams.Verbose        = obj.Verbose;
    if ~isempty(obj.NDatasets)
       DriftParams.NDatasets   = obj.NDatasets;
    end
@@ -108,6 +110,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
    TolFun_inter = DriftParams.TolFun_inter;
    TolX_inter   = DriftParams.TolX_inter;
    Init_inter   = DriftParams.Init_inter;
+   Verbose      = DriftParams.Verbose;
 
    Statistics.Ndims          = Ndims;
    Statistics.PixelSizeZUnit = PixelSizeZUnit;
@@ -176,7 +179,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
       else
          [P, ~, exitflag, output] = ...
             fminsearch(@minD_intra, P0, options, XY, FrameNum, Ndims, L_intra);
-         if exitflag ~= 1
+         if exitflag ~= 1 && Verbose >= 1
             fprintf( ...
                'driftCorrectKNN fminsearch on minD_intra exitflag = %d\n', ...
                      exitflag);

@@ -38,6 +38,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 %                     with brightfield registration, while final drift works
 %                     well generally (but the optimization process may not
 %                     converge quite as quickly) (Default = SMD.NFrames)
+%      Verbose        verbosity level (Default = 1)
 %      NDatasets      [OPTIONAL] override the collected value.  This causes the
 %                     dataset/frame numbering to be reorganized internally as
 %                     specified by the user
@@ -104,6 +105,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    if ~isempty(obj.NFrames)
       DriftParams.NFrames     = obj.NFrames;
    end
+   DriftParams.Verbose        = obj.Verbose;
 
    % Initialize various parameters, either provided by the user or defaults.
 %  if exist('DriftParams', 'var')
@@ -136,6 +138,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
       TolFun_inter = DriftParams.TolFun_inter;
       TolX_inter   = DriftParams.TolX_inter;
       Init_inter   = DriftParams.Init_inter;
+      Verbose      = DriftParams.Verbose;
 
       if any(isfield(DriftParams, {'NDatasets', 'NFrames'}))
          SMD = ReorganizeDatasets(SMD, DriftParams);
@@ -228,7 +231,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
       else
          [P, ~, exitflag, output] = ...
             fminsearch(@minD_intra, P0, options, XY, FrameNum, Ndims, L_intra);
-         if exitflag ~= 1
+         if exitflag ~= 1 && Verbose >= 1
             fprintf( ...
                'driftCorrectKNN fminsearch on minD_intra exitflag = %d\n', ...
                      exitflag);
@@ -298,7 +301,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
       else
          [P, ~, exitflag, output] = ...
             fminsearch(@minD_inter, P0, options, NS, XY2, Ndims, L_inter);
-         if exitflag ~= 1
+         if exitflag ~= 1 && Verbose >= 1
             fprintf( ...
                'driftCorrectKNN fminsearch on minD_inter exitflag = %d\n', ...
                     exitflag);

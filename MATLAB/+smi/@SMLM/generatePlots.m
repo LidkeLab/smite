@@ -38,7 +38,9 @@ function generatePlots(obj, ShowPlots, PlotDo)
 %    Hanieh Mazloom-Farsibaf, Marjolein Meddens Apr 2017 (Keith A. Lidke's lab)
 %    Michael J Wester (2020)
 
-fprintf('Generating output plots ...\n');
+if obj.Verbose >= 1
+   fprintf('Generating output plots ...\n');
+end
 
 if ~exist('ShowPlots', 'var')
    ShowPlots = false;

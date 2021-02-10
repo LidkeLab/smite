@@ -20,6 +20,7 @@ properties
 %   %       fields.  Typical fields used are:
 %   %          X, Y, Z, X_SE, Y_SE, Z_SE, Photons, Bg, PSFSigma, PValue
 %   MinMax=[]
+    Verbose = 1;   % verbosity level
 
 end % properties
 % =============================================================================
@@ -50,7 +51,7 @@ end % methods
 % =============================================================================
 methods(Static)
 
-   [SMR] = applyThresh(SMD)
+   [SMR] = applyThresh(SMD, Verbose)
    [ThreshFlagReadable, HotBits] = translateThreshFlag(ThreshFlag);
    success = unitTest()
 

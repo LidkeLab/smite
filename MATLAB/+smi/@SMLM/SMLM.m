@@ -8,10 +8,11 @@ classdef SMLM < handle
 % =========================================================================
 properties
     SMF         % Single Molecule Fitting structure
-    PlotDo = [] % Plots to generate (all by default)
+    PlotDo = [] % Plots to generate (all by default);see generatePlots comments
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
     %       DataType    % {'File', 'UserDefined'} ?
+    Verbose = 1 % Verbosity level
 end
 % =========================================================================
 
@@ -92,7 +93,9 @@ methods
         obj.generatePlots(ShowPlots, obj.PlotDo);
 
         %save
-        fprintf('Done fullAnalysis.\n');
+        if obj.Verbose >= 1
+            fprintf('Done fullAnalysis.\n');
+        end
 
     end
 
@@ -105,7 +108,9 @@ methods
         obj.analyzeAll();
         ShowPlots = true;
         obj.generatePlots(ShowPlots, obj.PlotDo);
-        fprintf('Done testFit.\n');
+        if obj.Verbose >= 1
+            fprintf('Done testFit.\n');
+        end
 
     end
 
@@ -125,11 +130,14 @@ methods
 
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
+        obj.DC.Verbose = obj.Verbose;
         obj.SMD=[];
         obj.SMDPreThresh.X=[];
         obj.SMDPreThresh.Y=[];
         obj.SMDPreThresh.ThreshFlag=[];
-        fprintf('Processing %d datasets ...\n', numel(obj.DatasetList));
+        if obj.Verbose >= 1
+            fprintf('Processing %d datasets ...\n', numel(obj.DatasetList));
+        end
         for nn=1:numel(obj.DatasetList)
             SMDnn = obj.analyzeDataset(obj.DatasetList(nn), nn);
             obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
@@ -137,12 +145,16 @@ methods
 
         % Inter-dataset drift correction.
         if numel(obj.DatasetList) > 1
-            fprintf('Drift correcting (inter-dataset) ...\n');
+            if obj.Verbose >= 1
+                fprintf('Drift correcting (inter-dataset) ...\n');
+            end
             obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
         end
 
         THR = smi_core.Threshold;
-        THR.rejectedLocalizations(obj.SMDPreThresh, '');
+        if obj.Verbose >= 1
+           THR.rejectedLocalizations(obj.SMDPreThresh, '');
+        end
     end
 
     % ---------------------------------------------------------------------
@@ -154,12 +166,17 @@ methods
             DatasetCount = 1;
         end
 
-        fprintf('Loading dataset %d ...\n', DatasetIndex);
+        if obj.Verbose >= 1
+            fprintf('Loading dataset %d ...\n', DatasetIndex);
+        end
         [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
 
         % Generate localizations from the current Dataset.
         LD = smi_core.LocalizeData(Dataset, obj.SMF);
-        fprintf('Generating localizations ...\n');
+        LD.Verbose = obj.Verbose;
+        if obj.Verbose >= 1
+            fprintf('Generating localizations ...\n');
+        end
         [SMD] = LD.genLocalizations();
 
         % Keep track of why localizations were filtered out.
@@ -176,12 +193,16 @@ methods
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF);
             [SMD, ~, OutputMessage] = FC.performFrameConnection();
-            fprintf('%s', OutputMessage);
+            if obj.Verbose >= 1
+                fprintf('%s', OutputMessage);
+            end
         end
 
         % Intra-dataset drift correction.
         if obj.SMF.DriftCorrection.On
-            fprintf('Drift correcting (intra-dataset) ...\n');
+            if obj.Verbose >= 1
+                fprintf('Drift correcting (intra-dataset) ...\n');
+            end
             SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
         end
     end
@@ -223,7 +244,9 @@ methods
 
         SMD = obj.SMD;
         SMF = obj.SMF;
-        fprintf('Saving SMD and SMF structures ...\n');
+        if obj.Verbose >= 1
+            fprintf('Saving SMD and SMF structures ...\n');
+        end
         if ~isfolder(obj.SMF.Data.ResultsDir)
             mkdir(obj.SMF.Data.ResultsDir);
         end

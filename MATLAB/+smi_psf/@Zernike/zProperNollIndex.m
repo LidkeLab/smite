@@ -7,9 +7,9 @@ function l_max = zProperNollIndex(l_max)
 % Created by
 %    Michael Wester, 2017, Lidkelab.
 
-   [n, m] = SMA_PSF.zernikeNoll2NM(l_max);
+   [n, m] = smi_psf.Zernike.zNoll2NM(l_max);
    if m ~= 0
-      [nn, mm] = SMA_PSF.zernikeNoll2NM(l_max - 1);
+      [nn, mm] = smi_psf.Zernike.zNoll2NM(l_max - 1);
       if abs(m) ~= abs(mm)
          l_max = l_max + 1;
       end
