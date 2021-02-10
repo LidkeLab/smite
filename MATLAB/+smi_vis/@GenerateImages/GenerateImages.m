@@ -35,6 +35,8 @@ methods(Static)
    dispIm()
    [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
    [GaussIm] = gaussianImage(SMR, SRImageZoom)
+   [CircleImage, CircleImageRGB, SRImageZoom] = ...
+        circleImage(SMR, ColorMap, SRImageZoom, SEScaleFactor);
    [HistIm, RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
    [FigHandle] = plotHistogram(Vector_in, Hist_Name)
    [ImageOut, Image] = scalebar(Image, PixelSize, Length, Location)
