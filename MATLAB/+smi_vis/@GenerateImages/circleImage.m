@@ -11,7 +11,9 @@ function [CircleImage, CircleImageRGB, SRImageZoom] = ...
 %        been "truncated" so that not all fields are present).
 %   ColorMap: A colormap defining the colors of the circles.  The row
 %             indices correspond to indices in SMR, i.e., the circle at
-%             [SMR.X(ii), SMR.Y(ii)] will have color ColorMap(ii, :)
+%             [SMR.X(ii), SMR.Y(ii)] will have color ColorMap(ii, :). Note
+%             that each row of ColorMap should sum to 1, otherwise the
+%             output circle images may not be generated correctly.
 %             (numeric array, NLocalizations x 3, or NLocalizations x 1 for
 %             a single color)(Default = [1, 0, 0])
 %   SRImageZoom: Zoom factor of the output images w.r.t. the coordinate
@@ -83,27 +85,7 @@ X = X * SRImageZoom;
 X_SE = X_SE * SRImageZoom;
 Y = Y * SRImageZoom;
 Y_SE = Y_SE * SRImageZoom;
-
-% Generate the monochrome circle image.
-% NOTE: The monochrome circle image SRImageZoom is restricted to the same
-%       value as the RGB image (for the sake of simplicity in this code).
 MeanSE = mean([X_SE, Y_SE], 2) * SEScaleFactor;
-CircleImage = zeros(ImageSize, 'single');
-for nn = 1:NLocalizations
-    % Create the binary circle image by creating ~4*circumference
-    % points for each circle (the extra points help make the circle
-    % appear smooth).
-    Theta = linspace(0, 2*pi, ceil(8*pi*MeanSE(nn)));
-    CircleRows = round(MeanSE(nn)*cos(Theta) + Y(nn));
-    CircleCols = round(MeanSE(nn)*sin(Theta) + X(nn));
-    IsValid = ((CircleRows<=ImageSize(1)) & (CircleRows>=1) ...
-        & (CircleCols<=ImageSize(2)) & (CircleCols>=1));
-    CircleRows = CircleRows(IsValid);
-    CircleCols = CircleCols(IsValid);
-    for mm = 1:numel(CircleRows)
-        CircleImage(CircleRows(mm), CircleCols(mm)) = 1;
-    end
-end
 
 % Generate the RGB image if needed.
 if (nargout >= 2)
@@ -125,6 +107,31 @@ if (nargout >= 2)
                 ColorMap(nn, 2);
             CircleImageRGB(CircleRows(mm), CircleCols(mm), 3) = ...
                 ColorMap(nn, 3);
+        end
+    end
+    
+    % Produce the binary 'CircleImage' by summing over the color channels
+    % and then converting all pixel values to either 0 or 1.
+    CircleImage = single(logical(sum(CircleImageRGB, 3)));
+else
+    % Generate the monochrome circle image.
+    % NOTE: The monochrome circle image SRImageZoom is restricted to the 
+    %       same value as the RGB image (for the sake of simplicity in this
+    %       code).
+    CircleImage = zeros(ImageSize, 'single');
+    for nn = 1:NLocalizations
+        % Create the binary circle image by creating ~4*circumference
+        % points for each circle (the extra points help make the circle
+        % appear smooth).
+        Theta = linspace(0, 2*pi, ceil(8*pi*MeanSE(nn)));
+        CircleRows = round(MeanSE(nn)*cos(Theta) + Y(nn));
+        CircleCols = round(MeanSE(nn)*sin(Theta) + X(nn));
+        IsValid = ((CircleRows<=ImageSize(1)) & (CircleRows>=1) ...
+            & (CircleCols<=ImageSize(2)) & (CircleCols>=1));
+        CircleRows = CircleRows(IsValid);
+        CircleCols = CircleCols(IsValid);
+        for mm = 1:numel(CircleRows)
+            CircleImage(CircleRows(mm), CircleCols(mm)) = 1;
         end
     end
 end
