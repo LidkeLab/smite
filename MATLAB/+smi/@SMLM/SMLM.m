@@ -173,6 +173,7 @@ methods
 
         % Generate localizations from the current Dataset.
         LD = smi_core.LocalizeData(Dataset, obj.SMF);
+        LD.Verbose = obj.Verbose;
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
         end
