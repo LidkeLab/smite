@@ -93,7 +93,7 @@ if (nargout >= 2)
     for nn = 1:NLocalizations
         % Create the circles by with ~4*circumference points per circle
         % (the extra points can help make the circle appear smooth).
-        Theta = linspace(0, 2*pi, ceil(4*pi*MeanSE(nn)));
+        Theta = linspace(0, 2*pi, ceil(8*pi*MeanSE(nn)));
         CircleRows = round(MeanSE(nn)*cos(Theta) + Y(nn));
         CircleCols = round(MeanSE(nn)*sin(Theta) + X(nn));
         IsValid = ((CircleRows<=ImageSize(1)) & (CircleRows>=1) ...
