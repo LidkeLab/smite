@@ -23,6 +23,8 @@ function generatePlots(obj, ShowPlots, PlotDo)
 %                "DriftIm"     2D drift image from SR data
 %                "GaussIm"     2D Gaussian blob image from SR data
 %                "HistIm"      2D histogram image from SR data
+%                "CircleIm"    2D Circle image from SR data
+%                "CircleImDrift" 2D circle image color coded by time
 %                (Default is to make all plots)
 %                For example, PlotDo = ["PValue", "FitFrame", DriftIm"]
 %                NOTE: plots will only be produced if there is corresponding
@@ -49,7 +51,7 @@ end
 if ~exist('PlotDo', 'var') || isempty(PlotDo)
    PlotDo = ["Photons", "Bg", "PSFSigma", "PValue", "X_SE", "Y_SE", "Z_SE", ...
              "NCombined", "DriftX", "DriftY", "DriftZ", "Drift", "FitFrame",...
-             "DriftIm", "GaussIm", "HistIm"];
+             "DriftIm", "GaussIm", "HistIm", "CircleIm", "CircleImDrift"];
 end
 
 % PlotSaveDir is the path to the directory for saving plots in .png format
@@ -184,6 +186,35 @@ if ismember("HistIm", PlotDo)
    FileName = [BaseName '_HistImage'];
    saveas(gcf, fullfile(PlotSaveDir, FileName), 'png');
    if ~ShowPlots; close(gcf); end
+end
+
+if ismember("CircleIm", PlotDo)
+    % Generate a circle image.
+    [~, CircleImageRGB] = smi_vis.GenerateImages.circleImage(...
+        SMD, [], SRImageZoom);
+    FileName = [BaseName, '_CircleImage.png'];
+    imwrite(CircleImageRGB, fullfile(PlotSaveDir, FileName))
+    if ShowPlots
+        CircleImFigure = figure();
+        CircleImAxes = axes(CircleImFigure);
+        imshow(CircleImageRGB, [], 'Parent', CircleImAxes)
+    end
+end
+
+if ismember("CircleImDrift", PlotDo)
+    % Generate a circle image.
+    ColorMap = parula(numel(SMD.FrameNum));
+    [~, SortIndices] = sort(SMD.FrameNum);
+    ColorMap = ColorMap(SortIndices, :);
+    [~, CircleImageRGB] = smi_vis.GenerateImages.circleImage(...
+        SMD, ColorMap, SRImageZoom);
+    FileName = [BaseName, '_CircleImageDrift.png'];
+    imwrite(CircleImageRGB, fullfile(PlotSaveDir, FileName))
+    if ShowPlots
+        CircleImDriftFigure = figure();
+        CircleImDriftAxes = axes(CircleImDriftFigure);
+        imshow(CircleImageRGB, [], 'Parent', CircleImDriftAxes)
+    end
 end
 
     % nested function for plotting and saving histograms
