@@ -11,7 +11,8 @@ classdef SimSMLM < handle
     properties
         SZ               % Linear size of image (pixels)
         Rho              % Fluorophore Density (flourophore/pixel)
-        NFrames          % Number of frames
+        NDatasets = 1    % Number of datasets
+        NFrames          % Number of frames per dataset
         ZoomFactor       % It can be either smaller or larger than one
         K_OnToOff        % Fluorophore turns Off from On state (default:1 frames^-1)
         K_OffToOn        % Fluorophore return to On state from Off state (default:0.0005 frames^-1)
@@ -19,6 +20,8 @@ classdef SimSMLM < handle
         EmissionRate     % Emission rate (Intensity) of photons (photons/frame)
         Bg               % Background Count Rate (counts/pixel)
         PSFSigma         % Point Spread Function Sigma size (Pixels).
+        Verbose = 1      % Verbosity level
+        
     end
 
     %properties(SetAccess = protected)

@@ -104,12 +104,14 @@ for mm=1:NLabels
         SMD_Model.Z = [];
         SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
     end
-    SMD_Model.FrameNum   = FrameNum;
+    SMD_Model.Photons    = Photons;
+    SMD_Model.Bg         = 0;
+    SMD_Model.X_SE       = SMD_Model.PSFSigma ./ sqrt(Photons);
+    SMD_Model.Y_SE       = SMD_Model.PSFSigma ./ sqrt(Photons);
+    SMD_Model.NDatasets  = 1;
     SMD_Model.NFrames    = numel(FrameNum);
     SMD_Model.DatasetNum = ones(size(FrameNum));
-    SMD_Model.NDatasets  = 1;
-    SMD_Model.Photons    = Photons;
-    SMD_Model.Bg = 0;
+    SMD_Model.FrameNum   = FrameNum;
 end
     
     %Nested function to generate blinking events.
