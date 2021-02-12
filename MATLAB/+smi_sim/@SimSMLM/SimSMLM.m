@@ -19,6 +19,8 @@ classdef SimSMLM < handle
         EmissionRate     % Emission rate (Intensity) of photons (photons/frame)
         Bg               % Background Count Rate (counts/pixel)
         PSFSigma         % Point Spread Function Sigma size (Pixels).
+        Verbose = 1      % Verbosity level
+        
     end
 
     %properties(SetAccess = protected)
