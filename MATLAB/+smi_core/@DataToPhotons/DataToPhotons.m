@@ -60,10 +60,13 @@ classdef DataToPhotons < handle
             % This constructor has several optional inputs which are set to
             % class properties.  If you provide all inputs (e.g., SMF,
             % RawData, ...) and set AutoRun = 1, this class will
-            % automatically run obj.convertToPhotons() on your data.  The
+            % automatically run obj.convertData() on your data.  The
             % results will be stored in the appropriate class properties,
             % but you can also retrieve them by specifying 2nd and 3rd
-            % outputs from this constructor.
+            % outputs from this constructor. Note that the input
+            % CalibrationROI is unused when SMF.Data.CalibrationFilePath is
+            % defined. Instead, we'll attempt to set that field with the
+            % value stored in that file.
             
             % Set defaults if needed.
             if (~exist('AutoRun', 'var') || isempty(AutoRun))
@@ -72,14 +75,33 @@ classdef DataToPhotons < handle
             
             % Set class properties based on the inputs.
             AllFieldsSet = true;
+            if (exist('CalibrationROI', 'var') && ~isempty(CalibrationROI))
+                % NOTE: This may be overwritten below if a calibration file
+                %       is present and the camera type is specified as
+                %       'SCMOS'. If that happens, it was done on purpose!
+                %       It's best to use the value in the calibration file
+                %       rather than what the user has entered.
+                obj.CalibrationROI = CalibrationROI;
+            end
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Reload the SMF to ensure it has all required properties.
                 SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMF);
                 
                 % Set the desired SMF fields to class properties.
-                obj.CameraGain = SMF.Data.CameraGain;
-                obj.CameraOffset = SMF.Data.CameraOffset;
-                obj.CameraReadNoise = SMF.Data.CameraReadNoise;
+                if (isempty(SMF.Data.CalibrationFilePath) ...
+                        || strcmpi(SMF.Data.CameraType, 'EMCCD'))
+                    % If no filepath is given, or if the camera is
+                    % specified as an EMCCD, we don't need to load a
+                    % calibration file.
+                    obj.CameraGain = SMF.Data.CameraGain;
+                    obj.CameraOffset = SMF.Data.CameraOffset;
+                    obj.CameraReadNoise = SMF.Data.CameraReadNoise;
+                else
+                    % Attempt to load the calibration data.
+                    [obj.CameraGain, obj.CameraOffset, ...
+                        obj.CameraReadNoise, obj.CalibrationROI] = ...
+                        smi_core.LoadData.loadCalibrationFile(SMF);
+                end
             else
                 AllFieldsSet = false;
             end
@@ -93,23 +115,12 @@ classdef DataToPhotons < handle
             else
                 AllFieldsSet = false;
             end
-            if (exist('CalibrationROI', 'var') && ~isempty(CalibrationROI))
-                obj.CalibrationROI = CalibrationROI;
-            else
-                AllFieldsSet = false;
-            end
             
             % Run obj.convertToPhotons() if requested.
             Data = [];
             ReadNoise = [];
             if (AutoRun && AllFieldsSet)
-                [Data, ReadNoise] = obj.convertToPhotons(...
-                    obj.RawData, ...
-                    obj.CameraGain, obj.CameraOffset, ...
-                    obj.CameraReadNoise, ...
-                    obj.RawDataROI, obj.CalibrationROI);
-                obj.CorrectedData = Data;
-                obj.CorrectedReadNoise = ReadNoise;
+                obj.convertData();
             end
         end
         
