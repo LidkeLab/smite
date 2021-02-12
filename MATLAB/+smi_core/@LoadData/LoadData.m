@@ -251,5 +251,47 @@ classdef LoadData < handle
 
         DatasetList = setSMFDatasetList(SMF);
         NDatasets = countNDatasets(SMF);
+        
+        function [Gain, Offset, ReadNoise, CalibrationROI] = ...
+                loadCalibrationFile(SMF)
+            %loadCalibrationFile loads calibration data from a file.
+            % This method attempts to load the gain, offset, and readnoise
+            % arrays from a file specified by SMF.Data.CalibrationFilePath. 
+            % If these arrays aren't found in the file, a warning will be 
+            % issued.
+            
+            % Load a "Params" struct from the file.
+            load(SMF.Data.CalibrationFilePath, 'Params')
+            
+            % Attempt to extract the appropriate fields from 'Params'.
+            Gain = Params.Gain;
+            Offset = Params.CCDOffset;
+            ReadNoise = Params.CCDVar;
+            
+            % If the ROI is defined as [YStart, YEnd, XStart, XEnd],
+            % we'll want to swap the values to have
+            % [YStart, XStart, YEnd, XEnd].
+            CalibrationROI = Params.CameraObj.ROI;
+            if ((CalibrationROI(2)>CalibrationROI(1)) ...
+                    && (CalibrationROI(4)>CalibrationROI(3)))
+                % If either of these are met, we'll assume it's defined
+                % in the old style. Note that this might fail, but I
+                % haven't thought of a better approach -D.J.S. 2/21
+                OldROI = CalibrationROI;
+                CalibrationROI = ...
+                    [CalibrationROI(1), CalibrationROI(3), ...
+                    CalibrationROI(2), CalibrationROI(4)];
+                warning(['The CalibrationROI in %s was assumed to be ', ...
+                    'in the format [YStart, YEnd, XStart, XEnd] and ', ...
+                    'thus was re-ordered from ', ...
+                    '[%i, %i, %i, %i] to [%i, %i, %i, %i]!'], ...
+                    SMF.Data.CalibrationFilePath, ...
+                    OldROI(1), OldROI(2), OldROI(3), OldROI(4), ...
+                    CalibrationROI(1), CalibrationROI(2), ...
+                    CalibrationROI(3), CalibrationROI(4))
+            end
+        end
+    
     end
+    
 end
