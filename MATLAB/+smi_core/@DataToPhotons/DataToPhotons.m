@@ -8,7 +8,7 @@ classdef DataToPhotons < handle
     %
     % EXAMPLE USAGE:
     %   Given RawData in units of ADU, and an SMF structure with the fields
-    %   SMF.Data.CameraGain, SMF.Data.CameraOffset, and 
+    %   SMF.Data.CameraGain, SMF.Data.CameraOffset, and
     %   SMF.Data.CameraReadNoise (see SingleMoleculeFitting class for
     %   details), you can convert RawData and CameraReadNoise to units of
     %   photons and photons^2, respectively, as follows:
@@ -19,6 +19,7 @@ classdef DataToPhotons < handle
     %   parameters immediately) as follows:
     %       DTP = smi_core.DataToPhotons(SMF, ...
     %           RawData, RawDataROI, CalibrationROI);
+    %       [Data, ReadNoise] = DTP.convertData();
     
     
     properties
@@ -30,6 +31,9 @@ classdef DataToPhotons < handle
         
         % Data that is to be gain/offset corrected (float array)
         RawData {mustBeFloat(RawData)}
+        
+        % Read noise that is to be gain/offset corrected (float array)
+        ReadNoise {mustBeFloat(ReadNoise)}
         
         % Region of interest of the raw data (float array)
         % (see obj.convertToPhotons() for details/usage)
@@ -65,7 +69,7 @@ classdef DataToPhotons < handle
             if (~exist('AutoRun', 'var') || isempty(AutoRun))
                 AutoRun = 0;
             end
-                        
+            
             % Set class properties based on the inputs.
             AllFieldsSet = true;
             if (exist('SMF', 'var') && ~isempty(SMF))
@@ -96,8 +100,11 @@ classdef DataToPhotons < handle
             end
             
             % Run obj.convertToPhotons() if requested.
+            Data = [];
+            ReadNoise = [];
             if (AutoRun && AllFieldsSet)
-                [Data, ReadNoise] = obj.convertToPhotons(obj.RawData, ...
+                [Data, ReadNoise] = obj.convertToPhotons(...
+                    obj.RawData, ...
                     obj.CameraGain, obj.CameraOffset, ...
                     obj.CameraReadNoise, ...
                     obj.RawDataROI, obj.CalibrationROI);
@@ -105,10 +112,13 @@ classdef DataToPhotons < handle
                 obj.CorrectedReadNoise = ReadNoise;
             end
         end
+        
+        [CorrectedData, CorrectedReadNoise] = convertData(obj);
+        
     end
     
     methods (Static)
-        [Data, ReadNoise] = convertToPhotons(RawData, ...
+        [CorrectedData, CorrectedReadNoise] = convertToPhotons(RawData, ...
             CameraGain, CameraOffset, CameraReadNoise, ...
             RawDataROI, CalibrationROI);
         [Success] = unitTest();

@@ -1,4 +1,5 @@
-function [Data, ReadNoise] = convertToPhotons(RawData, ...
+function [CorrectedData, CorrectedReadNoise] = ...
+    convertToPhotons(RawData, ...
     CameraGain, CameraOffset, CameraReadNoise, ...
     RawDataROI, CalibrationROI)
 %convertToPhotons converts RawData to units of photons.
@@ -124,14 +125,14 @@ end
 % photons.
 % NOTE: MATLAB will still do this element-wise calculation correctly even
 %       when size(RawData, 3) > 1 .
-Data = (RawData-CameraOffsetSub) ./ CameraGainSub;
-ReadNoise = CameraNoiseSub ./ (CameraGainSub.^2);
+CorrectedData = (RawData-CameraOffsetSub) ./ CameraGainSub;
+CorrectedReadNoise = CameraNoiseSub ./ (CameraGainSub.^2);
 
 % Remove negative values from Data.
 % NOTE: The old version of this code used a lower threshold of 0.01 instead
 %       of 0.  I'm just using 0 because I don't see the benefit of using
 %       0.01 (although one might exist that I'm just not seeing!).
-Data(Data < 0) = 0; 
+CorrectedData(CorrectedData < 0) = 0; 
 
 
 end

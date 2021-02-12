@@ -8,15 +8,15 @@ function [Success] = unitTest()
 % OUTPUTS:
 %   Success: A boolean array whose elements indicate success/failure of
 %            various methods of the DataToPhotons class. (Boolean)
-%            Success(1): method convertToPhotons(), RawData is gain and
+%            Success(1): Test of the class constructor.
+%            Success(2): method convertToPhotons(), RawData is gain and
 %                        offset corrected succesfully for non-scalar gain
 %                        and offset.
-%            Success(2): method convertToPhotons(), the input read-noise
+%            Success(3): method convertToPhotons(), the input read-noise
 %                        (given as a variance) is succesfully converted to
 %                        units of photons^2 for non-scalar gain and offset.
-%            Success(3): Same as Success(1) for scalar gain.
-%            Success(4): Same as Success(2) for scalar offset.
-%            Success(5): Test of the class constructor.
+%            Success(4): Same as Success(1) for scalar gain.
+%            Success(5): Same as Success(2) for scalar offset.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -33,6 +33,7 @@ rng(1234)
 %       failure in the unitTest(): it might be easier to track down if
 %       there is something meaningful to look at.
 FrameSizeFull = 256; % don't change this! other numbers assume = 256
+CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
 NFrames = 10;
 Background = 10; % e- (treated as photons)
 CameraGain = 2 + 0.2*randn(FrameSizeFull, 'single'); % ADU / e-
@@ -79,49 +80,66 @@ ROITopLeft = [min(IndicesTopLeft), max(IndicesTopLeft)];
 ROITopRight = [min(IndicesTopRight), max(IndicesTopRight)];
 ROIBottomRight = [min(IndicesBottomRight), max(IndicesBottomRight)];
 ROIBottomLeft = [min(IndicesBottomLeft), max(IndicesBottomLeft)];
+CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
+
+% Create an instance of the DataToPhotons class and test the constructor.
+% If this runs without throwing an exception, I'll just assume everything 
+% worked.
+SMF = smi_core.SingleMoleculeFitting;
+SMF.Data.CameraGain = CameraGain;
+SMF.Data.CameraOffset = CameraOffset;
+SMF.Data.CameraReadNoise = CameraReadNoise;
+Success = zeros(5, 1, 'logical');
+try
+    DTP = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
+        ROIBottomRight, CalibrationROI, true);
+    DTP = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
+        ROIBottomRight, CalibrationROI, false);
+    Success(1) = true;
+catch MException
+    warning('error message: %s', ...
+        MException.identifier, MException.message)
+end
 
 % Test the gain/offset corrections in convertToPhotons() in the corner test
 % quadrants.
-Success = zeros(5, 1, 'logical');
-CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
 CorrectedData = zeros(FrameSizeFull, FrameSizeFull, NFrames, 'single');
 CorrectedNoise = zeros(FrameSizeFull, 'single');
+DTP.RawData = RawDataTopLeft;
+DTP.RawDataROI = ROITopLeft;
 [CorrectedData(IndicesTopLeft(:, 1), IndicesTopLeft(:, 2), :), ...
     CorrectedNoise(IndicesTopLeft(:, 1), IndicesTopLeft(:, 2))] = ...
-    smi_core.DataToPhotons.convertToPhotons(...
-    RawDataTopLeft, CameraGain, CameraOffset, CameraReadNoise, ...
-    ROITopLeft, CalibrationROI);
+    DTP.convertData();
+DTP.RawData = RawDataTopRight;
+DTP.RawDataROI = ROITopRight;
 [CorrectedData(IndicesTopRight(:, 1), IndicesTopRight(:, 2), :), ...
     CorrectedNoise(IndicesTopRight(:, 1), IndicesTopRight(:, 2))] = ...
-    smi_core.DataToPhotons.convertToPhotons(...
-    RawDataTopRight, CameraGain, CameraOffset, CameraReadNoise, ...
-    ROITopRight, CalibrationROI);
+    DTP.convertData();
+DTP.RawData = RawDataBottomRight;
+DTP.RawDataROI = ROIBottomRight;
 [CorrectedData(IndicesBottomRight(:, 1), IndicesBottomRight(:, 2), :), ...
     CorrectedNoise(IndicesBottomRight(:, 1), IndicesBottomRight(:, 2))] = ...
-    smi_core.DataToPhotons.convertToPhotons(...
-    RawDataBottomRight, CameraGain, CameraOffset, CameraReadNoise, ...
-    ROIBottomRight, CalibrationROI);
+    DTP.convertData();
+DTP.RawData = RawDataBottomLeft;
+DTP.RawDataROI = ROIBottomLeft;
 [CorrectedData(IndicesBottomLeft(:, 1), IndicesBottomLeft(:, 2), :), ...
     CorrectedNoise(IndicesBottomLeft(:, 1), IndicesBottomLeft(:, 2))] = ...
-    smi_core.DataToPhotons.convertToPhotons(...
-    RawDataBottomLeft, CameraGain, CameraOffset, CameraReadNoise, ...
-    ROIBottomLeft, CalibrationROI);
-Success(1) = all(abs(CorrectedData(:)-DataWithReadNoise(:)) < 0.1);
-Success(2) = all(abs(CorrectedNoise(:)-ReadNoiseVariancePhotons(:)) < 0.1);
+    DTP.convertData();
+Success(2) = all(abs(CorrectedData(:)-DataWithReadNoise(:)) < 0.1);
+Success(3) = all(abs(CorrectedNoise(:)-ReadNoiseVariancePhotons(:)) < 0.1);
 
-% Test the gain/offset corrections in convertToPhotons() in the center test
-% quadrant, avoiding setting the input ROI to test the default indexing.
-[CorrectedDataCenter, CorrectedNoiseCenter] = ...
-    smi_core.DataToPhotons.convertToPhotons(...
-    RawDataCenter, CameraGain, CameraOffset, CameraReadNoise, ...
-    [], CalibrationROI);
+% Test the gain/offset corrections in the center test quadrant, avoiding
+% setting the input ROI to test the default indexing.
+DTP.RawData = RawDataCenter;
+DTP.RawDataROI = [];
+[CorrectedDataCenter, CorrectedNoiseCenter] = DTP.convertData();
 TrueDataCenter = DataWithReadNoise(IndicesCenter(:, 1), ...
     IndicesCenter(:, 2), :);
 TrueNoiseCenter = ReadNoiseVariancePhotons(IndicesCenter(:, 1), ...
     IndicesCenter(:, 2));
-Success(1) = (Success(1) ...
-    & all(abs(CorrectedDataCenter(:)-TrueDataCenter(:)) < 0.1));
 Success(2) = (Success(2) ...
+    & all(abs(CorrectedDataCenter(:)-TrueDataCenter(:)) < 0.1));
+Success(3) = (Success(3) ...
     & all(abs(CorrectedNoiseCenter(:)-TrueNoiseCenter(:)) < 0.1));
 
 % Repeat the above tests for scalar gain and offset (the quadrants no
@@ -137,28 +155,13 @@ DataWithScalarReadNoise = Data ...
     + sqrt(ScalarReadNoisePhotons)*randn(FrameSizeFull);
 DataWithScalarReadNoise(DataWithScalarReadNoise < 0) = 0;
 RawData = CameraGain.*DataWithScalarReadNoise + CameraOffset;
-[CorrectedData, CorrectedNoise] = ...
-    smi_core.DataToPhotons.convertToPhotons(RawData, ...
-    CameraGain, CameraOffset, CameraReadNoise);
-Success(3) = all(abs(CorrectedData(:)-DataWithScalarReadNoise(:)) < 0.1);
-Success(4) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
-
-% Test the class constructor functions.
-SMF = smi_core.SingleMoleculeFitting;
-SMF.Data.CameraGain = CameraGain;
-SMF.Data.CameraOffset = CameraOffset;
-SMF.Data.CameraReadNoise = CameraReadNoise;
-try
-    [DTP, CorrectedData, CorrectedReadNoise] = ...
-        smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
-        ROIBottomRight, CalibrationROI, 1);
-    [DTP] = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
-        ROIBottomRight, CalibrationROI, 0);
-    Success(5) = true;
-catch MException
-    warning('error message: %s', ...
-        MException.identifier, MException.message)
-end
+DTP.RawData = RawData;
+DTP.CameraGain = CameraGain;
+DTP.CameraOffset = CameraOffset;
+DTP.CameraReadNoise = CameraReadNoise;
+[CorrectedData, CorrectedNoise] = DTP.convertData();
+Success(4) = all(abs(CorrectedData(:)-DataWithScalarReadNoise(:)) < 0.1);
+Success(5) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
 
 
 end
