@@ -22,8 +22,8 @@ classdef SimSMLM < handle
         Bg               % Background Count Rate (counts/pixel)
         PSFSigma         % Point Spread Function Sigma size (Pixels)
         N_LabelTypes = 1 % Number of types of labels
-        LabelingEfficiency = 1
-                         % Fluorophore labeling efficiency [0-1]
+        LabelingEfficiency = [1]
+                         % Fluorophore labeling efficiency per label type [0-1]
         Verbose = 1      % Verbosity level
         
     end
