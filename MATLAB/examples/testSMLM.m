@@ -1,4 +1,4 @@
-% An example I used (MJW) to develop SMLM.
+% MJW: A real example used to develop SMLM.
 SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.FileDir           = ...
    'Y:\Sandeep\Genmab\10082020\Wien133_LQT_CD52_HexElect1\Cell_01\Label_01';
