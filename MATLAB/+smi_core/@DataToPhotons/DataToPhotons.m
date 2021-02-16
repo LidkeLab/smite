@@ -100,7 +100,7 @@ classdef DataToPhotons < handle
                     % Attempt to load the calibration data.
                     [obj.CameraGain, obj.CameraOffset, ...
                         obj.CameraReadNoise, obj.CalibrationROI] = ...
-                        smi_core.LoadData.loadCalibrationFile(SMF);
+                        smi_core.LoadData.loadDataCalibration(SMF);
                 end
             else
                 AllFieldsSet = false;

@@ -253,8 +253,8 @@ classdef LoadData < handle
         NDatasets = countNDatasets(SMF);
         
         function [Gain, Offset, ReadNoise, CalibrationROI] = ...
-                loadCalibrationFile(SMF)
-            %loadCalibrationFile loads calibration data from a file.
+                loadDataCalibration(SMF)
+            %loadDataCalibration loads calibration data from a file.
             % This method attempts to load the gain, offset, and readnoise
             % arrays from a file specified by SMF.Data.CalibrationFilePath. 
             % If these arrays aren't found in the file, a warning will be 
