@@ -168,8 +168,12 @@ methods
         end
         [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
 
+        % Perform the gain and offset correction.
+        DTP = smi_core.DataToPhotons(obj.SMF, Dataset);
+        ScaledDataset = DTP.convertData();
+        
         % Generate localizations from the current Dataset.
-        LD = smi_core.LocalizeData(Dataset, obj.SMF);
+        LD = smi_core.LocalizeData(ScaledDataset, obj.SMF);
         LD.Verbose = obj.Verbose;
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
