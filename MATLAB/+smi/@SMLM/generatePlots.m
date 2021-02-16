@@ -159,7 +159,7 @@ if ismember("FitFrame", PlotDo)
    if ~ShowPlots; close(gcf); end
 end
 
-SRImageZoom = 10;
+SRImageZoom = 20;
 
 if ismember("DriftIm", PlotDo)
    % Drift image
