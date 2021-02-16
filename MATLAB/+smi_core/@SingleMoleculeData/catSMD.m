@@ -179,8 +179,8 @@ end
 %       wanted to do it this way (with 'ConnectID' and 'IndSMD' added to
 %       'SpecialFields') so that it's more clear to readers that something
 %       special is being done with these fields.
-MaxConnectIDSMD1 = max(SMD1.ConnectID);
-MaxIndSMD1 = max(cell2mat(SMD1.IndSMD));
+MaxConnectIDSMD1 = max([0; SMD1.ConnectID]);
+MaxIndSMD1 = max([0; cell2mat(SMD1.IndSMD)]);
 SMD2.ConnectID = SMD2.ConnectID + MaxConnectIDSMD1;
 SMD2.IndSMD = cellfun(@(X) X + MaxIndSMD1, SMD2.IndSMD, ...
     'UniformOutput', false);

@@ -87,7 +87,7 @@ classdef SingleMoleculeData
             SMD.FrameNum=[];
             SMD.PValue=[];
             SMD.LogLikelihood=[];
-            SMD.ConnectID=[];
+            SMD.ConnectID=uint32([]);
             SMD.IndSMD={};
             SMD.ThreshFlag=[];
             SMD.DriftX=[];
