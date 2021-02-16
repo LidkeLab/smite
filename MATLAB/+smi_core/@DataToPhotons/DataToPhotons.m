@@ -24,33 +24,33 @@ classdef DataToPhotons < handle
     
     properties
         % obj.RawData converted to units of photons (float array)
-        CorrectedData {mustBeFloat(CorrectedData)}
+        CorrectedData {mustBeNumeric(CorrectedData)}
         
         % obj.CameraReadNoise converted to units of photons (float array)
-        CorrectedReadNoise {mustBeFloat(CorrectedReadNoise)}
+        CorrectedReadNoise {mustBeNumeric(CorrectedReadNoise)}
         
         % Data that is to be gain/offset corrected (float array)
-        RawData {mustBeFloat(RawData)}
+        RawData {mustBeNumeric(RawData)}
         
         % Read noise that is to be gain/offset corrected (float array)
-        ReadNoise {mustBeFloat(ReadNoise)}
+        ReadNoise {mustBeNumeric(ReadNoise)}
         
         % Region of interest of the raw data (float array)
         % (see obj.convertToPhotons() for details/usage)
-        RawDataROI {mustBeFloat(RawDataROI)}
+        RawDataROI {mustBeNumeric(RawDataROI)}
         
         % Gain of the camera used to collect RawData (float array)
-        CameraGain {mustBeFloat(CameraGain)}
+        CameraGain {mustBeNumeric(CameraGain)}
         
         % Offset of the camera used to collect RawData (float array)
-        CameraOffset {mustBeFloat(CameraOffset)}
+        CameraOffset {mustBeNumeric(CameraOffset)}
         
         % Read noise of the camera used to collect Raw Data (float array)
-        CameraReadNoise {mustBeFloat(CameraReadNoise)}
+        CameraReadNoise {mustBeNumeric(CameraReadNoise)}
         
         % Region of interest of the gain/offset arrays (float array)
         % (see obj.convertToPhotons() for details/usage)
-        CalibrationROI {mustBeFloat(CalibrationROI)}
+        CalibrationROI {mustBeNumeric(CalibrationROI)}
     end
     
     methods
