@@ -10,15 +10,20 @@ classdef SimSMLM < handle
     
     properties
         SZ               % Linear size of image (pixels)
-        Rho              % Fluorophore Density (flourophore/pixel)
+        Rho              % Fluorophore Density (fluorophore/pixel)
         NFrames          % Number of frames
         ZoomFactor       % It can be either smaller or larger than one
-        K_OnToOff        % Fluorophore turns Off from On state (default:1 frames^-1)
-        K_OffToOn        % Fluorophore return to On state from Off state (default:0.0005 frames^-1)
+        K_OnToOff        % Fluorophore turns Off from On state
+                         %    (default:1 frames^-1)
+        K_OffToOn        % Fluorophore return to On state from Off state
+                         %    (default:0.0005 frames^-1)
         K_OnToBleach     % Fluorophore bleached out (default:1/5 frames^-1)
         EmissionRate     % Emission rate (Intensity) of photons (photons/frame)
         Bg               % Background Count Rate (counts/pixel)
-        PSFSigma         % Point Spread Function Sigma size (Pixels).
+        PSFSigma         % Point Spread Function Sigma size (Pixels)
+        N_LabelTypes = 1 % Number of types of labels
+        LabelingEfficiency = 1
+                         % Fluorophore labeling efficiency
         Verbose = 1      % Verbosity level
         
     end
@@ -31,6 +36,7 @@ classdef SimSMLM < handle
     methods 
         
         [SMD_True] = simStar(obj,NWings)
+        [SMD_True] = kTets(obj, kk, radius_kTet)
         % Call the genBlinks() function to generate the model
         [SMD_Model] = genBlinks(obj,SMD_True,StartState)
         % Call the genNoisyData() function to generate the Data

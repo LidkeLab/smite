@@ -1,5 +1,5 @@
 function SMD_True = kTet(k, center, radius, startAngle)
-%ktet produces a circle of k equally spaced points starting at a random place
+%kTet produces a circle of k equally spaced points starting at a random place
 % on the circumference unless the optional argument startAngle is provided.
 % Each segment centered around a point will subtend an angle of 2 pi/k.  The
 % units of the output will be consistent with those of the inputs.
