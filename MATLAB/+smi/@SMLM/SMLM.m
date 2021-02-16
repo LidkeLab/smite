@@ -115,15 +115,14 @@ methods
     % ---------------------------------------------------------------------
 
     function analyzeAll(obj, DatasetList)
-        % analyzeAll loops over dataset and creates SMD.
+        % analyzeAll loops over a list of datasets and creates an SMD.
+        % If DatasetList not provided, use obj.SMD.Data.DatasetList
 
         % Define the list of datasets to be processed.
         obj.SMF = smi_core.LoadData.setSMFDatasetList(obj.SMF);
         % DatasetList takes priority over what is in SMF.
         if ~exist('DatasetList', 'var')
             DatasetList = obj.SMF.Data.DatasetList;
-       %else
-       %    obj.SMF.Data.DatasetList = DatasetList;
         end
 
         % DriftCorrection class object is also used in analyzeDataset.
