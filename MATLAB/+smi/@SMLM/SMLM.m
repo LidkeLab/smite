@@ -18,7 +18,6 @@ end
 
 % =========================================================================
 properties (Access=protected)
-    DatasetList = [] % List of datasets to be analyzed
     DC               % DriftCorrection class object used internally
     SMD              % SMD structure with final analysis results
     SMDPreThresh     % Keeps track of why localizations were filtered out
@@ -104,8 +103,7 @@ methods
     function testFit(obj, DatasetIndex)
         %testFit performs detailed analysis and feedback of one dataset.
 
-        obj.DatasetList = DatasetIndex;
-        obj.analyzeAll();
+        obj.analyzeAll(DatasetIndex);
         ShowPlots = true;
         obj.generatePlots(ShowPlots, obj.PlotDo);
         if obj.Verbose >= 1
@@ -116,16 +114,16 @@ methods
 
     % ---------------------------------------------------------------------
 
-    function analyzeAll(obj)
+    function analyzeAll(obj, DatasetList)
         % analyzeAll loops over dataset and creates SMD.
 
         % Define the list of datasets to be processed.
         obj.SMF = smi_core.LoadData.setSMFDatasetList(obj.SMF);
-        if isempty(obj.DatasetList)
-            obj.DatasetList = obj.SMF.Data.DatasetList;
-        else
-            % obj.DatasetList takes priority over what is in SMF.
-            obj.SMF.Data.DatasetList = obj.DatasetList;
+        % DatasetList takes priority over what is in SMF.
+        if ~exist('DatasetList', 'var')
+            DatasetList = obj.SMF.Data.DatasetList;
+       %else
+       %    obj.SMF.Data.DatasetList = DatasetList;
         end
 
         % DriftCorrection class object is also used in analyzeDataset.
@@ -136,15 +134,15 @@ methods
         obj.SMDPreThresh.Y=[];
         obj.SMDPreThresh.ThreshFlag=[];
         if obj.Verbose >= 1
-            fprintf('Processing %d datasets ...\n', numel(obj.DatasetList));
+            fprintf('Processing %d datasets ...\n', numel(DatasetList));
         end
-        for nn=1:numel(obj.DatasetList)
-            SMDnn = obj.analyzeDataset(obj.DatasetList(nn), nn);
+        for nn=1:numel(DatasetList)
+            SMDnn = obj.analyzeDataset(DatasetList(nn), nn);
             obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
         end
 
         % Inter-dataset drift correction.
-        if numel(obj.DatasetList) > 1
+        if numel(DatasetList) > 1
             if obj.Verbose >= 1
                 fprintf('Drift correcting (inter-dataset) ...\n');
             end
