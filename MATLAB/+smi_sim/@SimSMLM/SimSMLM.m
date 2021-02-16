@@ -23,7 +23,7 @@ classdef SimSMLM < handle
         PSFSigma         % Point Spread Function Sigma size (Pixels)
         N_LabelTypes = 1 % Number of types of labels
         LabelingEfficiency = 1
-                         % Fluorophore labeling efficiency
+                         % Fluorophore labeling efficiency [0-1]
         Verbose = 1      % Verbosity level
         
     end
