@@ -8,7 +8,7 @@ classdef DiffusionEstimator
         TR
         
         % Max. frame lag of the MSD (scalar, integer)
-        MaxFrameLag
+        MaxFrameLag = inf;
         
         % Fit method for fitting MSD results (char array/string)
         FitMethod = 'weightedLS';
