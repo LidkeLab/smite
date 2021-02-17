@@ -33,5 +33,9 @@ function [SMR] = applyThresh(SMD, Verbose)
       fprintf('   Thresholding: %d -> %d localizations\n', ...
               sizeX, numel(SMR.X));
    end
+   if Verbose >= 3
+     THR = smi_core.Threshold;
+     THR.rejectedLocalizations(SMD, '');
+   end
 
 end % applyThresh
