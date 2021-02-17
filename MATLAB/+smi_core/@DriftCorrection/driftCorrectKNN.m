@@ -272,6 +272,11 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 
    % Create a NeighborSearcher object for k-nearest neighbors search from the
    % first dataset.
+   if SMD.NDatasets > 1 && SMRS{1}.n == 0
+      % This whole procedure fails if the first dataset is empty!
+      error(['First dataset is empty!  ', ...
+             'Cannot perform inter-dataset drift correction.']);
+   end
    NS = createns(SMRS{1}.XY);
    % Count the number of iterations and function calls.
    it = 0;   fc = 0;
