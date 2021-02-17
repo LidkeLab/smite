@@ -6,17 +6,67 @@ classdef DiffusionEstimator
     properties
         % Tracking results structure.
         TR
+        
+        % Max. frame lag of the MSD (scalar, integer)
+        MaxFrameLag = inf;
+        
+        % Fit method for fitting MSD results (char array/string)
+        FitMethod = 'weightedLS';
+    end
+    
+    properties (SetAccess = protected)
+        % Structure array containing trajectory-wise MSDs.
+        MSDSingleTraj
+        
+        % Structure array containing the ensemble MSD.
+        MSDEnsemble
     end
     
     methods
-        function obj = DiffusionEstimator()
-            %DiffusionEstimator is the class constructor
+        function [obj, DiffusionStruct] = ...
+                DiffusionEstimator(TR, MaxFrameLag, AutoRun)
+            %DiffusionEstimator is the class constructor.
+            % Several optional inputs can be provided to directly set class
+            % properties.  'AutoRun' is a boolean flag which specifies 
+            % whether or not this constructor should call
+            % obj.estimateDiffusionConstant() if all requisite class
+            % properties were provided.
+            
+            % Set defaults if needed.
+            if (~exist('AutoRun', 'var') || isempty(AutoRun))
+                AutoRun = false;
+            end
+            
+            % Set class properties based on the inputs.
+            AllFieldsSet = true;
+            if (exist('TR', 'var') && ~isempty(TR))
+                obj.TR = TR;
+            else
+                AllFieldsSet = false;
+            end
+            if (exist('MaxFrameLag', 'var') && ~isempty(MaxFrameLag))
+                obj.MaxFrameLag = MaxFrameLag;
+            else
+                AllFieldsSet = false;
+            end
+            if (exist('FitMethod', 'var') && ~isempty(FitMethod))
+                obj.FitMethod = FitMethod;
+            end
+            
+            % Run obj.estimateDiffusionConstant() if requested.
+            if (AutoRun && AllFieldsSet)
+                [DiffusionStruct] = obj.estimateDiffusionConstant();
+            end
         end
+        
+        [DiffusionConstant, DiffusionConstantSE] = ...
+            estimateDiffusionConstant(obj);
+        
     end
     
     methods (Static)
-        [DiffusionConstant, DiffusionConstantSE] = fitMSD(TR);
-        [MSDStruct, TR] = computeMSD(TR, MaxLag);
+        [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method);
+        [MSDSingleTraj, MSDEnsemble] = computeMSD(TR, MaxFrameLag)
     end
     
     methods (Static, Hidden)
@@ -25,8 +75,8 @@ classdef DiffusionEstimator
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSD, NCount, SquaredDisplacement] = computeSingleTrajMSD(TR);
-        [MSD] = computeEnsembleMSD(TR, MaxLag);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR);
+        
     end
     
     
