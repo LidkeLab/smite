@@ -25,8 +25,8 @@ classdef DiffusionEstimator
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSD, NCount, SquaredDisplacement] = computeSingleTrajMSD(TR);
-        [MSD] = computeEnsembleMSD(TR, MaxLag);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR);
+        [MSDEnsemble] = computeEnsembleMSD(TR, MaxFrameLag);
     end
     
     

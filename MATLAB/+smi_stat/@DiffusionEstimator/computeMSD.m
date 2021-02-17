@@ -1,4 +1,4 @@
-function [MSDEnsemble, MSDIndividual] = computeMSD(TR, MaxFrameLag)
+function [MSDSingleTraj, MSDEnsemble] = computeMSD(TR, MaxFrameLag)
 %computeMSD computes the mean squared displacement from TR.
 % This method computes the trajectory-wise and ensemble mean squared
 % displacements of the trajectories given in 'TR'.
@@ -9,13 +9,13 @@ function [MSDEnsemble, MSDIndividual] = computeMSD(TR, MaxFrameLag)
 %                in the MSD calculation. (Default = ceil(MaxFrameDiff/4))
 %
 % OUTPUTS:
-%   MSDEnsemble: A structure array containing the ensemble MSD results.
-%   MSDIndividual: A structure array containing the trajectory-wise MSD
+%   MSDSingleTraj: A structure array containing the trajectory-wise MSD
 %                  results.
+%   MSDEnsemble: A structure array containing the ensemble MSD results.
 
 % Created by:
-%   Hanieh Mazloom-Farsibaf (Lidke lab, 2018) in sma-core-alpha
-%   rewritten by David J. Schodt (Lidke lab, 2021) in smite
+%   David J. Schodt (Lidke lab, 2021) 
+%       based on msdAnalysis.m by Hanieh Mazloom-Farsibaf (Lidke lab, 2018)
 
 
 % Set defaults/validate parameters if needed.
@@ -31,31 +31,33 @@ elseif (MaxFrameLag > DefaultMaxFrameLag)
         DefaultMaxFrameLag)
 end
 
-% Loop through all trajectories in TR and compute the trajectory-wise MSDs.
+% Loop through all trajectories in TR and compute the trajectory-wise and
+% ensemble MSDs.
 NTraj = numel(TR);
+MSDSingleTraj = struct([]);
+MSDMatrix = zeros(NTraj, MaxFrameLag);
+NPointsMatrix = MSDMatrix;
 for ii = 1:NTraj
+    % Compute the MSD for this trajectory.
+    MSDCurrent = smi_stat.DiffusionEstimator.computeSingleTrajMSD(TR(ii));
+    MSDSingleTraj = [MSDSingleTraj; MSDCurrent];
     
+    % Store the single trajectory MSD in a matrix with all of the
+    % trajectory MSDs.
+    MSDMatrix(ii, 1:numel(MSDCurrent.MSD)) = MSDCurrent.MSD;
+    NPointsMatrix(ii, 1:numel(MSDCurrent.NPoints)) = MSDCurrent.NPoints;
+end
+MSDMatrix = MSDMatrix(:, 1:MaxFrameLag);
+NPointsMatrix = NPointsMatrix(:, 1:MaxFrameLag);
+NPoints = sum(NPointsMatrix, 1).';
+MSDEnsemble.MSD = (sum(MSDMatrix.*NPointsMatrix, 1, 'omitnan').') ...
+    ./ NPoints;
+MSDEnsemble.NPoints = NPoints;
+
+
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-end
 
 
 
