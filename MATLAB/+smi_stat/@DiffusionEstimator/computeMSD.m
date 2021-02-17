@@ -27,9 +27,9 @@ DefaultMaxFrameLag = ceil(max(MaxFrameDiff) / 4);
 if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
     MaxFrameLag = DefaultMaxFrameLag;
 elseif (MaxFrameLag > DefaultMaxFrameLag)
+    warning('Input MaxFrameLag = %i is too large. Using default of %i.',...
+        MaxFrameLag, DefaultMaxFrameLag)
     MaxFrameLag = DefaultMaxFrameLag;
-    warning('Input MaxFrameLag=%i is too large.  Default set to %i', ...
-        DefaultMaxFrameLag)
 end
 
 % Loop through all trajectories in TR and compute the trajectory-wise and
