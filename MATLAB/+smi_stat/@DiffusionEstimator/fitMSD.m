@@ -10,9 +10,9 @@ function [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method)
 %
 % OUTPUTS:
 %   FitParams: Fit parameters for the MSD fit.  These will vary based on
-%              'Method'. 
-%   FitParamsSE: Standard errors for the MSD fit parameters 'FitParams'. 
-%                These will vary based on 'Method'. 
+%              'Method'.
+%   FitParamsSE: Standard errors for the MSD fit parameters 'FitParams'.
+%                These will vary based on 'Method'.
 %
 % REQUIRES:
 %   Curve Fitting Toolbox
@@ -50,15 +50,9 @@ for ii = 1:NTraj
             %       remove the factor of 1.96, but these numbers are more
             %       round....
             FitParams(ii, :) = coeffvalues(FitResults);
-            try
-                % confint() doesn't handle errors nicely, so I'm sticking
-                % this in a try/catch.
-                FitParamsCI = confint(FitResults, 0.95);
-                FitParamsSE(ii, :) = ...
-                    (FitParamsCI(2, :) - FitParams(ii, :)) / 1.96;
-            catch
-                FitParamsSE(ii, :) = [inf, inf];
-            end
+            FitParamsCI = confint(FitResults, 0.95);
+            FitParamsSE(ii, :) = ...
+                (FitParamsCI(2, :) - FitParams(ii, :)) / 1.96;
     end
 end
 
