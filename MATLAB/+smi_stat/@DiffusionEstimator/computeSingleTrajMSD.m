@@ -15,20 +15,21 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR)
 % OUTPUTS:
 %   MSDSingleTraj: A structure array with the following fields:
 %       TrajectoryID: The trajectory ID from TR(1).TrajectoryID.
-%       MSD: The mean squared displacement between localizations in TR(1).
+%       MSD: The mean squared displacement between localizations in TR(1)
+%            (pixel^2)
 %       NCount: The number of displacements used in computing MSD at each
 %               point (i.e., MSD(ii) was the mean of NCount(ii) squared
 %               displacements).
-%       FrameLag: Number of frames between displacements used to compute 
-%                 each MSD point (i.e., MSD(ii) is the mean squared
-%                 displacement for localizations separated by FrameLag(ii)
-%                 frames).
+%       FrameLags: Number of frames between displacements used to compute 
+%                  each MSD point (i.e., MSD(ii) is the mean squared
+%                  displacement for localizations separated by FrameLag(ii)
+%                  frames).
 %       SquaredDisplacement: The squared displacements used to compute MSD,
 %                            returned as a convenience since it was already
 %                            computed internally (i.e., we might as well 
 %                            output this if requested).  Each row
 %                            corresponds to a single localization, and each
-%                            column to a frame lag.
+%                            column to a frame lag. (pixel^2)
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021) 
@@ -60,12 +61,17 @@ for ff = 1:MaxFrameLag
 end
 
 % Compute the MSD.
+FrameLags = (1:MaxFrameLag).';
 NPoints = sum(logical(SquaredDisplacement), 1).';
 MSD = sum(SquaredDisplacement, 1).' ./ NPoints;
+KeepBool = ~isnan(MSD);
+NPoints = NPoints(KeepBool);
+MSD = MSD(KeepBool);
+FrameLags = FrameLags(KeepBool);
 MSDSingleTraj.TrajectoryID = TR(1).TrajectoryID;
 MSDSingleTraj.MSD = MSD;
+MSDSingleTraj.FrameLags = FrameLags;
 MSDSingleTraj.NPoints = NPoints;
-MSDSingleTraj.FrameLag = (1:MaxFrameLag).';
 MSDSingleTraj.SquaredDisplacement = SquaredDisplacement;
 
 

@@ -15,8 +15,10 @@ classdef DiffusionEstimator
     end
     
     methods (Static)
-        [DiffusionConstant, DiffusionConstantSE] = fitMSD(TR);
-        [MSDStruct, TR] = computeMSD(TR, MaxLag);
+        [DiffusionConstant, DiffusionConstantSE] = ...
+            estimateDiffusionConstant(MSD, FrameLags);
+        [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method);
+        [MSDSingleTraj, MSDEnsemble] = computeMSD(TR, MaxFrameLag)
     end
     
     methods (Static, Hidden)
@@ -26,7 +28,7 @@ classdef DiffusionEstimator
         % them they are still accessible).
         
         [MSDSingleTraj] = computeSingleTrajMSD(TR);
-        [MSDEnsemble] = computeEnsembleMSD(TR, MaxFrameLag);
+        
     end
     
     

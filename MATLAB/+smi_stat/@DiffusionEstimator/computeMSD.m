@@ -10,11 +10,12 @@ function [MSDSingleTraj, MSDEnsemble] = computeMSD(TR, MaxFrameLag)
 %
 % OUTPUTS:
 %   MSDSingleTraj: A structure array containing the trajectory-wise MSD
-%                  results.
+%                  results.  All units are in camera units (pixels, frames)
 %   MSDEnsemble: A structure array containing the ensemble MSD results.
+%                All units are in camera units (pixels, frames)
 
 % Created by:
-%   David J. Schodt (Lidke lab, 2021) 
+%   David J. Schodt (Lidke lab, 2021)
 %       based on msdAnalysis.m by Hanieh Mazloom-Farsibaf (Lidke lab, 2018)
 
 
@@ -47,21 +48,14 @@ for ii = 1:NTraj
     MSDMatrix(ii, 1:numel(MSDCurrent.MSD)) = MSDCurrent.MSD;
     NPointsMatrix(ii, 1:numel(MSDCurrent.NPoints)) = MSDCurrent.NPoints;
 end
-MSDMatrix = MSDMatrix(:, 1:MaxFrameLag);
-NPointsMatrix = NPointsMatrix(:, 1:MaxFrameLag);
+FrameLags = (1:MaxFrameLag).';
+MSDMatrix = MSDMatrix(:, FrameLags);
+NPointsMatrix = NPointsMatrix(:, FrameLags);
 NPoints = sum(NPointsMatrix, 1).';
 MSDEnsemble.MSD = (sum(MSDMatrix.*NPointsMatrix, 1, 'omitnan').') ...
     ./ NPoints;
+MSDEnsemble.FrameLags = FrameLags;
 MSDEnsemble.NPoints = NPoints;
 
 
 end
-
-
-
-
-
-
-
-
-
