@@ -13,6 +13,9 @@ classdef DiffusionEstimator
         % Directory in which results will be saved by saveResults().
         SaveDir = pwd();
         
+        % Name of results file. Default defined in obj.saveDir().
+        SaveName
+        
         % Tracking results structure.
         TR
         

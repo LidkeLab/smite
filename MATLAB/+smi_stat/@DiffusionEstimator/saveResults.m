@@ -8,8 +8,10 @@ function saveResults(obj)
     
 
 % Define the path to the .mat file in which results will be saved.
-TimeString = smi_helpers.genTimeString('_');
-FileName = ['DiffusionResults_', TimeString, '.mat'];
+if isempty(obj.SaveName)
+    TimeString = smi_helpers.genTimeString('_');
+    obj.SaveName = ['DiffusionResults_', TimeString, '.mat'];
+end
 
 % Save some class properties to FileName.
 DiffusionStruct = obj.DiffusionStruct;
@@ -17,7 +19,8 @@ FitMethod = obj.FitMethod;
 MSDEnsemble = obj.MSDEnsemble;
 MSDSingleTraj = obj.MSDSingleTraj;
 MaxFrameLag = obj.MaxFrameLag;
-save(fullfile(obj.SaveDir, FileName), 'DiffusionStruct', 'FitMethod', ...
+save(fullfile(obj.SaveDir, obj.SaveName), ...
+    'DiffusionStruct', 'FitMethod', ...
     'MSDEnsemble', 'MSDSingleTraj', 'MaxFrameLag');
 
 
