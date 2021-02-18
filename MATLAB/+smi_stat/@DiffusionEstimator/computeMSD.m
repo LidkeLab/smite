@@ -27,7 +27,8 @@ DefaultMaxFrameLag = ceil(max(MaxFrameDiff) / 4);
 if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
     MaxFrameLag = DefaultMaxFrameLag;
 elseif (MaxFrameLag > DefaultMaxFrameLag)
-    warning('Input MaxFrameLag = %i is too large. Using default of %i.',...
+    warning(['computeMSD(): Input MaxFrameLag = %i is too large. ', ...
+        'Using default of %i.'],...
         MaxFrameLag, DefaultMaxFrameLag)
     MaxFrameLag = DefaultMaxFrameLag;
 end

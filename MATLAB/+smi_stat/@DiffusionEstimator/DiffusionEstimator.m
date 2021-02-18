@@ -3,18 +3,35 @@ classdef DiffusionEstimator
     % This class contains several methods used to estimate diffusion
     % constants from single-particle tracking data.
     
-    properties
-        % Tracking results structure.
-        TR
+    properties        
+        % Fit method for fitting MSD results (char array/string)
+        FitMethod = 'weightedLS';
         
         % Max. frame lag of the MSD (scalar, integer)
         MaxFrameLag = inf;
         
-        % Fit method for fitting MSD results (char array/string)
-        FitMethod = 'weightedLS';
+        % Directory in which results will be saved by saveResults().
+        SaveDir = pwd();
+        
+        % Tracking results structure.
+        TR
+        
+        % Boolean flag to indicate units of outputs (boolean)(Default = 1)
+        % 1 (true) will make the outputs of estimateDiffusionConstant()
+        %   micrometers and seconds.
+        % 0 (false) will make the outputs of estimateDiffusionConstant()
+        %   pixels and frames.
+        % NOTE: Most methods of this class will use pixels and frames
+        %       regardless of obj.UnitFlag. This property will only affect
+        %       the "user-facing" wrapper methods, such as
+        %       estimateDiffusionConstant() and saveResults()
+        UnitFlag = true;
     end
     
     properties (SetAccess = protected)
+        % Structure array containing diffusion estimates.
+        DiffusionStruct
+        
         % Structure array containing trajectory-wise MSDs.
         MSDSingleTraj
         
@@ -59,8 +76,8 @@ classdef DiffusionEstimator
             end
         end
         
-        [DiffusionConstant, DiffusionConstantSE] = ...
-            estimateDiffusionConstant(obj);
+        [DiffusionStruct] = estimateDiffusionConstant(obj, SaveFlag);
+        saveResults(obj)
         
     end
     
