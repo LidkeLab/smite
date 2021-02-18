@@ -30,9 +30,9 @@ function [String] = stringMUX(StringOptions, Select)
 
 % Attempt to select the desired string.
 if isstring(StringOptions)
-    String = StringOptions(Select + 1);
+    String = StringOptions(logical(Select) + 1);
 elseif iscell(StringOptions)
-    String = StringOptions{Select + 1};
+    String = StringOptions{logical(Select) + 1};
 else
     error(['Input ''StringOptions'' must be either a string array ', ...
         'or a cell array of char'])

@@ -19,8 +19,7 @@ if (~exist('FileDir', 'var') || isempty(FileDir))
     FileDir = obj.SMF.Data.FileDir;
 end
 if (~exist('FileName', 'var') || isempty(FileName))
-    CurrentTime = cellstr(num2str(round(clock().')));
-    DateString = erase(strjoin(CurrentTime, '_'), ' ');
+    DateString = smi_helpers.genTimeString();
     FileName = ['RegistrationTransform', '_', DateString, '.mat'];
 end
 
