@@ -47,16 +47,27 @@ for ff = 1:MaxFrameLag
     % Start with the first localization and find the distance to the
     % localization ff frames away.
     Index1 = 1;
-    Index2 = Index1 + ff;
+    Index2 = 2;
     while (Index2 <= NLocalizations)
-        % Compute the displacement.
-        SquaredDisplacement(Index1, ff) = ...
-            (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
-            + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
-        
-        % Update the indices, avoiding overlap between each gap.
-        Index1 = Index2;
-        Index2 = Index1 + ff;
+        % Check if the current frame gap is that desired.
+        FrameDiff = FrameNum(Index2) - FrameNum(Index1);
+        if (FrameDiff > ff)
+            % This frame gap is too large, so we need a new Index1.
+            Index1 = Index1 + 1;
+            Index2 = Index1 + 1;
+        elseif (FrameDiff == ff)
+            % Compute the displacement.
+            SquaredDisplacement(Index1, ff) = ...
+                (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
+                + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
+            
+            % Update the indices, ensuring the gaps don't overlap.
+            Index1 = Index2;
+            Index2 = Index1 + 1;
+        else
+            % This frame gap isn't the one desired.
+            Index2 = Index2 + 1;
+        end
     end
 end
 

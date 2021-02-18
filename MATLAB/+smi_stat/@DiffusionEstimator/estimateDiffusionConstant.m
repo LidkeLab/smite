@@ -22,7 +22,7 @@ function [DiffusionStruct] = estimateDiffusionConstant(obj, SaveFlag)
 if (~exist('SaveFlag', 'var') || isempty(SaveFlag))
     SaveFlag = false;
 end
-    
+
 % Compute the MSDs.
 [obj.MSDSingleTraj, obj.MSDEnsemble] = ...
     obj.computeMSD(obj.TR, obj.MaxFrameLag);
