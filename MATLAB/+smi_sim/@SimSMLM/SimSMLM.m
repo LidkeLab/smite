@@ -41,6 +41,7 @@ classdef SimSMLM < handle
         [SMD_Model] = genBlinks(obj,SMD_True,StartState)
         % Call the genNoisyData() function to generate the Data
         [SMD_Data] = genNoisySMD(obj,SMD_Model)
+        
 
     end 
 
@@ -48,6 +49,7 @@ classdef SimSMLM < handle
 
         SMD_True = kTet(k, center, radius, startAngle)
         unitTest()
+        SimDimers()
 
     end
 

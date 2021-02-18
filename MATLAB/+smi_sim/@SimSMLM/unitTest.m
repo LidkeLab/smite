@@ -3,8 +3,8 @@ function unitTest()
    obj=smi_sim.SimSMLM();
    obj.SZ = 256;
    obj.Rho=30;
-   obj.NFrames=1;
-   obj.ZoomFactor=1;
+   obj.NFrames=10;
+   obj.ZoomFactor=2;
    obj.K_OnToOff=1;
    obj.K_OffToOn=0.005;
    obj.K_OnToBleach=0.2;
