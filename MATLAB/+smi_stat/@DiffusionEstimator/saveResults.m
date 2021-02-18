@@ -12,6 +12,9 @@ if isempty(obj.SaveName)
     TimeString = smi_helpers.genTimeString('_');
     obj.SaveName = ['DiffusionResults_', TimeString, '.mat'];
 end
+if ~exist(obj.SaveDir, 'dir')
+    mkdir(obj.SaveDir);
+end
 
 % Save some class properties to FileName.
 DiffusionStruct = obj.DiffusionStruct;
