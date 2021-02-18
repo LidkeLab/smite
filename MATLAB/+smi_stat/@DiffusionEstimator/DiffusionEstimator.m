@@ -1,4 +1,4 @@
-classdef DiffusionEstimator
+classdef DiffusionEstimator < handle
     %DiffusionEstimator contains methods useful for diffusion estimation.
     % This class contains several methods used to estimate diffusion
     % constants from single-particle tracking data.
@@ -29,6 +29,13 @@ classdef DiffusionEstimator
         %       the "user-facing" wrapper methods, such as
         %       estimateDiffusionConstant() and saveResults()
         UnitFlag = true;
+        
+        % Verbosity level for estimateDiffusionConstant() (Default = 0)
+        %   Verbose 0: no Command Window outputs
+        %   Verbose 1: General progress printed to Command Window
+        %   Verbose 2: Display some intermediate results
+        %   Verbose 3: Debugging mode, extensive outputs
+        Verbose = 0;
     end
     
     properties (SetAccess = protected)
@@ -44,7 +51,8 @@ classdef DiffusionEstimator
     
     methods
         function [obj, DiffusionStruct] = ...
-                DiffusionEstimator(TR, MaxFrameLag, AutoRun)
+                DiffusionEstimator(TR, MaxFrameLag, FitMethod, ...
+                Verbose, AutoRun)
             %DiffusionEstimator is the class constructor.
             % Several optional inputs can be provided to directly set class
             % properties.  'AutoRun' is a boolean flag which specifies 
@@ -66,11 +74,12 @@ classdef DiffusionEstimator
             end
             if (exist('MaxFrameLag', 'var') && ~isempty(MaxFrameLag))
                 obj.MaxFrameLag = MaxFrameLag;
-            else
-                AllFieldsSet = false;
             end
             if (exist('FitMethod', 'var') && ~isempty(FitMethod))
                 obj.FitMethod = FitMethod;
+            end
+            if (exist('Verbose', 'var') && ~isempty(Verbose))
+                obj.Verbose = Verbose;
             end
             
             % Run obj.estimateDiffusionConstant() if requested.
@@ -79,14 +88,16 @@ classdef DiffusionEstimator
             end
         end
         
-        [DiffusionStruct] = estimateDiffusionConstant(obj, SaveFlag);
+        [DiffusionStruct] = estimateDiffusionConstant(obj, ...
+            SaveFlag);
         saveResults(obj)
         
     end
     
     methods (Static)
-        [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method);
-        [MSDSingleTraj, MSDEnsemble] = computeMSD(TR, MaxFrameLag)
+        [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose);
+        [MSDSingleTraj, MSDEnsemble] = ...
+            computeMSD(TR, MaxFrameLag, Verbose);
     end
     
     methods (Static, Hidden)
@@ -95,7 +106,7 @@ classdef DiffusionEstimator
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSDSingleTraj] = computeSingleTrajMSD(TR);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose);
         
     end
     
