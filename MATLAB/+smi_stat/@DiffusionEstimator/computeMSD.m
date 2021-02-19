@@ -27,9 +27,9 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 0;
 end
 MaxFrameDiff = ...
-    cell2mat(cellfun(@(X) X(end) - X(1), {TR.FrameNum}, ...
-    'UniformOutput', false).');
-DefaultMaxFrameLag = ceil(max(MaxFrameDiff) / 4);
+    max(cell2mat(cellfun(@(X) X(end) - X(1), {TR.FrameNum}, ...
+    'UniformOutput', false).'));
+DefaultMaxFrameLag = ceil(MaxFrameDiff / 4);
 if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
     MaxFrameLag = DefaultMaxFrameLag;
 elseif (MaxFrameLag > DefaultMaxFrameLag)
@@ -39,7 +39,7 @@ elseif (MaxFrameLag > DefaultMaxFrameLag)
         fprintf(['computeMSD(): Input MaxFrameLag=%i but the maximum\n',...
             '\tpossible frame lag is %i frames. MaxFrameLag will be\n', ...
             '\tset to a default value of MaxFrameLag=%i\n'], ...
-            MaxFrameLag, max(MaxFrameDiff), DefaultMaxFrameLag)
+            MaxFrameLag, MaxFrameDiff, DefaultMaxFrameLag)
     elseif (Verbose > 0)
         warning(['computeMSD(): Input MaxFrameLag = %i is too large. ', ...
             'Using default of %i.'], ...
@@ -55,12 +55,12 @@ if (Verbose > 1)
 end
 NTraj = numel(TR);
 MSDSingleTraj = struct([]);
-MSDMatrix = zeros(NTraj, MaxFrameLag);
+MSDMatrix = zeros(NTraj, MaxFrameDiff);
 NPointsMatrix = MSDMatrix;
 for ii = 1:NTraj
     % Compute the MSD for this trajectory.
     if (Verbose > 2)
-        fprintf('computeMSD(): computing MSD for trajectory TR(%i)\n')
+        fprintf('computeMSD(): computing MSD for trajectory TR(%i)\n', ii)
     end
     MSDCurrent = smi_stat.DiffusionEstimator.computeSingleTrajMSD(...
         TR(ii), Verbose);
@@ -68,8 +68,9 @@ for ii = 1:NTraj
     
     % Store the single trajectory MSD in a matrix with all of the
     % trajectory MSDs.
-    MSDMatrix(ii, 1:numel(MSDCurrent.MSD)) = MSDCurrent.MSD;
-    NPointsMatrix(ii, 1:numel(MSDCurrent.NPoints)) = MSDCurrent.NPoints;
+    CurrentLags = MSDCurrent.FrameLags;
+    MSDMatrix(ii, CurrentLags) = MSDCurrent.MSD;
+    NPointsMatrix(ii, CurrentLags) = MSDCurrent.NPoints;
 end
 if (Verbose > 1)
     fprintf('computeMSD(): computing ensemble MSD...\n')
