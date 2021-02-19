@@ -48,7 +48,7 @@ MSDSingleTraj = obj.MSDSingleTraj;
 MaxFrameLag = obj.MaxFrameLag;
 save(fullfile(obj.SaveDir, ['DiffusionResults_', obj.BaseSaveName]), ...
     'DiffusionStruct', 'FitMethod', ...
-    'MSDEnsemble', 'MSDSingleTraj', 'MaxFrameLag');
+    'MSDEnsemble', 'MSDSingleTraj', 'MaxFrameLag', '-v7.3');
 
 % Generate an MSD fit plot.
 if SaveParams.MakeFitPlot
@@ -58,8 +58,13 @@ if SaveParams.MakeFitPlot
     obj.plotEnsembleMSD(PlotAxes, ...
         obj.MSDEnsemble, obj.DiffusionStruct, obj.UnitFlag);
     saveas(PlotFigure, ...
-        fullfile(obj.SaveDir, ['MSDEnsembleFit_', obj.BaseSaveName]), 'png')
-    close(PlotFigure)
+        fullfile(obj.SaveDir, ['MSDEnsembleFit_', obj.BaseSaveName]), ...
+        'png')
+    if (obj.Verbose < 2)
+        % For the higher verbosity levels, we'll keep the plot open for the
+        % user to view.
+        close(PlotFigure)
+    end
 end
 
 
