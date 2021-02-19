@@ -13,8 +13,8 @@ classdef DiffusionEstimator < handle
         % Directory in which results will be saved by saveResults().
         SaveDir = pwd();
         
-        % Name of results file. Default defined in obj.saveDir().
-        SaveName
+        % Base name of saved results. Default defined in obj.saveDir().
+        BaseSaveName
         
         % Tracking results structure.
         TR
@@ -98,7 +98,8 @@ classdef DiffusionEstimator < handle
         [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose);
         [MSDSingleTraj, MSDEnsemble] = ...
             computeMSD(TR, MaxFrameLag, Verbose);
-        [PlotAxes] = plotEnsembleMSD(PlotAxes, MSDStruct, DiffusionStruct);
+        [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
+            MSDStruct, DiffusionStruct, UnitFlag);
     end
     
     methods (Static, Hidden)

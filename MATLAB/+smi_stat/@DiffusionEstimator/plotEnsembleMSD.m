@@ -1,4 +1,5 @@
-function [PlotAxes] = plotEnsembleMSD(PlotAxes, MSDStruct, DiffusionStruct)
+function [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
+    MSDStruct, DiffusionStruct, UnitFlag)
 %plotEnsembleMSD plots an ensemble MSD and an associated fit.
 % This method will plot the MSD data in MSDStruct as well as the fit
 % information provided in DiffusionStruct.
@@ -9,6 +10,8 @@ function [PlotAxes] = plotEnsembleMSD(PlotAxes, MSDStruct, DiffusionStruct)
 %              computeMSD())
 %   DiffusionStruct: Structure array containing MSD fit ressults. 
 %                    (Default = [], meaning no fit results are plotted).
+%   UnitFlag: Flag to specify camera units (0) or physical units (1).
+%             (Default = 0)
 %
 % OUTPUTS:
 %   PlotAxes: Axes in which the plot was made.
@@ -24,15 +27,28 @@ end
 if (~exist('DiffusionStruct', 'var') || isempty(DiffusionStruct))
     DiffusionStruct = [];
 end
+if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
+    UnitFlag = 0;
+end
 
 % Generate the plot.
-plot(PlotAxes, MSDStruct.FrameLags, MSDStruct.MSD, '.')
+FrameConversion = UnitFlag/DiffusionStruct(2).FrameRate + ~UnitFlag;
+MSDConversion = ~UnitFlag ...
+    + UnitFlag*(DiffusionStruct(2).PixelSize^2);
+plot(PlotAxes, MSDStruct.FrameLags*FrameConversion, ...
+    MSDStruct.MSD*MSDConversion, '.')
 hold(PlotAxes, 'on')
 if ~isempty(DiffusionStruct)
     FitParams = DiffusionStruct(2).FitParams;
     FrameArray = MSDStruct.FrameLags([1, numel(MSDStruct.FrameLags)]);
-    plot(PlotAxes, FrameArray, FitParams(1)*FrameArray + FitParams(2))
+    plot(PlotAxes, FrameArray*FrameConversion, ...
+        MSDConversion * (FitParams(1)*FrameArray + FitParams(2)))
 end
-
+TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
+MSDUnit = smi_helpers.stringMUX(...
+    {'pixels^2', 'micrometers^2'}, UnitFlag);
+xlabel(PlotAxes, TimeUnit)
+ylabel(PlotAxes, MSDUnit)
+legend(PlotAxes, {'MSD', 'Fit'}, 'Location', 'best')
 
 end
