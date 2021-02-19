@@ -1,4 +1,4 @@
-function [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method)
+function [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose)
 %fitMSD fits mean squared displacement data.
 % This method will fit a mean squared displacement plot by the method
 % specified by 'Method'.
@@ -6,7 +6,9 @@ function [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method)
 % INPUTS:
 %   MSDStruct: A structure array of MSD data as output from computeMSD()
 %              (see computeMSD() for more details).
-%   Method: A string specifying the fit method. (Default = 'weightedLS')
+%   FitMethod: A string specifying the fit method. (Default = 'weightedLS')
+%   Verbose: Verbosity level specifying how many temporary outputs should
+%            be displayed (e.g., Command Window updates).
 %
 % OUTPUTS:
 %   FitParams: Fit parameters for the MSD fit.  These will vary based on
@@ -22,8 +24,11 @@ function [FitParams, FitParamsSE] = fitMSD(MSDStruct, Method)
 
 
 % Define default parameters if needed.
-if (~exist('Method', 'var') || isempty(Method))
-    Method = 'weightedLS';
+if (~exist('Method', 'var') || isempty(FitMethod))
+    FitMethod = 'weightedLS';
+end
+if (~exist('Verbose', 'var') || isempty(Verbose))
+    Verbose = 0;
 end
 
 % Fit the MSD data.
@@ -38,9 +43,13 @@ for ii = 1:NTraj
     if (numel(FrameLags) < 3)
         continue
     end
-    switch Method
+    switch FitMethod
         case 'weightedLS'
             % Fit the MSD using weighted least squares.
+            % NOTE: The weight array is (as I've defined it here) 
+            %       proportional to the reciprocal of the CRLB of each 
+            %       point in an MSD plot. The proportionality constant is 
+            %       dropped because it doesn't affect the weighted fit.
             WeightArray = NPoints ./ (FrameLags.^2);
             FitResults = fit(FrameLags, MSD, 'poly1', ...
                 'Weights', WeightArray);

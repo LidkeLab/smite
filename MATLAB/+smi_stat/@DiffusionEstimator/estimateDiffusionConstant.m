@@ -1,4 +1,5 @@
-function [DiffusionStruct] = estimateDiffusionConstant(obj, SaveFlag)
+function [DiffusionStruct] = ...
+    estimateDiffusionConstant(obj, SaveFlag)
 %estimateDiffusionConstant estimates the diffusion constant from an MSD.
 % This method will fit the mean squared displacement data in 'MSD' to make
 % an estimate of the diffusion constant.
@@ -24,11 +25,18 @@ if (~exist('SaveFlag', 'var') || isempty(SaveFlag))
 end
 
 % Compute the MSDs.
+if (obj.Verbose > 0)
+    fprintf('estimateDiffusionConstant(): computing MSDs...\n');
+end
 [obj.MSDSingleTraj, obj.MSDEnsemble] = ...
-    obj.computeMSD(obj.TR, obj.MaxFrameLag);
+    obj.computeMSD(obj.TR, obj.MaxFrameLag, obj.Verbose);
 
 % Fit the MSDs and convert units if necessary.
-[FitParams, FitParamsSE] = obj.fitMSD(obj.MSDSingleTraj, obj.FitMethod);
+if (obj.Verbose > 0)
+    fprintf('estimateDiffusionConstant(): fitting MSDs...\n');
+end
+[FitParams, FitParamsSE] = ...
+    obj.fitMSD(obj.MSDSingleTraj, obj.FitMethod, obj.Verbose);
 DConversionFactor = ~obj.UnitFlag ...
     + obj.UnitFlag*(obj.TR(1).PixelSize^2)*obj.TR(1).FrameRate;
 DiffusionStruct(1).Name = 'trajectory';
@@ -39,7 +47,8 @@ DiffusionStruct(1).DiffusionConstant = DConversionFactor ...
     * FitParams(:, 1) / (2*2);
 DiffusionStruct(1).DiffusionConstantSE = DConversionFactor ...
     * FitParamsSE(:, 1) / (2*2);
-[FitParams, FitParamsSE] = obj.fitMSD(obj.MSDEnsemble, obj.FitMethod);
+[FitParams, FitParamsSE] = ...
+    obj.fitMSD(obj.MSDEnsemble, obj.FitMethod, obj.Verbose);
 DiffusionStruct(2).Name = 'ensemble';
 DiffusionStruct(2).Units = ...
     smi_helpers.stringMUX({'pixels, frames', 'micrometers, seconds'}, ...
@@ -52,6 +61,9 @@ obj.DiffusionStruct = DiffusionStruct;
 
 % Save the results if requested.
 if SaveFlag
+    if (obj.Verbose > 0)
+        fprintf('estimateDiffusionConstant(): saving results...\n');
+    end
     obj.saveResults();
 end
 
