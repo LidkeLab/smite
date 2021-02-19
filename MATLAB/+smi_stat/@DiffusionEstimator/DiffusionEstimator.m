@@ -98,6 +98,7 @@ classdef DiffusionEstimator < handle
         [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose);
         [MSDSingleTraj, MSDEnsemble] = ...
             computeMSD(TR, MaxFrameLag, Verbose);
+        [PlotAxes] = plotEnsembleMSD(PlotAxes, MSDStruct, DiffusionStruct);
     end
     
     methods (Static, Hidden)

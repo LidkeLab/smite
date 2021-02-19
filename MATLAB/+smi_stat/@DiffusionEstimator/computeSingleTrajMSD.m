@@ -1,4 +1,4 @@
-function [MSDSingleTraj] = computeSingleTrajMSD(TR)
+function [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose)
 %computeSingleTrajMSD computes the mean squared displacement from TR.
 % This method computes the mean squared displacement between localizations
 % in the single trajectory provided in TR.
@@ -11,6 +11,8 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR)
 % INPUTS:
 %   TR: Tracking results structure containing only one trajectory.  To be
 %       sure, only TR(1) will be used in the analysis.
+%   Verbose: Verbosity level specifying how many temporary outputs should
+%            be displayed (e.g., Command Window updates).
 %
 % OUTPUTS:
 %   MSDSingleTraj: A structure array with the following fields:
@@ -35,6 +37,11 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR)
 %   David J. Schodt (Lidke lab, 2021) 
 %       based on msdAnalysis.m by Hanieh Mazloom-Farsibaf (Lidke lab, 2018)
 
+
+% Set defaults if needed.
+if (~exist('Verbose', 'var') || isempty(Verbose))
+    Verbose = 0;
+end
 
 % Loop through localizations and compute the displacement to later
 % localizations.
