@@ -1,12 +1,7 @@
-function [DiffusionStruct] = ...
-    estimateDiffusionConstant(obj, SaveFlag)
+function [DiffusionStruct] = estimateDiffusionConstant(obj)
 %estimateDiffusionConstant estimates the diffusion constant from an MSD.
 % This method will fit the mean squared displacement data in 'MSD' to make
 % an estimate of the diffusion constant.
-%
-% INPUTS:
-%   SaveFlag: Boolean indicating whether or not obj.saveResults() gets
-%             called within this method.  (boolean)(Default = false)
 %
 % OUTPUTS:
 %   DiffusionStruct: Structure array containing the fit diffusion
@@ -18,11 +13,6 @@ function [DiffusionStruct] = ...
 % Created by:
 %   David J. Schodt (Lidke lab, 2021) 
 
-
-% Set defaults if needed.
-if (~exist('SaveFlag', 'var') || isempty(SaveFlag))
-    SaveFlag = false;
-end
 
 % Compute the MSDs.
 if (obj.Verbose > 0)
@@ -66,14 +56,6 @@ DiffusionStruct(2).DiffusionConstant = DConversionFactor ...
 DiffusionStruct(2).DiffusionConstantSE = DConversionFactor ...
     * FitParamsSE(1) / (2*2);
 obj.DiffusionStruct = DiffusionStruct;
-
-% Save the results if requested.
-if SaveFlag
-    if (obj.Verbose > 0)
-        fprintf('estimateDiffusionConstant(): saving results...\n');
-    end
-    obj.saveResults();
-end
 
 
 end

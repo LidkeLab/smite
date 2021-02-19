@@ -88,9 +88,8 @@ classdef DiffusionEstimator < handle
             end
         end
         
-        [DiffusionStruct] = estimateDiffusionConstant(obj, ...
-            SaveFlag);
-        saveResults(obj)
+        [DiffusionStruct] = estimateDiffusionConstant(obj);
+        saveResults(obj, SaveParams)
         
     end
     
