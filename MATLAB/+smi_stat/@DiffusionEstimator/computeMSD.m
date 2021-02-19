@@ -79,10 +79,11 @@ FrameLags = (1:MaxFrameLag).';
 MSDMatrix = MSDMatrix(:, FrameLags);
 NPointsMatrix = NPointsMatrix(:, FrameLags);
 NPoints = sum(NPointsMatrix, 1).';
-MSDEnsemble.MSD = (sum(MSDMatrix.*NPointsMatrix, 1, 'omitnan').') ...
-    ./ NPoints;
-MSDEnsemble.FrameLags = FrameLags;
-MSDEnsemble.NPoints = NPoints;
+MSD = sum(MSDMatrix.*NPointsMatrix, 1).' ./ NPoints;
+KeepBool = ~isnan(MSD);
+MSDEnsemble.MSD = MSD(KeepBool);
+MSDEnsemble.FrameLags = FrameLags(KeepBool);
+MSDEnsemble.NPoints = NPoints(KeepBool);
 
 
 end
