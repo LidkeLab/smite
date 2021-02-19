@@ -107,7 +107,7 @@ classdef DiffusionEstimator < handle
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose);
         
     end
     

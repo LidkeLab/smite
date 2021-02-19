@@ -40,26 +40,37 @@ for ii = 1:numel(DefaultParameterNames)
     end
 end
 
-% Save some class properties to FileName.
+% Save some class properties to a .mat file.
+FilePath = fullfile(obj.SaveDir, ...
+    ['DiffusionResults_', obj.BaseSaveName, '.mat']);
+if (obj.Verbose > 1)
+    fprintf('saveResults(): saving diffusion estimates to \n\t%s...\n', ...
+        FilePath)
+elseif (obj.Verbose > 0)
+    fprintf('saveResults(): saving diffusion estimation results...\n')
+end
 DiffusionStruct = obj.DiffusionStruct;
 FitMethod = obj.FitMethod;
 MSDEnsemble = obj.MSDEnsemble;
 MSDSingleTraj = obj.MSDSingleTraj;
 MaxFrameLag = obj.MaxFrameLag;
-save(fullfile(obj.SaveDir, ['DiffusionResults_', obj.BaseSaveName]), ...
-    'DiffusionStruct', 'FitMethod', ...
-    'MSDEnsemble', 'MSDSingleTraj', 'MaxFrameLag', '-v7.3');
+save(FilePath, 'DiffusionStruct', 'FitMethod', 'MaxFrameLag', ...
+    'MSDEnsemble', 'MSDSingleTraj', '-v7.3');
 
 % Generate an MSD fit plot.
 if SaveParams.MakeFitPlot
+    FilePath = fullfile(obj.SaveDir, ...
+        ['MSDEnsembleFit_', obj.BaseSaveName, '.mat']);
+    if (obj.Verbose > 1)
+        fprintf('saveResults(): saving MSD fit plot to \n\t%s...\n', ...
+            FilePath)
+    end
     VisiblePlot = smi_helpers.stringMUX({'off', 'on'}, obj.Verbose);
     PlotFigure = figure('Visible', VisiblePlot);
     PlotAxes = axes(PlotFigure);
     obj.plotEnsembleMSD(PlotAxes, ...
         obj.MSDEnsemble, obj.DiffusionStruct, obj.UnitFlag);
-    saveas(PlotFigure, ...
-        fullfile(obj.SaveDir, ['MSDEnsembleFit_', obj.BaseSaveName]), ...
-        'png')
+    saveas(PlotFigure, FilePath, 'png')
     if (obj.Verbose < 2)
         % For the higher verbosity levels, we'll keep the plot open for the
         % user to view.

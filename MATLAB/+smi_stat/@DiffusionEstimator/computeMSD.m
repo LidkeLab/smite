@@ -7,7 +7,8 @@ function [MSDSingleTraj, MSDEnsemble] = ...
 % INPUTS:
 %   TR: Tracking results structure.
 %   MaxFrameLag: Maximum frame difference between localizations to be used
-%                in the MSD calculation. (Default = ceil(MaxFrameDiff/4))
+%                in the MSD calculation. (Default is 1/4 of the max 
+%                possible frame lag for the ensemble calculation)
 %   Verbose: Verbosity level specifying how many temporary outputs should
 %            be displayed (e.g., Command Window updates).
 %
@@ -50,20 +51,22 @@ end
 
 % Loop through all trajectories in TR and compute the trajectory-wise and
 % ensemble MSDs.
-if (Verbose > 1)
-    fprintf('computeMSD(): computing trajectory-wise MSDs...\n')
-end
 NTraj = numel(TR);
+if (Verbose > 1)
+    fprintf(['computeMSD(): computing trajectory-wise MSDs for %i ', ...
+        'localizations.\n'], NTraj)
+end
 MSDSingleTraj = struct([]);
-MSDMatrix = zeros(NTraj, MaxFrameDiff);
+MSDMatrix = zeros(NTraj, MaxFrameLag);
 NPointsMatrix = MSDMatrix;
 for ii = 1:NTraj
     % Compute the MSD for this trajectory.
     if (Verbose > 2)
-        fprintf('computeMSD(): computing MSD for trajectory TR(%i)\n', ii)
+        fprintf(['computeMSD(): computing MSD for ', ...
+            'trajectory TR(%i)...\n'], ii)
     end
     MSDCurrent = smi_stat.DiffusionEstimator.computeSingleTrajMSD(...
-        TR(ii), Verbose);
+        TR(ii), MaxFrameLag, Verbose);
     MSDSingleTraj = [MSDSingleTraj; MSDCurrent];
     
     % Store the single trajectory MSD in a matrix with all of the

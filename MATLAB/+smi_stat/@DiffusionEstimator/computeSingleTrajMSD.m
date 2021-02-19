@@ -1,4 +1,4 @@
-function [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose)
+function [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose)
 %computeSingleTrajMSD computes the mean squared displacement from TR.
 % This method computes the mean squared displacement between localizations
 % in the single trajectory provided in TR.
@@ -11,6 +11,9 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose)
 % INPUTS:
 %   TR: Tracking results structure containing only one trajectory.  To be
 %       sure, only TR(1) will be used in the analysis.
+%   MaxFrameLag: Maximum frame difference between localizations to be used
+%                in the MSD calculation. (Default is max. possible frame 
+%                lag for this trajectory)
 %   Verbose: Verbosity level specifying how many temporary outputs should
 %            be displayed (e.g., Command Window updates).
 %
@@ -42,13 +45,31 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, Verbose)
 if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 0;
 end
+FrameNum = TR(1).FrameNum;
+NLocalizations = numel(FrameNum);
+DefaultMaxFrameLag = FrameNum(NLocalizations) - FrameNum(1);
+if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
+    MaxFrameLag = DefaultMaxFrameLag;
+elseif (MaxFrameLag > DefaultMaxFrameLag)
+    if (Verbose > 2)
+        % For the highest verbosity levels, we should share more info. than
+        % just the warning.
+        fprintf(['computeSingleTrajMSD(): Input MaxFrameLag=%i but\n', ...
+            '\tthe maximum possible frame lag is %i frames.\n', ...
+            '\tMaxFrameLag will be set to a default value of\n', ...
+            '\tMaxFrameLag=%i\n'], ...
+            MaxFrameLag, DefaultMaxFrameLag, DefaultMaxFrameLag)
+    end
+    MaxFrameLag = DefaultMaxFrameLag;
+end
 
 % Loop through localizations and compute the displacement to later
 % localizations.
+if (Verbose > 2)
+    fprintf(['computeSingleTrajMSD(): computing single trajectory\n', ...
+        'displacements between %i localizations\n'], NLocalizations)
+end
 Coordinates = [TR(1).X, TR(1).Y];
-FrameNum = TR(1).FrameNum;
-NLocalizations = numel(FrameNum);
-MaxFrameLag = FrameNum(NLocalizations) - FrameNum(1);
 SquaredDisplacement = zeros(NLocalizations-1, MaxFrameLag);
 for ff = 1:MaxFrameLag
     % Start with the first localization and find the distance to the
@@ -81,8 +102,12 @@ end
 % Compute the MSD.
 FrameLags = (1:MaxFrameLag).';
 NPoints = sum(logical(SquaredDisplacement), 1).';
+KeepBool = logical(NPoints);
+if (Verbose > 2)
+    fprintf(['computeSingleTrajMSD(): computing single trajectory\n', ...
+        'MSD, %i valid frame gaps found\n'], sum(KeepBool))
+end
 MSD = sum(SquaredDisplacement, 1).' ./ NPoints;
-KeepBool = ~isnan(MSD);
 NPoints = NPoints(KeepBool);
 MSD = MSD(KeepBool);
 FrameLags = FrameLags(KeepBool);

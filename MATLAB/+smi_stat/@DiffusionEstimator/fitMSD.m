@@ -32,6 +32,10 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
 end
 
 % Fit the MSD data.
+if (Verbose > 1)
+    fprintf('fitMSD(): fitting MSD with FitMethod = ''%s''...\n', ...
+        FitMethod)
+end
 NTraj = numel(MSDStruct);
 FitParams = NaN(NTraj, 2);
 FitParamsSE = NaN(NTraj, 2);

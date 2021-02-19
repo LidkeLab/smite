@@ -22,7 +22,10 @@ end
     obj.computeMSD(obj.TR, obj.MaxFrameLag, obj.Verbose);
 
 % Fit the MSDs and convert units if necessary.
-if (obj.Verbose > 0)
+if (obj.Verbose > 1)
+    fprintf(['estimateDiffusionConstant(): fitting trajectory-wise ', ...
+        'MSDs...\n']);
+elseif (obj.Verbose > 0)
     fprintf('estimateDiffusionConstant(): fitting MSDs...\n');
 end
 [FitParams, FitParamsSE] = ...
@@ -41,6 +44,10 @@ DiffusionStruct(1).DiffusionConstant = DConversionFactor ...
     * FitParams(:, 1) / (2*2);
 DiffusionStruct(1).DiffusionConstantSE = DConversionFactor ...
     * FitParamsSE(:, 1) / (2*2);
+if (obj.Verbose > 1)
+    fprintf(['estimateDiffusionConstant(): fitting ensemble ', ...
+        'MSD...\n']);
+end
 [FitParams, FitParamsSE] = ...
     obj.fitMSD(obj.MSDEnsemble, obj.FitMethod, obj.Verbose);
 DiffusionStruct(2).Name = 'ensemble';
