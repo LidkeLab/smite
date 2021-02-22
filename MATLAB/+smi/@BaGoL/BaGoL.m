@@ -211,7 +211,7 @@ classdef BaGoL < handle
                 end
                 
                 AnimFlag = 0;
-                [TChain]=BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Lambda,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
+                [TChain]=smi.BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Lambda,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
                 
                 if obj.PImageFlag == 1
                     PostIm = obj.genPosterior(PostIm,SZ,TChain,ROIs,nn);
@@ -243,7 +243,7 @@ classdef BaGoL < handle
        saveMAPN(Directory,FileType,MAPN)
        errPlot(SMD);
        SMD=loadPICASSOh5(DataDir,FileName)
-       [Chain]=BaGoL_RJMCMC(SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
+       [Chain]=smi.BaGoL_RJMCMC(SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
        [SRIm,MapIm]=makeIm(SMD,MAPN,SZ,PixSize,XStart,YStart)
        [Alpha,XShift,YShift,Aligned,Chain] = align_template(Temp,Input,Start,Cutoff,NChain,PlotFlag)
        [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)

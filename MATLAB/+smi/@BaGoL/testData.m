@@ -52,7 +52,7 @@ end
 D=[];
 LPost=[];
 for nn = 1:ClustNumHeirar
-    [TChain]=BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Lambda,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,0);
+    [TChain]=smi.BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Lambda,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,0);
     N=[];
     for mm = 1:length(TChain)
         if TChain(nn).N == 0
