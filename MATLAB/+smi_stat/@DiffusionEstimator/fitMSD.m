@@ -12,19 +12,21 @@ function [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose)
 %
 % OUTPUTS:
 %   FitParams: Fit parameters for the MSD fit.  These will vary based on
-%              'Method'.
+%              'FitMethod'. FitParams(ii, :) will contain the fit
+%              parameters for the fit to MSDStruct(ii). 
+%              (numel(MSDStruct)xNParameters array)
 %   FitParamsSE: Standard errors for the MSD fit parameters 'FitParams'.
 %                These will vary based on 'Method'.
 %
 % REQUIRES:
-%   Curve Fitting Toolbox
+%   Curve Fitting Toolbox (for fit() and associated methods)
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
 
 
 % Define default parameters if needed.
-if (~exist('Method', 'var') || isempty(FitMethod))
+if (~exist('FitMethod', 'var') || isempty(FitMethod))
     FitMethod = 'weightedLS';
 end
 if (~exist('Verbose', 'var') || isempty(Verbose))
@@ -36,36 +38,38 @@ if (Verbose > 1)
     fprintf('fitMSD(): fitting MSD with FitMethod = ''%s''...\n', ...
         FitMethod)
 end
-NTraj = numel(MSDStruct);
-FitParams = NaN(NTraj, 2);
-FitParamsSE = NaN(NTraj, 2);
-for ii = 1:NTraj
+NFits = numel(MSDStruct);
+FitParams = NaN(NFits, 2);
+FitParamsSE = NaN(NFits, 2);
+for ii = 1:NFits
     % If the MSD has enough points to be "useful", try to fit it.
     FrameLags = double(MSDStruct(ii).FrameLags);
+    NFrames = numel(FrameLags);
     NPoints = double(MSDStruct(ii).NPoints);
     MSD = double(MSDStruct(ii).MSD);
-    if (numel(FrameLags) < 3)
+    if (NFrames < 3)
         continue
     end
     switch FitMethod
+        case 'LS'
+            % Fit the MSD using linear least squares.
+            [BetaHat, BetaHatSE] = ...
+                smi_stat.leastSquaresFit(FrameLags, MSD);
+            FitParams(ii, :) = BetaHat.';
+            FitParamsSE(ii, :) = BetaHatSE.';
         case 'weightedLS'
             % Fit the MSD using weighted least squares.
             % NOTE: The weight array is (as I've defined it here) 
             %       proportional to the reciprocal of the CRLB of each 
             %       point in an MSD plot. The proportionality constant is 
             %       dropped because it doesn't affect the weighted fit.
-            WeightArray = NPoints ./ (FrameLags.^2);
-            FitResults = fit(FrameLags, MSD, 'poly1', ...
-                'Weights', WeightArray);
-            
-            % Extract the parameters of interest from the fit results.
-            % NOTE: I could just specify the ~0.68 confidence level and
-            %       remove the factor of 1.96, but these numbers are more
-            %       round....
-            FitParams(ii, :) = coeffvalues(FitResults);
-            FitParamsCI = confint(FitResults, 0.95);
-            FitParamsSE(ii, :) = ...
-                (FitParamsCI(2, :) - FitParams(ii, :)) / 1.96;
+            Weights = NPoints ./ (FrameLags.^2);
+            [BetaHat, BetaHatSE] = ...
+                smi_stat.leastSquaresFit(FrameLags, MSD, Weights);
+            FitParams(ii, :) = BetaHat.';
+            FitParamsSE(ii, :) = BetaHatSE.';
+        otherwise
+            error('Unknown ''FitMethod'' = %s', FitMethod)
     end
 end
 

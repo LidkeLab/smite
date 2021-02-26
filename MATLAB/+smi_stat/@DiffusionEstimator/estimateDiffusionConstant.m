@@ -41,9 +41,9 @@ DiffusionStruct(1).FitParamsSE = FitParamsSE;
 DiffusionStruct(1).PixelSize = obj.TR(1).PixelSize;
 DiffusionStruct(1).FrameRate = obj.TR(1).FrameRate;
 DiffusionStruct(1).DiffusionConstant = DConversionFactor ...
-    * FitParams(:, 1) / (2*2);
+    * FitParams(:, 2) / (2*2);
 DiffusionStruct(1).DiffusionConstantSE = DConversionFactor ...
-    * FitParamsSE(:, 1) / (2*2);
+    * FitParamsSE(:, 2) / (2*2);
 if (obj.Verbose > 1)
     fprintf(['estimateDiffusionConstant(): fitting ensemble ', ...
         'MSD...\n']);
@@ -59,9 +59,9 @@ DiffusionStruct(2).FitParamsSE = FitParamsSE;
 DiffusionStruct(2).PixelSize = obj.TR(1).PixelSize;
 DiffusionStruct(2).FrameRate = obj.TR(1).FrameRate;
 DiffusionStruct(2).DiffusionConstant = DConversionFactor ...
-    * FitParams(1) / (2*2);
+    * FitParams(2) / (2*2);
 DiffusionStruct(2).DiffusionConstantSE = DConversionFactor ...
-    * FitParamsSE(1) / (2*2);
+    * FitParamsSE(2) / (2*2);
 obj.DiffusionStruct = DiffusionStruct;
 
 
