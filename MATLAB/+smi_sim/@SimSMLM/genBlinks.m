@@ -106,8 +106,6 @@ for mm=1:NLabels
     end
     SMD_Model.Photons    = Photons;
     SMD_Model.Bg         = 0;
-    SMD_Model.X_SE       = SMD_Model.PSFSigma ./ sqrt(Photons);
-    SMD_Model.Y_SE       = SMD_Model.PSFSigma ./ sqrt(Photons);
     SMD_Model.NDatasets  = 1;
     SMD_Model.NFrames    = numel(FrameNum);
     SMD_Model.DatasetNum = ones(size(FrameNum));
