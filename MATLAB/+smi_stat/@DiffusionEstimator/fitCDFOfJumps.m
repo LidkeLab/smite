@@ -1,12 +1,14 @@
 function [FitParams, FitParamsSE] = ...
-    fitMSD(MSDStruct, FitMethod, DiffusionModel, Verbose)
-%fitMSD fits mean squared displacement data.
-% This method will fit a mean squared displacement plot by the method
-% specified by 'FitMethod'.
+    fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose)
+%fitCDFOfJumps fits the CDF of displacement data (jumps).
+% This method will fit a model to the CDF (CPD) of trajectory
+% displacements.
 %
 % INPUTS:
 %   MSDStruct: A structure array of MSD data as output from computeMSD()
-%              (see computeMSD() for more details).
+%              (see computeMSD() for more details). The MSDStruct must
+%              already be populated with SortedJumps and CDFOfJumps (see
+%              computeCDFOfMSD()).
 %   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
@@ -39,7 +41,8 @@ end
 
 % Fit the MSD data.
 if (Verbose > 1)
-    fprintf('fitMSD(): fitting MSD with FitMethod = ''%s''...\n', ...
+    fprintf(['fitCDFOfMSD(): fitting CDF of MSD with FitMethod = ', ...
+        '''%s''...\n'], ...
         FitMethod)
 end
 NFits = numel(MSDStruct);
@@ -53,14 +56,15 @@ for ii = 1:NFits
         continue
     end
     
-    % Fit the MSD to the desired diffusion model.
-    NPoints = double(MSDStruct(ii).NPoints);
-    MSD = double(MSDStruct(ii).MSD);
+    % Fit the CDF of the jumps to the desired diffusion model.
+    SortedJumps = double(MSDStruct(ii).SortedJumps);
+    FrameLags = double(MSDStruct(ii).FrameLagsAll);
+    CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             [FitParams, FitParamsSE] = ...
-                smi_stat.DiffusionEstimator.fitMSDBrownian(...
-                FrameLags, MSD, NPoints, FitMethod);
+                smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+                SortedJumps, FrameLags, CDFOfJumps, FitMethod);
         otherwise
             error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
     end

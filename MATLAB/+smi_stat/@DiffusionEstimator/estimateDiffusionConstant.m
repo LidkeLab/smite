@@ -9,9 +9,12 @@ function [DiffusionStruct] = estimateDiffusionConstant(obj)
 %                    specified by the property obj.UnitFlag, with 1
 %                    specifying physical units (micrometers, seconds) and 0
 %                    specifying camera units (pixels, frames).
+%
+% REQUIRES:
+%   Statistics and Machine Learning Toolbox (for ecdf())
 
 % Created by:
-%   David J. Schodt (Lidke lab, 2021) 
+%   David J. Schodt (Lidke lab, 2021)
 
 
 % Compute the MSDs.
@@ -21,47 +24,77 @@ end
 [obj.MSDSingleTraj, obj.MSDEnsemble] = ...
     obj.computeMSD(obj.TR, obj.MaxFrameLag, obj.Verbose);
 
-% Fit the MSDs and convert units if necessary.
+% Fit the results and convert units if necessary.
 if (obj.Verbose > 1)
     fprintf(['estimateDiffusionConstant(): fitting trajectory-wise ', ...
-        'MSDs...\n']);
+        'data...\n']);
 elseif (obj.Verbose > 0)
-    fprintf('estimateDiffusionConstant(): fitting MSDs...\n');
+    fprintf(['estimateDiffusionConstant(): estimating diffusion ', ...
+        'constants...\n']);
 end
-[FitParams, FitParamsSE] = obj.fitMSD(obj.MSDSingleTraj, ...
-    obj.DiffusionModel, obj.FitMethod, obj.Verbose);
-DConversionFactor = ~obj.UnitFlag ...
+DUnitConversion = ~obj.UnitFlag ...
     + obj.UnitFlag*(obj.TR(1).PixelSize^2)*obj.TR(1).FrameRate;
+switch obj.FitTarget
+    case 'MSD'
+        % Fit the trajectory-wise MSDs.
+        [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
+            obj.fitMSD(obj.MSDSingleTraj, ...
+            obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+        
+        % Compute the diffusion constants.
+        DiffusionConstantSingleTraj = DUnitConversion ...
+            * FitParamsSingleTraj(:, 2) / (2*obj.NDimensions);
+        DiffusionConstantSingleTrajSE = DUnitConversion ...
+            * FitParamsSingleTrajSE(:, 2) / (2*obj.NDimensions);
+        
+        % Fit the ensemble MSD.
+        if (obj.Verbose > 1)
+            fprintf(['estimateDiffusionConstant(): fitting ensemble ', ...
+                'MSD...\n']);
+        end
+        [FitParamsEnsemble, FitParamsEnsembleSE] = ...
+            obj.fitMSD(obj.MSDEnsemble, ...
+            obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+        
+        % Compute the ensemble diffusion constant.
+        DiffusionConstantEnsemble = DUnitConversion ...
+            * FitParamsEnsemble(:, 2) / (2*obj.NDimensions);
+        DiffusionConstantEnsembleSE = DUnitConversion ...
+            * FitParamsEnsembleSE(:, 2) / (2*obj.NDimensions);
+    case 'CDFOfJumps'
+        % Compute the CDF (cumulative distribution function, a.k.a. 
+        % cumulative probability distribution, CPD) of the trajectory-wise
+        % displacements.
+        obj.MSDSingleTraj = obj.computeCDFOfJumps(obj.MSDSingleTraj);
+        obj.MSDEnsemble = obj.computeCDFOfJumps(obj.MSDEnsemble);
+        
+        % Fit the trajectory-wise CDFs.
+        [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
+            obj.fitCDFOfJumps(obj.MSDSingleTraj, ...
+            obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+end
+
+% Store the results in the DiffusionStruct.
 DiffusionStruct(1).Name = 'trajectory';
 DiffusionStruct(1).Units = ...
     smi_helpers.stringMUX({'pixels, frames', 'micrometers, seconds'}, ...
     obj.UnitFlag);
-DiffusionStruct(1).FitParams = FitParams;
-DiffusionStruct(1).FitParamsSE = FitParamsSE;
+DiffusionStruct(1).FitParams = FitParamsSingleTraj;
+DiffusionStruct(1).FitParamsSE = FitParamsSingleTrajSE;
 DiffusionStruct(1).PixelSize = obj.TR(1).PixelSize;
 DiffusionStruct(1).FrameRate = obj.TR(1).FrameRate;
-DiffusionStruct(1).DiffusionConstant = DConversionFactor ...
-    * FitParams(:, 2) / (2*2);
-DiffusionStruct(1).DiffusionConstantSE = DConversionFactor ...
-    * FitParamsSE(:, 2) / (2*2);
-if (obj.Verbose > 1)
-    fprintf(['estimateDiffusionConstant(): fitting ensemble ', ...
-        'MSD...\n']);
-end
-[FitParams, FitParamsSE] = obj.fitMSD(obj.MSDEnsemble, ...
-    obj.DiffusionModel, obj.FitMethod, obj.Verbose);
+DiffusionStruct(1).DiffusionConstant = DiffusionConstantSingleTraj;
+DiffusionStruct(1).DiffusionConstantSE = DiffusionConstantSingleTrajSE;
 DiffusionStruct(2).Name = 'ensemble';
 DiffusionStruct(2).Units = ...
     smi_helpers.stringMUX({'pixels, frames', 'micrometers, seconds'}, ...
     obj.UnitFlag);
-DiffusionStruct(2).FitParams = FitParams;
-DiffusionStruct(2).FitParamsSE = FitParamsSE;
+DiffusionStruct(2).FitParams = FitParamsEnsemble;
+DiffusionStruct(2).FitParamsSE = FitParamsEnsembleSE;
 DiffusionStruct(2).PixelSize = obj.TR(1).PixelSize;
 DiffusionStruct(2).FrameRate = obj.TR(1).FrameRate;
-DiffusionStruct(2).DiffusionConstant = DConversionFactor ...
-    * FitParams(2) / (2*2);
-DiffusionStruct(2).DiffusionConstantSE = DConversionFactor ...
-    * FitParamsSE(2) / (2*2);
+DiffusionStruct(2).DiffusionConstant = DiffusionConstantEnsemble;
+DiffusionStruct(2).DiffusionConstantSE = DiffusionConstantEnsembleSE;
 obj.DiffusionStruct = DiffusionStruct;
 
 
