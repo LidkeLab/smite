@@ -71,6 +71,7 @@ if (Verbose > 2)
 end
 Coordinates = [TR(1).X, TR(1).Y];
 SquaredDisplacement = zeros(NLocalizations-1, MaxFrameLag);
+SquaredDisplacementMask = logical(SquaredDisplacement);
 for ff = 1:MaxFrameLag
     % Start with the first localization and find the distance to the
     % localization ff frames away.
@@ -88,6 +89,7 @@ for ff = 1:MaxFrameLag
             SquaredDisplacement(Index1, ff) = ...
                 (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
                 + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
+            SquaredDisplacementMask(Index1, ff) = 1;
             
             % Update the indices, ensuring the gaps don't overlap.
             Index1 = Index2;
@@ -115,7 +117,10 @@ MSDSingleTraj.TrajectoryID = TR(1).TrajectoryID;
 MSDSingleTraj.MSD = MSD;
 MSDSingleTraj.FrameLags = FrameLags;
 MSDSingleTraj.NPoints = NPoints;
-MSDSingleTraj.SquaredDisplacement = SquaredDisplacement;
+MSDSingleTraj.SquaredDisplacement = ...
+    SquaredDisplacement(SquaredDisplacementMask);
+FrameLagsAll = FrameLags.' .* SquaredDisplacementMask;
+MSDSingleTraj.FrameLagsAll = FrameLagsAll(SquaredDisplacementMask);
 
 
 end

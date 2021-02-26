@@ -59,6 +59,8 @@ end
 MSDSingleTraj = struct([]);
 MSDMatrix = zeros(NTraj, MaxFrameLag);
 NPointsMatrix = MSDMatrix;
+SquaredDisplacement = [];
+FrameLagsAll = [];
 for ii = 1:NTraj
     % Compute the MSD for this trajectory.
     if (Verbose > 2)
@@ -74,6 +76,9 @@ for ii = 1:NTraj
     CurrentLags = MSDCurrent.FrameLags;
     MSDMatrix(ii, CurrentLags) = MSDCurrent.MSD;
     NPointsMatrix(ii, CurrentLags) = MSDCurrent.NPoints;
+    SquaredDisplacement = [SquaredDisplacement; ...
+        MSDCurrent.SquaredDisplacement];
+    FrameLagsAll = [FrameLagsAll; MSDCurrent.FrameLagsAll];
 end
 if (Verbose > 1)
     fprintf('computeMSD(): computing ensemble MSD...\n')
@@ -87,6 +92,8 @@ KeepBool = ~isnan(MSD);
 MSDEnsemble.MSD = MSD(KeepBool);
 MSDEnsemble.FrameLags = FrameLags(KeepBool);
 MSDEnsemble.NPoints = NPoints(KeepBool);
+MSDEnsemble.SquaredDisplacement = SquaredDisplacement;
+MSDEnsemble.FrameLagsAll = FrameLagsAll;
 
 
 end

@@ -3,11 +3,24 @@ classdef DiffusionEstimator < handle
     % This class contains several methods used to estimate diffusion
     % constants from single-particle tracking data.
     
-    properties        
-        % Fit method for fitting MSD results (char array/string)
-        FitMethod = 'weightedLS';
+    properties
+        % ID of the diffusion model to be considered (char array/string)
+        % OPTIONS:
+        %   'Brownian': Simple Brownian motion.
+        DiffusionModel{mustBeMember(DiffusionModel, {'Brownian'})} = ...
+            'Brownian';
         
-        % Max. frame lag of the MSD (scalar, integer)
+        % Fit method for fitting data (char array/string)
+        FitMethod{mustBeMember(FitMethod, {'WeightedLS', 'LS'})} = ...
+            'WeightedLS';
+        
+        % Target data that will be fit (char array/string)
+        FitTarget{mustBeMember(FitTarget, {'MSD', 'CDFOfJumps'})} = 'MSD';
+        
+        % Number of spatial dimensions (scalar, integer)(Default = 2)
+        NDimensions = 2;
+        
+        % Max. frame lag of the MSD (scalar, integer)(Default = inf)
         MaxFrameLag = inf;
         
         % Directory in which results will be saved by saveResults().
@@ -55,7 +68,7 @@ classdef DiffusionEstimator < handle
                 Verbose, AutoRun)
             %DiffusionEstimator is the class constructor.
             % Several optional inputs can be provided to directly set class
-            % properties.  'AutoRun' is a boolean flag which specifies 
+            % properties.  'AutoRun' is a boolean flag which specifies
             % whether or not this constructor should call
             % obj.estimateDiffusionConstant() if all requisite class
             % properties were provided.
@@ -94,9 +107,13 @@ classdef DiffusionEstimator < handle
     end
     
     methods (Static)
-        [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose);
         [MSDSingleTraj, MSDEnsemble] = ...
             computeMSD(TR, MaxFrameLag, Verbose);
+        [MSDStruct] = computeCDFOfJumps(MSDStruct);
+        [FitParams, FitParamsSE] = ...
+            fitMSD(MSDStruct, FitMethod, DiffusionModel, Verbose);
+        [FitParams, FitParamsSE] = ...
+            fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose);
         [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
             MSDStruct, DiffusionStruct, UnitFlag);
     end
@@ -108,6 +125,11 @@ classdef DiffusionEstimator < handle
         % them they are still accessible).
         
         [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose);
+        [FitParams, FitParamsSE] = ...
+            fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
+        [FitParams, FitParamsSE] = ...
+            fitCDFOfJumpsBrownian(SortedJumps, FrameLags, ...
+            CDFOfJumps, FitMethod)
         
     end
     

@@ -42,7 +42,7 @@ if ~isempty(DiffusionStruct)
     FitParams = DiffusionStruct(2).FitParams;
     FrameArray = MSDStruct.FrameLags([1, numel(MSDStruct.FrameLags)]);
     plot(PlotAxes, FrameArray*FrameConversion, ...
-        MSDConversion * (FitParams(1)*FrameArray + FitParams(2)))
+        MSDConversion * (FitParams(2)*FrameArray + FitParams(1)))
 end
 TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
 MSDUnit = smi_helpers.stringMUX(...
