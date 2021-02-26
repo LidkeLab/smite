@@ -243,7 +243,7 @@ classdef BaGoL < handle
        saveMAPN(Directory,FileType,MAPN)
        errPlot(SMD);
        SMD=loadPICASSOh5(DataDir,FileName)
-       [Chain]=smi.BaGoL_RJMCMC(SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
+       [Chain]=smi.BaGoL.BaGoL_RJMCMC(SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
        [SRIm,MapIm]=makeIm(SMD,MAPN,SZ,PixSize,XStart,YStart)
        [Alpha,XShift,YShift,Aligned,Chain] = align_template(Temp,Input,Start,Cutoff,NChain,PlotFlag)
        [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)
