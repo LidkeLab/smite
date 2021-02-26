@@ -5,7 +5,14 @@ classdef DiffusionEstimator < handle
     
     properties        
         % Fit method for fitting MSD results (char array/string)
-        FitMethod = 'weightedLS';
+        FitMethod{mustBeMember(FitMethod, {'WeightedLS', 'LS'})} = ...
+            'WeightedLS';
+        
+        % ID of the diffusion model to be considered (char array/string)
+        % OPTIONS: 
+        %   'Brownian': Simple Brownian motion.
+        DiffusionModel{mustBeMember(DiffusionModel, {'Brownian'})} = ...
+            'Brownian';
         
         % Max. frame lag of the MSD (scalar, integer)
         MaxFrameLag = inf;
@@ -41,6 +48,9 @@ classdef DiffusionEstimator < handle
     properties (SetAccess = protected)
         % Structure array containing diffusion estimates.
         DiffusionStruct
+        
+        % Function handle for the MSD model.
+        ModelFunction
         
         % Structure array containing trajectory-wise MSDs.
         MSDSingleTraj
@@ -94,7 +104,8 @@ classdef DiffusionEstimator < handle
     end
     
     methods (Static)
-        [FitParams, FitParamsSE] = fitMSD(MSDStruct, FitMethod, Verbose);
+        [FitParams, FitParamsSE] = ...
+            fitMSD(MSDStruct, FitMethod, DiffusionModel, Verbose);
         [MSDSingleTraj, MSDEnsemble] = ...
             computeMSD(TR, MaxFrameLag, Verbose);
         [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
@@ -108,6 +119,8 @@ classdef DiffusionEstimator < handle
         % them they are still accessible).
         
         [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose);
+        [FitParams, FitParamsSE] = ...
+            fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod)
         
     end
     
