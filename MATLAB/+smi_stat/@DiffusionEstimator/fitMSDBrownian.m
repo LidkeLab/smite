@@ -35,19 +35,19 @@ end
 
 % Fit the MSD to the model.
 switch FitMethod
-    case 'LS'
-        % Fit the MSD using linear least squares.
-        [BetaHat, BetaHatSE] = ...
-            smi_stat.leastSquaresFit(FrameLags, MSD);
-        FitParams = BetaHat.';
-        FitParamsSE = BetaHatSE.';
-    case 'WeightedLS'
-        % Fit the MSD using weighted linear least squares.
+    case {'LS', 'WeightedLS'}
+        % Define the weights to just be 1 (i.e., an unweighted fit) for
+        % regular least squares and roughly the inverse of the MSD variance
+        % otherwise.
         % NOTE: The weight array is (as I've defined it here)
         %       proportional to the reciprocal of the CRLB of each
         %       point in an MSD plot. The proportionality constant is
         %       dropped because it doesn't affect the weighted fit.
-        Weights = NPoints ./ (FrameLags.^2);
+        MSDVariance = NPoints ./ (FrameLags.^2);
+        Weights = strcmpi(FitMethod, 'LS')*ones(numel(FrameLags), 1) ...
+            + strcmpi(FitMethod, 'WeightedLS')*MSDVariance;
+        
+        % Perform the least squares fit.
         [BetaHat, BetaHatSE] = ...
             smi_stat.leastSquaresFit(FrameLags, MSD, Weights);
         FitParams = BetaHat.';

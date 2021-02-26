@@ -34,18 +34,24 @@ elseif (obj.Verbose > 0)
 end
 DUnitConversion = ~obj.UnitFlag ...
     + obj.UnitFlag*(obj.TR(1).PixelSize^2)*obj.TR(1).FrameRate;
+FitParamsSingleTraj = NaN;
+FitParamsSingleTrajSE = NaN;
+DiffusionConstantSingleTraj = NaN;
+DiffusionConstantSingleTrajSE = NaN;
 switch obj.FitTarget
     case 'MSD'
-        % Fit the trajectory-wise MSDs.
-        [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
-            obj.fitMSD(obj.MSDSingleTraj, ...
-            obj.FitMethod, obj.DiffusionModel, obj.Verbose);
-        
-        % Compute the diffusion constants.
-        DiffusionConstantSingleTraj = DUnitConversion ...
-            * FitParamsSingleTraj(:, 2) / (2*obj.NDimensions);
-        DiffusionConstantSingleTrajSE = DUnitConversion ...
-            * FitParamsSingleTrajSE(:, 2) / (2*obj.NDimensions);
+        % Fit the trajectory-wise MSDs (if requested).
+        if obj.FitIndividualTrajectories
+            [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
+                obj.fitMSD(obj.MSDSingleTraj, ...
+                obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+            
+            % Compute the diffusion constants.
+            DiffusionConstantSingleTraj = DUnitConversion ...
+                * FitParamsSingleTraj(:, 2) / (2*obj.NDimensions);
+            DiffusionConstantSingleTrajSE = DUnitConversion ...
+                * FitParamsSingleTrajSE(:, 2) / (2*obj.NDimensions);
+        end
         
         % Fit the ensemble MSD.
         if (obj.Verbose > 1)
@@ -68,10 +74,33 @@ switch obj.FitTarget
         obj.MSDSingleTraj = obj.computeCDFOfJumps(obj.MSDSingleTraj);
         obj.MSDEnsemble = obj.computeCDFOfJumps(obj.MSDEnsemble);
         
-        % Fit the trajectory-wise CDFs.
-        [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
-            obj.fitCDFOfJumps(obj.MSDSingleTraj, ...
+        % Fit the trajectory-wise CDFs (if requested).
+        if obj.FitIndividualTrajectories
+            [FitParamsSingleTraj, FitParamsSingleTrajSE] = ...
+                obj.fitCDFOfJumps(obj.MSDSingleTraj, ...
+                obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+            
+            % Compute the diffusion constants.
+            DiffusionConstantSingleTraj = DUnitConversion ...
+                * FitParamsSingleTraj / (2*obj.NDimensions);
+            DiffusionConstantSingleTrajSE = DUnitConversion ...
+                * FitParamsSingleTrajSE / (2*obj.NDimensions);
+        end
+        
+        % Fit the ensemble CDF of jumps.
+        if (obj.Verbose > 1)
+            fprintf(['estimateDiffusionConstant(): fitting ensemble ', ...
+                'CDF of jumps...\n']);
+        end
+        [FitParamsEnsemble, FitParamsEnsembleSE] = ...
+            obj.fitCDFOfJumps(obj.MSDEnsemble, ...
             obj.FitMethod, obj.DiffusionModel, obj.Verbose);
+        
+        % Compute the ensemble diffusion constant.
+        DiffusionConstantEnsemble = DUnitConversion ...
+            * FitParamsEnsemble / (2*obj.NDimensions);
+        DiffusionConstantEnsembleSE = DUnitConversion ...
+            * FitParamsEnsembleSE / (2*obj.NDimensions);
 end
 
 % Store the results in the DiffusionStruct.

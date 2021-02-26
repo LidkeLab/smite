@@ -46,8 +46,8 @@ if (Verbose > 1)
         FitMethod)
 end
 NFits = numel(MSDStruct);
-FitParams = NaN(NFits, 2);
-FitParamsSE = NaN(NFits, 2);
+FitParams = NaN(NFits, 1);
+FitParamsSE = NaN(NFits, 1);
 for ii = 1:NFits
     % Make sure the MSD has enough points to make a useful fit.
     FrameLags = double(MSDStruct(ii).FrameLags);
@@ -55,16 +55,20 @@ for ii = 1:NFits
     if (NFrames < 2)
         continue
     end
-    
+
     % Fit the CDF of the jumps to the desired diffusion model.
+    FrameLags = double(MSDStruct(ii).FrameLags);
+    NPoints = double(MSDStruct(ii).NPoints);
     SortedJumps = double(MSDStruct(ii).SortedJumps);
-    FrameLags = double(MSDStruct(ii).FrameLagsAll);
     CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
     switch DiffusionModel
         case {'Brownian', 'brownian'}
-            [FitParams, FitParamsSE] = ...
+            [ParamsHat, ParamsHatSE] = ...
                 smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
-                SortedJumps, FrameLags, CDFOfJumps, FitMethod);
+                SortedJumps, CDFOfJumps, FrameLags, NPoints, ...
+                [], FitMethod);
+            FitParams(ii, :) = ParamsHat.';
+            FitParamsSE(ii, :) = ParamsHatSE.';
         otherwise
             error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
     end

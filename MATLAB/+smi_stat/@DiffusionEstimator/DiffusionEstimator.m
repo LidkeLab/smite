@@ -17,6 +17,9 @@ classdef DiffusionEstimator < handle
         % Target data that will be fit (char array/string)
         FitTarget{mustBeMember(FitTarget, {'MSD', 'CDFOfJumps'})} = 'MSD';
         
+        % Specify whether or not individual trajectories are fit.
+        FitIndividualTrajectories = true;
+        
         % Number of spatial dimensions (scalar, integer)(Default = 2)
         NDimensions = 2;
         
@@ -115,7 +118,9 @@ classdef DiffusionEstimator < handle
         [FitParams, FitParamsSE] = ...
             fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose);
         [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
-            MSDStruct, DiffusionStruct, UnitFlag);
+            MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
+        [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
+            MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
     end
     
     methods (Static, Hidden)
@@ -128,8 +133,10 @@ classdef DiffusionEstimator < handle
         [FitParams, FitParamsSE] = ...
             fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
         [FitParams, FitParamsSE] = ...
-            fitCDFOfJumpsBrownian(SortedJumps, FrameLags, ...
-            CDFOfJumps, FitMethod)
+            fitCDFOfJumpsBrownian(SortedJumps, CDFOfJumps, ...
+            FrameLags, NPoints, Weights, FitMethod)
+        [CDFOfJumps] =  brownianJumpCDF(...
+            MotionParams, SortedJumps, FrameLags, NPoints)
         
     end
     

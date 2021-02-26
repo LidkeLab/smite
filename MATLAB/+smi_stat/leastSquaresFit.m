@@ -42,12 +42,10 @@ end
 if (~exist('CovariateFunctions', 'var') || isempty(CovariateFunctions))
     CovariateFunctions = {@(X) ones(numel(X), 1); @(X) X};
 end
-XSize = size(XData);
-YSize = size(YData);
-if (XSize(1) < XSize(2))
+if isrow(XData)
     XData = XData.';
 end
-if (YSize(1) < YSize(2))
+if isrow(YData)
     YData = YData.';
 end
 
@@ -63,8 +61,8 @@ end
 WeightsMatrix = diag(Weights);
 XTransposeWXInverse = inv(X.' * WeightsMatrix * X);
 BetaHat = XTransposeWXInverse * (X.'*WeightsMatrix*YData);
-WeightedSquaredResiduals = sum(Weights .* ((X*BetaHat - YData)).^2);
-YDataVarianceEstimate = WeightedSquaredResiduals / (NData-NCovariates);
+SumOfWeightedSqResiduals = sum(Weights .* (X*BetaHat-YData).^2);
+YDataVarianceEstimate = SumOfWeightedSqResiduals / (NData-NCovariates);
 BetaHatSE = sqrt(abs(diag(XTransposeWXInverse * YDataVarianceEstimate)));
 
 

@@ -1,8 +1,8 @@
-function [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
+function [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
     MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag)
-%plotEnsembleMSD plots an ensemble MSD and an associated fit.
-% This method will plot the MSD data in MSDEnsemble as well as the fit
-% information provided in DiffusionStruct.
+%plotEnsembleCDFOfJumps plots the CDF of jumps and an associated fit.
+% This method will plot the CDF of jumps data provided in MSDEnsemble as
+% well as the associated fit provided in DiffusionStruct.
 %
 % INPUTS:
 %   PlotAxes: Axes in which the plot will be made. (Default = gca())
@@ -37,33 +37,27 @@ if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
     UnitFlag = 0;
 end
 
-% Plot the MSD.
-FrameConversion = UnitFlag/DiffusionStruct(2).FrameRate + ~UnitFlag;
-MSDConversion = ~UnitFlag ...
-    + UnitFlag*(DiffusionStruct(2).PixelSize^2);
-plot(PlotAxes, MSDEnsemble.FrameLags*FrameConversion, ...
-    MSDEnsemble.MSD*MSDConversion, '.')
-hold(PlotAxes, 'on')
+% Plot the CDF of jumps.
+JumpsConversion = UnitFlag*DiffusionStruct(2).PixelSize + ~UnitFlag;
+Jumps = MSDEnsemble.SortedJumps * JumpsConversion;
+stairs(PlotAxes, Jumps, MSDEnsemble.CDFOfJumps)
 
 % If needed, plot the fit results.
 if ~isempty(DiffusionStruct)
+    hold(PlotAxes, 'on')
     switch DiffusionModel
         case {'Brownian', 'brownian'}
-            % The Brownian diffusion model suggests the MSD is linear with
-            % time.
-            FitParams = DiffusionStruct(2).FitParams;
-            FrameArray = ...
-                MSDEnsemble.FrameLags([1, numel(MSDEnsemble.FrameLags)]);
-            plot(PlotAxes, FrameArray*FrameConversion, ...
-                MSDConversion * (FitParams(2)*FrameArray + FitParams(1)))
+            % Plot the CDF of jumps expected for Brownian diffusion.
+            ModelCDF = smi_stat.DiffusionEstimator.brownianJumpCDF(...
+                DiffusionStruct(2).FitParams, MSDEnsemble.SortedJumps, ...
+                MSDEnsemble.FrameLags, MSDEnsemble.NPoints);
+            plot(PlotAxes, Jumps, ModelCDF)
     end
 end
-TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
-MSDUnit = smi_helpers.stringMUX(...
-    {'pixels^2', 'micrometers^2'}, UnitFlag);
-xlabel(PlotAxes, TimeUnit)
-ylabel(PlotAxes, MSDUnit)
-legend(PlotAxes, {'MSD', 'Fit'}, 'Location', 'best')
+JumpsUnit = smi_helpers.stringMUX({'pixels', 'micrometers'}, UnitFlag);
+xlabel(PlotAxes, JumpsUnit)
+ylabel(PlotAxes, 'CDF of jumps')
+legend(PlotAxes, {'CDF of jumps', 'Fit'}, 'Location', 'best')
 
 
 end
