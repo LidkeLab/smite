@@ -107,7 +107,7 @@ for mm=1:NLabels
     SMD_Model.Photons    = Photons;
     SMD_Model.Bg         = 0;
     SMD_Model.NDatasets  = 1;
-    SMD_Model.NFrames    = numel(FrameNum);
+    SMD_Model.NFrames    = ob.NFrames;
     SMD_Model.DatasetNum = ones(size(FrameNum));
     SMD_Model.FrameNum   = FrameNum;
 end
