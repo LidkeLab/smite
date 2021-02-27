@@ -36,7 +36,8 @@ methods(Static)
    [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
    [GaussIm] = gaussianImage(SMR, SRImageZoom)
    [CircleImage, CircleImageRGB, SRImageZoom] = ...
-        circleImage(SMR, ColorMap, SRImageZoom, SEScaleFactor);
+        circleImage(SMR, ColorMap, ...
+        SRImageZoom, MinPixelsPerCircle, SEScaleFactor);
    [HistIm, RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
    [FigHandle] = plotHistogram(Vector_in, Hist_Name)
    [ImageOut, Image] = scalebar(Image, PixelSize, Length, Location)
@@ -47,6 +48,7 @@ methods(Static)
    [success] = driftImage_unitTest()
    [success] = gaussianImage_unitTest()
    [success] = histogramImage_unitTest()
+   [Success] =  circleImage_unitTest()
 
    function [success] = unitTest()
       %unitTest tests various class functionality.
@@ -55,6 +57,7 @@ methods(Static)
       [success(3)] = smi_vis.GenerateImages.driftImage_unitTest();
       [success(4)] = smi_vis.GenerateImages.gaussianImage_unitTest();
       [success(5)] = smi_vis.GenerateImages.histogramImage_unitTest();
+      [success(6)] = smi_vis.GenerateImages.circleImage_unitTest();
    end
 end % methods(Static)
 

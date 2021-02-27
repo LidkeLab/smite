@@ -1,5 +1,6 @@
 function [CircleImage, CircleImageRGB, SRImageZoom] = ...
-    circleImage(SMR, ColorMap, SRImageZoom, SEScaleFactor)
+    circleImage(SMR, ColorMap, ...
+    SRImageZoom, MinPixelsPerCircle, SEScaleFactor)
 %circleImage generates an image with circles for each localization.
 % This method generates a circle image of the localizations in SMR.  At
 % each localization in SMR, a circle will be placed in the image centered
@@ -19,11 +20,15 @@ function [CircleImage, CircleImageRGB, SRImageZoom] = ...
 %   SRImageZoom: Zoom factor of the output images w.r.t. the coordinate
 %                system of the localizations.
 %                (scalar, integer)(Default = 20)
+%   MinPixelsPerCircle: Approximately the number of pixels used for the
+%                       smallest SE circle. Note that SRImageZoom takes
+%                       precedence over this parameter, so you must set
+%                       SRImageZoom = [] for this to work.
+%                       (Default = 16 for guidance, but isn't used!)
 %   SEScaleFactor: Multiplicative scaling of the mean X/Y standard errors.
 %                  This is useful if you have very low SEs but still want
 %                  their circles visible, without the need to increase
 %                  SRImageZoom. (Default = 1);
-%
 %
 % OUTPUTS:
 %   CircleImage: A grayscale image with localizations in SMR represented by
@@ -45,8 +50,15 @@ function [CircleImage, CircleImageRGB, SRImageZoom] = ...
 if (~exist('ColorMap', 'var') || isempty(ColorMap))
     ColorMap = [1, 0, 0];
 end
-if (~exist('SRImageZoom', 'var') || isempty(SRImageZoom))
+if (~exist('SRImageZoom', 'var') ...
+        || (isempty(SRImageZoom)&&isempty(MinPixelsPerCircle)))
+    % NOTE: The special condition here is to ensure SRImageZoom takes
+    %       precedence over MinPixelsPerCircle when appropriate (see
+    %       documentation for INPUTS: MinPixelsPerCircle above).
     SRImageZoom = 20;
+end
+if (~exist('MinPixelsPerCircle', 'var') || isempty(MinPixelsPerCircle))
+    MinPixelsPerCircle = 16;
 end
 if (~exist('SEScaleFactor', 'var') || isempty(SEScaleFactor))
     SEScaleFactor = 1;
@@ -59,15 +71,29 @@ X_SE = SMR.X_SE;
 Y = SMR.Y;
 Y_SE = SMR.Y_SE;
 
+% Set a default standard error if X_SE or Y_SE are empty (may be useful for
+% some simulations where the circle images are still needed).
+NLocalizations = numel(X);
+if (isempty(X_SE) || isempty(Y_SE) || ~any(X_SE) || ~any(Y_SE))
+    X_SE = ones(NLocalizations, 1);
+    Y_SE = X_SE;
+end
+
 % Revise 'ColorMap' if the rows dimension isn't suitable (this will be used
 % if the input is only one row, for monochrome images).
-NLocalizations = numel(X);
 if (size(ColorMap, 1) ~= NLocalizations)
     ColorMap = repmat(ColorMap(1, 1:3), NLocalizations, 3);
 end
 
+% Revise SRImageZoom if needed.
+MeanSE = mean([X_SE, Y_SE], 2);
+SmallestCircumference= 2 * pi * min(MeanSE);
+if isempty(SRImageZoom)
+    SRImageZoom = ceil(MinPixelsPerCircle / SmallestCircumference);
+end
+
 % Define some new parameters.
-ImageSize = SRImageZoom * [SMR.YSize, SMR.XSize];
+ImageSize = ceil(SRImageZoom * [SMR.YSize, SMR.XSize]);
 RGBChannels = 3;
 if ((RGBChannels*prod(ImageSize)) > (2^32 - 1))
     % imwrite() can't write images this large, so we'll choose a smaller
@@ -82,10 +108,8 @@ end
 
 % Rescale the data based on SRImageZoom.
 X = X * SRImageZoom;
-X_SE = X_SE * SRImageZoom;
 Y = Y * SRImageZoom;
-Y_SE = Y_SE * SRImageZoom;
-MeanSE = mean([X_SE, Y_SE], 2) * SEScaleFactor;
+MeanSE = MeanSE * SEScaleFactor * SRImageZoom;
 
 % Generate the RGB image if needed.
 if (nargout >= 2)
