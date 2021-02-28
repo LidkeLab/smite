@@ -82,9 +82,9 @@ switch obj.FitTarget
             
             % Compute the diffusion constants.
             DiffusionConstantSingleTraj = DUnitConversion ...
-                * FitParamsSingleTraj / (2*obj.NDimensions);
+                * FitParamsSingleTraj / 2;
             DiffusionConstantSingleTrajSE = DUnitConversion ...
-                * FitParamsSingleTrajSE / (2*obj.NDimensions);
+                * FitParamsSingleTrajSE / 2;
         end
         
         % Fit the ensemble CDF of jumps.
@@ -98,9 +98,9 @@ switch obj.FitTarget
         
         % Compute the ensemble diffusion constant.
         DiffusionConstantEnsemble = DUnitConversion ...
-            * FitParamsEnsemble / (2*obj.NDimensions);
+            * FitParamsEnsemble / 2;
         DiffusionConstantEnsembleSE = DUnitConversion ...
-            * FitParamsEnsembleSE / (2*obj.NDimensions);
+            * FitParamsEnsembleSE / 2;
 end
 
 % Store the results in the DiffusionStruct.

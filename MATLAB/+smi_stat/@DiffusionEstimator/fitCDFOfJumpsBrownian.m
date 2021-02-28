@@ -49,7 +49,7 @@ switch FitMethod
         % Fit the CDF of the displacements using least squares. This
         % process is quite slow due to the bootstrap, so I'll only do the
         % bootstrap if the output FitParamsSE was requested.
-        % NOTE: This model can be found by taking the prob(r|sigma^2=2NDt)
+        % NOTE: This model can be found by taking the prob(r|sigma^2=2Dt)
         %       (which is a product of Gaussians), converting to polar
         %       coordinates, integrating over theta, and then integrating
         %       from 0 to r' to get the CDF. For multiple frame lags (as we

@@ -57,7 +57,6 @@ for ii = 1:NFits
     end
 
     % Fit the CDF of the jumps to the desired diffusion model.
-    FrameLags = double(MSDStruct(ii).FrameLags);
     NPoints = double(MSDStruct(ii).NPoints);
     SortedJumps = double(MSDStruct(ii).SortedJumps);
     CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
