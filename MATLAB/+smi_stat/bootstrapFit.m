@@ -1,5 +1,5 @@
 function [ParamsHat, ParamsHatSE] = bootstrapFit(XData, YData, ...
-    ParamsInitialGuess, CostFunction, NBootstrap)
+    ParamsInitialGuess, CostFunction, NBootstrap, FitOptions)
 %bootstrapFit minimizes CostFunction and performs a basic boostrap.
 % This function takes random samples (with replacement) from XData/YData
 % and minimizes the associated cost function to find the parameters from
@@ -25,6 +25,8 @@ function [ParamsHat, ParamsHatSE] = bootstrapFit(XData, YData, ...
 %                 sum((Params(1) + Params(2)*XData - YData).^2))
 %   NBootstrap: Number of bootstrap samples to be made from the data.
 %               (Default = 100)
+%   FitOptions: Fit options sent directly to fminsearch (see doc fminsearch
+%               for details)(Default = optimset(@fminsearch))
 %
 % OUTPUTS:
 %   ParamsHat: Estimated fit parameters. (numeric array)
@@ -42,6 +44,9 @@ end
 if isrow(YData)
     YData = YData.';
 end
+if isrow(ParamsInitialGuess)
+    ParamsInitialGuess = ParamsInitialGuess.';
+end
 if (~exist('CostFunction', 'var') || isempty(CostFunction))
     CostFunction = @(Params, XData, YData) ...
         sum((Params(1) + Params(2)*XData - YData).^2);
@@ -49,12 +54,16 @@ end
 if (~exist('NBootstrap', 'var') || isempty(NBootstrap))
     NBootstrap = 100;
 end
+if (~exist('FitOptions', 'var') || isempty(FitOptions))
+    FitOptions = optimset(@fminsearch);
+end
 
 % Estimate ParamsHat (I'm not sure if this is appropriate. Should I instead
 % use ParamsHat = mean(ParamsBootstrap) below? I don't think so, but I
 % don't know for sure! -DJS).
 CostFunctionSingleInput = @(Params) CostFunction(Params, XData, YData);
-ParamsHat = fminsearch(CostFunctionSingleInput, ParamsInitialGuess);
+ParamsHat = ...
+    fminsearch(CostFunctionSingleInput, ParamsInitialGuess, FitOptions);
 
 % Perform the bootstrap.
 NData =  numel(YData);
@@ -71,7 +80,7 @@ for nn = 1:NBootstrap
 
     % Minimize the cost function.
     ParamsBootstrap(:, nn) = ...
-        fminsearch(CostFunctionSingleInput, ParamsHat);
+        fminsearch(CostFunctionSingleInput, ParamsHat, FitOptions);
 end
 ParamsHatSE = std(ParamsBootstrap, [], 2);
 
