@@ -25,6 +25,9 @@ classdef SimSMLM < handle
         LabelingEfficiency = 1
                          % Fluorophore labeling efficiency [range: 0 - 1]
         Verbose = 1      % Verbosity level
+        NWings           % The number of wings of the Siemen's star
+        StartState       % A string which determine if the particle starts on or
+                         % starts randomly on or off. It can be either 'on' or 'Equib'.
         
     end
 
@@ -32,6 +35,29 @@ classdef SimSMLM < handle
     %    LabelCoords
     %    NLabels
     %end
+    
+    methods
+        
+        function [SMD_True, SMD_Model, SMD_Data] = SiemenStar(obj)
+        
+        if nargout == 1
+            [SMD_True] = simStar(obj,obj.NWings);
+        end
+        
+        if nargout == 2
+             [SMD_True] = simStar(obj,obj.NWings);
+             [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
+        end
+         
+        if nargout == 3
+             [SMD_True] = simStar(obj,obj.NWings);
+             [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
+             [SMD_Data] = genNoisySMD(obj,SMD_Model);
+        end
+        
+        end
+    
+    end
     
     methods 
         

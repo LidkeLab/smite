@@ -11,6 +11,8 @@ function unitTest()
    obj.EmissionRate=1000;
    obj.Bg=15;
    obj.PSFSigma=1.3;
+   obj.NWings = 16;
+   obj.StartState = 'Equib';
 
    [SMD_True] = obj.simStar(16);
    [SMD_Model] = obj.genBlinks(SMD_True,'Equib'); 
