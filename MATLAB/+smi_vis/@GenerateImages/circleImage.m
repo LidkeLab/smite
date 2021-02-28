@@ -104,7 +104,7 @@ if ((RGBChannels*prod(ImageSize)) > (2^32 - 1))
     % image size.
     ImageSize = floor([1, 1] * 2^16 / sqrt(3));
     RequestedSRImageZoom = SRImageZoom;
-    SRImageZoom = ImageSize(1) / SMR.YSize;
+    SRImageZoom = ceil(ImageSize(1) / SMR.YSize);
     warning(['smi_vis.GenerateImages.circleImage(): ', ...
         'Requested SRImageZoom=%i is too large and was reset to ', ...
         'SRImageZoom=%i'], RequestedSRImageZoom, SRImageZoom)
