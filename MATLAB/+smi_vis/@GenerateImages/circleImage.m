@@ -58,6 +58,8 @@ if (~exist('SRImageZoom', 'var') ...
     SRImageZoom = 20;
 end
 if (~exist('MinPixelsPerCircle', 'var') || isempty(MinPixelsPerCircle))
+    % As it's currently written, this default won't actually be used (see
+    % relation to 'SRImageZoom' and default setting.
     MinPixelsPerCircle = 16;
 end
 if (~exist('SEScaleFactor', 'var') || isempty(SEScaleFactor))
@@ -75,7 +77,9 @@ Y_SE = SMR.Y_SE;
 % some simulations where the circle images are still needed).
 NLocalizations = numel(X);
 if (isempty(X_SE) || isempty(Y_SE) || ~any(X_SE) || ~any(Y_SE))
-    X_SE = ones(NLocalizations, 1);
+    warning(['circleImage(): X_SE or Y_SE were empty/zero. ', ...
+        'Default value of 0.1 pixels will be used.'])
+    X_SE = 0.1 * ones(NLocalizations, 1);
     Y_SE = X_SE;
 end
 
@@ -86,7 +90,7 @@ if (size(ColorMap, 1) ~= NLocalizations)
 end
 
 % Revise SRImageZoom if needed.
-MeanSE = mean([X_SE, Y_SE], 2);
+MeanSE = mean([X_SE, Y_SE], 2) * SEScaleFactor;
 SmallestCircumference= 2 * pi * min(MeanSE);
 if isempty(SRImageZoom)
     SRImageZoom = ceil(MinPixelsPerCircle / SmallestCircumference);
@@ -109,7 +113,7 @@ end
 % Rescale the data based on SRImageZoom.
 X = X * SRImageZoom;
 Y = Y * SRImageZoom;
-MeanSE = MeanSE * SEScaleFactor * SRImageZoom;
+MeanSE = MeanSE * SRImageZoom;
 
 % Generate the RGB image if needed.
 if (nargout >= 2)
