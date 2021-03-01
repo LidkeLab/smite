@@ -114,7 +114,7 @@ for mm=1:NLabels
     SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
     % Convert absolute frame numbers to per dataset frame numbers.
     lo = 1;
-    for i = 1 : obj.Ndatasets
+    for i = 1 : obj.NDatasets
        hi = lo + obj.Nframes - 1;
        indx = find(lo <= AbsoluteFrameNum & AbsoluteFrameNum <= hi);
        SMD_Model.DatasetNum(indx) = i;
