@@ -99,28 +99,28 @@ for mm=1:NLabels
         Indiv(:,1)=SMD_True.Y(mm);
         Y = cat(1,Y,Indiv);
     end
-    SMD_Model.X = X;
-    SMD_Model.Y = Y;
-    if isscalar (obj.PSFSigma) 
-        SMD_Model.Z = [];
-        SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
-    end
-    SMD_Model.Photons    = Photons;
-    SMD_Model.Bg         = 0;
-    SMD_Model.NDatasets  = obj.NDatasets;
-    SMD_Model.NFrames    = obj.NFrames;
-    AbsoluteFrameNum     = FrameNum;
-    SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
-    SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
-    % Convert absolute frame numbers to per dataset frame numbers.
-    lo = 1;
-    for i = 1 : obj.NDatasets
-       hi = lo + obj.NFrames - 1;
-       indx = find(lo <= AbsoluteFrameNum & AbsoluteFrameNum <= hi);
-       SMD_Model.DatasetNum(indx) = i;
-       SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
-       lo = lo + obj.NFrames;
-    end
+end
+SMD_Model.X = X;
+SMD_Model.Y = Y;
+if isscalar (obj.PSFSigma) 
+    SMD_Model.Z = [];
+    SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
+end
+SMD_Model.Photons    = Photons;
+SMD_Model.Bg         = 0;
+SMD_Model.NDatasets  = obj.NDatasets;
+SMD_Model.NFrames    = obj.NFrames;
+AbsoluteFrameNum     = FrameNum;
+SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
+SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
+% Convert absolute frame numbers to per dataset frame numbers.
+lo = 1;
+for i = 1 : obj.NDatasets
+   hi = lo + obj.NFrames - 1;
+   indx = find(lo <= AbsoluteFrameNum & AbsoluteFrameNum <= hi);
+   SMD_Model.DatasetNum(indx) = i;
+   SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
+   lo = lo + obj.NFrames;
 end
     
     %Nested function to generate blinking events.
@@ -191,5 +191,5 @@ end
     end
 
     end % Blinks
-end % genBlinks
 
+end % genBlinks
