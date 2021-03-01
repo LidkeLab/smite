@@ -12,7 +12,7 @@ classdef SimSMLM < handle
         SZ               % Linear size of image (pixels)
         Rho              % Fluorophore Density (fluorophore/pixel)
         NDatasets        % Number of datasets
-        NFrames          % Number of frames
+        NFrames          % Number of frames per dataset
         ZoomFactor       % It can be either smaller or larger than one
         K_OnToOff        % Fluorophore turns Off from On state
                          %    (default:1 frames^-1)

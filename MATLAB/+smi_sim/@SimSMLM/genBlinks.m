@@ -42,10 +42,10 @@ function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
 
  % SMD_Model.NFrames:The number of frames that the particles have been detected.
 
- % SMD_Model.DatasetNum:The dataset (1) that corresponds to the the FrameNum.
+ % SMD_Model.DatasetNum:The dataset that corresponds to the FrameNum.
  % (Number of the seen particles x 1)
 
- % SMD_Model.NDatasets: 1
+ % SMD_Model.NDatasets: The number of datasets in which to organize the frames.
  
  % SMD_Model.PSFSigma: Point Spread Function Sigma size (Pixels)
  
@@ -60,13 +60,14 @@ Z=[];
 FrameNum=[];
 PSFSigma=[];
 Bg=[];
-IntArray = zeros(NLabels, obj.NFrames);
+TotalNFrames = obj.NDatasets*obj.NFrames;
+IntArray = zeros(NLabels, TotalNFrames);
 
 %The following loop iterates over each particle to generate the blinking
 %events for them.
 
 for mm=1:NLabels
-    Temp=Blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,obj.NFrames,StartState);
+    Temp=Blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,TotalNFrames,StartState);
     
     %Blinks() makes the blinking events. It takes the following inputs:
     
@@ -76,7 +77,7 @@ for mm=1:NLabels
  
     %K_OnToBleach: Fluorophore bleaches (default:1/5 frames^-1)
  
-    %NFrames: Number of frames (pixels x pixels)
+    %TotalNFrames: Total number of frames (pixels x pixels)
     
     %StartState: A string which determine if the particle starts on or
     %starts randomly on or off. It can be either 'on' or 'Equib'.
@@ -106,10 +107,20 @@ for mm=1:NLabels
     end
     SMD_Model.Photons    = Photons;
     SMD_Model.Bg         = 0;
-    SMD_Model.NDatasets  = 1;
+    SMD_Model.NDatasets  = obj.NDatasets;
     SMD_Model.NFrames    = obj.NFrames;
-    SMD_Model.DatasetNum = ones(size(FrameNum));
-    SMD_Model.FrameNum   = FrameNum;
+    AbsoluteFrameNum     = FrameNum;
+    SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
+    SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
+    % Convert absolute frame numbers to per dataset frame numbers.
+    lo = 1;
+    for i = 1 : obj.Ndatasets
+       hi = lo + obj.Nframes - 1;
+       indx = find(lo <= AbsoluteFrameNum & AbsoluteFrameNum <= hi);
+       SMD_Model.DatasetNum(indx) = i;
+       SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
+       lo = lo + obj.Nframes;
+    end
 end
     
     %Nested function to generate blinking events.
