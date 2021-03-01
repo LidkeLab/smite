@@ -38,24 +38,35 @@ if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
 end
 
 % Plot the MSD.
-FrameConversion = UnitFlag/DiffusionStruct(2).FrameRate + ~UnitFlag;
-MSDConversion = ~UnitFlag ...
-    + UnitFlag*(DiffusionStruct(2).PixelSize^2);
-plot(PlotAxes, MSDEnsemble.FrameLags*FrameConversion, ...
-    MSDEnsemble.MSD*MSDConversion, '.')
+FrameRate = DiffusionStruct(2).FrameRate;
+PixelSize = DiffusionStruct(2).PixelSize;
+FrameConversion = ~UnitFlag + UnitFlag/FrameRate;
+JumpConversion = ~UnitFlag + UnitFlag*PixelSize;
+FrameLags = MSDEnsemble.FrameLags * FrameConversion;
+plot(PlotAxes, FrameLags, MSDEnsemble.MSD*(JumpConversion^2), '.')
 hold(PlotAxes, 'on')
 
 % If needed, plot the fit results.
 if ~isempty(DiffusionStruct)
+    % Define some unit conversion parameters. This is needed because the
+    % DiffusionStruct allows for either camera units or physical units
+    % (unlike the MSD structures).
+    IsCameraUnits = strcmpi(DiffusionStruct(2).Units, ...
+        {'pixels'; 'frames'});
+    JumpUnitConversion = IsCameraUnits(1)*JumpConversion ...
+        + ~IsCameraUnits(1)*(UnitFlag + ~UnitFlag/PixelSize);
+    FrequencyUnitConversion = IsCameraUnits(2)/FrameConversion ...
+        + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag/FrameRate);
+    
+    % Plot the MSD fit.
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             % The Brownian diffusion model suggests the MSD is linear with
             % time.
-            FitParams = DiffusionStruct(2).FitParams;
-            FrameArray = ...
-                MSDEnsemble.FrameLags([1, numel(MSDEnsemble.FrameLags)]);
-            plot(PlotAxes, FrameArray*FrameConversion, ...
-                MSDConversion * (FitParams(2)*FrameArray + FitParams(1)))
+            FitParams = DiffusionStruct(2).FitParams ...
+                * (JumpUnitConversion^2) .* [1, FrequencyUnitConversion];
+            plot(PlotAxes, ...
+                FrameLags, FitParams(2)*FrameLags + FitParams(1))
     end
 end
 TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
