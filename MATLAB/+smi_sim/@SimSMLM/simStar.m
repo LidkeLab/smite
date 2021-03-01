@@ -56,8 +56,8 @@ function [SMD_True] = simStar(obj,NWings)
     LabelCoords = LabelCoords*obj.ZoomFactor;
     obj.SZ = obj.SZ*obj.ZoomFactor;
     NLabels=length(LabelCoords); % Number of the generated particles.
-    IntArray=zeros(NLabels,obj.NFrames); % This is a 2D-array with
-    % the size of(Number of the particles)x(Number of the frames)
+    IntArray=zeros(NLabels,obj.NDatasets*obj.NFrames); % This is a 2D-array
+    % with the size of(Number of the particles)x(Number of the frames)
     % to store the trace of the blinking events. The elements of
     % this array can be either zero or one. One signifies an on event.
     % Let say the element on the ith row and jth column is one. This
