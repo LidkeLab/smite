@@ -141,7 +141,7 @@ methods
         end
 
         % Inter-dataset drift correction.
-        if numel(DatasetList) > 1
+        if obj.SMF.DriftCorrection.On && numel(DatasetList) > 1
             if obj.Verbose >= 1
                 fprintf('Drift correcting (inter-dataset) ...\n');
             end
