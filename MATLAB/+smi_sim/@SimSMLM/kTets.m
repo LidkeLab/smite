@@ -26,5 +26,8 @@ function SMD_True = kTets(obj, kk, radius_kTet)
       SMD_True_tmp = obj.kTet(kk, center_kTet, radius_kTet);
       SMD_True = smi_core.SingleMoleculeData.catSMD(SMD_True, SMD_True_tmp);
    end
+   SMD_True.NDims = 2;
+   SMD_True.XSize = obj.SZ;
+   SMD_True.YSize = obj.SZ;
 
 end
