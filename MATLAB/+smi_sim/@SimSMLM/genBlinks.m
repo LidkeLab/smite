@@ -100,6 +100,7 @@ for mm=1:NLabels
         Y = cat(1,Y,Indiv);
     end
 end
+SMD_Model = SMD_True;
 SMD_Model.X = X;
 SMD_Model.Y = Y;
 if isscalar (obj.PSFSigma) 
