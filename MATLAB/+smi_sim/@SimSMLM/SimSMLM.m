@@ -60,16 +60,10 @@ classdef SimSMLM < handle
     end
     
     methods 
-        
-        [SMD_True] = simStar(obj,NWings)
+         
         [SMD_True] = kTets(obj, kk, radius_kTet)
         [SMD_True_Labeled] = applyLabelEffic(obj, SMD_True)
-        % Call the genBlinks() function to generate the model
-        [SMD_Model] = genBlinks(obj,SMD_True,StartState)
-        % Call the genNoisyData() function to generate the Data
-        [SMD_Data] = genNoisySMD(obj,SMD_Model)
         
-
     end 
 
     methods(Static)
