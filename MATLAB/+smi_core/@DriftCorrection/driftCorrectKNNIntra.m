@@ -5,6 +5,16 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 % datasets (inter-dataset).  Fitting is done via performing fminsearch on the
 % (weighted) sums of nearest neighbor distances.  Intra-dataset portion.
 %
+% Example usage:
+%
+%    N = numel(SMD_drifted.X);
+%    for k = 1:N
+%       i = SMD.FrameNum(k);
+%       j = SMD.DatasetNum(k);
+%       SMD_corrected.X(k) = SMD_drifted.X(k) - SMD.DriftX(i, j);
+%       SMD_corrected.Y(k) = SMD_drifted.Y(k) - SMD.DriftY(i, j);
+%    end
+%
 % INPUTS:
 %   iDataset:    Dataset index
 %   SMD:         A structure with fields:
@@ -46,9 +56,9 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 %      X              drift corrected x coordinates (Nx1)
 %      Y              drift corrected y coordinates (Nx1)
 %      Z              drift corrected z coordinates (Nx1) [OPTIONAL]
-%      DriftX         found x drift (NFrames x NDatasets)
-%      DriftY         found y drift (NFrames x NDatasets)
-%      DriftZ         found z drift (NFrames x NDatasets) [OPTIONAL]
+%      DriftX         found x drift per frame (NFrames x NDatasets)
+%      DriftY         found y drift per frame (NFrames x NDatasets)
+%      DriftZ         found z drift per frame (NFrames x NDatasets) [OPTIONAL]
 %   Statistics:  statistical information about the algorithm performance
 %                including various input parameters above and ...:
 %      NDatasets          internal number of datasets
@@ -59,6 +69,9 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 %      Inter_iterations   inter-dataset number of fminsearch iterations
 %      Inter_funcCount    inter-dataset number of fminsearch function evals
 %      Inter_elapsedTime  inter-dataset elapsed time for drift correction
+%
+%   NOTE: SMD.DriftX/Y/Z are the drift corrections defined such that
+%         drifted coordinates - drift correction = drift corrected coordinates
 %
 % CITATION:
 %    "Robust, Fiducial-Free Drift Correction for Super-resolution Imaging"
