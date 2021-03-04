@@ -5,14 +5,14 @@ function [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
 % datasets (inter-dataset).  Fitting is done via performing fminsearch on the
 % (weighted) sums of nearest neighbor distances.  Inter-dataset portion.
 %
-% Example usage:
+% Sign convention:
 %
 %    N = numel(SMD_drifted.X);
 %    for k = 1:N
-%       i = SMD.FrameNum(k);
-%       j = SMD.DatasetNum(k);
-%       SMD_corrected.X(k) = SMD_drifted.X(k) - SMD.DriftX(i, j);
-%       SMD_corrected.Y(k) = SMD_drifted.Y(k) - SMD.DriftY(i, j);
+%       i = SMD_corrected.FrameNum(k);
+%       j = SMD_corrected.DatasetNum(k);
+%       SMD_corrected.X(k) = SMD_drifted.X(k) - SMD_corrected.DriftX(i, j);
+%       SMD_corrected.Y(k) = SMD_drifted.Y(k) - SMD_corrected.DriftY(i, j);
 %    end
 %
 % INPUTS:
