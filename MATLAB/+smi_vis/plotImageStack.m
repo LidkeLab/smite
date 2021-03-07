@@ -1,5 +1,5 @@
 function [PlotAxes] = plotImageStack(PlotAxes, ...
-    ImageStack, StackSpacing, ColorMap, FaceAlpha, ViewLOS, ImageScaling)
+    ImageStack, StackSpacing, ColorMap, ViewLOS, ImageScaling)
 %plotImageStack plots a stack of images.
 % This method will plot a stack of images contained in a 3D array. The
 % intention is that these plots will be used for qualitative purposes 
