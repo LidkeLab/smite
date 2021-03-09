@@ -113,10 +113,8 @@ switch obj.FitTarget
             .* (JumpUnitConversion.^2) .* FrameUnitConversion;
         
         % Compute the ensemble diffusion constant.
-        DiffusionConstantEnsemble = DUnitConversion ...
-            * FitParamsEnsemble / 2;
-        DiffusionConstantEnsembleSE = DUnitConversion ...
-            * FitParamsEnsembleSE / 2;
+        DiffusionConstantEnsemble = FitParamsEnsemble / 2;
+        DiffusionConstantEnsembleSE = FitParamsEnsembleSE / 2;
 end
 
 % Store the results in the DiffusionStruct.
