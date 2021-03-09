@@ -30,6 +30,7 @@ SMF.Fitting.ZFitStruct = obj.ZFitStruct;
                
 % Generate candidate ROIs from the gain and offset corrected data.
 FindROI = smi_core.FindROI(SMF, obj.ScaledData);
+FindROI.Verbose = obj.Verbose;
 [ROIStack, SMDCandidates] = FindROI.findROI();
 
 % Pass the candidate ROIs to the fitting algorithm.  The output SMD from

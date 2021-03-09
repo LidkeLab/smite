@@ -34,6 +34,8 @@ classdef FindROI < handle
         PSFSigma=1.3    %Sigma of 2D Gaussian PSF (Pixels) (Default=1.3)
         ROIs            %Stack of subregions
         LocalMaxIm      %Binary Image showing local maxima above the threshold
+        PlotBoxFrame=1  %If Verbose >= 3, plot boxes for this frame (Default=1)
+        Verbose=1       %Verbosity level
     end
     
     properties (Access = protected)
@@ -191,6 +193,10 @@ classdef FindROI < handle
             SMD.XSize = XSize;
             SMD.YSize = YSize;
             SMD.NDims = 2;
+
+            if Verbose >= 3
+                plotBox(SMD, obj.Data, obj.PlotBoxFrame, obj.BoxSize)
+            end
         end
         
         function showOverlay(obj)

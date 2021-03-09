@@ -232,7 +232,7 @@ end
     % nested function for plotting and saving cumulative Drift
     function plotAndSaveCum(FieldName,CumName)
         if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
-            FigH = obj.plotCumDrift(SMD,FieldName);
+            FigH = smi_core.DriftCorrection.plotCumDrift(SMD,FieldName);
             [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
             FileName = [BaseName '_' CumName '_Cum.png'];
             saveas(FigH,(fullfile(PlotSaveDir,FileName)),'png');

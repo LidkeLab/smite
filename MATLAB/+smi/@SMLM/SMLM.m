@@ -263,7 +263,6 @@ end % methods
 
 % =========================================================================
 methods(Static)
-    [FigHandle] = plotCumDrift(SMD, FieldName)
     Success = unitTest()
 end % methods(Static)
 % =========================================================================

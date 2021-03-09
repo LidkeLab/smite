@@ -110,6 +110,8 @@ methods(Static)
    [dist1, rmse1, dist2, rmse2, nnfig] =      ...
       calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
                  DriftX_True, DriftY_True, DriftZ_True)
+   [FigHandle] = plotCumDrift(SMD, FieldName)
+   [FigHandle] = plotXYDriftParametric(SMD)
    [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 
 end % methods(Static)
