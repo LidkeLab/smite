@@ -38,24 +38,41 @@ if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
 end
 
 % Plot the CDF of jumps.
-JumpsConversion = UnitFlag*DiffusionStruct(2).PixelSize + ~UnitFlag;
-Jumps = MSDEnsemble.SortedJumps * JumpsConversion;
+FrameRate = DiffusionStruct(2).FrameRate;
+PixelSize = DiffusionStruct(2).PixelSize;
+FrameConversion = ~UnitFlag + UnitFlag/FrameRate;
+JumpConversion = UnitFlag*PixelSize + ~UnitFlag;
+Jumps = MSDEnsemble.SortedJumps * JumpConversion;
 stairs(PlotAxes, Jumps, MSDEnsemble.CDFOfJumps)
 
 % If needed, plot the fit results.
 if ~isempty(DiffusionStruct)
+    % Define some unit conversion parameters. This is needed because the
+    % DiffusionStruct allows for either camera units or physical units
+    % (unlike the MSD structures).
+    IsCameraUnits = strcmpi(DiffusionStruct(2).Units, ...
+        {'pixels'; 'frames'});
+    JumpUnitConversion = IsCameraUnits(1)*JumpConversion ...
+        + ~IsCameraUnits(1)*(UnitFlag + ~UnitFlag/PixelSize);
+    TimeUnitConversion = IsCameraUnits(2)*FrameConversion ...
+        + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag*FrameRate);
+    
+    % Plot the CDF fit.
     hold(PlotAxes, 'on')
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             % Plot the CDF of jumps expected for Brownian diffusion.
+            FitParams = DiffusionStruct(2).FitParams ...
+                * (JumpUnitConversion^2) / TimeUnitConversion;
             ModelCDF = smi_stat.DiffusionEstimator.brownianJumpCDF(...
-                DiffusionStruct(2).FitParams, MSDEnsemble.SortedJumps, ...
-                MSDEnsemble.FrameLags, MSDEnsemble.NPoints);
+                FitParams, Jumps, ...
+                MSDEnsemble.FrameLags * FrameConversion, ...
+                MSDEnsemble.NPoints);
             plot(PlotAxes, Jumps, ModelCDF)
     end
 end
 JumpsUnit = smi_helpers.stringMUX({'pixels', 'micrometers'}, UnitFlag);
-xlabel(PlotAxes, JumpsUnit)
+xlabel(PlotAxes, sprintf('Jumps (%s)', JumpsUnit))
 ylabel(PlotAxes, 'CDF of jumps')
 legend(PlotAxes, {'CDF of jumps', 'Fit'}, 'Location', 'best')
 
