@@ -83,6 +83,15 @@ methods
 
     % ---------------------------------------------------------------------
 
+    function SMD = getSMD(obj)
+        % Interface to get the SMD property of the object.
+
+        SMD = obj.SMD;
+
+    end
+
+    % ---------------------------------------------------------------------
+
     function fullAnalysis(obj)
         % fullAnalysis analyzes all data and saves results.
 
