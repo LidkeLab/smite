@@ -3,10 +3,10 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose)
 % This method computes the mean squared displacement between localizations
 % in the single trajectory provided in TR.
 %
-% NOTE: Enforcing a max. frame lag is best done outside of this method.  In
-%       testing, enforcing that max. lag in this code showed negligible
-%       speed improvements, thus it didn't seem beneficial to throw out the
-%       large lag data internally.
+% NOTE: This method isn't very memory efficient, as I'm creating two pretty
+%       big arrays of zeros (see 'SquaredDisplacement' below) which are
+%       usually very sparse. I tried using the sparse matrix built-ins in
+%       MATLAB but that made this method too slow.
 %
 % INPUTS:
 %   TR: Tracking results structure containing only one trajectory.  To be
@@ -102,7 +102,6 @@ for ff = 1:MaxFrameLag
 end
 
 % Compute the MSD.
-FrameLags = (1:MaxFrameLag).';
 NPoints = sum(logical(SquaredDisplacement), 1).';
 KeepBool = logical(NPoints);
 if (Verbose > 2)
@@ -112,6 +111,7 @@ end
 MSD = sum(SquaredDisplacement, 1).' ./ NPoints;
 NPoints = NPoints(KeepBool);
 MSD = MSD(KeepBool);
+FrameLags = (1:MaxFrameLag).';
 FrameLags = FrameLags(KeepBool);
 MSDSingleTraj.TrajectoryID = TR(1).TrajectoryID;
 MSDSingleTraj.MSD = MSD;

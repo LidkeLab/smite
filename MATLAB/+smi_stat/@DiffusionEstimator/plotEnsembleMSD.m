@@ -55,8 +55,8 @@ if ~isempty(DiffusionStruct)
         {'pixels'; 'frames'});
     JumpUnitConversion = IsCameraUnits(1)*JumpConversion ...
         + ~IsCameraUnits(1)*(UnitFlag + ~UnitFlag/PixelSize);
-    FrequencyUnitConversion = IsCameraUnits(2)/FrameConversion ...
-        + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag/FrameRate);
+    TimeUnitConversion = IsCameraUnits(2)*FrameConversion ...
+        + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag*FrameRate);
     
     % Plot the MSD fit.
     switch DiffusionModel
@@ -64,7 +64,7 @@ if ~isempty(DiffusionStruct)
             % The Brownian diffusion model suggests the MSD is linear with
             % time.
             FitParams = DiffusionStruct(2).FitParams ...
-                * (JumpUnitConversion^2) .* [1, FrequencyUnitConversion];
+                * (JumpUnitConversion^2) ./ [1, TimeUnitConversion];
             plot(PlotAxes, ...
                 FrameLags, FitParams(2)*FrameLags + FitParams(1))
     end
@@ -72,8 +72,8 @@ end
 TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
 MSDUnit = smi_helpers.stringMUX(...
     {'pixels^2', 'micrometers^2'}, UnitFlag);
-xlabel(PlotAxes, TimeUnit)
-ylabel(PlotAxes, MSDUnit)
+xlabel(PlotAxes, sprintf('Time lag (%s)', TimeUnit))
+ylabel(PlotAxes, sprintf('MSD (%s)', MSDUnit))
 legend(PlotAxes, {'MSD', 'Fit'}, 'Location', 'best')
 
 
