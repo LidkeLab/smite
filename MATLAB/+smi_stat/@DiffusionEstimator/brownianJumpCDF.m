@@ -7,7 +7,7 @@ function [CDFOfJumps] = brownianJumpCDF(...
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. As of now, this
 %                 is the variance of the jump sizes for a single frame step
-%                 (2*NDim*D)
+%                 (2 * diffusion constant)
 %   SortedJumps: The sorted jumps values used to compute 'CDFOfJumps' in 
 %                ascending order. (numeric array)
 %   FrameLags: All of the unique frame lags associated with the jumps in
