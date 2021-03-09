@@ -195,7 +195,7 @@ classdef FindROI < handle
             SMD.NDims = 2;
 
             if obj.Verbose >= 3
-                plotBox(SMD, obj.Data, obj.PlotBoxFrame, obj.BoxSize)
+                obj.plotBox(SMD, obj.Data, obj.PlotBoxFrame, obj.BoxSize);
             end
         end
         
