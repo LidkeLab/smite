@@ -7,7 +7,9 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
       SMD_True = obj.simStar(obj.NWings);
    case 'kTets'
       % Generate k-tets in the simulation region (units are pixels).
-      SMD_True = SIM.kTets(obj.OrderkTet, obj.RadiuskTet);
+      SMD_True = obj.kTets(obj.OrderkTet, obj.RadiuskTet);
+   otherwise
+      error('Unknown pattern!');
    end
    if nargout == 1 return; end
 
