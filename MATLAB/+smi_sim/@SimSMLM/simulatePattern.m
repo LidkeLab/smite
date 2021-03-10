@@ -28,8 +28,6 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
    % OR ALTERNATIVELY, generate the blobs without Poisson noise (units are
    % pixels).  Below needed for generating blob images.
    SMD_Model.FitBoxSize = ceil(4 * 2 * obj.PSFSigma);
-   if nargout <= 5 return; end
-
    % Temporarily convert FrameNum into an absolute frame number for the call
    % to gaussBlobImage.
    FrameNum = SMD_Model.FrameNum;
@@ -38,6 +36,7 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
                                              obj.NDatasets * obj.NFrames, ...
                                              SMD_Model, 0, 0, 0);
    SMD_Model.FrameNum = FrameNum;
+   if nargout <= 5 return; end
 
    % Generate the blobs having Poisson noise.
    Data = obj.genNoisyData(Model);
