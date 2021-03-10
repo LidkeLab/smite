@@ -24,10 +24,13 @@ classdef SimSMLM < handle
         PSFSigma         % Point Spread Function Sigma size (Pixels)
         LabelingEfficiency = 1
                          % Fluorophore labeling efficiency [range: 0 - 1]
-        Verbose = 1      % Verbosity level
         NWings           % The number of wings of the Siemen's star
-        StartState       % A string which determine if the particle starts on or
-                         % starts randomly on or off. It can be either 'on' or 'Equib'.
+        StartState       % A string which determine if the particle starts on
+                         % or starts randomly on or off.  It can be either 'on'
+                         % or 'Equib'.
+        OrderkTet        % Order of kTet (the value of k)
+        RadiuskTet       % Radius of kTet
+        Verbose = 1      % Verbosity level
         
     end
 
