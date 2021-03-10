@@ -58,13 +58,15 @@ for ii = 1:NFits
 
     % Fit the CDF of the jumps to the desired diffusion model.
     NPoints = double(MSDStruct(ii).NPoints);
+    LocVarianceSum = double(MSDStruct(ii).LocVarianceSum);
     SortedJumps = double(MSDStruct(ii).SortedJumps);
     CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             [ParamsHat, ParamsHatSE] = ...
                 smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
-                SortedJumps, CDFOfJumps, FrameLags, NPoints, ...
+                SortedJumps, CDFOfJumps, ...
+                FrameLags, NPoints, LocVarianceSum, ...
                 [], FitMethod);
             FitParams(ii, :) = ParamsHat.';
             FitParamsSE(ii, :) = ParamsHatSE.';

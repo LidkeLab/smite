@@ -70,8 +70,10 @@ if (Verbose > 2)
         'displacements between %i localizations\n'], NLocalizations)
 end
 Coordinates = [TR(1).X, TR(1).Y];
+MeanVariance = mean([TR(1).X_SE.^2, TR(1).Y_SE.^2], 2);
 SquaredDisplacement = zeros(NLocalizations-1, MaxFrameLag);
 SquaredDisplacementMask = logical(SquaredDisplacement);
+LocVarianceSum = SquaredDisplacement;
 for ff = 1:MaxFrameLag
     % Start with the first localization and find the distance to the
     % localization ff frames away.
@@ -90,6 +92,10 @@ for ff = 1:MaxFrameLag
                 (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
                 + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
             SquaredDisplacementMask(Index1, ff) = 1;
+            
+            % Store the sum of the localization variances.
+            LocVarianceSum(Index1, ff) = ...
+                MeanVariance(Index1) + MeanVariance(Index2);
             
             % Update the indices, ensuring the gaps don't overlap.
             Index1 = Index2;
@@ -119,6 +125,7 @@ MSDSingleTraj.FrameLags = FrameLags;
 MSDSingleTraj.NPoints = NPoints;
 MSDSingleTraj.SquaredDisplacement = ...
     SquaredDisplacement(SquaredDisplacementMask);
+MSDSingleTraj.LocVarianceSum = LocVarianceSum(SquaredDisplacementMask);
 FrameLagsAll = FrameLags.' .* SquaredDisplacementMask;
 MSDSingleTraj.FrameLagsAll = FrameLagsAll(SquaredDisplacementMask);
 

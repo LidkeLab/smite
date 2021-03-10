@@ -60,6 +60,7 @@ MSDSingleTraj = struct([]);
 MSDMatrix = zeros(NTraj, MaxFrameLag);
 NPointsMatrix = MSDMatrix;
 SquaredDisplacement = [];
+LocVarianceSum = [];
 FrameLagsAll = [];
 for ii = 1:NTraj
     % Compute the MSD for this trajectory.
@@ -78,6 +79,7 @@ for ii = 1:NTraj
     NPointsMatrix(ii, CurrentLags) = MSDCurrent.NPoints;
     SquaredDisplacement = [SquaredDisplacement; ...
         MSDCurrent.SquaredDisplacement];
+    LocVarianceSum = [LocVarianceSum; MSDCurrent.LocVarianceSum];
     FrameLagsAll = [FrameLagsAll; MSDCurrent.FrameLagsAll];
 end
 if (Verbose > 1)
@@ -93,6 +95,7 @@ MSDEnsemble.MSD = MSD(KeepBool);
 MSDEnsemble.FrameLags = FrameLags(KeepBool);
 MSDEnsemble.NPoints = NPoints(KeepBool);
 MSDEnsemble.SquaredDisplacement = SquaredDisplacement;
+MSDEnsemble.LocVarianceSum = LocVarianceSum;
 MSDEnsemble.FrameLagsAll = FrameLagsAll;
 
 
