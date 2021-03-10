@@ -1,5 +1,5 @@
 function [CDFOfJumps] = brownianJumpCDF(...
-    MotionParams, SortedJumps, FrameLags, NPoints)
+    MotionParams, SortedJumps, FrameLags, NPoints, LocVarianceSum)
 %brownianJumpCDF generates a model of the CDF of Brownian jumps.
 % This method will generate a model of the CDF (CPD) of the jumps made by a
 % Brownian random walker.
@@ -17,6 +17,14 @@ function [CDFOfJumps] = brownianJumpCDF(...
 %              (NFrameLagsx1 array)
 %   NPoints: The number of data points (or jumps) corresponding to each 
 %            frame lag in 'FrameLags' (NFrameLagsx1 array)
+%   LocVarianceSum: Sum of the localization variances for the two points
+%                   used to compute the jumps. This array should be 
+%                   averaged over x and y.
+%                   (NJumpsx1 numeric array)
+%                   NOTE: I don't know which is better: average the
+%                         variances, or average the SEs and square them? My
+%                         bet is on averaging variances, but I'm not sure.
+%                         This can make a big difference in some cases!
 %
 % OUTPUTS:
 %   CDFOfJumps: The CDF (cumulative distribution function, cumulative
@@ -32,9 +40,12 @@ function [CDFOfJumps] = brownianJumpCDF(...
 FrameLagProb = NPoints / sum(NPoints);
 
 % Compute the CDF model.
+% NOTE: I'm taking the mean of the localization variance sums.  That's not
+%       ideal, but dealing with those properly becomes too messy/slow
+%       (i.e., we get another integral...).
 NFrameLags = numel(FrameLags);
 PDFOfJumps = zeros(numel(SortedJumps), 1);
-Variance = FrameLags * MotionParams;
+Variance = FrameLags*MotionParams + mean(LocVarianceSum);
 for ff = 1:NFrameLags
     PDFOfJumps = PDFOfJumps ...
         + (FrameLagProb(ff) * (SortedJumps/Variance(ff)) ...

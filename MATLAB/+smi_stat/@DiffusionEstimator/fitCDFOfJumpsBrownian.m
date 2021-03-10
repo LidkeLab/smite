@@ -1,5 +1,5 @@
 function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
-    SortedJumps, CDFOfJumps, FrameLags, NPoints, ...
+    SortedJumps, CDFOfJumps, FrameLags, NPoints, LocVarianceSum, ...
     Weights, FitMethod)
 %fitCDFOfJumpsBrownian fits the CDF of jumps to a Brownian motion model.
 % This method will fit the CDF of an MSD to the Brownian motion model 
@@ -16,6 +16,14 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 %              (NFrameLagsx1 array)
 %   NPoints: The number of data points (or jumps) corresponding to each 
 %            frame lag in 'FrameLags' (NFrameLagsx1 array)
+%   LocVarianceSum: Sum of the localization variances for the two points
+%                   used to compute the jumps. This array should be 
+%                   averaged over x and y.
+%                   (NDatax1 numeric array)
+%                   NOTE: I don't know which is better: average the
+%                         variances, or average the SEs and square them? My
+%                         bet is on averaging variances, but I'm not sure.
+%                         This can make a big difference in some cases!
 %   Weights: Weights used for weighted least squares. (NDatax1 array)
 %            (Default = ones(NFrameLags, 1) i.e. no weighting)
 %   FitMethod: A string specifying the fit method. (Default = 'LS')
@@ -57,7 +65,7 @@ switch FitMethod
         %       times the proportion of each frame lag observed.
         CostFunction = @(Params, SortedJumps, CDFOfJumps) sum(Weights ...
             .* (smi_stat.DiffusionEstimator.brownianJumpCDF(...
-            Params, SortedJumps, FrameLags, NPoints) ...
+            Params, SortedJumps, FrameLags, NPoints, LocVarianceSum) ...
             - CDFOfJumps).^2);
         if (nargout > 1)
             [FitParams, FitParamsSE] = smi_stat.bootstrapFit(...

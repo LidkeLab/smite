@@ -134,9 +134,9 @@ classdef DiffusionEstimator < handle
             fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
         [FitParams, FitParamsSE] = ...
             fitCDFOfJumpsBrownian(SortedJumps, CDFOfJumps, ...
-            FrameLags, NPoints, Weights, FitMethod)
+            FrameLags, NPoints, LocVarianceSum, Weights, FitMethod)
         [CDFOfJumps] =  brownianJumpCDF(...
-            MotionParams, SortedJumps, FrameLags, NPoints)
+            MotionParams, SortedJumps, FrameLags, NPoints, LocVarianceSum)
         
     end
     
