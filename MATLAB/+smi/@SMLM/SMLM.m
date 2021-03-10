@@ -158,7 +158,7 @@ methods
         end
 
         THR = smi_core.Threshold;
-        if obj.Verbose >= 1
+        if obj.Verbose >= 1 && obj.SMF.Thresholding.On
            THR.rejectedLocalizations(obj.SMDPreThresh, '');
         end
     end
