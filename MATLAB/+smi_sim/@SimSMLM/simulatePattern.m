@@ -5,7 +5,7 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
    case 'SiemensStar'
       % Siemen's star
       if isempty(obj.NWings)
-         error('Siemen's star must define NWings!');
+         error('Siemen''s star must define NWings!');
       end
       SMD_True = obj.simStar(obj.NWings);
    case 'kTets'
