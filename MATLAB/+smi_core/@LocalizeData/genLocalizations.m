@@ -44,7 +44,11 @@ SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 % Threshold localizations.
 Threshold = smi_core.Threshold;
 [SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, obj.MinMax);
-[SMD] = Threshold.applyThresh(SMDPreThresh, obj.Verbose);
+if SMF.Thresholding.On
+   [SMD] = Threshold.applyThresh(SMDPreThresh, obj.Verbose);
+else
+   SMD = SMDPreThresh;
+end
 obj.SMDPreThresh = SMDPreThresh;
 obj.SMD = SMD;
 
