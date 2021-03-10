@@ -16,17 +16,18 @@ classdef LocalizeData < handle
     
     
     properties
-        CameraType % (char array) see GaussMLE class for usage
-        BoxSize % (scalar)(Pixels) see FindROI class for usage
-        BoxOverlap % (scalar)(Pixels) see FindROI class for usage
-        FitType % (char array) see GaussMLE class for usage/options
-        PSFSigma % (scalar)(Pixels) see GaussMLE class
-        MinPhotons % (scalar)(Photons) see FindROI class
-        Iterations % (scalar) see GaussMLE class
-        ZFitStruct % (struct array) see GaussMLE class
-        MinMax % (struct array), see Threshold class for usage
-        ScaledData % (float array)(Photons) Gain/offset corrected data
+        CameraType  % (char array) see GaussMLE class for usage
+        BoxSize     % (scalar)(Pixels) see FindROI class for usage
+        BoxOverlap  % (scalar)(Pixels) see FindROI class for usage
+        FitType     % (char array) see GaussMLE class for usage/options
+        PSFSigma    % (scalar)(Pixels) see GaussMLE class
+        MinPhotons  % (scalar)(Photons) see FindROI class
+        Iterations  % (scalar) see GaussMLE class
+        ZFitStruct  % (struct array) see GaussMLE class
+        MinMax      % (struct array), see Threshold class for usage
+        ScaledData  % (float array)(Photons) Gain/offset corrected data
         Verbose = 1 % verbosity level
+        ThresholdingOn % (true/false) perform thresholding
     end
     
     properties (SetAccess = 'protected')
@@ -70,6 +71,7 @@ classdef LocalizeData < handle
             obj.PSFSigma = SMF.Fitting.PSFSigma;
             obj.Iterations = SMF.Fitting.Iterations;
             obj.ZFitStruct = SMF.Fitting.ZFitStruct;
+            obj.ThresholdingOn = SMF.Thresholding.On;
             obj.MinMax.X_SE = [0, SMF.Thresholding.MaxXY_SE];
             obj.MinMax.Y_SE = [0, SMF.Thresholding.MaxXY_SE];
             obj.MinMax.Z_SE = [0, SMF.Thresholding.MaxZ_SE];

@@ -27,6 +27,7 @@ SMF.Fitting.FitType = obj.FitType;
 SMF.Fitting.PSFSigma = obj.PSFSigma;
 SMF.Fitting.Iterations = obj.Iterations;
 SMF.Fitting.ZFitStruct = obj.ZFitStruct;
+SMF.Thresholding.On = obj.ThresholdingOn;
                
 % Generate candidate ROIs from the gain and offset corrected data.
 FindROI = smi_core.FindROI(SMF, obj.ScaledData);
