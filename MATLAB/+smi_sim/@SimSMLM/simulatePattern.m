@@ -2,11 +2,17 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
           Data] = simulatePattern(obj, pattern)
 
    switch pattern
-   case 'Star'
-      % Siemen's Star
+   case 'SiemensStar'
+      % Siemen's star
+      if isempty(obj.NWings)
+         error('Siemen's star must define NWings!');
+      end
       SMD_True = obj.simStar(obj.NWings);
    case 'kTets'
       % Generate k-tets in the simulation region (units are pixels).
+      if isempty(obj.OrderkTet) || isempty(obj.RadiuskTet)
+         error('kTets must define OrderkTet and RadiuskTet!');
+      end
       SMD_True = obj.kTets(obj.OrderkTet, obj.RadiuskTet);
    otherwise
       error('Unknown pattern!');
