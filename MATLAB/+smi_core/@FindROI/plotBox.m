@@ -3,6 +3,7 @@ function plotBox(SMD,Data,Frame,BoxSize)
 %
 %plotBox takes the data and the structure containing the box info and the
 %number of the frame that you are interested in and plots the found boxes.
+%This routine is only really needed for debugging.
 %
 % INPUTS
 %    SMD             SMD data structure with fields:
@@ -12,6 +13,12 @@ function plotBox(SMD,Data,Frame,BoxSize)
 %    Data            raw image data (XSize x YSize x NFrames)
 %    Frame           user specified frame number of interest
 %    BoxSize         linear box size for fitting (pixels)
+%
+% REQUIRES
+%    DIPimage Toolbox
+
+% Created by
+%    Mohamad Fazel
 
 ParticleFrame = find(SMD.FrameNum==Frame);
 XCorners = double(SMD.XBoxCorner(ParticleFrame));
