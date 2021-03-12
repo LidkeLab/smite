@@ -5,7 +5,7 @@ function exportTransform(obj, FileName, FileDir)
 %
 % INPUTS:
 %   FileName: Name of the .mat file we'll save. (char array/string)
-%             (Default = 'RegistrationTransform' plus a string containing 
+%             (Default = 'RegistrationTransform' plus a string containing
 %             time)
 %   FileDir: Directory in which we'll save the transform information.
 %            (char array/string)(Default = obj.SMF.Data.FileDir)
@@ -24,6 +24,10 @@ if (~exist('FileName', 'var') || isempty(FileName))
 end
 
 % Save the registration information.
+if (obj.Verbose > 1)
+    fprintf(['\tChannelRegistration.exportTransform(): ', ...
+        'Exporting transform to %s.\n'], fullfile(FileDir, FileName))
+end
 RegistrationTransform = obj.RegistrationTransform;
 Coordinates = obj.Coordinates;
 FiducialROI = obj.FiducialROI;

@@ -24,7 +24,7 @@ SMF.Fitting.PSFSigma = 1.3;
 
 % Prepare the channel registration class.
 ChannelReg = smi_core.ChannelRegistration(...
-    FiducialFileDir, FiducialFileNames, SMF);
+    FiducialFileDir, FiducialFileNames, SMF, 1);
 
 % Compute a locally weighted mean transform from the fiducials.
 % NOTE: The transform from fiducial 2 to fiducial 1 will be stored in 

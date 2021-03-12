@@ -12,6 +12,11 @@ function [] = loadFiducials(obj)
 % needed.
 % NOTE: I'll be averaging over the "time" dimension of all fiducials used.
 NFiles = numel(obj.SMF.Data.FileName);
+if (obj.Verbose > 1)
+    fprintf(['\tChannelRegistration.loadFiducials(): ', ...
+        'Loading %i fiducial files from %s...\n'], ...
+        NFiles, obj.SMF.Data.FileDir)
+end
 LoadData = smi_core.LoadData;
 [~, TempImage] = ...
     LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, 1);
@@ -39,9 +44,11 @@ else
             else
                 obj.SplitFormat = [1, 2];
             end
-            warning(['findTransform(): obj.SplitFormat ', ...
-                'reset to [%i, %i]'], ...
-                obj.SplitFormat(1), obj.SplitFormat(2))
+            if (obj.Verbose > 0)
+                warning(['findTransform(): obj.SplitFormat ', ...
+                    'reset to [%i, %i]'], ...
+                    obj.SplitFormat(1), obj.SplitFormat(2))
+            end
         end
         obj.FiducialROI = obj.convertSplitFormatToROIs(...
             FullROI, obj.SplitFormat);
@@ -77,6 +84,10 @@ if (NROIs == 1)
     end
 else
     % There is only one fiducial image, which we'll need to split by ROI.
+    if (obj.Verbose > 1)
+        fprintf(['\tChannelRegistration.loadFiducials(): ', ...
+            'Splitting fiducial image into channels.\n'])
+    end
     NFiducials = NROIs;
     FiducialImages = zeros(...
         [obj.FiducialROI(1, 3:4)-obj.FiducialROI(1, 1:2)+1, NFiducials]);

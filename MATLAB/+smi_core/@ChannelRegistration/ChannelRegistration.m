@@ -108,6 +108,15 @@ classdef ChannelRegistration < handle
         % used to produce the transform (this is only applicable for
         % TransformationBasis = 'coords').
         ManualCull(1, 1) logical = true;
+        
+        % Verbosity level for standard workflow. (Default = 1)
+        % 0: Command Window updates will be supressed where possible.
+        % 1: Some updates may appear in Command Window
+        % 2: More detailed updates in Command Window
+        % 3: Lot's of info. may be passed to Command Window. This mode may
+        %    be useful for debugging large workflows encompassing this
+        %    class.
+        Verbose = 1;
     end
     
     properties (SetAccess = protected)
@@ -144,23 +153,28 @@ classdef ChannelRegistration < handle
     
     methods
         function [obj] = ChannelRegistration(...
-                FiducialFileDir, FiducialFileNames, SMF)
+                FiducialFileDir, FiducialFileNames, SMF, Verbose)
             %ChannelRegistration class constructor.
             % The inputs can be used to set class properties if desired.
-            %
-            % INPUTS:
-            %   FiducialFileDir: Name of directory containing the fiducial
-            %                    files. (char array/string)
-            %   FiducialFileNames: Filename(s) of the files containing the
-            %                      fiducial images. 
-            %                      (cell array of char/string).
             
             % Set inputs to class properties if needed.
+            if (exist('Verbose', 'var') && ~isempty(Verbose))
+                obj.Verbose = Verbose;
+            end
             if (exist('SMF', 'var') && ~isempty(SMF))
+                if (obj.Verbose > 2)
+                    fprintf(['ChannelRegistration constructor: ', ...
+                        'Setting input SMF structure as a class ', ...
+                        'property\n'])
+                end
                 obj.SMF = SMF;
             else
                 % Set a (mostly) default SMF, with a few tweaks that tend
                 % to help out for several types of fiducial images.
+                if (obj.Verbose > 2)
+                    fprintf(['ChannelRegistration constructor: ', ...
+                        'Using default SMF structure.\n'])
+                end
                 obj.SMF = smi_core.SingleMoleculeFitting;
                 obj.SMF.BoxFinding.MinPhotons = 100;
                 obj.SMF.Fitting.FitType = 'XYNBS';
@@ -168,10 +182,24 @@ classdef ChannelRegistration < handle
             if (exist('FiducialFileDir', 'var') ...
                     && ~isempty(FiducialFileDir))
                 obj.SMF.Data.FileDir = FiducialFileDir;
+                if (obj.Verbose > 2)
+                    fprintf(['ChannelRegistration constructor: ', ...
+                        'Input \n\tFiducialFileDir = ''%s'' stored ', ...
+                        'as a class property.\n'], FiducialFileDir)
+                end
             end
             if (exist('FiducialFileNames', 'var') ...
                     && ~isempty(FiducialFileNames))
                 obj.SMF.Data.FileName = FiducialFileNames;
+                if (obj.Verbose > 2)
+                    fprintf(['ChannelRegistration constructor: ', ...
+                        'Input FiducialFileNames stored as a ', ...
+                        'class property.\n'])
+                end
+            end
+            if (obj.Verbose > 1)
+                fprintf(['ChannelRegistration: constructor ran ', ...
+                    'succesfully.\n'])
             end
 
         end
