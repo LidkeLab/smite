@@ -51,11 +51,21 @@ classdef DataToPhotons < handle
         % Region of interest of the gain/offset arrays (float array)
         % (see obj.convertToPhotons() for details/usage)
         CalibrationROI {mustBeNumeric(CalibrationROI)}
+        
+        % Verbosity level for standard workflow. (Default = 1)
+        %   0: Command Window updates will be supressed where possible and
+        %      reasonable.
+        %   1: Some updates may appear in Command Window
+        %   2: More detailed updates in Command Window
+        %   3: Lot's of info. may be passed to Command Window. This mode
+        %      may be useful for debugging large workflows encompassing
+        %      this class.
+        Verbose = 1;
     end
     
     methods
         function [obj, Data, ReadNoise] = DataToPhotons(SMF, ...
-                RawData, RawDataROI, CalibrationROI, AutoRun)
+                RawData, RawDataROI, CalibrationROI, Verbose, AutoRun)
             %DataToPhotons is the class constructor.
             % This constructor has several optional inputs which are set to
             % class properties.  If you provide all inputs (e.g., SMF,
@@ -75,6 +85,9 @@ classdef DataToPhotons < handle
             
             % Set class properties based on the inputs.
             AllFieldsSet = true;
+            if (exist('Verbose', 'var') && ~isempty(Verbose))
+                obj.Verbose = Verbose;
+            end
             if (exist('CalibrationROI', 'var') && ~isempty(CalibrationROI))
                 % NOTE: This may be overwritten below if a calibration file
                 %       is present and the camera type is specified as
@@ -82,6 +95,11 @@ classdef DataToPhotons < handle
                 %       It's best to use the value in the calibration file
                 %       rather than what the user has entered.
                 obj.CalibrationROI = CalibrationROI;
+                if (obj.Verbose > 2)
+                    fprintf(['\tDataToPhotons constructor: ', ...
+                        'Input CalibrationROI structure stored as a ', ...
+                        'class property.\n'])
+                end
             end
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Reload the SMF to ensure it has all required properties.
@@ -96,22 +114,42 @@ classdef DataToPhotons < handle
                     obj.CameraGain = SMF.Data.CameraGain;
                     obj.CameraOffset = SMF.Data.CameraOffset;
                     obj.CameraReadNoise = SMF.Data.CameraReadNoise;
+                    if (obj.Verbose > 2)
+                        fprintf(['\tDataToPhotons constructor: ', ...
+                            'Camera gain, offset, and read-noise ', ...
+                            'provided in input SMF have been stored ', ...
+                            'as class properties.\n'])
+                    end
                 else
                     % Attempt to load the calibration data.
                     [obj.CameraGain, obj.CameraOffset, ...
                         obj.CameraReadNoise, obj.CalibrationROI] = ...
                         smi_core.LoadData.loadDataCalibration(SMF);
+                    if (obj.Verbose > 2)
+                        fprintf(['\tDataToPhotons constructor: ', ...
+                            'Camera gain, offset, and read-noise ', ...
+                            'loaded from file specified by ', ...
+                            'SMF.Data.CalibrationFilePath.\n'])
+                    end
                 end
             else
                 AllFieldsSet = false;
             end
             if (exist('RawData', 'var') && ~isempty(RawData))
                 obj.RawData = RawData;
+                if (obj.Verbose > 2)
+                    fprintf(['\tDataToPhotons constructor: ', ...
+                        'Input RawData stored as a class property.\n'])
+                end
             else
                 AllFieldsSet = false;
             end
             if (exist('RawDataROI', 'var') && ~isempty(RawDataROI))
                 obj.RawDataROI = RawDataROI;
+                if (obj.Verbose > 2)
+                    fprintf(['\tDataToPhotons constructor: ', ...
+                        'Input RawDataROI stored as a class property.\n'])
+                end
             else
                 AllFieldsSet = false;
             end
@@ -120,6 +158,10 @@ classdef DataToPhotons < handle
             Data = [];
             ReadNoise = [];
             if (AutoRun && AllFieldsSet)
+                if (obj.Verbose > 2)
+                    fprintf(['\tDataToPhotons constructor: ', ...
+                        'Auto-running obj.convertData()...\n'])
+                end
                 obj.convertData();
             end
         end

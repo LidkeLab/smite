@@ -110,12 +110,13 @@ classdef ChannelRegistration < handle
         ManualCull(1, 1) logical = true;
         
         % Verbosity level for standard workflow. (Default = 1)
-        % 0: Command Window updates will be supressed where possible.
-        % 1: Some updates may appear in Command Window
-        % 2: More detailed updates in Command Window
-        % 3: Lot's of info. may be passed to Command Window. This mode may
-        %    be useful for debugging large workflows encompassing this
-        %    class.
+        %   0: Command Window updates will be supressed where possible and
+        %      reasonable.
+        %   1: Some updates may appear in Command Window
+        %   2: More detailed updates in Command Window
+        %   3: Lot's of info. may be passed to Command Window. This mode
+        %      may be useful for debugging large workflows encompassing
+        %      this class.
         Verbose = 1;
     end
     
@@ -162,17 +163,17 @@ classdef ChannelRegistration < handle
                 obj.Verbose = Verbose;
             end
             if (exist('SMF', 'var') && ~isempty(SMF))
+                obj.SMF = SMF;
                 if (obj.Verbose > 2)
-                    fprintf(['ChannelRegistration constructor: ', ...
-                        'Setting input SMF structure as a class ', ...
+                    fprintf(['\tChannelRegistration constructor: ', ...
+                        'Input SMF structure stored as a class ', ...
                         'property\n'])
                 end
-                obj.SMF = SMF;
             else
                 % Set a (mostly) default SMF, with a few tweaks that tend
                 % to help out for several types of fiducial images.
                 if (obj.Verbose > 2)
-                    fprintf(['ChannelRegistration constructor: ', ...
+                    fprintf(['\tChannelRegistration constructor: ', ...
                         'Using default SMF structure.\n'])
                 end
                 obj.SMF = smi_core.SingleMoleculeFitting;
@@ -183,7 +184,7 @@ classdef ChannelRegistration < handle
                     && ~isempty(FiducialFileDir))
                 obj.SMF.Data.FileDir = FiducialFileDir;
                 if (obj.Verbose > 2)
-                    fprintf(['ChannelRegistration constructor: ', ...
+                    fprintf(['\tChannelRegistration constructor: ', ...
                         'Input \n\tFiducialFileDir = ''%s'' stored ', ...
                         'as a class property.\n'], FiducialFileDir)
                 end
@@ -192,13 +193,13 @@ classdef ChannelRegistration < handle
                     && ~isempty(FiducialFileNames))
                 obj.SMF.Data.FileName = FiducialFileNames;
                 if (obj.Verbose > 2)
-                    fprintf(['ChannelRegistration constructor: ', ...
+                    fprintf(['\tChannelRegistration constructor: ', ...
                         'Input FiducialFileNames stored as a ', ...
                         'class property.\n'])
                 end
             end
             if (obj.Verbose > 1)
-                fprintf(['ChannelRegistration: constructor ran ', ...
+                fprintf(['\tChannelRegistration: constructor ran ', ...
                     'succesfully.\n'])
             end
 

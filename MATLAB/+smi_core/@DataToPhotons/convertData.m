@@ -13,12 +13,20 @@ function [CorrectedData, CorrectedReadNoise] = convertData(obj)
 
 
 % Call obj.convertToPhotons() and store the outputs in obj.
+if (obj.Verbose > 0)
+    fprintf(['\tDataToPhotons.convertData(): ', ...
+        'Performing gain and offset correction on provided data...\n'])
+end
 [CorrectedData, CorrectedReadNoise] = ...
     obj.convertToPhotons(obj.RawData, ...
     obj.CameraGain, obj.CameraOffset, obj.CameraReadNoise, ...
     obj.RawDataROI, obj.CalibrationROI);
 obj.CorrectedData = CorrectedData;
 obj.CorrectedReadNoise = CorrectedReadNoise;
+if (obj.Verbose > 0)
+    fprintf(['\tDataToPhotons.convertData(): ', ...
+        'Gain and offset correction complete.\n'])
+end
 
 
 end
