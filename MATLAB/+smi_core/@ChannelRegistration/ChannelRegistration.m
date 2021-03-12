@@ -186,6 +186,7 @@ classdef ChannelRegistration < handle
         loadFiducials(obj)
         exportTransform(obj, FileName, FileDir)
         gui(obj, GUIParent)
+        
     end
     
     methods (Static)
