@@ -53,7 +53,7 @@ switch FitMethod
         % array of ones (i.e., no weighting).
         Weights = strcmpi(FitMethod, 'LS')*ones(NJumps, 1) ...
             + strcmpi(FitMethod, 'WeightedLS')*Weights;
-        
+
         % Fit the CDF of the displacements using least squares. This
         % process is quite slow due to the bootstrap, so I'll only do the
         % bootstrap if the output FitParamsSE was requested.

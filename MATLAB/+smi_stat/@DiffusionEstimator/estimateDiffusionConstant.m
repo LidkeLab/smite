@@ -9,9 +9,6 @@ function [DiffusionStruct] = estimateDiffusionConstant(obj)
 %                    specified by the property obj.UnitFlag, with 1
 %                    specifying physical units (micrometers, seconds) and 0
 %                    specifying camera units (pixels, frames).
-%
-% REQUIRES:
-%   Statistics and Machine Learning Toolbox (for ecdf())
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
