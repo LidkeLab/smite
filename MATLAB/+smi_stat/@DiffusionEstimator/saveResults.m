@@ -6,8 +6,8 @@ function saveResults(obj, SaveParams)
 % INPUTS:
 %   SaveParams: Structure array of various parameters defining what we
 %               should save.
-%               Fields: MakeFitPlot: Generates and saves a plot of the MSD
-%                                    fit. (Default = true)
+%               Fields: MakeFitPlot-Generates and saves a plot of the 
+%                                   MSD/CDF fit. (Default = true)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -57,19 +57,35 @@ MaxFrameLag = obj.MaxFrameLag;
 save(FilePath, 'DiffusionStruct', 'FitMethod', 'MaxFrameLag', ...
     'MSDEnsemble', 'MSDSingleTraj', '-v7.3');
 
-% Generate an MSD fit plot.
+% Generate and save a plot of the fit.
 if SaveParams.MakeFitPlot
-    FilePath = fullfile(obj.SaveDir, ...
-        ['MSDEnsembleFit_', obj.BaseSaveName, '.mat']);
-    if (obj.Verbose > 1)
-        fprintf('saveResults(): saving MSD fit plot to \n\t%s...\n', ...
-            FilePath)
-    end
     VisiblePlot = smi_helpers.stringMUX({'off', 'on'}, obj.Verbose);
     PlotFigure = figure('Visible', VisiblePlot);
     PlotAxes = axes(PlotFigure);
-    obj.plotEnsembleMSD(PlotAxes, ...
-        obj.MSDEnsemble, obj.DiffusionStruct, obj.UnitFlag);
+    FilePath = fullfile(obj.SaveDir, ...
+        [obj.FitTarget, 'EnsembleFit_', obj.BaseSaveName]);
+    switch obj.FitTarget
+        case 'MSD'
+            % Plot the MSD and the associated fit.
+            if (obj.Verbose > 1)
+                fprintf('saveResults(): saving MSD fit plot to \n\t%s...\n', ...
+                    FilePath)
+            end
+            obj.plotEnsembleMSD(PlotAxes, obj.MSDEnsemble, ...
+                obj.DiffusionStruct, obj.DiffusionModel, ...
+                obj.UnitFlag);
+        case 'CDFOfJumps'
+            % Plot the CDF and the associated fit.
+            if (obj.Verbose > 1)
+                fprintf('saveResults(): saving CDF fit plot to \n\t%s...\n', ...
+                    FilePath)
+            end
+            obj.plotEnsembleCDFOfJumps(PlotAxes, obj.MSDEnsemble, ...
+                obj.DiffusionStruct, obj.DiffusionModel, ...
+                obj.UnitFlag);
+    end
+    
+    % Save the plot.
     saveas(PlotFigure, FilePath, 'png')
     if (obj.Verbose < 2)
         % For the higher verbosity levels, we'll keep the plot open for the
