@@ -64,7 +64,7 @@ axis(PlotAxesTop, 'equal');
 hold(PlotAxesTop, 'on');
 surface(PlotAxesTop, XGrid, YGrid, TransformMagnitude, ...
     'EdgeColor', 'none')
-title(PlotAxesTop, 'sqrt(XCorrection.^2 + YCorrection.^2)')
+title(PlotAxesTop, 'sqrt(XCorrection^2 + YCorrection^2)')
 xlabel(PlotAxesTop, 'X (pixels)')
 ylabel(PlotAxesTop, 'Y (pixels)')
 RegColorBar = colorbar(PlotAxesTop);
@@ -76,7 +76,7 @@ axis(PlotAxesBottom, 'equal');
 hold(PlotAxesBottom, 'on');
 surface(PlotAxesBottom, XGrid, YGrid, GradientMagnitude, ...
     'EdgeColor', 'none')
-title(PlotAxesBottom, 'sqrt(XDerivative.^2 + YDerivative.^2)')
+title(PlotAxesBottom, 'sqrt(XDerivative^2 + YDerivative^2)')
 xlabel(PlotAxesBottom, 'X (pixels)')
 ylabel(PlotAxesBottom, 'Y (pixels)')
 RegColorBar = colorbar(PlotAxesBottom);

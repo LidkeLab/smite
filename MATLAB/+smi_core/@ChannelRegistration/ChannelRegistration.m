@@ -94,20 +94,20 @@ classdef ChannelRegistration < handle
         PolynomialDegree(1, 1) ...
             {mustBeMember(PolynomialDegree, [2, 3, 4])} = 2;
         
-        % Auto-scale fiducial images (boolean)(Default = 1)
+        % Auto-scale fiducial images (boolean)(Default = true)
         % This flag lets this class do a somewhat arbitrary scaling of the
         % fiducial images in an attempt to simplify the code usage.  This
         % allows us to avoid gain/offset correcting the data, which might
         % be annoying in some cases (as in, it's nice to just use the
         % default SMF instead of having to tweak parameters just for this
         % code).
-        AutoscaleFiducials(1, 1) logical = 1;
+        AutoscaleFiducials(1, 1) logical = true;
         
-        % Manually cull localization pairs (boolean)(Default = 1)
+        % Manually cull localization pairs (boolean)(Default = true)
         % This flag lets the user manually cull the paired localizations
         % used to produce the transform (this is only applicable for
         % TransformationBasis = 'coords').
-        ManualCull(1, 1) logical = 1;
+        ManualCull(1, 1) logical = true;
     end
     
     properties (SetAccess = protected)
@@ -192,8 +192,7 @@ classdef ChannelRegistration < handle
     methods (Static)
         [PlotAxes, LineHandles] = ...
             plotCoordsOnData(PlotAxes, RawData, Coordinates);
-        [SMDMoving, SMDFixed] = transformSMD(...
-            RegistrationTransform, SMDMoving, SMDFixed);
+        [SMDMoving] = transformSMD(RegistrationTransform, SMDMoving);
         [MovingCoordsTransformed] = ...
             transformCoords(RegistrationTransform, MovingCoords);
         [TransformedImages] = transformImages(...

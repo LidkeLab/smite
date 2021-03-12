@@ -88,7 +88,7 @@ xlabel(PlotAxes, 'X (pixels)')
 ylabel(PlotAxes, 'Y (pixels)')
 axis(PlotAxes, 'tight')
 ColorBar = colorbar(PlotAxes);
-ColorBar.Label.String = 'Squared error (Pixels^2)';
+ColorBar.Label.String = 'Squared error (pixels^2)';
 
 % Plot the true points as a visual reference.
 hold(PlotAxes, 'on');
