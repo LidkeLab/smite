@@ -1,4 +1,4 @@
-function [SMDCombined, SMD, OutputMessage] = performFrameConnection(obj)
+function [SMDCombined, SMD] = performFrameConnection(obj)
 %performFrameConnection is the "run" method of the FrameConnection class.
 %
 % This method is intended to be used as the main "run" method of the
@@ -32,8 +32,6 @@ function [SMDCombined, SMD, OutputMessage] = performFrameConnection(obj)
 %   SMD: obj.SMD but with the field 'ConnectID' populated (see
 %        smi_core.FrameConnection.findConnected() for a careful description
 %        of 'ConnectID'.
-%   OutputMessage: A summary message that describes how many localizations
-%                  in SMD were collapsed into localizations in SMDCombined.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -72,16 +70,31 @@ PSFSigmaY_SE = [];
 %       < 100) I don't anticipate any benefit to making local copies of any
 %       arrays from SMD (as opposed to accessing them from SMD
 %       inside the loop, as I'm doing here).
+if (obj.Verbose > 1)
+    fprintf(['\tFrameConnection.performFrameConnection(): ', ...
+        'Looping over datasets and performing frame connection...\n'])
+end
 InputExtras = [];
 InputExtrasSE = [];
 SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
 MaxConnectID = max(SMD.ConnectID);
 for nn = unique(SMD.DatasetNum)
+    % Provide a Command Window update if needed.
+    if (obj.Verbose > 2)
+        fprintf(['\tFrameConnection.performFrameConnection(): ', ...
+            'Performing frame connection for dataset %i...\n'], ...
+            nn)
+    end
+        
     % Isolate all valid localizations in the nn-th dataset and typecast
     % certain arrays for smi_c_FrameConnection.mex* .
     CurrentBool = ((SMD.DatasetNum==nn) & (SMD.ThreshFlag==0));
     if ~any(CurrentBool)
         % All localizations in this dataset were thresholded out.
+        if (obj.Verbose > 2)
+            fprintf(['\t\tAll dataset %i localizations ', ...
+                'were thresholded.\n'], nn)
+        end
         continue
     end
     InputFrameNum = uint32(SMD.FrameNum(CurrentBool));
@@ -112,6 +125,9 @@ for nn = unique(SMD.DatasetNum)
     end
     
     % Perform the frame-connection using smi_c_FrameConnection.mex*.
+    if (obj.Verbose > 2)
+        fprintf('\t\tCalling smi_c_FrameConnection.mex*...\n')
+    end
     [OutputCoords, OutputCoordsSE, NConnected, OutputFrames, ...
         OutputExtras, OutputExtrasSE, OutputPhotonsBgLogL, ...
         OutputConnectID, OutputConnectIDCombined] = ...
@@ -121,6 +137,11 @@ for nn = unique(SMD.DatasetNum)
         obj.MaxSeparation, obj.MaxFrameGap, MaxConnectID);
     
     % Update 'SMD' to contain the current connection information.
+    if (obj.Verbose > 2)
+        fprintf(['\t\t%i localizations combined to ', ...
+            '%i localizations in dataset %i.\n'], ...
+            numel(OutputConnectID), numel(OutputConnectIDCombined), nn)
+    end
     SMD.ConnectID(CurrentBool) = OutputConnectID;
     MaxConnectID = max(OutputConnectID);
     
@@ -156,6 +177,9 @@ end
 
 % Store the temporary arrays from the main loop above into 'SMDCombined'
 % (as well as some other things we'd like to carry along from SMD).
+if (obj.Verbose > 2)
+    fprintf('\t\tPreparing output SMD structures...\n')
+end
 SMDCombined = smi_core.SingleMoleculeData.createSMD();
 SMDCombined.NDims = SMD.NDims;
 SMDCombined.NDatasets = SMD.NDatasets;
@@ -202,9 +226,12 @@ SMDCombined.IndSMD = IndSMD;
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
 
-% A helpful message enumerating how many localizations were collapsed here.
-OutputMessage = sprintf('Frame connecting: %d -> %d localizations\n', ...
-        numel(SMD.X), numel(SMDCombined.X));
+% Provide a final message to summarize the results.
+if (obj.Verbose > 2)
+    fprintf(['\tFrameConnection.performFrameConnection(): ', ...
+        '%i localizations combined to %i localizations.\n'], ...
+        numel(SMD.FrameNum), numel(SMDCombined.FrameNum))
+end
     
 
 end

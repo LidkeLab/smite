@@ -84,7 +84,7 @@ SMF.FrameConnection.FitType = 'XYNB';
 SMF.FrameConnection.LoS = 0.01023;
 SMF.FrameConnection.MaxSeparation = 1.023;
 SMF.FrameConnection.MaxFrameGap = 4;
-FC = smi_core.FrameConnection(SMDSim, SMF);
+FC = smi_core.FrameConnection(SMDSim, SMF, 3);
 FCParams = SMF.FrameConnection;
 Success(1) = (~isempty(FC.SMD) ...
     && strcmp(FC.FitType, FCParams.FitType) ...

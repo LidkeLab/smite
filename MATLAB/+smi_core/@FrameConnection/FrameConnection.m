@@ -28,6 +28,7 @@ classdef FrameConnection < handle
         MaxSeparation(1, 1) double = 1; % (Pixels)(Default = 1)
         NParams(1, 1) double = 4; % (Default = 4) see GaussMLE
         SMD % see SingleMoleculeData class
+        Verbose = 1; % (Default = 1) Verbosity level of main workflow
     end
     
     properties (SetAccess = 'protected')
@@ -36,7 +37,7 @@ classdef FrameConnection < handle
     
     methods
         function [obj, SMDCombined, SMD] = FrameConnection(SMD, SMF, ...
-                AutoRun)
+                Verbose, AutoRun)
             %FrameConnection prepares the FrameConnection class for use.
             % This constructor can be used to (optionally) set the input
             % SMD structure and/or "unwrap" an SMF structure to set the
@@ -48,10 +49,24 @@ classdef FrameConnection < handle
             % constructor).
             if (~exist('AutoRun', 'var') || isempty(AutoRun))
                 AutoRun = 0;
-            end            
+            end
+            
+            % Set the verbosity level if provided.
+            if (exist('Verbose', 'var') && ~isempty(Verbose))
+                obj.Verbose = Verbose;
+            end
+            if ((obj.Verbose>2) && (nargin()>0))
+                fprintf(['\tFrameConnection constructor: ', ...
+                    'Setting class properties based on constructor ', ...
+                    'inputs...\n'])
+            end
             
             % Set the input SMD structure as a class property (if provided)
             if (exist('SMD', 'var') && ~isempty(SMD))
+                if (obj.Verbose > 2)
+                    fprintf(['\tFrameConnection constructor: ', ...
+                        'Storing input SMD as a class property...\n'])
+                end
                 obj.SMD = SMD;
                 AllFieldsSet = 1;
             else
@@ -63,11 +78,16 @@ classdef FrameConnection < handle
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Pad the input SMF structure to ensure it contains all
                 % fields defined in SingleMoleculeFitting.createSMF().
+                if (obj.Verbose > 2)
+                    fprintf(['\tFrameConnection constructor: ', ...
+                        'Extracting fields from input SMF to store ', ...
+                        'as class properties...\n'])
+                end
                 SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
                 
                 % Set the desired SMF fields to class properties.
                 obj.BoxSize = SMF.BoxFinding.BoxSize;
-               	obj.FitType = SMF.Fitting.FitType;
+                obj.FitType = SMF.Fitting.FitType;
                 obj.NParams = SMF.Fitting.NParams;
                 obj.LoS = SMF.FrameConnection.LoS;
                 obj.MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
@@ -79,9 +99,13 @@ classdef FrameConnection < handle
             % If all required fields are set, run the frame-connection
             % process.
             if (AutoRun && AllFieldsSet)
+                if (obj.Verbose > 2)
+                    fprintf(['\tFrameConnection constructor: ', ...
+                        'Auto-running obj.performFrameConnection()...\n'])
+                end
                 [SMDCombined, SMD] = obj.performFrameConnection();
             else
-                if (nargout() > 1)
+                if ((obj.Verbose>0) && (nargout()>1))
                     warning(['Constructor outputs SMD and ', ...
                         'SMDCombined were requested but ', ...
                         'frame-connection was not performed.'])
@@ -91,7 +115,7 @@ classdef FrameConnection < handle
             end
         end
         
-        [SMDCombined, SMD, OutputMessage] = performFrameConnection(obj)
+        [SMDCombined, SMD] = performFrameConnection(obj)
         
     end
     

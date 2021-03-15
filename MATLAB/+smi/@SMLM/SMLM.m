@@ -178,12 +178,11 @@ methods
         [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
 
         % Perform the gain and offset correction.
-        DTP = smi_core.DataToPhotons(obj.SMF, Dataset);
+        DTP = smi_core.DataToPhotons(obj.SMF, Dataset, [], [], obj.Verbose);
         ScaledDataset = DTP.convertData();
         
         % Generate localizations from the current Dataset.
-        LD = smi_core.LocalizeData(ScaledDataset, obj.SMF);
-        LD.Verbose = obj.Verbose;
+        LD = smi_core.LocalizeData(ScaledDataset, obj.SMF, obj.Verbose);
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
         end
@@ -201,11 +200,8 @@ methods
 
         % Perform frame-connection on localizations in SMD.
         if obj.SMF.FrameConnection.On
-            FC = smi_core.FrameConnection(SMD, obj.SMF);
-            [SMD, ~, OutputMessage] = FC.performFrameConnection();
-            if obj.Verbose >= 1
-                fprintf('%s', OutputMessage);
-            end
+            FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
+            SMD = FC.performFrameConnection();
         end
 
         % Intra-dataset drift correction.
