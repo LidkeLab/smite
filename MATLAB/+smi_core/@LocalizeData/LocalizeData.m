@@ -37,7 +37,7 @@ classdef LocalizeData < handle
     
     methods
         function [obj, SMD, SMDPreThresh] = LocalizeData(...
-                ScaledData, SMF, AutoRun)
+                ScaledData, SMF, Verbose, AutoRun)
             %LocalizeData creates an instance of the LocalizeData class.
             % This method will prepare the LocalizeData class, setting
             % inputs to class properties if provided. This constructor can
@@ -61,8 +61,17 @@ classdef LocalizeData < handle
                 SMF = smi_core.SingleMoleculeFitting;
             end
             
-            % Set class properties based on the SMF structure input to the
-            % constructor/set to a default above.
+            % Set the verbosity level if provided.
+            if (exist('Verbose', 'var') && ~isempty(Verbose))
+                obj.Verbose = Verbose;
+            end
+            if ((obj.Verbose>2) && (nargin()>0))
+                fprintf(['\tLocalizeData constructor: ', ...
+                    'Setting class properties based on constructor ', ...
+                    'inputs...\n'])
+            end
+                    
+            % Set class properties based on the inputs/defaults set above.
             obj.CameraType = SMF.Data.CameraType;
             obj.BoxSize = SMF.BoxFinding.BoxSize;
             obj.BoxOverlap = SMF.BoxFinding.BoxOverlap;
@@ -91,9 +100,13 @@ classdef LocalizeData < handle
             
             % Run genLocalizations() if desired.
             if (AutoRun && AllFieldsSet)
+                if (obj.Verbose > 2)
+                    fprintf(['\tLocalizeData constructor: ', ...
+                        'Auto-running obj.genLocalizations()...\n'])
+                end
                 [SMD, SMDPreThresh] = obj.genLocalizations();
             else
-                if (nargout() > 1)
+                if ((obj.Verbose>0) && (nargout()>1))
                     warning(['Constructor outputs SMD and ', ...
                         'SMDPreThresh requested but ', ...
                         'localizations were not generated.'])

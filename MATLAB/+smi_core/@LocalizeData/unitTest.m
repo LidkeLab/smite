@@ -47,7 +47,7 @@ SMF.BoxFinding.BoxSize = 10;
 SMF.Fitting.PSFSigma = SMD.PSFSigma;
 
 % Attempt to generate localizations from the simulated data.
-LD = smi_core.LocalizeData(ScaledData, SMF);
+LD = smi_core.LocalizeData(ScaledData, SMF, 3);
 [SMD, SMDPreThresh] = LD.genLocalizations();
 
 % Check that SMD and SMDPreThresh make sense and are consistent with each
