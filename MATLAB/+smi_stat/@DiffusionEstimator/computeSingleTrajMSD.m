@@ -118,16 +118,16 @@ MSD = sum(SquaredDisplacement, 1).' ./ NPoints;
 NPoints = NPoints(KeepBool);
 MSD = MSD(KeepBool);
 FrameLags = (1:MaxFrameLag).';
+FrameLagsAll = FrameLags.' .* SquaredDisplacementMask;
 FrameLags = FrameLags(KeepBool);
 MSDSingleTraj.TrajectoryID = TR(1).TrajectoryID;
 MSDSingleTraj.MSD = MSD;
 MSDSingleTraj.FrameLags = FrameLags;
+MSDSingleTraj.FrameLagsAll = FrameLagsAll(SquaredDisplacementMask);
 MSDSingleTraj.NPoints = NPoints;
 MSDSingleTraj.SquaredDisplacement = ...
     SquaredDisplacement(SquaredDisplacementMask);
 MSDSingleTraj.LocVarianceSum = LocVarianceSum(SquaredDisplacementMask);
-FrameLagsAll = FrameLags.' .* SquaredDisplacementMask;
-MSDSingleTraj.FrameLagsAll = FrameLagsAll(SquaredDisplacementMask);
 
 
 end
