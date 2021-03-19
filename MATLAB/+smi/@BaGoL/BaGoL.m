@@ -1,44 +1,44 @@
 classdef BaGoL < handle
-%BaGoL Implements a Bayesian Grouping of Localizations (BaGoL)
+% BaGoL Implements a Bayesian Grouping of Localizations (BaGoL)
 %
-%Single molecule localization based super-resolution data can contain
-%repeat localizations from the same emitter. These localizations can be
-%grouped to give better localization precision.  BaGoL explores the
-%possible number of emitters and their positions that can explain the
-%observed localizations and uncertainties. An 'emitter' is a
-%blinking/binding point source that generates a single 'localization'
-%each time there is a blinking/binding event. Localizations must be
-%frame connected.
+% Single molecule localization based super-resolution data can contain
+% repeat localizations from the same emitter. These localizations can be
+% grouped to give better localization precision.  BaGoL explores the
+% possible number of emitters and their positions that can explain the
+% observed localizations and uncertainties. An 'emitter' is a
+% blinking/binding point source that generates a single 'localization'
+% each time there is a blinking/binding event. Localizations must be
+% frame connected.
 %
-%The core algorithm uses Reversible Jump Markov Chain Monte Carlo to
-%add, remove and move emitters and to explore the classification of
-%localizations to emitters.  Prior information on the distribution of
-%localizations per emitter is required and the localization precisions
-%are assumed to be accurate. The prior distribution is
-%parameterized by either a Poisson or Gamma distribution function.
+% The core algorithm uses Reversible Jump Markov Chain Monte Carlo to
+% add, remove and move emitters and to explore the classification of
+% localizations to emitters.  Prior information on the distribution of
+% localizations per emitter is required and the localization precisions
+% are assumed to be accurate. The prior distribution is
+% parameterized by either a Poisson or Gamma distribution function.
 %
-%The primary BaGoL outputs are a 'Posterior Image' and MAPN coordinates
-%that can also be used to generate a 'MAPN image'. The Posterior Image
-%shows a probablity distribution of emitter locations that is a weighted
-%average over the number of emitters, emitter locations, and
-%classification of localizations to emitters. The Maximum a Posteriori
-%Number of emitters (MAPN) result uses only the information from
-%the most likely number of emitters.  MAPN emitter coordinates and their
-%uncertainties are returned and images from these coordinates are
-%generated similarly to a traditional SR reconstruction.
+% The primary BaGoL outputs are a 'Posterior Image' and MAPN coordinates
+% that can also be used to generate a 'MAPN image'. The Posterior Image
+% shows a probablity distribution of emitter locations that is a weighted
+% average over the number of emitters, emitter locations, and
+% classification of localizations to emitters. The Maximum a Posteriori
+% Number of emitters (MAPN) result uses only the information from
+% the most likely number of emitters.  MAPN emitter coordinates and their
+% uncertainties are returned and images from these coordinates are
+% generated similarly to a traditional SR reconstruction.
 %
-%This class implements the pre/post-processing steps needed to analyze
-%a spatially extended data set typical of super-resolution experiments.
+% This class implements the pre/post-processing steps needed to analyze
+% a spatially extended data set typical of super-resolution experiments.
 %This includes breaking data into subregions and collating the results
-%from the subregions.
+% from the subregions.
 %
 %
 % USAGE:
-%   B=BaGoL()       %create object
-%   B.SMD=....      %set properties
-%   B.analyze_all() %run complete analysis
+%   B=BaGoL()       % create object
+%   B.SMD=....      % set properties
+%   B.analyze_all() % run complete analysis
 %
-%The class also has several methods for visualizing and saving results.
+% The class also has several methods for visualizing and saving results.
 %See 'doc BaGoL' for the complete list of methods.
 %
 % PROPERTIES:
@@ -50,7 +50,7 @@ classdef BaGoL < handle
 %       Y_SE:       Vector of Y localization standard error (Pixel)(Nx1)
 %       Z_SE:       Vector of Z localization standard error (Pixel)(Nx1)(Optional)
 %       FrameNum:   Vector of localization frame numbers (Nx1)
-%       PixelSize:  Camera pixel size (nm/Pixel) ??is it microns?
+%       PixelSize:  Camera pixel size (nm/Pixel) 
 %   Lambda:     Loc./emitter params [lambda] (Poisson) or [k theta] (Gamma)
 %   Cutoff:     Max distance between localizations in analyzed cluster (nm) (Default=20)
 %   NNN:        Minimum Number of Nearest Neighbors (Default=2)
@@ -98,61 +98,57 @@ classdef BaGoL < handle
 %   Mohamadreza Fazel, Lidke Lab 2019
 %
     properties
-        SMD %Structure containing localization coordinates and uncertainties
-        ClusterSMD %SMD array corresponding to clusters   
-        MAPN %MAPN output coordinates and uncertainties.
-        PImage; %Posterior image
-        PImageFlag = 1; %Generate Posterior image. 0 or 1. (Default=1)
-        PImageSize = []; %Size of Posterior image (nm)
-        PixelSize = 2; %Pixel size for posterior images (nm) (Default=2)
-        XStart = []; %X starting coordinate of posterior images (nm)
-        YStart = []; %Y starting coordinate of posterior images (nm)
-        P_Jumps=[0.25 0.25 0.25 0.25]; %Proposal probabilities for RJMCMC Jumps 
-        N_Burnin=2000; %Number of jumps in burn in of RJMCMC chain (Default=2000)
-        N_Trials=3000; %Number of jumps in RJMCMC chain post burn in (Default=3000)
-        ROIsize=200; %ROI size for RJMCMC (nm)(Default=200)
-        Overlap=50; %Allowed overlap between subregions (nm)(Default=50)  
-        NNR = Inf; %Nearest Neighbor Radius (nm)(Default = Inf)
-        NNN = 2; %Minimum Number of Nearest Neighbors (Default=2)
-        Drift = 0; %Expected magnitude of drift velocity (nm/frame)(Default=0) 
-        SE_Adjust = 0; %Localization precision adjustment (nm) (Default=0)
-        Cutoff=20; %Max distance between localizations in analyzed cluster (nm) (Default=20)
-        Lambda; %Loc./emitter params [lambda] (Poisson) or [k, theta] (Gamma)
-        ChainFlag = 0; %Save RJCMC chain. 0 or 1. (Default=0)
-        Chain = {}; %Cell array of RJMCMC chains for clusters
+        SMD % Structure containing localization coordinates and uncertainties
+        ClusterSMD % SMD array corresponding to clusters   
+        MAPN % MAPN output coordinates and uncertainties.
+        PImage; % Posterior image
+        PImageFlag = 1; % Generate Posterior image. 0 or 1. (Default=1)
+        PImageSize = []; % Size of Posterior image (nm)
+        PixelSize = 2; % Pixel size for posterior images (nm) (Default=2)
+        XStart = []; % X starting coordinate of posterior images (nm)
+        YStart = []; % Y starting coordinate of posterior images (nm)
+        P_Jumps=[0.25 0.25 0.25 0.25]; % Proposal probabilities for RJMCMC Jumps 
+        N_Burnin=2000; % Number of jumps in burn in of RJMCMC chain (Default=2000)
+        N_Trials=3000; % Number of jumps in RJMCMC chain post burn in (Default=3000)
+        ROIsize=200; % ROI size for RJMCMC (nm)(Default=200)
+        Overlap=50; % Allowed overlap between subregions (nm)(Default=50)  
+        NNR = Inf; % Nearest Neighbor Radius (nm)(Default = Inf)
+        NNN = 2; % Minimum Number of Nearest Neighbors (Default=2)
+        Drift = 0; % Expected magnitude of drift velocity (nm/frame)(Default=0) 
+        SE_Adjust = 0; % Localization precision adjustment (nm) (Default=0)
+        Cutoff=20; % Max distance between localizations in analyzed cluster (nm) (Default=20)
+        Lambda; % Loc./emitter params [lambda] (Poisson) or [k, theta] (Gamma)
+        ChainFlag = 0; % Save RJCMC chain. 0 or 1. (Default=0)
+        Chain = {}; % Cell array of RJMCMC chains for clusters
     end
     
     methods
         
         function obj=analyze_all(obj)
-        %analyze_all Implements complete BaGoL analysis of SR dataset
+        % analyze_all Implements complete BaGoL analysis of SR dataset
         %
-        %This  method performs all steps necessary to analyze a
-        %super-resolution data set with BaGoL. Internally, it intializes
-        %output structures, generates ROIs and then clusters for RJMCMC,
-        %then loops over clusters and collates the output. 
+        % This  method performs all steps necessary to analyze a
+        % super-resolution data set with BaGoL. Internally, it intializes
+        % output structures, generates ROIs and then clusters for RJMCMC,
+        % then loops over clusters and collates the output. 
         %
-        %This method sequentially calls: 
+        % This method sequentially calls: 
         %   ROIs = obj.genROIs()
         %   obj.precluster(...)
         %       BaGoL_RJMCMC(...)
         %       genPosterior(...)
         %       genMAPN(...)
-        %   removeOverlap(obj,ROIs,MeanX,MeanY,ii)
-        %   genMAPN(...); %% why is this done again??
-        %   genROIs(...) %% why is this done again??
-        %   genPosterior(...)
-        %   plotNND(...)
         %
         % USAGE:
         %   B.analyze_all
+        %
             
        % plotNND(obj,SaveDir)
-            %Save results first, then ROIs are generated. Next, the outliers
-            %are filtered and the preclusters are identified. Then, each
-            %precluster is processed usin the RJMCMC algorithm. Finally, the
-            %chain from RJMCMC is used to generate the posterior image and the
-            %MAPN coordinates.
+            % Save results first, then ROIs are generated. Next, the outliers
+            % are filtered and the preclusters are identified. Then, each
+            % precluster is processed usin the RJMCMC algorithm. Finally, the
+            % chain from RJMCMC is used to generate the posterior image and the
+            % MAPN coordinates.
             
             %auto calculate posterior size
             if isempty(obj.XStart)
@@ -195,7 +191,7 @@ classdef BaGoL < handle
             obj.MAPN.AlphaX_SE = [];
             obj.MAPN.AlphaY_SE = [];
             obj.MAPN.Nmean = [];
-            obj.MAPN.N = 0;
+            
             ClustNumHeirar = length(obj.ClusterSMD);
             if isempty(obj.SMD.FrameNum)
                MaxAlpha = 0; 
@@ -207,7 +203,7 @@ classdef BaGoL < handle
             warning('OFF', 'stats:kmeans:FailedToConvergeRep');
             for nn = 1:ClustNumHeirar
                 if nn/50 == ceil(nn/50)
-                    fprintf('Cluster: %g out of %g\n',nn,ClustNumHeirar);
+                    fprintf('Cluster: %g out of %g \n',nn,ClustNumHeirar);
                 end
                 
                 AnimFlag = 0;
@@ -242,12 +238,12 @@ classdef BaGoL < handle
        [SMD,SMD_combined]=frameConnect(SMDin,LOS,MaxDistance,MaxFrameGap,FitType);
        saveMAPN(Directory,FileType,MAPN)
        errPlot(SMD);
-       SMD=loadPICASSOh5(DataDir,FileName)
-       [Chain]=BaGoL_RJMCMC(SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
-       [SRIm,MapIm]=makeIm(SMD,MAPN,SZ,PixSize,XStart,YStart)
-       [Alpha,XShift,YShift,Aligned,Chain] = align_template(Temp,Input,Start,Cutoff,NChain,PlotFlag)
-       [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)
-       [Im]=scaleIm(Im,Percentile)
+       SMD=loadPICASSOh5 (DataDir,FileName)
+       [Chain]=BaGoL_RJMCMC (SMD,Lambda,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
+       [SRIm,MapIm]=makeIm (SMD,MAPN,SZ,PixSize,XStart,YStart)
+       [Alpha,XShift,YShift,Aligned,Chain] = align_template (Temp,Input,Start,Cutoff,NChain,PlotFlag)
+       [ImageOut,Image] = scalebar (Image,PixelSize,Length,Location)
+       [Im]=scaleIm (Im,Percentile)
        [ParamPoiss,ParamGam]=fitLambda(NMean,Percent)
        dispIm()
        Im=genSRMAPNOverlay(SMD,MAPN,XSize,YSize,PixelSize,SaveDir,XStart,YStart,RadiusScale,ScaleBarLength)

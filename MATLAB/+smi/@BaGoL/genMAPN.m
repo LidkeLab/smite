@@ -44,7 +44,7 @@ function genMAPN(obj,Chain,ROIs,ii)
     Frequency(1) = [];
     MostFrequent = find(Frequency==max(Frequency));
     MostFrequent = MostFrequent(1);
-    %obj.MAPN.N = obj.MAPN.N+MostFrequent;
+   
     for nn = 1:length(TChain)
         if TChain(nn).N == MostFrequent
             NSum = zeros(MostFrequent,1);
