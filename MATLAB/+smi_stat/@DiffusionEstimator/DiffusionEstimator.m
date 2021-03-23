@@ -17,6 +17,9 @@ classdef DiffusionEstimator < handle
         % Target data that will be fit (char array/string)
         FitTarget{mustBeMember(FitTarget, {'MSD', 'CDFOfJumps'})} = 'MSD';
         
+        % Number of MSD points to be fit (scalar, integer)(Default = 5)
+        NFitPoints = 5;
+        
         % Specify whether or not individual trajectories are fit.
         FitIndividualTrajectories = true;
         
@@ -114,9 +117,11 @@ classdef DiffusionEstimator < handle
             computeMSD(TR, MaxFrameLag, Verbose);
         [MSDStruct] = computeCDFOfJumps(MSDStruct);
         [FitParams, FitParamsSE] = ...
-            fitMSD(MSDStruct, FitMethod, DiffusionModel, Verbose);
+            fitMSD(MSDStruct, FitMethod, NFitPoints, ...
+            DiffusionModel, Verbose);
         [FitParams, FitParamsSE] = ...
-            fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose);
+            fitCDFOfJumps(MSDStruct, FitMethod, NFitPoints, ...
+            DiffusionModel, Verbose);
         [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
             MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
         [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...

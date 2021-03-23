@@ -51,11 +51,12 @@ elseif (obj.Verbose > 0)
 end
 DiffusionStruct = obj.DiffusionStruct;
 FitMethod = obj.FitMethod;
+NFitPoints = obj.NFitPoints;
 MSDEnsemble = obj.MSDEnsemble;
 MSDSingleTraj = obj.MSDSingleTraj;
 MaxFrameLag = obj.MaxFrameLag;
-save(FilePath, 'DiffusionStruct', 'FitMethod', 'MaxFrameLag', ...
-    'MSDEnsemble', 'MSDSingleTraj', '-v7.3');
+save(FilePath, 'DiffusionStruct', 'FitMethod', 'NFitPoints', ...
+    'MaxFrameLag', 'MSDEnsemble', 'MSDSingleTraj', '-v7.3');
 
 % Generate and save a plot of the fit.
 if SaveParams.MakeFitPlot

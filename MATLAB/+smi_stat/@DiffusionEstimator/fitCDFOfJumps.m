@@ -1,5 +1,6 @@
 function [FitParams, FitParamsSE] = ...
-    fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose)
+    fitCDFOfJumps(MSDStruct, FitMethod, NFitPoints, ...
+    DiffusionModel, Verbose)
 %fitCDFOfJumps fits the CDF of displacement data (jumps).
 % This method will fit a model to the CDF (CPD) of trajectory
 % displacements.
@@ -10,6 +11,7 @@ function [FitParams, FitParamsSE] = ...
 %              already be populated with SortedJumps and CDFOfJumps (see
 %              computeCDFOfMSD()).
 %   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
+%   NFitPoints: Number of points in the MSD to be fit. (Default = 5)
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
 %                   'DiffusionModel'. (Default = 'Brownian')
@@ -32,6 +34,9 @@ function [FitParams, FitParamsSE] = ...
 if (~exist('FitMethod', 'var') || isempty(FitMethod))
     FitMethod = 'WeightedLS';
 end
+if (~exist('NFitPoints', 'var') || isempty(NFitPoints))
+    NFitPoints = 5;
+end
 if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
     DiffusionModel = 'Brownian';
 end
@@ -51,16 +56,19 @@ FitParamsSE = NaN(NFits, 1);
 for ii = 1:NFits
     % Make sure the MSD has enough points to make a useful fit.
     FrameLags = double(MSDStruct(ii).FrameLags);
+    MaxFitPoints = numel(FrameLags);
+    FitPointsIndices = 1:min(NFitPoints, MaxFitPoints);
+    FrameLags = FrameLags(FitPointsIndices);
     NFrames = numel(FrameLags);
     if (NFrames < 2)
         continue
     end
 
     % Fit the CDF of the jumps to the desired diffusion model.
-    NPoints = double(MSDStruct(ii).NPoints);
-    LocVarianceSum = double(MSDStruct(ii).LocVarianceSum);
-    SortedJumps = double(MSDStruct(ii).SortedJumps);
-    CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
+    NPoints = double(MSDStruct(ii).NPoints(FitPointsIndices));
+    LocVarianceSum = double(MSDStruct(ii).LocVarianceSum(FitPointsIndices));
+    SortedJumps = double(MSDStruct(ii).SortedJumps(FitPointsIndices));
+    CDFOfJumps = double(MSDStruct(ii).CDFOfJumps(FitPointsIndices));
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             [ParamsHat, ParamsHatSE] = ...

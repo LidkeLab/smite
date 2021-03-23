@@ -1,5 +1,5 @@
 function [FitParams, FitParamsSE] = ...
-    fitMSD(MSDStruct, FitMethod, DiffusionModel, Verbose)
+    fitMSD(MSDStruct, FitMethod, NFitPoints, DiffusionModel, Verbose)
 %fitMSD fits mean squared displacement data.
 % This method will fit a mean squared displacement plot by the method
 % specified by 'FitMethod'.
@@ -8,6 +8,7 @@ function [FitParams, FitParamsSE] = ...
 %   MSDStruct: A structure array of MSD data as output from computeMSD()
 %              (see computeMSD() for more details).
 %   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
+%   NFitPoints: Number of points in the MSD to be fit. (Default = 5)
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
 %                   'DiffusionModel'. (Default = 'Brownian')
@@ -30,6 +31,9 @@ function [FitParams, FitParamsSE] = ...
 if (~exist('FitMethod', 'var') || isempty(FitMethod))
     FitMethod = 'WeightedLS';
 end
+if (~exist('NFitPoints', 'var') || isempty(NFitPoints))
+    NFitPoints = 5;
+end
 if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
     DiffusionModel = 'Brownian';
 end
@@ -48,14 +52,17 @@ FitParamsSE = NaN(NFits, 2);
 for ii = 1:NFits
     % Make sure the MSD has enough points to make a useful fit.
     FrameLags = double(MSDStruct(ii).FrameLags);
+    MaxFitPoints = numel(FrameLags);
+    FitPointsIndices = 1:min(NFitPoints, MaxFitPoints);
+    FrameLags = FrameLags(FitPointsIndices);
     NFrames = numel(FrameLags);
     if (NFrames < 2)
         continue
     end
     
     % Fit the MSD to the desired diffusion model.
-    NPoints = double(MSDStruct(ii).NPoints);
-    MSD = double(MSDStruct(ii).MSD);
+    NPoints = double(MSDStruct(ii).NPoints(FitPointsIndices));
+    MSD = double(MSDStruct(ii).MSD(FitPointsIndices));
     switch DiffusionModel
         case {'Brownian', 'brownian'}
             [FitParams(ii, :), FitParamsSE(ii, :)] = ...
