@@ -52,7 +52,7 @@ end
 
 % Reshape 'ColorMap' if needed.
 StackSize = size(ImageStack);
-if (size(ColorMap, 3) ~= StackSize(3))
+if (size(ColorMap, 1) ~= StackSize(3))
     ColorMap = repmat(ColorMap(1, 1:size(ColorMap, 2)), StackSize(3), 1);
 end
 FaceAlpha = ones(StackSize(3), 1);

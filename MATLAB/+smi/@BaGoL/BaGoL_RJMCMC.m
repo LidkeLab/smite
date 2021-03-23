@@ -23,7 +23,7 @@ function [Chain]=BaGoL_RJMCMC(SMD,Lambda,SigAlpha,PMove,NChain,NBurnin,DEBUG)
 % The output chain is a structure array of the post burn-in states after
 % each jump for the input cluster. Each element of the array contains fields 
 % associated to a single accepted jump. A description of the fields is
-% given below. ??
+% given below. 
 %
 % INPUTS:
 %    SMD:      SMD structure with the following fields:
@@ -46,7 +46,7 @@ function [Chain]=BaGoL_RJMCMC(SMD,Lambda,SigAlpha,PMove,NChain,NBurnin,DEBUG)
 %
 % OUTPUT:
 %    Chain:    Structure array of post burn-in states of the RJMCMC Chain. 
-%       N: Number of emitters ??
+%       N: Number of emitters (Scalar)
 %       X: X coordinate of emitters (Kx1)
 %       Y: Y coordinate of emitters (Kx1)
 %       AlphaX: Corresponding X drift velocities (Kx1)

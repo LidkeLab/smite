@@ -4,7 +4,7 @@ function [LPost,D]=testData(obj,M)
 %
 % analyze_all() is the main function and all the other functions
 % are called inside this function. (genROIs, precluster, run 
-% all clusters, generate all statistics) ??
+% all clusters, generate all statistics) 
 %
 %    obj:   BaGoL object with an SMD structure as a field,  The SMD structure
 %           contains the following fields:
@@ -18,8 +18,8 @@ function [LPost,D]=testData(obj,M)
 %    M:     number of ROIs to test
 %
 % OUTPUTS:
-%    LPost: cluster posteriors ?? define cluster
-%    D:     scaled distances ??
+%    LPost: cluster posteriors
+%    D:     scaled distances 
 %
 
 % Created by:
