@@ -59,8 +59,8 @@ if ~isempty(DiffusionStruct)
         + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag*FrameRate);
     
     % Plot the MSD fit.
-    switch DiffusionModel
-        case {'Brownian', 'brownian'}
+    switch lower(DiffusionModel)
+        case 'brownian1c'
             % The Brownian diffusion model suggests the MSD is linear with
             % time.
             FitParams = DiffusionStruct(2).FitParams ...

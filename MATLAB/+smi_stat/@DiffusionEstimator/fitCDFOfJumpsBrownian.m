@@ -1,9 +1,11 @@
 function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
-    SortedJumps, CDFOfJumps, FrameLags, NPoints, LocVarianceSum, ...
-    Weights, FitMethod)
+    SortedJumps, CDFOfJumps, FrameLags, NPoints, ...
+    LocVarianceSum, NComponents, Weights, FitMethod, FitOptions)
 %fitCDFOfJumpsBrownian fits the CDF of jumps to a Brownian motion model.
-% This method will fit the CDF of an MSD to the Brownian motion model 
-% (i.e., a line).
+% This method will fit the CDF of squared displacements to a Brownian 
+% motion model with either one diffusing population (i.e., one diffusion 
+% constant) or two diffusing populations (two diffusion constants and the
+% population ratio).
 %
 % INPUTS:
 %   SortedJumps: The sorted jumps values used to compute 'CDFOfJumps' in 
@@ -24,9 +26,13 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 %                         variances, or average the SEs and square them? My
 %                         bet is on averaging variances, but I'm not sure.
 %                         This can make a big difference in some cases!
+%   NComponents: Number of diffusion coefficients to fit.  
+%                (scalar, integer)(Default = 2)
 %   Weights: Weights used for weighted least squares. (NDatax1 array)
 %            (Default = ones(NFrameLags, 1) i.e. no weighting)
 %   FitMethod: A string specifying the fit method. (Default = 'LS')
+%   FitOptions: Fit options sent directly to fminsearch (see doc fminsearch
+%               for details)(Default = optimset(@fminsearch))
 %
 % OUTPUTS:
 %   FitParams: Fit parameters for the MSD fit where
@@ -41,9 +47,15 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 if (~exist('FitMethod', 'var') || isempty(FitMethod))
     FitMethod = 'LS';
 end
+if (~exist('FitOptions', 'var') || isempty(FitOptions))
+    FitOptions = optimset(@fminsearch);
+end
 NJumps = numel(SortedJumps);
 if (~exist('Weights', 'var') || isempty(Weights))
     Weights = ones(NJumps, 1);
+end
+if (~exist('NComponents', 'var') || isempty(NComponents))
+    NComponents = 2;
 end
 
 % Fit the CDF of the MSD to the model.
@@ -67,12 +79,15 @@ switch FitMethod
             .* (smi_stat.DiffusionEstimator.brownianJumpCDF(...
             Params, SortedJumps, FrameLags, NPoints, LocVarianceSum) ...
             - CDFOfJumps).^2);
+        ParamsInit = 0.1 * ones(NComponents, 1);
         if (nargout > 1)
             [FitParams, FitParamsSE] = smi_stat.bootstrapFit(...
-                SortedJumps, CDFOfJumps, 0.1, CostFunction);
+                SortedJumps, CDFOfJumps, ParamsInit, CostFunction, [], ...
+                FitOptions);
         else
             FitParams = fminsearch(@(Params) ...
-                CostFunction(Params, SortedJumps, CDFOfJumps), 0.1);
+                CostFunction(Params, SortedJumps, CDFOfJumps), ...
+                ParamsInit, FitOptions);
         end
     otherwise
         error('Unknown ''FitMethod'' = %s', FitMethod)

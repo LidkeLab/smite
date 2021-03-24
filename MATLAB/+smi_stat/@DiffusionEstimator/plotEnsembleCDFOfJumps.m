@@ -59,8 +59,8 @@ if ~isempty(DiffusionStruct)
     
     % Plot the CDF fit.
     hold(PlotAxes, 'on')
-    switch DiffusionModel
-        case {'Brownian', 'brownian'}
+    switch lower(DiffusionModel)
+        case 'brownian1c'
             % Plot the CDF of jumps expected for Brownian diffusion.
             FitParams = DiffusionStruct(2).FitParams ...
                 * (JumpUnitConversion^2) / TimeUnitConversion;

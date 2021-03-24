@@ -6,9 +6,14 @@ classdef DiffusionEstimator < handle
     properties
         % ID of the diffusion model to be considered (char array/string)
         % OPTIONS:
-        %   'Brownian': Simple Brownian motion.
-        DiffusionModel{mustBeMember(DiffusionModel, {'Brownian'})} = ...
-            'Brownian';
+        %   'Brownian1C': Simple Brownian motion with one diffusion
+        %                 population (i.e., one diffusion constant).
+        %   'Brownian2C': Simple Brownian motion with two diffusing
+        %                 populations (i.e., two diffusion constants).
+        %                 This model can only be used when 
+        %                 FitTarget = 'CDFOfJumps'
+        DiffusionModel{mustBeMember(DiffusionModel, ...
+            {'Brownian1C', 'Brownian2C'})} = 'Brownian1C';
         
         % Fit method for fitting data (char array/string)
         FitMethod{mustBeMember(FitMethod, {'WeightedLS', 'LS'})} = ...
@@ -120,8 +125,7 @@ classdef DiffusionEstimator < handle
             fitMSD(MSDStruct, FitMethod, NFitPoints, ...
             DiffusionModel, Verbose);
         [FitParams, FitParamsSE] = ...
-            fitCDFOfJumps(MSDStruct, FitMethod, NFitPoints, ...
-            DiffusionModel, Verbose);
+            fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose);
         [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
             MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
         [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
@@ -139,9 +143,10 @@ classdef DiffusionEstimator < handle
             fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
         [FitParams, FitParamsSE] = ...
             fitCDFOfJumpsBrownian(SortedJumps, CDFOfJumps, ...
-            FrameLags, NPoints, LocVarianceSum, Weights, FitMethod)
+            FrameLags, NPoints, LocVarianceSum, NComponents, ...
+            Weights, FitMethod, FitOptions);
         [CDFOfJumps] =  brownianJumpCDF(...
-            MotionParams, SortedJumps, FrameLags, NPoints, LocVarianceSum)
+            MotionParams, SortedJumps, FrameLags, NPoints, LocVarianceSum);
         
     end
     

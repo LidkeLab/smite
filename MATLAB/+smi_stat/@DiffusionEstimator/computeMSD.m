@@ -33,7 +33,7 @@ MaxFrameDiff = ...
 DefaultMaxFrameLag = ceil(MaxFrameDiff / 4);
 if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
     MaxFrameLag = DefaultMaxFrameLag;
-elseif (MaxFrameLag > DefaultMaxFrameLag)
+elseif (MaxFrameLag > MaxFrameDiff)
     if (Verbose > 2)
         % For the highest verbosity levels, we should share more info. than
         % just the warning.
