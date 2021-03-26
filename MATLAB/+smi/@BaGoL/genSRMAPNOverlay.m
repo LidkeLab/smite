@@ -50,6 +50,7 @@ if ~exist('PixelSize','var') || strcmp(PixelSize,'rescale')
     %smallest precision.
     MinPixelsPerCircle = 16;
     CircleRadius = sqrt((MAPN.X_SE.^2+MAPN.Y_SE.^2) / 2) .* RadiusScale;
+    CircleRadius = max(1, CircleRadius);   % Don't let value become too small!
     SmallestCircumference= 2 * pi * min(CircleRadius);
     if SmallestCircumference == 0
        error('Precision cannot be zero'); 
