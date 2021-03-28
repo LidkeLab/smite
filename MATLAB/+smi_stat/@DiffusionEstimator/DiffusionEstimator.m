@@ -2,6 +2,9 @@ classdef DiffusionEstimator < handle
     %DiffusionEstimator contains methods useful for diffusion estimation.
     % This class contains several methods used to estimate diffusion
     % constants from single-particle tracking data.
+    %
+    % REQUIRES:
+    %   Optimization Toolbox (to use fmincon() for certain models)
     
     properties
         % ID of the diffusion model to be considered (char array/string)
@@ -10,7 +13,7 @@ classdef DiffusionEstimator < handle
         %                 population (i.e., one diffusion constant).
         %   'Brownian2C': Simple Brownian motion with two diffusing
         %                 populations (i.e., two diffusion constants).
-        %                 This model can only be used when 
+        %                 This model can only be used when
         %                 FitTarget = 'CDFOfJumps'
         DiffusionModel{mustBeMember(DiffusionModel, ...
             {'Brownian1C', 'Brownian2C'})} = 'Brownian1C';
@@ -22,17 +25,23 @@ classdef DiffusionEstimator < handle
         % Target data that will be fit (char array/string)
         FitTarget{mustBeMember(FitTarget, {'MSD', 'CDFOfJumps'})} = 'MSD';
         
+        % Max. frame lag of the MSD (scalar, integer)(Default = inf)
+        MaxFrameLag = inf;
+        
         % Number of MSD points to be fit (scalar, integer)(Default = 5)
         NFitPoints = 5;
         
-        % Specify whether or not individual trajectories are fit.
+        % Flag to estimate standard errors (Default = true)
+        % NOTE: For some of the fit methods/fit targets (e.g., FitTarget =
+        %       'CDFOfJumps') we have to use a bootstrap, in which case
+        %       estimating SEs can be unreasonably slow.
+        EstimateSEs = true;
+        
+        % Flag to fit individual trajectory MSDs/CDFs (Default = true)
         FitIndividualTrajectories = true;
         
         % Number of spatial dimensions (scalar, integer)(Default = 2)
         NDimensions = 2;
-        
-        % Max. frame lag of the MSD (scalar, integer)(Default = inf)
-        MaxFrameLag = inf;
         
         % Directory in which results will be saved by saveResults().
         SaveDir = pwd();
@@ -145,8 +154,8 @@ classdef DiffusionEstimator < handle
             fitCDFOfJumpsBrownian(SortedJumps, CDFOfJumps, ...
             FrameLags, NPoints, LocVarianceSum, NComponents, ...
             Weights, FitMethod, FitOptions);
-        [CDFOfJumps] =  brownianJumpCDF(...
-            MotionParams, SortedJumps, FrameLags, NPoints, LocVarianceSum);
+        [CDFOfJumps] =  brownianJumpCDF(MotionParams, ...
+            SortedJumps, FrameLags, NPoints, LocVarianceSum);
         
     end
     

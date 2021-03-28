@@ -7,7 +7,9 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. For the one
 %                 component model, this is just 2*D. For the two component
-%                 model, this is [2*D1, 2*D2, alpha]
+%                 model, this is [2*D_1; 2*D_2; alpha]. For N-components,
+%                 this is [2*D_1, 2*D_2, ..., 2*D_N, 
+%                         alpha_1, alpha_2, ..., alpha_{N-1}
 %   SortedJumps: The sorted jumps values used to compute 'CDFOfJumps' in
 %                ascending order. (numeric array)
 %   FrameLags: All of the unique frame lags associated with the jumps in
@@ -35,43 +37,45 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 %   David J. Schodt (Lidke lab, 2021)
 
 
+% Ensure MotionParams is a column vector.
+if isrow(MotionParams)
+    MotionParams = MotionParams.';
+end
+
+% Determine which model we're using (1-component, 2-component, ...).
+NParams = numel(MotionParams);
+NComponents = (NParams+1) / 2;
+
 % Compute the probability of each frame lag (i.e., the proportion of data
 % corresponding to each frame lag).
 FrameLagProb = NPoints / sum(NPoints);
+
+% Pad the MotionParams with the constrained term (i.e., the population
+% parameters have to sum to 1 so one of them is defined in terms of the
+% others).
+MotionParams = [MotionParams; ...
+    1 - sum(MotionParams(NComponents+1:NParams))];
 
 % Compute the CDF model.
 % NOTE: I'm taking the mean of the localization variance sums.  That's not
 %       ideal, but dealing with those properly becomes too messy/slow
 %       (i.e., we get another integral...).
-NParams = numel(MotionParams);
 NFrameLags = numel(FrameLags);
-PDFOfJumps = zeros(numel(SortedJumps), 1);
-switch NParams
-    case 1
-        Variance = FrameLags*MotionParams + mean(LocVarianceSum);
-        for ff = 1:NFrameLags
-            PDFOfJumps = PDFOfJumps ...
-                + (FrameLagProb(ff) * (SortedJumps/Variance(ff)) ...
-                .* exp(-0.5*(SortedJumps.^2)/Variance(ff)));
-        end
-    case 3
-        Variance1 = FrameLags*MotionParams(1) + mean(LocVarianceSum);
-        Variance2 = FrameLags*MotionParams(2) + mean(LocVarianceSum);
-        for ff = 1:NFrameLags
-            PDFOfJumps = PDFOfJumps ...
-                + (MotionParams(3)*(FrameLagProb(ff) ...
-                * (SortedJumps/Variance1(ff)) ...
-                .* exp(-0.5*(SortedJumps.^2)/Variance1(ff)))) ...
-                + ((1-MotionParams(3))*(FrameLagProb(ff) ...
-                * (SortedJumps/Variance2(ff)) ...
-                .* exp(-0.5*(SortedJumps.^2)/Variance2(ff))));
-        end
-    otherwise
-        error(['Input ''MotionParams'' must have either one or three', ...
-            'elements, corresponding to the 1-component and ', ...
-            '2-component models'])
+ZerosArray = zeros(numel(SortedJumps), 1);
+CDFOfJumps = ZerosArray;
+for nn = 1:NComponents
+    % Define the variance term for this component.
+    Variance = FrameLags*MotionParams(nn) + mean(LocVarianceSum);
+    
+    % Sum over frame lags.
+    CDFOfJumpsNN = ZerosArray;
+    for ff = 1:NFrameLags
+        CDFOfJumpsNN = CDFOfJumpsNN ...
+            + (FrameLagProb(ff) ...
+            * (1-exp(-0.5*(SortedJumps.^2)/Variance(ff))));
+    end
+    CDFOfJumps = CDFOfJumps + MotionParams(nn+NComponents)*CDFOfJumpsNN;
 end
-CDFOfJumps = cumsum(PDFOfJumps .* [0; diff(SortedJumps)]);
 
 
 end

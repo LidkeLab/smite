@@ -19,7 +19,7 @@ function [FitParams, FitParamsSE] = ...
 % OUTPUTS:
 %   FitParams: Fit parameters for the MSD fit.  These will vary based on
 %              'FitMethod'. FitParams(ii, :) will contain the fit
-%              parameters for the fit to MSDStruct(ii). 
+%              parameters for the fit to MSDStruct(ii).
 %              (numel(MSDStruct)xNParameters array)
 %   FitParamsSE: Standard errors for the MSD fit parameters 'FitParams'.
 %                These will vary based on 'Method'.
@@ -39,15 +39,26 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 0;
 end
 
-% Fit the MSD data.
+% Determine how many components and fit parameters are used in the desired
+% model.
+switch lower(DiffusionModel)
+    case 'brownian1c'
+        NComponents = 1;
+    case 'brownian2c'
+        NComponents = 2;
+    otherwise
+        error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
+end
+NFitParams = 2*NComponents - 1;
+
+% Fit the CDF data.
 if (Verbose > 1)
-    fprintf(['fitCDFOfMSD(): fitting CDF of MSD with FitMethod = ', ...
-        '''%s''...\n'], ...
-        FitMethod)
+    fprintf(['fitCDFOfJumps(): fitting CDF of jumps with FitMethod = ', ...
+        '''%s''...\n'], FitMethod)
 end
 NFits = numel(MSDStruct);
-FitParams = NaN(NFits, 1);
-FitParamsSE = NaN(NFits, 1);
+FitParams = NaN(NFits, NFitParams);
+FitParamsSE = NaN(NFits, NFitParams);
 for ii = 1:NFits
     % Isolate some arrays needed for the fit.
     CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
@@ -55,23 +66,22 @@ for ii = 1:NFits
     NPoints = double(MSDStruct(ii).NPoints);
     LocVarianceSum = double(MSDStruct(ii).LocVarianceSum);
     SortedJumps = double(MSDStruct(ii).SortedJumps);
-
+    
     % Fit the CDF of the jumps to the desired diffusion model.
-    switch lower(DiffusionModel)
-        case 'brownian1c'
-            NComponents = 1;
-        case 'brownian2c'
-            NComponents = 2;
-        otherwise
-            error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
+    if (nargout > 1)
+        [ParamsHat, ParamsHatSE] = ...
+            smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+            SortedJumps, CDFOfJumps, ...
+            FrameLags, NPoints, LocVarianceSum, NComponents, ...
+            [], FitMethod);
+        FitParamsSE(ii, :) = ParamsHatSE.';
+    else
+        ParamsHat = smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+            SortedJumps, CDFOfJumps, ...
+            FrameLags, NPoints, LocVarianceSum, NComponents, ...
+            [], FitMethod);
     end
-    [ParamsHat, ParamsHatSE] = ...
-        smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
-        SortedJumps, CDFOfJumps, ...
-        FrameLags, NPoints, LocVarianceSum, NComponents, ...
-        [], FitMethod);
     FitParams(ii, :) = ParamsHat.';
-    FitParamsSE(ii, :) = ParamsHatSE.';
 end
 
 

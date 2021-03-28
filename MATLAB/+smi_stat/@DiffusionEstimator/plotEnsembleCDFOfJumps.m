@@ -8,11 +8,11 @@ function [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
 %   PlotAxes: Axes in which the plot will be made. (Default = gca())
 %   MSDEnsemble: Structure array with ensemble MSD results (see outputs of
 %                computeMSD())
-%   DiffusionStruct: Structure array containing MSD fit ressults. 
+%   DiffusionStruct: Structure array containing MSD fit ressults.
 %                    (Default = [], meaning no fit results are plotted).
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
-%                   'DiffusionModel'. (Default = 'Brownian')
+%                   'DiffusionModel'. (Default = 'Brownian1C')
 %   UnitFlag: Flag to specify camera units (0) or physical units (1).
 %             (Default = 0)
 %
@@ -31,7 +31,7 @@ if (~exist('DiffusionStruct', 'var') || isempty(DiffusionStruct))
     DiffusionStruct = [];
 end
 if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
-    DiffusionModel = 'Brownian';
+    DiffusionModel = 'Brownian1C';
 end
 if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
     UnitFlag = 0;
@@ -47,6 +47,16 @@ stairs(PlotAxes, Jumps, MSDEnsemble.CDFOfJumps)
 
 % If needed, plot the fit results.
 if ~isempty(DiffusionStruct)
+    % Determine how many components are used in the model.
+    switch lower(DiffusionModel)
+        case 'brownian1c'
+            NComponents = 1;
+        case 'brownian2c'
+            NComponents = 2;
+        otherwise
+            error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
+    end
+    
     % Define some unit conversion parameters. This is needed because the
     % DiffusionStruct allows for either camera units or physical units
     % (unlike the MSD structures).
@@ -59,18 +69,15 @@ if ~isempty(DiffusionStruct)
     
     % Plot the CDF fit.
     hold(PlotAxes, 'on')
-    switch lower(DiffusionModel)
-        case 'brownian1c'
-            % Plot the CDF of jumps expected for Brownian diffusion.
-            FitParams = DiffusionStruct(2).FitParams ...
-                * (JumpUnitConversion^2) / TimeUnitConversion;
-            ModelCDF = smi_stat.DiffusionEstimator.brownianJumpCDF(...
-                FitParams, Jumps, ...
-                MSDEnsemble.FrameLags * FrameConversion, ...
-                MSDEnsemble.NPoints, ...
-                MSDEnsemble.LocVarianceSum * (JumpConversion^2));
-            plot(PlotAxes, Jumps, ModelCDF)
-    end
+    FitParams = DiffusionStruct(2).FitParams;
+    FitParams(1:NComponents) = FitParams(1:NComponents) ...
+        * (JumpUnitConversion^2) / TimeUnitConversion;
+    ModelCDF = smi_stat.DiffusionEstimator.brownianJumpCDF(...
+        FitParams, Jumps, ...
+        MSDEnsemble.FrameLags * FrameConversion, ...
+        MSDEnsemble.NPoints, ...
+        MSDEnsemble.LocVarianceSum * (JumpConversion^2));
+    plot(PlotAxes, Jumps, ModelCDF)
 end
 JumpsUnit = smi_helpers.stringMUX({'pixels', 'micrometers'}, UnitFlag);
 xlabel(PlotAxes, sprintf('Jumps (%s)', JumpsUnit))
