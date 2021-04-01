@@ -1,4 +1,7 @@
 %% Bayesian Grouping of Localizations (BaGoL)
+%
+%  This function is adapted from EGFR_dSTORM.m in the BaGoL distribution.
+%
 %  BaGoL is run for a part of the region of the data with a broad gamma   
 %  prior to find the distribution of the number of localizations per  
 %  emitter.  In the second run of BaGoL, the entire region is processed 
@@ -37,8 +40,57 @@
 %     MAPN.AlphaY_SE: Y-Drift precisions (nm/frame)
 %     MAPN.Nmean: Mean number of binding events per docking strand
 
-%% Important Parameters
 function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
+%
+% INPUTS:
+%    FileNameIn    name of file containing coordinate (SMR/SMD) structure
+%    DataDir       directory in which FileNameIn is located
+%    SaveDir       directory in which saved results are put
+%    BaGoLParams   structure with the following parameters:
+%       ImageSize         Image size (pixel)
+%       PixelSize         Pixel size (nm)
+%       OutputPixelSize   Pixel size for posterior images (nm)
+%       IntensityCutoff   Intensity cutoff
+%       NNR               At least NNN localizations within NNR (nm)
+%       NNN               Number of Nearest Neighbors
+%       NNNmax            No more than NNN locs within NNR (nm)
+%       SE_Adjust         Precision inflation applied to SE (nm)
+%       ClusterDrift      Expected magnitude of drift (nm/frame)
+%       ROIsz             ROI size for RJMCMC (nm)
+%       OverLap           Size of overlapping region (nm)
+%       PreCluster        Pre-clustering parameter (nm)
+%       Lambda            Loc./emitter parameters for [lambda] (Poisson) or
+%                         [k theta] (Gamma) prior
+%       DataROI           1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
+%       N_Burnin1         Length of Burn-in chain      (1st pass)
+%       N_Trials1         Length of post-burn-in chain (1st pass)
+%       N_Burnin2         Length of Burn-in chain      (2nd pass)
+%       N_Trials2         Length of post-burn-in chain (2nd pass)
+%       Skip1stPass       If true, skip the 1st pass and directly use the
+%                         values for Lambda defined above for the prior
+%
+% NOTES:
+%    For very sparse datasets, turn off filtering (NNR = inf, NN = 0,
+%    NNNmax = inf).
+%
+%    SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
+%    data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
+%    be used.
+%
+%    k and theta are the shape and scale parameters for the Gamma probability
+%    distribution function.
+%
+%    DataROI is defined when running BaGoL's first pass over only part of the
+%    image.  If DataROI is empty, use the whole image.
+%
+% OUTPUTS:
+%    BGL           BaGoL object containing the results of the analysis
+%    ...           various plots, images and saved results detailed above
+
+% Created by
+%    Mohamadreza Fazel (2019) and Michael J. Wester (2021), Lidke Lab
+
+%% Important Parameters
 PixelSize = BaGoLParams.PixelSize;       %Pixel size (nm)
 OutputPixelSize = BaGoLParams.OutputPixelSize;
 IntensityCutoff = BaGoLParams.IntensityCutoff; %Intensity cutoff
@@ -141,7 +193,7 @@ BGL.ChainFlag = 0; %Save the chain if 1
 BGL.Drift = ClusterDrift; %Expected magnitude of drift (nm/frame)
 BGL.PixelSize = OutputPixelSize; %Pixel size for the posterior image
 
-% ---------- 1st Pass of BaGoL
+% ---------- 1st Pass of BaGoL (to estimate Lambda)
 
 if ~BaGoLParams.Skip1stPass
    %Analyzing the data
