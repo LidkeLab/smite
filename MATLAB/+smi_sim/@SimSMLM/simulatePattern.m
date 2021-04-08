@@ -55,6 +55,9 @@ function [SMD_True, SMD_True_Labeled, SMD_Model, SMD_Model_Noisy, Model, ...
    if nargout <= 2 return; end
 
    % Generate blinks (units are pixels).
+   if isempty(obj.StartState)
+      error('genBlinks must define StartState!');
+   end
    SMD_Model = obj.genBlinks(SMD_True_Labeled, obj.StartState);
    if nargout <= 3 return; end
 
