@@ -19,6 +19,15 @@ BaGoLParams.N_Trials2 = 4000;       % Length of post-burn-in chain (2nd pass)
 % the values for Lambda defined below.
 BaGoLParams.Skip1stPass = true;
 Results_BaGoL = 'Results_BaGoL';
+% If Make2ndPassExpPrior is true, then the posterior Lambda from the 1st pass
+% is converted into an exponential prior for the 2nd pass via:
+%    [k2_prior, theta2_prior] = [1, k1_posterior * theta1_posterior]
+% noting that k is the shape parameter (1 produces an exponential) and theta is
+% the scale parameter for a gamma distribution, where the product k * theta is
+% the mean of the distribution for the number of localizations per emitter, so
+% the idea is to perserve this mean value while retaining an exponential shape.
+% This is important in dSTORM.
+BaGoLParams.Make2ndPassExpPrior = true;
 
 % For very sparse datasets, turn off filtering (NNR = inf, NN = 0,
 % NNNmax = inf).
@@ -27,7 +36,7 @@ Results_BaGoL = 'Results_BaGoL';
 % data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should be
 % used.
 %
-% gamma and eta below are the shape and scale parameters for the Gamma
+% k and theta below are the shape and scale parameters for the Gamma
 % probability distribution function.
 %
 % DataROI is defined when running BaGoL's first pass over only part of the
@@ -43,7 +52,7 @@ BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.ROIsz = 200;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 BaGoLParams.PreCluster = 50;        % Pre-clustering parameter (nm)
-BaGoLParams.Lambda = [1, 1];        % [gamma, eta] parameters for gamma prior
+BaGoLParams.Lambda = [1, 1];        % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 %BaGoLParams.DataROI = [100, 200, 100, 200];
 
@@ -57,7 +66,7 @@ BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 %BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 %BaGoLParams.PreCluster = 50;        % Pre-clustering parameter (nm)
-%BaGoLParams.Lambda = [1.8, 4];      % [gamma, eta] parameters for gamma prior
+%BaGoLParams.Lambda = [1.8, 4];      % [k, theta] parameters for gamma prior
 %BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 
 % Dense data parameters
@@ -70,7 +79,7 @@ BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 %BaGoLParams.ROIsz = 1000;           % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 %BaGoLParams.PreCluster = 80;        % Pre-clustering parameter (nm)
-%BaGoLParams.Lambda = [0.25, 200];   % [gamma, eta] parameters for gamma prior
+%BaGoLParams.Lambda = [0.25, 200];   % [k, theta] parameters for gamma prior
 %BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 
 c = SMA_Cluster();

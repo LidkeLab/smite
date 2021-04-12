@@ -68,8 +68,19 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %       N_Trials2         Length of post-burn-in chain (2nd pass)
 %       Skip1stPass       If true, skip the 1st pass and directly use the
 %                         values for Lambda defined above for the prior
+%       Make2ndPassExpPrior If true, adjust the 1st pass Lambda posterior to an
+%                         exponential to used as the prior for the 2nd pass
 %
 % NOTES:
+%    If Make2ndPassExpPrior is true, then the posterior Lambda from the 1st
+%    pass % is converted into an exponential prior for the 2nd pass via:
+%       [k2_prior, theta2_prior] = [1, k1_posterior * theta1_posterior]
+%    noting that k is the shape parameter (1 produces an exponential) and theta
+%    is the scale parameter for a gamma distribution, where the product
+%    k * theta is the mean of the distribution for the number of localizations
+%    per emitter, so the idea is to perserve this mean value while retaining an
+%    exponential shape.  This is important in dSTORM.
+%
 %    For very sparse datasets, turn off filtering (NNR = inf, NN = 0,
 %    NNNmax = inf).
 %
@@ -215,6 +226,14 @@ if ~BaGoLParams.Skip1stPass
    % run
    %PdP = fitdist(NMean,'gamma');
    PdP = ParamGam;
+
+   if BaGoLParams.Make2ndPassExpPrior
+      PdPsave = PdP;
+      PdP.a = 1;
+      PdP.b = PdPsave.a * PdPsave.b;
+      fprintf('Lambda adjust: [%.3f, %.3f] -> [%.3f, %.3f]\n', ...
+              PdPsave.a, PdPsave.b, PdP.a, PdP.b);
+   end
 end
 
 % ---------- 2nd Pass of BaGoL
@@ -257,8 +276,8 @@ SMD.FrameNum = SMR.Nframes*single((SMR.DatasetNum(Ind)-1))+single(SMR.FrameNum(I
 BGL.SMD = SMD;
 
 if ~BaGoLParams.Skip1stPass
-   BGL.Lambda = [PdP.a,PdP.b]; %Mean number of blinking estimated from the
-                               %former section, used for Poisson dist.
+   BGL.Lambda = [PdP.a, PdP.b]; %Mean number of blinking estimated from the
+                                %former section, used for Poisson dist.
 end
 
 BGL.N_Burnin = N_Burnin2; %Length of Burn-in chain
