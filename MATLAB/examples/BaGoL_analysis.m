@@ -160,7 +160,7 @@ end
 IndP = SMR.Photons < IntensityCutoff;
 
 % First run: Estimating Lambda using a wide gamma distribution
-Lambda = BaGoLParams.Lambda; %[gamma,etha] parameters for gamma prior.
+Lambda = BaGoLParams.Lambda; %[k, theta] parameters for gamma prior.
 % Make the first run on a smaller subregion (commented out for now).
 %DataROI = [80 120 120 160]; %Region to find Lambda (pixel) [XStart XEnd YStart YEnd]
 if ~isempty(BaGoLParams.DataROI)
@@ -206,8 +206,11 @@ BGL.PixelSize = OutputPixelSize; %Pixel size for the posterior image
 
 % ---------- 1st Pass of BaGoL (to estimate Lambda)
 
+Lambda1Prior     = [];
+Lambda1Posterior = [];
 if ~BaGoLParams.Skip1stPass
    %Analyzing the data
+   Lambda1Prior = BGL.Lambda;
    BGL.analyze_all()
 
    %Histogram of the number of blinking per emitter used to calculate the
@@ -226,13 +229,16 @@ if ~BaGoLParams.Skip1stPass
    % run
    %PdP = fitdist(NMean,'gamma');
    PdP = ParamGam;
+   Lambda1Posterior = [PdP.a, PdP.b];
 
+   % Force the prior for the 2nd pass (PdP) to be exponential, but with the
+   % same mean as the posterior for the 1st pass.
    if BaGoLParams.Make2ndPassExpPrior
-      PdPsave = PdP;
+      PdP1Posterior = PdP;
       PdP.a = 1;
-      PdP.b = PdPsave.a * PdPsave.b;
+      PdP.b = PdP1Posterior.a * PdP1Posterior.b;
       fprintf('Lambda adjust: [%.3f, %.3f] -> [%.3f, %.3f]\n', ...
-              PdPsave.a, PdPsave.b, PdP.a, PdP.b);
+              PdP1Posterior.a, PdP1Posterior.b, PdP.a, PdP.b);
    end
 end
 
@@ -279,6 +285,7 @@ if ~BaGoLParams.Skip1stPass
    BGL.Lambda = [PdP.a, PdP.b]; %Mean number of blinking estimated from the
                                 %former section, used for Poisson dist.
 end
+Lambda2Prior = BGL.Lambda;
 
 BGL.N_Burnin = N_Burnin2; %Length of Burn-in chain
 BGL.N_Trials = N_Trials2; %Length of post-burn-in chain
@@ -315,8 +322,9 @@ if minY < 0
    end
 end
 
-save(fullfile(SaveDir, ...
-              sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
+save(fullfile(SaveDir,                                              ...
+              sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), ...
+     'BGL', 'Lambda1Prior', 'Lambda1Posterior', 'Lambda2Prior');
 ScaleBarLength = 1000;   % nm
 BGL.saveBaGoL(ScaleBarLength, SaveDirLong);
 BGL.plotMAPN(3, SaveDirLong);

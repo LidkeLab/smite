@@ -17,7 +17,7 @@ BaGoLParams.N_Burnin2 = 8000;       % Length of Burn-in chain      (2nd pass)
 BaGoLParams.N_Trials2 = 4000;       % Length of post-burn-in chain (2nd pass)
 % If Skip1stPass is true, skip the 1st pass in BaGoL_analysis and directly use
 % the values for Lambda defined below.
-BaGoLParams.Skip1stPass = true;
+BaGoLParams.Skip1stPass = false;
 Results_BaGoL = 'Results_BaGoL';
 % If Make2ndPassExpPrior is true, then the posterior Lambda from the 1st pass
 % is converted into an exponential prior for the 2nd pass via:
@@ -49,10 +49,9 @@ BaGoLParams.NNNmax = inf;           % No more than NNN locs within NNR (nm)
 BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
-%BaGoLParams.ROIsz = 200;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 BaGoLParams.PreCluster = 50;        % Pre-clustering parameter (nm)
-BaGoLParams.Lambda = [1, 1];        % [k, theta] parameters for gamma prior
+BaGoLParams.Lambda = [1, 5];        % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % 1st pass [Xmin, Xmax, Ymin, Ymax] (pixel)
 %BaGoLParams.DataROI = [100, 200, 100, 200];
 
