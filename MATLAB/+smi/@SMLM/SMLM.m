@@ -12,6 +12,14 @@ properties
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
     %       DataType    % {'File', 'UserDefined'} ?
+    %
+    % Top level results directory: A few special results/plots (like GaussIm)
+    % are saved here.  Default value is obj.SMF.Data.ResultsDir set in the
+    % class constructor.  The rest of the results/plots are saved in
+    % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
+    % be derived from the dataset name and analysis ID.
+    ResultsDir = []
+    SRImageZoom = 20 % magnification factor for SR images generated
     Verbose = 1 % Verbosity level
 end
 % =========================================================================
@@ -21,6 +29,8 @@ properties (Access=protected)
     DC               % DriftCorrection class object used internally
     SMD              % SMD structure with final analysis results
     SMDPreThresh     % Keeps track of why localizations were filtered out
+    FullvsTest       % Logical value set by fullAnalysis or testFit to tell
+                     % saveResults to make the proper call to generatePlots
 end % properties (Access=protected)
 % =========================================================================
 
@@ -66,6 +76,8 @@ methods
             end
         end
 
+        obj.ResultsDir1 = obj.SMF.Data.ResultsDir;
+
         if StartGUI
             obj.gui();
         end
@@ -95,12 +107,10 @@ methods
     function fullAnalysis(obj)
         % fullAnalysis analyzes all data and saves results.
 
+        obj.FullvsTest = true;
         obj.analyzeAll();
         obj.saveResults();
-        ShowPlots = false;
-        obj.generatePlots(ShowPlots, obj.PlotDo);
 
-        %save
         if obj.Verbose >= 1
             fprintf('Done fullAnalysis.\n');
         end
@@ -112,9 +122,10 @@ methods
     function testFit(obj, DatasetIndex)
         %testFit performs detailed analysis and feedback of one dataset.
 
+        obj.FullvsTest = false;
         obj.analyzeAll(DatasetIndex);
-        ShowPlots = true;
-        obj.generatePlots(ShowPlots, obj.PlotDo);
+        obj.saveResults();
+
         if obj.Verbose >= 1
             fprintf('Done testFit.\n');
         end
@@ -243,9 +254,21 @@ methods
         [~, f, ~] = fileparts(obj.SMF.Data.FileName{1});
         if isempty(obj.SMF.Data.AnalysisID)
             fn = [f, '_Results.mat'];
+            SubDir = f;
         else
             fnextend = strcat('_Results_', obj.SMF.Data.AnalysisID, '.mat');
             fn = [f, fnextend];
+            SubDir = [f, obj.SMF.Data.AnalysisID];
+        end
+
+        if obj.FullvsTest
+           ResultsDir = obj.ResultsDir;
+           ResultsSubDir = fullfile(ResultsDir, SubDir);
+           ShowPlots = false;
+        else
+           ResultsDir = [];
+           ResultsSubDir = [];
+           ShowPlots = true;
         end
 
         SMD = obj.SMD;
@@ -253,15 +276,20 @@ methods
         if obj.Verbose >= 1
             fprintf('Saving SMD and SMF structures ...\n');
         end
-        if ~isfolder(obj.SMF.Data.ResultsDir)
-            mkdir(obj.SMF.Data.ResultsDir);
+        if ~isempty(ResultsDir) && ~isfolder(ResultsDir)
+            mkdir(ResultsDir);
         end
-        save(fullfile(obj.SMF.Data.ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
+        if ~isempty(ResultsSubDir) && ~isfolder(ResultsSubDir)
+            mkdir(ResultsSubDir);
+        end
+
+        save(fullfile(ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
+        obj.generatePlots(ResultsDir, ResultsSubDir, ShowPlots, obj.PlotDo);
     end
 
     % ---------------------------------------------------------------------
 
-    generatePlots(obj, ShowPlots, PlotDo)
+    generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
     gui(obj)
 end % methods
 % =========================================================================
