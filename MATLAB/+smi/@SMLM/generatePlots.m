@@ -5,7 +5,8 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
 %    obj          SMLM object
 %       obj.SMD      Single Molecule Data structure
 %       obj.SMF      Single Molecule Fitting structure
-%       obj.SRImageZoom   magnification factor for SR images
+%       obj.SRImageZoom    magnification factor for SR     images
+%       obj.SRCircImZoom   magnification factor for circle images
 %    PlotSaveDir1 Directory in which to save especially useful (priority 1)
 %                 plots, like GaussIm
 %    PlotSaveDir2 Directory in which to save all the other (priority 2) plots
@@ -202,7 +203,7 @@ end
 if ismember("CircleIm", PlotDo)
    % Generate a circle image.
    [~, CircleImageRGB] = smi_vis.GenerateImages.circleImage(...
-      SMD, [], obj.SRImageZoom);
+      SMD, [], obj.SRCircImZoom);
    if ~isempty(PlotSaveDir2)
       FileName = [BaseName, '_CircleImage.png'];
       imwrite(CircleImageRGB, fullfile(PlotSaveDir2, FileName))
@@ -220,7 +221,7 @@ if ismember("CircleImDrift", PlotDo)
     [~, SortIndices] = sort(SMD.FrameNum);
     ColorMap = ColorMap(SortIndices, :);
     [~, CircleImageRGB] = smi_vis.GenerateImages.circleImage(...
-        SMD, ColorMap, obj.SRImageZoom);
+        SMD, ColorMap, obj.SRCircImZoom);
     if ~isempty(PlotSaveDir2)
        FileName = [BaseName, '_CircleImageDrift.png'];
        imwrite(CircleImageRGB, fullfile(PlotSaveDir2, FileName))

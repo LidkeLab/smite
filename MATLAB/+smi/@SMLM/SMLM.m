@@ -19,7 +19,8 @@ properties
     % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
     % be derived from the dataset name and analysis ID.
     ResultsDir = []
-    SRImageZoom = 20 % magnification factor for SR images generated
+    SRImageZoom  = 20 % magnification factor for SR     images generated
+    SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1 % Verbosity level
 end
 % =========================================================================
