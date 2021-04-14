@@ -76,7 +76,7 @@ methods
             end
         end
 
-        obj.ResultsDir1 = obj.SMF.Data.ResultsDir;
+        obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         if StartGUI
             obj.gui();
