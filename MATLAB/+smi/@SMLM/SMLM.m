@@ -285,7 +285,9 @@ methods
             mkdir(ResultsSubDir);
         end
 
-        save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
+        if ~isempty(ResultsSubDir)
+           save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
+        end
         obj.generatePlots(ResultsDir, ResultsSubDir, ShowPlots, obj.PlotDo);
     end
 
