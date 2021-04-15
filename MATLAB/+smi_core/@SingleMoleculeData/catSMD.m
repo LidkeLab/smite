@@ -39,15 +39,15 @@ function [SMD] = catSMD(SMD1, SMD2)
 
 % Ensure neither of the input SMD's are empty.  If one of them is empty,
 % output the other one without changes.  If both appear empty, return a
-% default empty SMD.
-if ((isempty(SMD1)||isempty(SMD1.FrameNum)) ...
-        && (isempty(SMD2)||isempty(SMD2.FrameNum)))
+% default empty SMD.  Note that if SMD exists but SMD.X is empty, then
+% there are no localizations present, so this is equivalent to SMD empty.
+if ((isempty(SMD1)||isempty(SMD1.X)) && (isempty(SMD2)||isempty(SMD2.X)))
     SMD = smi_core.SingleMoleculeData.createSMD();
     return
-elseif (isempty(SMD1) || isempty(SMD1.FrameNum))
+elseif (isempty(SMD1) || isempty(SMD1.X))
     SMD = SMD2;
     return
-elseif (isempty(SMD2) || isempty(SMD2.FrameNum))
+elseif (isempty(SMD2) || isempty(SMD2.X))
     SMD = SMD1;
     return
 end
