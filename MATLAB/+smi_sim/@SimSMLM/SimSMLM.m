@@ -7,30 +7,43 @@ classdef SimSMLM < handle
     % K_OnToBleach). The data has the same uniform background noise for the
     % whole sequence. The output is corrupted with the Poisson noise.
     
-    
+    % Typical data flows are
+%    produce noisy coordinates:
+%       SMD_True -> SMD_True_Labeled -> SMD_Model -> SMD_Model_Noisy
+%    produce noisy image stacks
+%       SMD_True -> SMD_True_Labeled -> SMD_Model -> Model -> Data
+
+
     properties
-        SZ               % Linear size of image (pixels)
-        Rho              % Fluorophore Density (fluorophore/pixel)
-        NDatasets        % Number of datasets
-        NFrames          % Number of frames per dataset
-        ZoomFactor       % It can be either smaller or larger than one
-        K_OnToOff        % Fluorophore turns Off from On state
+        SZ=256               % Linear size of image (pixels)
+        Rho=30              % Fluorophore Density (fluorophore/pixel)
+        NDatasets=1      % Number of datasets
+        NFrames=1000     % Number of frames per dataset
+        ZoomFactor=20    % It can be either smaller or larger than one- change
+        K_OnToOff=1      % Fluorophore turns Off from On state
                          %    (default:1 frames^-1)
-        K_OffToOn        % Fluorophore return to On state from Off state
+        K_OffToOn=.0005  % Fluorophore return to On state from Off state
                          %    (default:0.0005 frames^-1)
-        K_OnToBleach     % Fluorophore bleached out (default:1/5 frames^-1)
-        EmissionRate     % Emission rate (Intensity) of photons (photons/frame)
-        Bg               % Background Count Rate (counts/pixel)
-        PSFSigma         % Point Spread Function Sigma size (Pixels)
+        K_OnToBleach=.2   % Fluorophore bleached out (default:1/5 frames^-1)
+        EmissionRate=1000 % Emission rate (Intensity) of photons (photons/frame)
+        Bg=5             % Background Count Rate (counts/pixel)
+        PSFSigma=1.3      % Point Spread Function Sigma size (Pixels)
         LabelingEfficiency = 1
-                         % Fluorophore labeling efficiency [range: 0 - 1]
+        % Fluorophore labeling efficiency [range: 0 - 1]
+        
+        StartState='Equib'   % A string which determine if the particle starts on
+        % or starts randomly on or off.  It can be either 'on'
+        % or 'Equib'.
+        Verbose = 1      % Verbosity level
+        
+        SMD_True        
+        SMD_Labeled
+        SMD_Model
+                
         NWings           % The number of wings of the Siemen's star
-        StartState       % A string which determine if the particle starts on
-                         % or starts randomly on or off.  It can be either 'on'
-                         % or 'Equib'.
         OrderkTet        % Order of kTet (the value of k)
         RadiuskTet       % Radius of kTet
-        Verbose = 1      % Verbosity level
+        
         
     end
 
@@ -41,19 +54,23 @@ classdef SimSMLM < handle
     
     methods
         
-        function [SMD_True, SMD_Model, SMD_Data] = SiemenStar(obj)
+        function [SMD_True, SMD_Model, SMD_Data] = SiemenStar(obj,NWings)
         
+            if nargin()<2
+                NWings=16;
+            end
+            
         if nargout == 1
-            [SMD_True] = simStar(obj,obj.NWings);
+            [SMD_True] = simStar(obj,NWings);
         end
         
         if nargout == 2
-             [SMD_True] = simStar(obj,obj.NWings);
+             [SMD_True] = simStar(obj,NWings);
              [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
         end
          
         if nargout == 3
-             [SMD_True] = simStar(obj,obj.NWings);
+             [SMD_True] = simStar(obj,NWings);
              [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
              [SMD_Data] = genNoisySMD(obj,SMD_Model);
         end

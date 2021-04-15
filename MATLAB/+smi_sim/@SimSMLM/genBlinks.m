@@ -61,13 +61,15 @@ FrameNum=[];
 PSFSigma=[];
 Bg=[];
 TotalNFrames = obj.NDatasets*obj.NFrames;
-IntArray = zeros(NLabels, TotalNFrames);
+
+%IntArray = zeros(NLabels, TotalNFrames);
+IntArray = sparse(NLabels, TotalNFrames);
 
 %The following loop iterates over each particle to generate the blinking
 %events for them.
 
 for mm=1:NLabels
-    Temp=Blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,TotalNFrames,StartState);
+    Temp=blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,TotalNFrames,StartState);
     
     %Blinks() makes the blinking events. It takes the following inputs:
     
@@ -125,7 +127,7 @@ for i = 1 : obj.NDatasets
 end
     
     %Nested function to generate blinking events.
-    function IvsT=Blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
+    function IvsT=blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
     %Blinks() generates blinking time trace for a single
     %particle over the given number of the frames considering
     %the parameters K_OffToOn, K_OnToOff and K_OnToBleach.

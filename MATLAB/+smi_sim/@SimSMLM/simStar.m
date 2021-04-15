@@ -30,6 +30,12 @@ function [SMD_True] = simStar(obj,NWings)
     % throughout a cycle and then we remove those that are not
     % inside any wing.
     
+    
+    if nargin()<2
+        NWings=16;
+    end
+            
+    
     Alpha = -pi:2*pi/NWings:pi; %The angle that each wing starts and ends.
     Nn=poissrnd(floor(pi*R^2*obj.Rho)); % Nn are the number of emitters.
     X = 2*(rand(Nn,1)-0.5);
@@ -53,24 +59,17 @@ function [SMD_True] = simStar(obj,NWings)
     Y(DInd)=[];
     LabelCoords(:,1)=X.*R+obj.SZ/2;
     LabelCoords(:,2)=Y.*R+obj.SZ/2;
-    LabelCoords = LabelCoords*obj.ZoomFactor;
-    obj.SZ = obj.SZ*obj.ZoomFactor;
-    NLabels=length(LabelCoords); % Number of the generated particles.
-    IntArray=zeros(NLabels,obj.NDatasets*obj.NFrames); % This is a 2D-array
-    % with the size of(Number of the particles)x(Number of the frames)
-    % to store the trace of the blinking events. The elements of
-    % this array can be either zero or one. One signifies an on event.
-    % Let say the element on the ith row and jth column is one. This
-    % signifies the ith particle is ON in the jth frame.
-    
+
     %Saving the generated data in the structure SMD.
-    SMD_True = smi_core.SingleMoleculeData.createSMD();
-    SMD_True.X = LabelCoords(:,1);
-    SMD_True.Y = LabelCoords(:,2);
+    obj.SMD_True = smi_core.SingleMoleculeData.createSMD();
+    
+    obj.SMD_True.X = LabelCoords(:,1);
+    obj.SMD_True.Y = LabelCoords(:,2);
     if isscalar(obj.PSFSigma)
-        SMD_True.Z = [];
+        obj.SMD_True.Z = [];
     end
 
-    %obj.LabelCoords = LabelCoords;
-    %obj.NLabels = NLabels;
+    obj.genData()
+    
+    
 end

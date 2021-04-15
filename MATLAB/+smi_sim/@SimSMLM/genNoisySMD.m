@@ -15,6 +15,10 @@ function [SMD_Data] = genNoisySMD(obj,SMD_Model)
 % SMD_Data.Bg
 
 % Copy all fields from SMD_Model into SMD_Data.
+if nargin<2
+    SMD_Model=obj.SMD_Model;
+end
+
 SMD_Data = SMD_Model;
 
 SMD_Data.X_SE=(obj.PSFSigma)./sqrt(SMD_Model.Photons);
