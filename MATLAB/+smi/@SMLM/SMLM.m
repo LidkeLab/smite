@@ -285,7 +285,7 @@ methods
             mkdir(ResultsSubDir);
         end
 
-        save(fullfile(ResultsDir, fn), 'SMD', 'SMF', '-v7.3');
+        save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
         obj.generatePlots(ResultsDir, ResultsSubDir, ShowPlots, obj.PlotDo);
     end
 
