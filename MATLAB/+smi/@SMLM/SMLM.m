@@ -12,13 +12,6 @@ properties
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
     %       DataType    % {'File', 'UserDefined'} ?
-    %
-    % Top level results directory: A few special results/plots (like GaussIm)
-    % are saved here.  Default value is obj.SMF.Data.ResultsDir set in the
-    % class constructor.  The rest of the results/plots are saved in
-    % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
-    % be derived from the dataset name and analysis ID.
-    ResultsDir = []
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1 % Verbosity level
@@ -32,6 +25,12 @@ properties (Access=protected)
     SMDPreThresh     % Keeps track of why localizations were filtered out
     FullvsTest       % Logical value set by fullAnalysis or testFit to tell
                      % saveResults to make the proper call to generatePlots
+    % Top level results directory: A few special results/plots (like GaussIm)
+    % are saved here.  Default value is obj.SMF.Data.ResultsDir set in testFit
+    % and fullAnalysis.  The rest of the results/plots are saved in
+    % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
+    % be derived from the dataset name and analysis ID.
+    ResultsDir = []
 end % properties (Access=protected)
 % =========================================================================
 
@@ -81,8 +80,6 @@ methods
             obj.gui();
         end
 
-        obj.ResultsDir = obj.SMF.Data.ResultsDir;
-
     end
 
     % ---------------------------------------------------------------------
@@ -108,6 +105,8 @@ methods
     function fullAnalysis(obj)
         % fullAnalysis analyzes all data and saves results.
 
+        obj.ResultsDir = obj.SMF.Data.ResultsDir;
+
         obj.FullvsTest = true;
         obj.analyzeAll();
         obj.saveResults();
@@ -122,6 +121,8 @@ methods
 
     function testFit(obj, DatasetIndex)
         %testFit performs detailed analysis and feedback of one dataset.
+
+        obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         obj.FullvsTest = false;
         obj.analyzeAll(DatasetIndex);
