@@ -1,4 +1,4 @@
-function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
+function genBlinks(obj,StartState)
 
 %This function generates the blinking time traces for a single particle 
 %over the given number of the frames considering the input parameters and
@@ -8,15 +8,15 @@ function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
  
  % obj: The object of the SimSMLM() class.
  
- % [SMD_True]: This is a structure with the following three fields:
+ % [obj.SMD_Labeled]: This is a structure with the following three fields:
  
- % SMD_True.X: The X-positions of particles generated randomly.
+ % obj.SMD_Labeled.X: The X-positions of particles generated randomly.
  % (Number of the generated particles x 1)(Pixels)
     
- % SMD_True.Y: The Y-positions of particles generated randomly
+ % obj.SMD_Labeled.Y: The Y-positions of particles generated randomly
  % (Number of the generated particles x 1),(Pixels)
     
- % SMD_True.Z: The Z-positions of particles generated randomly
+ % obj.SMD_Labeled.Z: The Z-positions of particles generated randomly
  % (Number of the generated particles x 1), (um)
  
  % StartState: A string which determine if the particle starts on or
@@ -24,35 +24,35 @@ function [SMD_Model] = genBlinks(obj,SMD_True,StartState)
  
  % OUTPUTS:
  
- % [SMD_Model]: This is a structure with the following fields:
+ % [obj.SMD_Model]: This is a structure with the following fields:
  
- % SMD_Model.X: The X-positions of the particles seen on the frames.
+ % obj.SMD_Model.X: The X-positions of the particles seen on the frames.
  % (Number of the seen particles x 1),(Pixels)
     
- % SMD_Model.Y: The Y-positions of the particles seen on the frames.
+ % obj.SMD_Model.Y: The Y-positions of the particles seen on the frames.
  % (Number of the seen particles x 1),(Pixels)
     
- % SMD_Model.Z: The Z-positions of particles (um)
+ % obj.SMD_Model.Z: The Z-positions of particles (um)
     
- % SMD_Model.Photons: The intensity of the particles.
+ % obj.SMD_Model.Photons: The intensity of the particles.
  % (Number of the seen particles x 1),(Photon counts)
     
- % SMD_Model.FrameNum:The frames that the particles have been detected.
+ % obj.SMD_Model.FrameNum:The frames that the particles have been detected.
  % (Number of the seen particles x 1)
 
- % SMD_Model.NFrames:The number of frames that the particles have been detected.
+ % obj.SMD_Model.NFrames:The number of frames that the particles have been detected.
 
- % SMD_Model.DatasetNum:The dataset that corresponds to the FrameNum.
+ % obj.SMD_Model.DatasetNum:The dataset that corresponds to the FrameNum.
  % (Number of the seen particles x 1)
 
- % SMD_Model.NDatasets: The number of datasets in which to organize the frames.
+ % obj.SMD_Model.NDatasets: The number of datasets in which to organize the frames.
  
- % SMD_Model.PSFSigma: Point Spread Function Sigma size (Pixels)
+ % obj.SMD_Model.PSFSigma: Point Spread Function Sigma size (Pixels)
  
- % SMD_Model.Bg: Background Count Rate (counts/pixel), this will be empty.
+ % obj.SMD_Model.Bg: Background Count Rate (counts/pixel), this will be empty.
 
 % First making empty vectors that will be filled later.
-NLabels = numel(SMD_True.X);
+NLabels = numel(obj.SMD_Labeled.X);
 Photons=[];
 X=[];
 Y=[];
@@ -95,34 +95,34 @@ for mm=1:NLabels
         Indiv = obj.EmissionRate*Temp(FrameNumIndiv);
         Photons = cat(1,Photons,Indiv);
         %Indiv(:,1)=obj.LabelCoords(mm,1);
-        Indiv(:,1)=SMD_True.X(mm);
+        Indiv(:,1)=obj.SMD_Labeled.X(mm);
         X = cat(1,X,Indiv);
         %Indiv(:,1)=obj.LabelCoords(mm,2);
-        Indiv(:,1)=SMD_True.Y(mm);
+        Indiv(:,1)=obj.SMD_Labeled.Y(mm);
         Y = cat(1,Y,Indiv);
     end
 end
-SMD_Model = SMD_True;
-SMD_Model.X = X;
-SMD_Model.Y = Y;
+obj.SMD_Model = obj.SMD_Labeled;
+obj.SMD_Model.X = X;
+obj.SMD_Model.Y = Y;
 if isscalar (obj.PSFSigma) 
-    SMD_Model.Z = [];
-    SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
+    obj.SMD_Model.Z = [];
+    obj.SMD_Model.PSFSigma = obj.PSFSigma*ones([length(Photons),1]);
 end
-SMD_Model.Photons    = Photons;
-SMD_Model.Bg         = 0;
-SMD_Model.NDatasets  = obj.NDatasets;
-SMD_Model.NFrames    = obj.NFrames;
+obj.SMD_Model.Photons    = Photons;
+obj.SMD_Model.Bg         = 0;
+obj.SMD_Model.NDatasets  = obj.NDatasets;
+obj.SMD_Model.NFrames    = obj.NFrames;
 AbsoluteFrameNum     = FrameNum;
-SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
-SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
+obj.SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
+obj.SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
 % Convert absolute frame numbers to per dataset frame numbers.
 lo = 1;
 for i = 1 : obj.NDatasets
    hi = lo + obj.NFrames - 1;
    indx = find(lo <= AbsoluteFrameNum & AbsoluteFrameNum <= hi);
-   SMD_Model.DatasetNum(indx) = i;
-   SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
+   obj.SMD_Model.DatasetNum(indx) = i;
+   obj.SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
    lo = lo + obj.NFrames;
 end
     

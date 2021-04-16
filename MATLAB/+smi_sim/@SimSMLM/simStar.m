@@ -1,4 +1,4 @@
-function [SMD_True] = simStar(obj,NWings)
+function simStar(obj,NWings)
     
     % This function simulates the Siemen star and returns the frames
     % with particles distributed uniformaly on the wings of the star.

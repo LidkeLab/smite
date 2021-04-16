@@ -32,15 +32,18 @@ function genData(obj)
 % Created by
 %    Sajjad Khan and Michael J. Wester (Lidkelab 2021)
 
-
    % Apply labeling efficiency.
-   obj.SMD_Labeled = obj.applyLabelEffic(obj.SMD_True);
+   if isempty(obj.LabelingEfficiency)
+      error('applyLabelEffic must define LabelingEfficiency!');
+   end
+   % Transform obj.SMD_True into obj.SMD_Labeled.
+   obj.applyLabelEffic();
    
    % Generate blinks (units are pixels).
    if isempty(obj.StartState)
       error('genBlinks must define StartState!');
    end
-   obj.SMD_Model = obj.genBlinks(obj.SMD_Labeled, obj.StartState);
-   
-     
+   % Transform obj.SMD_Labeled into obj.SMD_Model.
+   obj.genBlinks(obj.StartState);
+
 end

@@ -6,12 +6,12 @@ function SMD_True = kTet(k, center, radius, startAngle)
 %
 % INPUTS:
 %    k            order of the k-tet (= number of points generated)
-%    center       (x, y) coordinates of the circle's center [1 x 2]
-%    radius       radius of the circle
+%    center       (x, y) coordinates of the circle's center [1 x 2] (pixel)
+%    radius       radius of the circle (pixel)
 %    startAngle   [OPTIONAL] starting angle for the first localization (radian)
 %
 % OUTPUT:
-%    SMD          SMD structure containing:
+%    SMD_True     SMD structure containing:
 %       X, Y         coordinates of the localizations computed
 
 % Created by
