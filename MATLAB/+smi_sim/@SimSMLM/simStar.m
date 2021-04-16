@@ -69,7 +69,6 @@ function simStar(obj,NWings)
         obj.SMD_True.Z = [];
     end
 
-    obj.genData()
-    
+    obj.genModel()
     
 end

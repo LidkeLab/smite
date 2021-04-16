@@ -31,4 +31,7 @@ function simkTets(obj, kk, radius_kTet)
    obj.SMD_True.XSize = obj.SZ;
    obj.SMD_True.YSize = obj.SZ;
 
+   % Apply labeling efficiency and generate blinks.
+   obj.genModel();
+
 end

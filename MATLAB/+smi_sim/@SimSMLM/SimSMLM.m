@@ -12,6 +12,20 @@ classdef SimSMLM < handle
     %       SMD_True -> SMD_Labeled -> SMD_Model -> SMD_Model_Noisy
     %    produce noisy image stacks
     %       SMD_True -> SMD_Labeled -> SMD_Model -> Model -> Data
+    % where
+    %   SMD_True           true locations of localizations
+    %   SMD_Labeled        obj.LabelingEfficiency applied to SMD_True
+    %                      localizations, removing localizations that are not
+    %                      labeled
+    %   SMD_Model          blinks generated for SMD_True_Labeled localizations
+    %   SMD_Model_Noisy    SMD_Model with positional and intensity noise added
+    %   Model              Gaussian blob image stack produced from SMD_Model
+    %   Data               Model image stack to which Poisson noise has been
+    %                      applied
+    %
+    % Model and Data are image stacks (n x n x f), where n is the linear size
+    % of the image in pixels and f is the total number of frames to be
+    % generated (f = obj.NDatasets * obj.NFrames).
 
     properties
         SZ=256            % Linear size of image (pixels)
@@ -34,48 +48,22 @@ classdef SimSMLM < handle
         Verbose = 1      % Verbosity level
 
         % Generic note: SMD_* below are SMD structures with various fields
-        % filled in as % appropriate at that stage.
+        % filled in as appropriate at that stage.
         SMD_True         % True coordinates produced by sim*
         SMD_Labeled      % True labeled coordinates produced by applyLabelEffic
         SMD_Model        % Coordinates with blinks produced by genBlinks
     end
 
-    %properties(SetAccess = protected)
-    %end
-    
-    methods
-        
-        function [SMD_True, SMD_Model, SMD_Data] = SiemenStar(obj,NWings)
-        
-            if nargin()<2
-                NWings=16;
-            end
-            
-        if nargout == 1
-            [SMD_True] = simStar(obj,NWings);
-        end
-        
-        if nargout == 2
-             [SMD_True] = simStar(obj,NWings);
-             [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
-        end
-         
-        if nargout == 3
-             [SMD_True] = simStar(obj,NWings);
-             [SMD_Model] = genBlinks(obj,SMD_True,obj.StartState);
-             [SMD_Data] = genNoisySMD(obj,SMD_Model);
-        end
-        
-        end
-    
-    end
-    
     methods 
          
         simkTets(obj, kk, radius_kTet)
         applyLabelEffic(obj)
         
     end 
+
+    properties(SetAccess = protected)
+
+    end
 
     methods(Static)
 

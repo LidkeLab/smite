@@ -1,4 +1,3 @@
-
 %% Example of generating sythetic SMLM data
 
 %Create sim object
@@ -14,7 +13,3 @@ S.simStar(NWings)
 % Generate Noisy Coordinates
 [SMD_Noisy]=S.genNoisySMD()
 figure;scatter(SMD_Noisy.X,SMD_Noisy.Y)
-
-
-
-
