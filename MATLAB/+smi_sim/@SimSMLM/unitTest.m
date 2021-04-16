@@ -22,7 +22,7 @@ function unitTest()
    %[SMD_Data] = obj.genNoisySMD(SMD_Model);
    
    % To generate the blobs without noise, execute the following:
-   [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,SMD_Model,0,0,0);
+   [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,obj.SMD_Model,0,0,0);
    dipshow(Model)
    
     % To generate the blobs having poisson noise, execute the following:
