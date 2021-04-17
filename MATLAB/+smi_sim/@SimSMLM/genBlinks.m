@@ -62,8 +62,11 @@ PSFSigma=[];
 Bg=[];
 TotalNFrames = obj.NDatasets*obj.NFrames;
 
-%IntArray = zeros(NLabels, TotalNFrames);
-IntArray = sparse(NLabels, TotalNFrames);
+if obj.SparseFlag
+   IntArray = sparse(NLabels, TotalNFrames);
+else
+   IntArray = zeros(NLabels, TotalNFrames);
+end
 
 %The following loop iterates over each particle to generate the blinking
 %events for them.

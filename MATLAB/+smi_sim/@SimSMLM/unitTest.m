@@ -18,8 +18,6 @@ function unitTest()
    NWings = 16;
    obj.simStar(NWings);
    SMD_Data = obj.genNoisySMD(obj.SMD_Model);
-   %[SMD_Model] = obj.genBlinks(SMD_True,'Equib'); 
-   %[SMD_Data] = obj.genNoisySMD(SMD_Model);
    
    % To generate the blobs without noise, execute the following:
    [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,obj.SMD_Model,0,0,0);

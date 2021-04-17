@@ -45,6 +45,7 @@ classdef SimSMLM < handle
         % A string which determine if the particle starts on or starts randomly
         % on or off.  It can be either 'on' or 'Equib'.
         StartState='Equib'
+        SparseFlag=false % 
         Verbose = 1      % Verbosity level
 
         % Generic note: SMD_* below are SMD structures with various fields
