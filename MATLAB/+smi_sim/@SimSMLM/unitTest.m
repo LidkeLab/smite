@@ -1,7 +1,7 @@
 function unitTest()
 
    obj = smi_sim.SimSMLM();
-   obj.SZ = 64;
+   obj.SZ = 256;
    obj.Rho = 30;
    obj.NDatasets = 2;
    obj.NFrames = 10;
