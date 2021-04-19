@@ -96,6 +96,7 @@ classdef SingleMoleculeData
         end
         
         [SMD] = catSMD(SMD1, SMD2)
+        [Density] = computeDensity(SMD);
         
     end
 end
