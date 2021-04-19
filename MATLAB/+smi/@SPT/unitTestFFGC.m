@@ -28,6 +28,7 @@ SimParams.PSFSigma = 1.3; % pixels
 SimParams.Bg = 5; % photons
 [TD] = SMA_Sim.simulateTrajectories(SimParams);
 TD.ConnectID = TD.TrajectoryID;
+TD.NFrames = SimParams.NFrames;
 [TRTruth] = smi_core.TrackingResults.convertSMDToTR(TD);
 [RawData] = SMA_SPT.simRawDataFromTR(TRTruth, SimParams);
 
@@ -42,14 +43,15 @@ SMF.Tracking.MaxFrameGap = 20;
 TD.ConnectID = zeros(numel(TD.X), 1); 
 RhoOnMean = mean(SMA_SPT.calcDensity(TD));
 RhoOffMean = (SimParams.KBlinkOff/SimParams.KBlinkOn) * RhoOnMean;
+SMF.Tracking.Rho_off = RhoOffMean;
 for ff = min(TD.FrameNum):max(TD.FrameNum)
-    [CM] = smi.SPT.createCostMatrixFF(TD, SMF, ff, RhoOffMean, -1);
+    [CM] = smi.SPT.createCostMatrixFF(TD, SMF, ff, -1);
     [Link12] = smi.SPT.solveLAP(CM);
     [TD] = smi.SPT.connectTrajFF(TD, Link12, ff);
 end
 
 % Perform the gap-closing process.
-[CM] =smi.SPT.createCostMatrixGC(TD, SMF, RhoOffMean, -1, 1); 
+[CM] =smi.SPT.createCostMatrixGC(TD, SMF, -1, 1); 
 [Link12] = smi.SPT.solveLAP(CM);
 [TD] = smi.SPT.connectTrajGC(TD, Link12);
 TR = smi_core.TrackingResults.convertSMDToTR(TD);

@@ -1,5 +1,5 @@
 function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-    FrameNumber, RhoOff, NonLinkMarker)
+    FrameNumber, NonLinkMarker)
 %createCostMatrixFF generates frame-to-frame connection cost matrix.
 % This method creates the cost matrix for the frame-to-frame connection of
 % localizations present in SMD.
@@ -14,9 +14,6 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   FrameNumber: The frame containing the localizations for which we want
 %                to construct a cost matrix (for connection to
 %                FrameNumber+1).
-%   RhoOff: The density of "dark" emitters (dark state emitters, 
-%           background emitters that can come into the field of view, 
-%           etc.). (particles / pixel^2)
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we 
 %                  don't want to select that element in the linear 
 %                  assignment problem.
@@ -116,7 +113,7 @@ end
 % FrameNumber and FrameNumber+1 (the costs of introducing a new emitter
 % appearing in FrameNumber+1/an emitter disappearing in FrameNumber+1,
 % respectively).
-CostBirth = -log(RhoOff * SMF.Tracking.K_on);
+CostBirth = -log(SMF.Tracking.Rho_off * SMF.Tracking.K_on);
 CostDeath = -log(SMF.Tracking.K_off);
 
 % Populate the remaining blocks (lower left, upper right, bottom right) of

@@ -102,6 +102,7 @@ classdef SingleMoleculeFitting < handle
 %   D:              Diffusion Constant (Pixels^2/Frame) (Default=1)
 %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
 %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
+%   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
 %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
 %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
 %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
@@ -208,6 +209,7 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.D=1;
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
+            obj.Tracking.Rho_off=1e-3;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MaxDistGC=10;
             obj.Tracking.MaxDistFF=5;
@@ -270,6 +272,7 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.D.Units = 'pixel^2 / frame';
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
+            obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
@@ -414,6 +417,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.K_off.Tip = ...
                 sprintf(['Known/anticipated rate at which emitters\n', ...
                 'transition to a dark state.']);
+            obj.SMFFieldNotes.Tracking.Rho_off.Tip = ...
+                sprintf('Density of emitters in the dark state');
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
                 sprintf(['Maximum number of frames elapsed between\n', ...
                 'localizations such that they can still be\n', ...
@@ -853,6 +858,11 @@ classdef SingleMoleculeFitting < handle
             if isfield(TrackingInput, 'K_off')
                 if ~isnumeric(TrackingInput.K_off)
                     error('''SMF.Tracking.K_off'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'Rho_off')
+                if ~isnumeric(TrackingInput.Rho_off)
+                    error('''SMF.Tracking.Rho_off'' must be numeric.')
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')

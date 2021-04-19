@@ -1,5 +1,5 @@
 function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
-    RhoOff, NonLinkMarker, CreateSparseMatrix)
+    NonLinkMarker, CreateSparseMatrix)
 %createCostMatrixGC creates the cost matrix for gap closing in SPT.
 % This method creates a cost matrix whose elements represent the cost for
 % connecting trajectory segments produced by the frame-to-frame step in the
@@ -12,11 +12,8 @@ function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   RhoOff: The density of "dark" emitters (dark state emitters, 
-%           background emitters that can come into the field of view, 
-%           etc.). (particles / pixel^2)
-%   NonLinkMarker: A marker in the output CostMatrix that indicates we 
-%                  don't want to select that element in the linear 
+%   NonLinkMarker: A marker in the output CostMatrix that indicates we
+%                  don't want to select that element in the linear
 %                  assignment problem.
 %                  (scalar, ~=inf, ~=nan, and typically < 0)(Default = -1)
 %   CreateSparseMatrix: This boolean flag will determine whether or not we
@@ -30,7 +27,7 @@ function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
 %   CostMatrix: The cost matrix whose elements represent the cost for
 %               connecting the end of one trajectory to the start of
 %               another trajectory in a future frame.
-%               (2*NTraj x 2*NTraj numeric, array, where NTraj is the 
+%               (2*NTraj x 2*NTraj numeric, array, where NTraj is the
 %               number of trajectories in the input SMD structure)
 %
 % CITATION:
@@ -50,7 +47,7 @@ if (~exist('CreateSparseMatrix', 'var') || isempty(CreateSparseMatrix))
     CreateSparseMatrix = true;
 end
 
-% Extract some arrays from the SMD/SMF structure.  Doing this outside of 
+% Extract some arrays from the SMD/SMF structure.  Doing this outside of
 % for loops can speed things up for very large SMD structures (although for
 % small SMD structures this has the potential to slow things down, but then
 % we don't care about speed).
@@ -65,6 +62,7 @@ MaxDistGC = SMF.Tracking.MaxDistGC;
 D = SMF.Tracking.D;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
+Rho_off = SMF.Tracking.Rho_off;
 
 % Define various parameters that will be useful later on.
 NTraj = max(ConnectID);
@@ -205,11 +203,11 @@ for bb = 1:NTraj
     %       conventions used in MATLAB: usually, MATLAB is column oriented,
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
-        -(log(RhoOff*K_on) + (StartFrameCurrent-FirstFrame)*log(1-K_on));
+        -(log(Rho_off*K_on) + (StartFrameCurrent-FirstFrame)*log(1-K_on));
 end
 
 % Fill in the "death" block (upper-right) of the cost matrix.
-LastFrame = max(FrameNum);
+LastFrame = SMD.NFrames;
 for ee = 1:NTraj
     % Find the ending frame for the ee-th trajectory.
     EndIndexCurrent = StartEndIndices(ee, 2);
