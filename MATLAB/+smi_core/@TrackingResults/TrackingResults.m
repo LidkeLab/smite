@@ -66,7 +66,7 @@ classdef TrackingResults
             TR.FileName = '';
         end
         
-        [TR] = convertSMDToTR(TD);
+        [TR] = convertSMDToTR(SMD, FileInfoStruct);
         
     end
 end
