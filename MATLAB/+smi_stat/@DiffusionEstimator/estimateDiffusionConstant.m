@@ -32,7 +32,7 @@ switch lower(obj.DiffusionModel)
         error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
 end
 
-% Fit the results and convert units if necessary.
+% Fit the results and convert units where necessary.
 if (obj.Verbose > 1)
     fprintf(['estimateDiffusionConstant(): fitting trajectory-wise ', ...
         'data...\n']);
@@ -185,6 +185,7 @@ switch obj.FitTarget
         PopulationRatiosEnsembleSE = ...
             [FitParamsEnsembleSE((NComponents+1):end); ...
             NaN];
+    case 'LikelihoodOfJumps'
 end
 
 % Store the results in the DiffusionStruct.

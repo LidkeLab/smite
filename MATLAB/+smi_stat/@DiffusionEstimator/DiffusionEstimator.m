@@ -6,6 +6,10 @@ classdef DiffusionEstimator < handle
     % REQUIRES:
     %   Optimization Toolbox (to use fmincon() for certain models)
     
+    % Created by:
+    %   David J. Schodt (Lidke lab, 2021)
+    
+    
     properties
         % ID of the diffusion model to be considered (char array/string)
         % OPTIONS:
@@ -23,7 +27,8 @@ classdef DiffusionEstimator < handle
             'WeightedLS';
         
         % Target data that will be fit (char array/string)
-        FitTarget{mustBeMember(FitTarget, {'MSD', 'CDFOfJumps'})} = 'MSD';
+        FitTarget{mustBeMember(FitTarget, ...
+            {'MSD', 'CDFOfJumps', 'LikelihoodOfJumps'})} = 'MSD';
         
         % Max. frame lag of the MSD (scalar, integer)(Default = inf)
         MaxFrameLag = inf;
