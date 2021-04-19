@@ -7,7 +7,9 @@ classdef SMLM < handle
 
 % =========================================================================
 properties
-    SMF         % Single Molecule Fitting structure
+    SMDPreThresh      % Keeps track of why localizations were filtered out
+    SMD               % SMD structure with final analysis results
+    SMF               % Single Molecule Fitting structure
     PlotDo = [] % Plots to generate (all by default);see generatePlots comments
     %       Preset      % {'TIRF', 'Sequential'} good idea?
     %       Data        % Current dataset or used for manual setting of data
@@ -20,17 +22,15 @@ end
 
 % =========================================================================
 properties (Access=protected)
-    DC               % DriftCorrection class object used internally
-    SMD              % SMD structure with final analysis results
-    SMDPreThresh     % Keeps track of why localizations were filtered out
-    FullvsTest       % Logical value set by fullAnalysis or testFit to tell
-                     % saveResults to make the proper call to generatePlots
+    DC                % DriftCorrection class object used internally
+    FullvsTest        % Logical value set by fullAnalysis or testFit to tell
+                      % saveResults to make the proper call to generatePlots
     % Top level results directory: A few special results/plots (like GaussIm)
     % are saved here.  Default value is obj.SMF.Data.ResultsDir set in testFit
     % and fullAnalysis.  The rest of the results/plots are saved in
     % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
     % be derived from the dataset name and analysis ID.
-    ResultsDir = []
+    ResultsDir = []   % This is set from SMF.Data.ResultsDir
 end % properties (Access=protected)
 % =========================================================================
 
