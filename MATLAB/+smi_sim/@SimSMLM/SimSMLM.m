@@ -26,6 +26,10 @@ classdef SimSMLM < handle
     % Model and Data are image stacks (n x n x f), where n is the linear size
     % of the image in pixels and f is the total number of frames to be
     % generated (f = obj.NDatasets * obj.NFrames).
+    %
+    % EITHER, generate an SMD structure with positional and intensity noise.
+    % (SMD_Model_Noisy <- genNoisySMD) OR ALTERNATIVELY, generate the blobs
+    % without Poisson noise (Model) then add it in (Data).
 
     properties
         SZ=256            % Linear size of image (pixels)
@@ -45,7 +49,12 @@ classdef SimSMLM < handle
         % A string which determine if the particle starts on or starts randomly
         % on or off.  It can be either 'on' or 'Equib'.
         StartState='Equib'
-        SparseFlag=false % 
+        % SparseFlag, if true, turns on using sparse matrices in genBlinks,
+        % allowing it to accomodate larger examples.  However, sparse matrices
+        % are also slower to manipulate than regular ones especially for
+        % smaller examples, so shouldn't be used unless needed, thus the
+        % default is false.
+        SparseFlag=false
         Verbose = 1      % Verbosity level
 
         % Generic note: SMD_* below are SMD structures with various fields
