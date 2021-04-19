@@ -55,12 +55,15 @@ classdef SPT < handle
             
         end
         
+        performFullAnalysis(obj)
+        saveResults(obj)
         gui(obj)
         
     end
     
     methods(Static)
         [Success] = unitTest();
+        [Success] = unitTestFFGC()
         [CostMatrix] = createCostMatrixFF(SMD, SMF, FrameNumber, ...
             RhoOff, NonLinkMarker);
         [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
