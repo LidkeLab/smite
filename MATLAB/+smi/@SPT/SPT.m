@@ -65,6 +65,7 @@ classdef SPT < handle
             RhoOff, NonLinkMarker);
         [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
             RhoOff, NonLinkMarker, CreateSparseMatrix);
+        [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
     end
     
     

@@ -32,4 +32,4 @@ mex(fullfile(sourcePath,'smi_c_FrameConnection.cpp'), '-outdir', mexFilePath);
 
 %% c_lap
 
-%mex(fullfile(sourcePath,'c_lap.cpp'), '-outdir', mexFilePath);
+mex(fullfile(sourcePath,'c_lap.cpp'), '-outdir', mexFilePath);
