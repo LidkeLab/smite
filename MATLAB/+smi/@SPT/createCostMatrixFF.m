@@ -72,7 +72,7 @@ for ii = 1:N
         % Compute the distance between the localizations and determine if
         % we need to proceed.
         Separation = sqrt((XFrame1-XFrame2)^2 + (YFrame1-YFrame2)^2);
-        if (Separation > MaxDist)
+        if (Separation > SMF.Tracking.MaxDistFF)
             continue
         end
         
@@ -80,8 +80,8 @@ for ii = 1:N
         % and Y separations between two localizations in consecutive
         % frames, assuming they came from the same emitter which
         % experienced Brownian motion with diffusion constant D.
-        Sigma_X = sqrt(2*D + X_SEFrame1^2 + X_SEFrame2^2);
-        Sigma_Y = sqrt(2*D + Y_SEFrame1^2 + Y_SEFrame2^2);
+        Sigma_X = sqrt(2*SMF.Tracking.D + X_SEFrame1^2 + X_SEFrame2^2);
+        Sigma_Y = sqrt(2*SMF.Tracking.D + Y_SEFrame1^2 + Y_SEFrame2^2);
         
         % Define the negative log-likelihood of the observed X, Y from
         % FrameNumber and FrameNumber+1 having come from the Normal
@@ -107,7 +107,8 @@ for ii = 1:N
         %       factor of 0.5 ensures that the total cost of elements
         %       selected in the LAP will be consistent with the physically
         %       reasonable costs we've defined otherwise.
-        CostMatrix(ii, jj) = 0.5 * (NegLikelihoodOfXandY - log(1-K_off));
+        CostMatrix(ii, jj) = ...
+            0.5 * (NegLikelihoodOfXandY - log(1-SMF.Tracking.K_off));
     end
 end
 
@@ -115,8 +116,8 @@ end
 % FrameNumber and FrameNumber+1 (the costs of introducing a new emitter
 % appearing in FrameNumber+1/an emitter disappearing in FrameNumber+1,
 % respectively).
-CostBirth = -log(Rho_off * K_on);
-CostDeath = -log(K_off);
+CostBirth = -log(RhoOff * SMF.Tracking.K_on);
+CostDeath = -log(SMF.Tracking.K_off);
 
 % Populate the remaining blocks (lower left, upper right, bottom right) of
 % the cost matrix as appropriate.
