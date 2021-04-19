@@ -469,14 +469,17 @@ classdef SingleMoleculeFitting < handle
                         || iscell(DataInput.FileDir))
                     error(['''SMF.Data.FileDir'' must be of type ', ...
                         'char, string, or cell.'])
-                elseif ~(isempty(DataInput.FileDir) ...
-                        || strcmp(DataInput.FileDir, obj.Data.FileDir))
+                elseif ~isempty(DataInput.FileDir)
                     % Note that if the FileDir isn't being changed, we
                     % don't want to update ResultsDir since that might
                     % overwrite a change to ResultsDir intended by the
                     % user.
-                    DataInput.ResultsDir = ...
-                        fullfile(DataInput.FileDir, 'Results');
+                    if (isfield(obj.Data, 'FileDir') ...
+                            && ~strcmp(DataInput.FileDir, ...
+                            obj.Data.FileDir))
+                        DataInput.ResultsDir = ...
+                            fullfile(DataInput.FileDir, 'Results');
+                    end
                 end
             end
             if isfield(DataInput, 'ResultsDir')
