@@ -1,4 +1,4 @@
-function [TR] = joinTraj(TR, TrajectoryIDs)
+function [TR] = joinTraj(TR, TrajectoryIDs, Verbose)
 %joinTraj joins a set of trajectories into one trajectory.
 % This method joins the trajectorys with IDs 'TrajectoryIDs' into a single
 % trajectory with the new ID being min(TrajectoryIDs).
@@ -7,6 +7,8 @@ function [TR] = joinTraj(TR, TrajectoryIDs)
 %   TR: Tracking Results structure.
 %   TrajectoryIDs: Array of trajectory IDs present in TR which will be
 %                  joined together. (integer array)
+%   Verbose: Verbosity level describing the types of output messages made
+%            during calls to this method. (Default = 1)
 %
 % OUTPUTS:
 %   TR: Tracking Results Structure with specified trajectories combined
@@ -16,6 +18,11 @@ function [TR] = joinTraj(TR, TrajectoryIDs)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
+% Set defaults if needed.
+if (~exist('Verbose', 'var') || isempty(Verbose))
+    Verbose = 1;
+end
+    
 % Remove duplicates and sort the TrajectoryIDs input.
 TrajectoryIDs = sort(unique(TrajectoryIDs), 'ascend');
 
@@ -24,9 +31,13 @@ TRIndices = smi_core.TrackingResults.getTRIndex(TR, TrajectoryIDs);
 for ii = 2:numel(TrajectoryIDs)
     if any(intersect(TR(TRIndices(1)).FrameNum, ...
             TR(TRIndices(ii)).FrameNum))
-        warning(['Trajectories %i and %i cannot be joined because ', ...
-            'they were observed in the same frame'], ...
-            TR(TRIndices(1)).TrajectoryID, TR(TRIndices(ii)).TrajectoryID)
+        if Verbose
+            warning(['smi_core.TrackingResults.joinTraj(): ', ...
+                'Trajectories %i and %i cannot be joined ', ...
+                'because they were observed in the same frame'], ...
+                TR(TRIndices(1)).TrajectoryID, ...
+                TR(TRIndices(ii)).TrajectoryID)
+        end
         continue
     end
     TR(TRIndices(1)).X = [TR(TRIndices(1)).X; TR(TRIndices(ii)).X];

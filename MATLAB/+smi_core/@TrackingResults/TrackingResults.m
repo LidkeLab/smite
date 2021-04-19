@@ -68,7 +68,7 @@ classdef TrackingResults
         
         [TR] = convertSMDToTR(SMD, FileInfoStruct);
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
-        [TR] = joinTraj(TR, TrajectoryIDs);
+        [TR] = joinTraj(TR, TrajectoryIDs, Verbose);
         
     end
 end
