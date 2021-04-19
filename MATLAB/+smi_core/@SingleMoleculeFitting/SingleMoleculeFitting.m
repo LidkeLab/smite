@@ -103,7 +103,8 @@ classdef SingleMoleculeFitting < handle
 %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
 %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
 %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
-%   MaxDist:        Maximum distance gap for Gap Closing (Pixels) (Default=10)
+%   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
+%   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
 %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
 %
 
@@ -208,7 +209,8 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
             obj.Tracking.MaxFrameGap=10;
-            obj.Tracking.MaxDist=10;
+            obj.Tracking.MaxDistGC=10;
+            obj.Tracking.MaxDistFF=5;
             obj.Tracking.MinTrackLength=3;
             
             % Store a note about the unit/type of various sub-fields.
@@ -269,7 +271,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
-            obj.SMFFieldNotes.Tracking.MaxDist.Units = 'pixels';
+            obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
+            obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
             
@@ -415,10 +418,14 @@ classdef SingleMoleculeFitting < handle
                 sprintf(['Maximum number of frames elapsed between\n', ...
                 'localizations such that they can still be\n', ...
                 'considered candidates for the gap closing procedure']);
-            obj.SMFFieldNotes.Tracking.MaxDist.Tip = ...
+            obj.SMFFieldNotes.Tracking.MaxDistGC.Tip = ...
                 sprintf(['Maximum separation between localizations\n', ...
                 'such that they can still be considered candidates\n', ...
                 'for the gap closing procedure']);
+            obj.SMFFieldNotes.Tracking.MaxDistFF.Tip = ...
+                sprintf(['Maximum separation between localizations\n', ...
+                'such that they can still be considered candidates\n', ...
+                'for the frame-to-frame connection procedure']);
             obj.SMFFieldNotes.Tracking.MinTrackLength.Tip = ...
                 sprintf(['Minimum number of observations\n', ...
                 '(localizations) a trajectory must have to not be\n', ...
@@ -854,9 +861,14 @@ classdef SingleMoleculeFitting < handle
                         'must be an integer.'])
                 end
             end
-            if isfield(TrackingInput, 'MaxDist')
-                if ~isnumeric(TrackingInput.MaxDist)
-                    error('''SMF.Tracking.MaxDist'' must be numeric.')
+            if isfield(TrackingInput, 'MaxDistGC')
+                if ~isnumeric(TrackingInput.MaxDistGC)
+                    error('''SMF.Tracking.MaxDistGC'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'MaxDistFF')
+                if ~isnumeric(TrackingInput.MaxDistFF)
+                    error('''SMF.Tracking.MaxDistFF'' must be numeric.')
                 end
             end
             if isfield(TrackingInput, 'MinTrackLength')
