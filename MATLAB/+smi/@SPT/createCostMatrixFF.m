@@ -1,5 +1,5 @@
 function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-    RhoOff, FrameNumber, NonLinkMarker)
+    FrameNumber, RhoOff, NonLinkMarker)
 %createCostMatrixFF generates frame-to-frame connection cost matrix.
 % This method creates the cost matrix for the frame-to-frame connection of
 % localizations present in SMD.
