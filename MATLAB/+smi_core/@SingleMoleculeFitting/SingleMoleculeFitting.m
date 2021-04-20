@@ -52,6 +52,7 @@ classdef SingleMoleculeFitting < handle
 %   CameraOffset:   Camera Offset, scalar or image (Default=0)
 %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
 %   CalibrationFilePath: Path to the camera calibration file (Default='')
+%   DataROI:        Region of interest of data file to be used (Default=[])
 %   FrameRate:      Data Collection Frame Rate (1/s) 
 %   PixelSize:      Camera back-projected pixel size (micrometers)   
 %
@@ -98,7 +99,7 @@ classdef SingleMoleculeFitting < handle
 %  PDegree          Degree intra-dataset fitting poly for drift rate (Default=1)
 % 
 % Tracking          {SPT}
-%   Method:         Type of method used for tracking (Default='smi_spt')
+%   Method:         Type of method used for tracking (Default='CostMatrix')
 %   D:              Diffusion Constant (Pixels^2/Frame) (Default=1)
 %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
 %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
@@ -160,6 +161,7 @@ classdef SingleMoleculeFitting < handle
             obj.Data.CameraOffset=0;
             obj.Data.CameraReadNoise=0;
             obj.Data.CalibrationFilePath='';
+            obj.Data.DataROI=[];
             obj.Data.FrameRate=1;
             obj.Data.PixelSize=0.1;
             
@@ -205,7 +207,7 @@ classdef SingleMoleculeFitting < handle
             obj.DriftCorrection.PDegree = 1;
             
             %Tracking
-            obj.Tracking.Method='SMA_SPT';
+            obj.Tracking.Method='CostMatrix';
             obj.Tracking.D=1;
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
@@ -232,6 +234,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Data.CameraReadNoise.Units = 'ADU^2';
             obj.SMFFieldNotes.Data.CalibrationFilePath.Units = ...
                 'char array';
+            obj.SMFFieldNotes.Data.DataROI.Units = ...
+                'pixels, [YStart, XStart, YEnd, XEnd]';
             obj.SMFFieldNotes.Data.FrameRate.Units = ...
                 'frames / second';
             obj.SMFFieldNotes.Data.PixelSize.Units = 'micrometers';
@@ -268,7 +272,7 @@ classdef SingleMoleculeFitting < handle
                 'micrometers';
             obj.SMFFieldNotes.DriftCorrection.PDegree.Units = '';
             obj.SMFFieldNotes.Tracking.Method.Units = ...
-                'must be SMA_SPT for now';
+                'must be CostMatrix for now';
             obj.SMFFieldNotes.Tracking.D.Units = 'pixel^2 / frame';
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
@@ -324,6 +328,10 @@ classdef SingleMoleculeFitting < handle
                 'used to collect the raw data']);
             obj.SMFFieldNotes.Data.CalibrationFilePath.Tip = ...
                 'Path to the camera calibration file to be used.';
+            obj.SMFFieldNotes.Data.DataROI.Tip = ...
+                sprintf(['ROI of data to be analyzed (currently only ', ...
+                'used in smi.SPT).\nThis should be organized as ', ...
+                '[YStart, XStart, YEnd, XEnd]']);
             obj.SMFFieldNotes.Data.FrameRate.Tip = ...
                 sprintf(['Acquisition frame rate of the camera used\n', ...
                 'to collect the raw data']);
@@ -578,6 +586,16 @@ classdef SingleMoleculeFitting < handle
                         || isstring(DataInput.CalibrationFilePath))
                     error(['''SMF.Data.CalibrationFilePath'' must ', ...
                         'be of type char or string'])
+                end
+            end
+            if isfield(DataInput, 'DataROI')
+                if (~isempty(DataInput.DataROI) ...
+                        && any(mod(DataInput.DataROI, 1)))
+                    % NOTE: This condition allows obj.Data.DataROI to
+                    %       be set to empty, which may cause issues
+                    %       depending on how it's used.
+                    error(['''SMF.Data.DataROI must be an array ', ...
+                        'of integers.'])
                 end
             end
             if isfield(DataInput, 'FrameRate')
@@ -842,8 +860,8 @@ classdef SingleMoleculeFitting < handle
             
             % Validate the inputs given in TrackingInput.
             if (isfield(TrackingInput, 'Method') ...
-                    && ~ismember(TrackingInput.Method, {'SMA_SPT'}))
-                error('SMF.Tracking.Method must be one of SMA_SPT,')
+                    && ~ismember(TrackingInput.Method, {'CostMatrix'}))
+                error('SMF.Tracking.Method must be one of CostMatrix,')
             end
             if isfield(TrackingInput, 'D')
                 if ~isnumeric(TrackingInput.D)
