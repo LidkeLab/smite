@@ -16,18 +16,9 @@ classdef LocalizeData < handle
     
     
     properties
-        CameraType  % (char array) see GaussMLE class for usage
-        BoxSize     % (scalar)(Pixels) see FindROI class for usage
-        BoxOverlap  % (scalar)(Pixels) see FindROI class for usage
-        FitType     % (char array) see GaussMLE class for usage/options
-        PSFSigma    % (scalar)(Pixels) see GaussMLE class
-        MinPhotons  % (scalar)(Photons) see FindROI class
-        Iterations  % (scalar) see GaussMLE class
-        ZFitStruct  % (struct array) see GaussMLE class
-        MinMax      % (struct array), see Threshold class for usage
+        SMF % see smi_core.SingleMoleculeFitting
         ScaledData  % (float array)(Photons) Gain/offset corrected data
         Verbose = 1 % verbosity level
-        ThresholdingOn % (true/false) perform thresholding
     end
     
     properties (SetAccess = 'protected')
@@ -56,9 +47,9 @@ classdef LocalizeData < handle
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Pad the input SMF structure to ensure it contains all
                 % fields defined in smi_core.SingleMoleculeFitting.
-                SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
+                obj.SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
             else
-                SMF = smi_core.SingleMoleculeFitting;
+                obj.SMF = smi_core.SingleMoleculeFitting;
             end
             
             % Set the verbosity level if provided.
@@ -70,26 +61,7 @@ classdef LocalizeData < handle
                     'Setting class properties based on constructor ', ...
                     'inputs...\n'])
             end
-                    
-            % Set class properties based on the inputs/defaults set above.
-            obj.CameraType = SMF.Data.CameraType;
-            obj.BoxSize = SMF.BoxFinding.BoxSize;
-            obj.BoxOverlap = SMF.BoxFinding.BoxOverlap;
-            obj.MinPhotons = SMF.BoxFinding.MinPhotons;
-            obj.FitType = SMF.Fitting.FitType;
-            obj.PSFSigma = SMF.Fitting.PSFSigma;
-            obj.Iterations = SMF.Fitting.Iterations;
-            obj.ZFitStruct = SMF.Fitting.ZFitStruct;
-            obj.ThresholdingOn = SMF.Thresholding.On;
-            obj.MinMax.X_SE = [0, SMF.Thresholding.MaxXY_SE];
-            obj.MinMax.Y_SE = [0, SMF.Thresholding.MaxXY_SE];
-            obj.MinMax.Z_SE = [0, SMF.Thresholding.MaxZ_SE];
-            obj.MinMax.PValue = [SMF.Thresholding.MinPValue, 1];
-            obj.MinMax.PSFSigma = [SMF.Thresholding.MinPSFSigma, ...
-                SMF.Thresholding.MaxPSFSigma];
-            obj.MinMax.Photons = [SMF.Thresholding.MinPhotons, inf];
-            obj.MinMax.Bg = [0, SMF.Thresholding.MaxBg];
-            
+                        
             % Set the ScaledData as a class property if provided.
             if (exist('ScaledData', 'var') && ~isempty(ScaledData))
                 obj.ScaledData = ScaledData;

@@ -17,22 +17,6 @@ function [SMD, SMDPreThresh] = genLocalizations(obj)
 %       Hanieh Mazloom-Farsibaf
 
 
-% Construct an SMF structure from the class properties.
-if (obj.Verbose > 1)
-    fprintf(['\tLocalizeData.genLocalizations(): ', ...
-        'Populating SMF structure based on class properties...\n'])
-end
-SMF = smi_core.SingleMoleculeFitting;
-SMF.Data.CameraType = obj.CameraType;
-SMF.BoxFinding.BoxSize = obj.BoxSize;
-SMF.BoxFinding.BoxOverlap = obj.BoxOverlap;
-SMF.BoxFinding.MinPhotons = obj.MinPhotons;
-SMF.Fitting.FitType = obj.FitType;
-SMF.Fitting.PSFSigma = obj.PSFSigma;
-SMF.Fitting.Iterations = obj.Iterations;
-SMF.Fitting.ZFitStruct = obj.ZFitStruct;
-SMF.Thresholding.On = obj.ThresholdingOn;
-               
 % Generate candidate ROIs from the gain and offset corrected data.
 if (obj.Verbose > 1)
     fprintf(['\tLocalizeData.genLocalizations(): ', ...
@@ -41,7 +25,7 @@ elseif (obj.Verbose > 0)
     fprintf(['\tLocalizeData.genLocalizations(): ', ...
         'Generating localizations from the input data...\n'])
 end
-FindROI = smi_core.FindROI(SMF, obj.ScaledData);
+FindROI = smi_core.FindROI(obj.SMF, obj.ScaledData);
 FindROI.Verbose = obj.Verbose;
 [ROIStack, SMDCandidates] = FindROI.findROI();
 if (obj.Verbose > 2)
@@ -56,16 +40,24 @@ if (obj.Verbose > 1)
     fprintf(['\tLocalizeData.genLocalizations(): ', ...
         'Fitting candidate ROIs with smi_core.GaussMLE...\n'])
 end
-GaussMLE = smi_core.GaussMLE(SMF, ROIStack);
+GaussMLE = smi_core.GaussMLE(obj.SMF, ROIStack);
 [SMDCandidates] = GaussMLE.gaussMLE(SMDCandidates);
 SMDCandidates.X = SMDCandidates.X + SMDCandidates.XBoxCorner;
 SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 
 % Threshold localizations.
+MinMax.X_SE = [0, obj.SMF.Thresholding.MaxXY_SE];
+MinMax.Y_SE = [0, obj.SMF.Thresholding.MaxXY_SE];
+MinMax.Z_SE = [0, obj.SMF.Thresholding.MaxZ_SE];
+MinMax.PValue = [obj.SMF.Thresholding.MinPValue, 1];
+MinMax.PSFSigma = [obj.SMF.Thresholding.MinPSFSigma, ...
+    obj.SMF.Thresholding.MaxPSFSigma];
+MinMax.Photons = [obj.SMF.Thresholding.MinPhotons, inf];
+MinMax.Bg = [0, obj.SMF.Thresholding.MaxBg];
 Threshold = smi_core.Threshold;
 Threshold.Verbose = obj.Verbose;
-[SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, obj.MinMax);
-if SMF.Thresholding.On
+[SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, MinMax);
+if obj.SMF.Thresholding.On
    [SMD] = Threshold.applyThresh(SMDPreThresh, obj.Verbose);
 else
    SMD = SMDPreThresh;
