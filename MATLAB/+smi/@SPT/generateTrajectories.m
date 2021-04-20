@@ -23,45 +23,38 @@ if isempty(obj.DataROI)
 end
 obj.SMD.DataROI = obj.DataROI;
 
-% Grab a bunch of parameters from the SMF structure (this might help make
-% the code more readable).
-K_on = obj.SMF.Params_Track.K_on;
-K_off = obj.SMF.Params_Track.K_off;
-D = obj.SMF.Params_Track.D;
-MaxFrameGap = obj.SMF.Params_Track.MaxFrameGap;
-MaxDistGC = obj.SMF.Params_Track.MaxDistGC;
-MaxDistFF = obj.SMF.Params_Track.MaxDistFF;
-
-% Calculate the mean density of emitters in the data.
-fprintf('Estimating the density of emitters in the data...\n')
-obj.TD.TrajectoryID = [];
-RhoOnMean = mean(obj.calcDensity(obj.TD)); % mean density of 'on' emitters
-RhoOffMean = (K_off/K_on) * RhoOnMean; % mean density of 'off' emitters
-
-% If the framerate wasn't provided, error out in a useful way.
-if isempty(obj.TD.FrameRate)
-    error('SMA_SPT.track(): FrameRate not set inside of the TD structure')
+% Estimate the density of off emitters (if requested).
+if obj.EstimateRhoFromData
+    RhoOnMean = mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
+    obj.SMF.Tracking.Rho_off = RhoOnMean ...
+        * (obj.SMF.Tracking.K_off/obj.SMF.Tracking.K_on);
 end
 
 % Perform the frame-to-frame connection of the localizations.
-fprintf('Performing the frame-to-frame connection process...\n')
-for ff = min(obj.TD.FrameNum):(max(obj.TD.FrameNum)-1)
+for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
     % Create the frame-to-frame connection cost matrix.
-    [CM] = obj.createCM_FF(obj.TD, ff, K_on, K_off, RhoOffMean, D, ...
-        MaxDistFF);
+    CostMatrix = smi.SPT.createCostMatrixFF(obj.SMD, obj.SMF, ...
+        ff, obj.NonlinkMarker);
 
     % Perform the linear assignment problem to determine how we should link
     % together trajectories.
-    [Link12] = obj.solveLAP(CM);
-    [obj.TD] = obj.connectFrame(obj.TD, Link12, ff);
+    Link12 = obj.solveLAP(CostMatrix);
+    obj.SMD = obj.connectTrajFF(obj.SMD, Link12, ff);
 end
+obj.SMDPreGapClosing = obj.SMD;
 
 % Perform the gap closing on the trajectory segments.
-fprintf('Performing the gap closing process...\n')
-[CM] = obj.createCM_GC(obj.TD, K_on, K_off, RhoOffMean, ...
-    D, MaxFrameGap, MaxDistGC);
-[Link12] = obj.solveLAP(CM);
-[obj.TD] = obj.connectGaps(obj.TD, Link12);
+CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...
+    obj.NonlinkMarker, obj.UseSparseMatrices);
+Link12 = obj.solveLAP(CostMatrix);
+SMD = obj.connectTrajGC(obj.SMD, Link12);
+
+% Add the framerate and pixel size to the outputs.
+[SMD.FrameRate] = deal(obj.SMF.Data.FrameRate);
+[SMD.PixelSize] = deal(obj.SMF.Data.PixelSize);
+obj.SMD = SMD;
+TR = smi_core.TrackingResults.convertSMDToTR(SMD);
+obj.TR = TR;
 
 
 end

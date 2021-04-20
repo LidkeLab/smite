@@ -13,6 +13,8 @@ classdef SingleMoleculeData
     %   NDims:          Number of dimensions in localization information (2,3)
     %   NFrames:        Number of image frames in raw data sets
     %   NDatasets:      Number of 3D image stacks
+    %   FrameRate:      Acquisition frame rate (1/seconds)
+    %   PixelSize       Pixel size of camera projected onto sample (micrometers)
     %   XSize:          Number of pixels in X dimension of raw data
     %   YSize:          Number of pixels in Y dimension of raw data
     %   XBoxCorner:     X coordinate of top right box corner
@@ -62,6 +64,8 @@ classdef SingleMoleculeData
             SMD.NDims=[];
             SMD.NFrames=[];
             SMD.NDatasets=[];
+            SMD.FrameRate=[];
+            SMD.PixelSize=[];
             SMD.XSize=[];
             SMD.YSize=[];
             SMD.XBoxCorner=[];
