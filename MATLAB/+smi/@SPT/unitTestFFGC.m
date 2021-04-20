@@ -10,9 +10,9 @@ function [Success] = unitTestFFGC()
 
 
 % Simulate Tracking Data (create a simulated TD structure).
-SimParams.ParticleDensity = 0.01; % particles / pixel^2
+SimParams.ParticleDensity = 0.001; % particles / pixel^2
 SimParams.NFrames = 200;
-SimParams.NSubFrames = 4;
+SimParams.NSubFrames = 1;
 SimParams.BoundaryCondition = 'Reflecting';
 SimParams.Intensity = 1000; % photons / trajectory / frame
 SimParams.D = 0.01; % pixel^2 / frame
@@ -20,23 +20,26 @@ SimParams.InteractionProb = 0;
 SimParams.KBlinkOff = 0.3;
 SimParams.KBlinkOn = 0.7;
 SimParams.KBleach = 0;
-SimParams.SigmaNoise = 0.2; % pixels
-SimParams.FrameSize = 32; % pixels
+SimParams.FrameSize = 64; % pixels
 SimParams.FrameRate = 1; % frames / second
 SimParams.PixelSize = 0.1; % micrometers
 SimParams.PSFSigma = 1.3; % pixels
+SimParams.SigmaNoise = ...
+    SimParams.PSFSigma / sqrt(SimParams.Intensity); % pixels
 SimParams.Bg = 5; % photons
 [TD] = SMA_Sim.simulateTrajectories(SimParams);
 TD.ConnectID = TD.TrajectoryID;
 TD.NFrames = SimParams.NFrames;
 [TRTruth] = smi_core.TrackingResults.convertSMDToTR(TD);
+[TRTruth.PixelSize] = deal(SimParams.PixelSize);
+[TRTruth.FrameRate] = deal(SimParams.FrameRate);
 [RawData] = SMA_SPT.simRawDataFromTR(TRTruth, SimParams);
 
 % Perform the frame-to-frame connection process.
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Tracking.D = 0.01;
-SMF.Tracking.K_off = 0.3;
-SMF.Tracking.K_on = 0.7;
+SMF.Tracking.D = SimParams.D;
+SMF.Tracking.K_off = SimParams.KBlinkOff;
+SMF.Tracking.K_on = SimParams.KBlinkOn;
 SMF.Tracking.MaxDistGC = 10;
 SMF.Tracking.MaxDistFF = 2 * MaxDistGC / sqrt(MaxFrameGap);
 SMF.Tracking.MaxFrameGap = 20;
@@ -44,7 +47,7 @@ TD.ConnectID = zeros(numel(TD.X), 1);
 RhoOnMean = mean(SMA_SPT.calcDensity(TD));
 RhoOffMean = (SimParams.KBlinkOff/SimParams.KBlinkOn) * RhoOnMean;
 SMF.Tracking.Rho_off = RhoOffMean;
-for ff = min(TD.FrameNum):max(TD.FrameNum)
+for ff = min(TD.FrameNum):(max(TD.FrameNum)-1)
     [CM] = smi.SPT.createCostMatrixFF(TD, SMF, ff, -1);
     [Link12] = smi.SPT.solveLAP(CM);
     [TD] = smi.SPT.connectTrajFF(TD, Link12, ff);
@@ -55,6 +58,8 @@ end
 [Link12] = smi.SPT.solveLAP(CM);
 [TD] = smi.SPT.connectTrajGC(TD, Link12);
 TR = smi_core.TrackingResults.convertSMDToTR(TD);
+[TR.PixelSize] = deal(SimParams.PixelSize);
+[TR.FrameRate] = deal(SimParams.FrameRate);
 
 % Make some plots.
 PlotFigure = figure();
