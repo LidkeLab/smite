@@ -152,9 +152,6 @@ methods
         obj.DC.Verbose = obj.Verbose;
         obj.SMD=[];
         obj.SMDPreThresh=[];
-        %obj.SMDPreThresh.X=[];
-        %obj.SMDPreThresh.Y=[];
-        %obj.SMDPreThresh.ThreshFlag=[];
         if obj.Verbose >= 1
             fprintf('Processing %d datasets ...\n', numel(DatasetList));
         end
@@ -205,10 +202,6 @@ methods
         % Keep track of why localizations were filtered out.
         obj.SMDPreThresh = smi_core.SingleMoleculeData.catSMD( ...
                               obj.SMDPreThresh, LD.SMDPreThresh);
-        %obj.SMDPreThresh.X = [obj.SMDPreThresh.X; LD.SMDPreThresh.X];
-        %obj.SMDPreThresh.Y = [obj.SMDPreThresh.Y; LD.SMDPreThresh.Y];
-        %obj.SMDPreThresh.ThreshFlag = ...
-        %    [obj.SMDPreThresh.ThreshFlag; LD.SMDPreThresh.ThreshFlag];
 
         % Define NDatasets, and DatasetNum from the dataset count.
         SMD.NDatasets  = 1;
