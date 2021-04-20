@@ -58,7 +58,6 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
-    rmdir(fullfile(tempdir, saveName));
     delete(fullfile(tempdir, [saveName, '*.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier);
@@ -66,7 +65,6 @@ catch ME
     Success(1) = 0;
 end
 fprintf('Loading and analyzing data saved as mat file done.\n');
-rmdir(fullfile(tempdir, saveName));
 delete(fullfile(tempdir, [saveName, '*.*']));
 
 %% ----------------------------------------------------------------------------
@@ -97,7 +95,6 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
-    rmdir(fullfile(tempdir, saveName));
     delete(fullfile(tempdir, [saveName '.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier)
@@ -105,7 +102,6 @@ catch ME
     Success(2) = 0;
 end
 fprintf('Loading and analyzing data saved as h5 file done.\n');
-rmdir(fullfile(tempdir, saveName));
 delete(fullfile(tempdir, [saveName, '.*']));
 
 %% ----------------------------------------------------------------------------
