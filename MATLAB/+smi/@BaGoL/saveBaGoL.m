@@ -73,7 +73,8 @@ print(gcf,fullfile(SaveDir,'BaGoL_Y-SE'),'-dpng')
 Nmean = obj.MAPN.Nmean;
 P = prctile(Nmean,99);
 figure('Visible','off')
-histogram(Nmean(Nmean<P),0:max(Nmean)+15,'Normalization','pdf')
+% 0:* replaced by 0.5:* as histogram can produce funny results otherwise.
+histogram(Nmean(Nmean<P),0.5:max(Nmean)+15,'Normalization','pdf')
 hold;
 if length(obj.Lambda)>1
     Xp = 0:0.2:max(Nmean)+15;
