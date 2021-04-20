@@ -100,7 +100,6 @@ for ii = numel(UniqueTrajIDs):-1:1
 end
 [TR.FrameRate] = deal(SMD.FrameRate);
 [TR.PixelSize] = deal(SMD.PixelSize);
-[TR.DataROI] = deal(SMD.DataROI);
 [TR.XSize] = deal(SMD.XSize);
 [TR.YSize] = deal(SMD.YSize);
 [TR.FileDir] = deal(FileInfoStruct.FileDir);
