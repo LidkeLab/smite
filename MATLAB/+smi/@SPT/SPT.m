@@ -5,11 +5,6 @@ classdef SPT < handle
     
     
     properties
-        % ROI of the raw data used to generate SMD. (Pixels)
-        % Default will be set in obj.generateTrajectories() if needed.
-        % Organized as [YStart, XStart, YEnd, XEnd]
-        DataROI
-        
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
         SMF
         

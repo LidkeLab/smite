@@ -19,17 +19,10 @@ SMLM = smi.SMLM(obj.SMF);
 SMLM.Verbose = obj.Verbose;
 
 % Load data, perform gain/offset correction, and fit the data.
-SMLM.analyzeAll();
+SMLM.analyzeAll()
+obj.SMF = SMLM.SMF;
 obj.SMD = SMLM.SMD;
 obj.SMDPreThresh = SMLM.SMDPreThresh;
-
-% Store the framerate and pixel size in SMD (if not already there).
-if isempty(obj.SMD.FrameRate)
-    obj.SMD.FrameRate = obj.SMF.Data.FrameRate;
-end
-if isempty(obj.SMD.PixelSize)
-    obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
-end
 
 % Generate trajectories from the localizations in obj.SMD.
 obj.generateTrajectories()

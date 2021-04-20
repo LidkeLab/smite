@@ -9,16 +9,6 @@ function generateTrajectories(obj)
 %   Revised for smite, David J. Schodt (Lidke Lab, 2021)
 
 
-% Set obj.DataROI if needed (this is not explicitly needed for tracking,
-% but it's nice to keep it around in saved results).
-if isempty(obj.DataROI)
-    warning(['smi.SPT.generateTrajectories(): obj.DataROI property ', ...
-        'not set. Default set to obj.DataROI = ', ...
-        '[1, 1, obj.SMD.YSize, obj.SMD.XSize]'])
-    obj.DataROI = [1, 1, obj.SMD.YSize, obj.SMD.XSize];
-end
-obj.SMD.DataROI = obj.DataROI;
-
 % Estimate the density of off emitters (if requested).
 if obj.EstimateRhoFromData
     RhoOnMean = mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
