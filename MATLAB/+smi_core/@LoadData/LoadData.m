@@ -84,12 +84,14 @@ classdef LoadData < handle
                     Data=smi_core.LoadData.loadDataH5(obj.FullFileName,varargin);
             end
             
-            % If SMF.Data.DataROI is empty, set a default.
-            if isempty(SMF.Data.DataROI)
+            % If SMF.Data.DataROI is empty or larger than the available
+            % data, set a default.
+            DataSize = size(Data);
+            if (isempty(SMF.Data.DataROI) ...
+                    || any(DataSize(1:2)<SMF.Data.DataROI(3:4)))
                 % For now, I'm doing this instead of 
                 % [1, 1, size(Data, [1, 2])] because size(Data, [1, 2])
                 % didn't work until MATLAB 2019b.
-                DataSize = size(Data);
                 SMF.Data.DataROI = [1, 1, DataSize(1:2)];
             end
         end
