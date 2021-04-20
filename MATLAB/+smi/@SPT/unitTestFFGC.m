@@ -11,13 +11,13 @@ function [Success] = unitTestFFGC()
 
 % Simulate Tracking Data (create a simulated TD structure).
 SimParams.ParticleDensity = 0.001; % particles / pixel^2
-SimParams.NFrames = 200;
+SimParams.NFrames = 500;
 SimParams.NSubFrames = 1;
-SimParams.BoundaryCondition = 'Reflecting';
+SimParams.BoundaryCondition = 'Free';
 SimParams.Intensity = 1000; % photons / trajectory / frame
 SimParams.D = 0.01; % pixel^2 / frame
 SimParams.InteractionProb = 0;
-SimParams.KBlinkOff = 0.3;
+SimParams.KBlinkOff = 0.2;
 SimParams.KBlinkOn = 0.7;
 SimParams.KBleach = 0;
 SimParams.FrameSize = 64; % pixels
@@ -40,9 +40,10 @@ SMF = smi_core.SingleMoleculeFitting();
 SMF.Tracking.D = SimParams.D;
 SMF.Tracking.K_off = SimParams.KBlinkOff;
 SMF.Tracking.K_on = SimParams.KBlinkOn;
-SMF.Tracking.MaxDistGC = 10;
-SMF.Tracking.MaxDistFF = 2 * MaxDistGC / sqrt(MaxFrameGap);
 SMF.Tracking.MaxFrameGap = 20;
+SMF.Tracking.MaxDistGC = 10;
+SMF.Tracking.MaxDistFF = 2 * SMF.Tracking.MaxDistGC ...
+    / sqrt(SMF.Tracking.MaxFrameGap);
 TD.ConnectID = zeros(numel(TD.X), 1); 
 RhoOnMean = mean(SMA_SPT.calcDensity(TD));
 RhoOffMean = (SimParams.KBlinkOff/SimParams.KBlinkOn) * RhoOnMean;

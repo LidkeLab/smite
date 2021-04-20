@@ -39,9 +39,6 @@ classdef SPT < handle
         %       we wish to keep)
         SMD
         
-        % Pre gap-closing SMD structure (see smi_core.SingleMoleculeData)
-        SMDPreGapClosing
-        
         % Pre-threshold SMD structure (see smi_core.SingleMoleculeData)
         SMDPreThresh
        
@@ -82,8 +79,8 @@ classdef SPT < handle
             
         end
         
-        performFullAnalysis(obj)
-        [TR, SMD] = generateTrajectories(obj);
+        [TR, SMD] = performFullAnalysis(obj);
+        generateTrajectories(obj);
         saveResults(obj)
         gui(obj)
         

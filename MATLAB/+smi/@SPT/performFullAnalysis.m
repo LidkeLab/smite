@@ -32,7 +32,19 @@ if isempty(obj.SMD.PixelSize)
 end
 
 % Generate trajectories from the localizations in obj.SMD.
-[TR, SMD] = obj.generateTrajectories();
+obj.generateTrajectories()
+
+% Remove short trajectories from the TR.
+% NOTE: I'm leaving everything in SMD.  It might be nice to also threshold
+%       short trajectories in SMD, but for now I'll leave it this way.
+obj.TR = smi_core.TrackingResults.threshTrajLength(obj.TR, ...
+    obj.SMF.Tracking.MinTrackLength);
+
+% Make copies of TR and SMD for the outputs.
+if nargout
+    TR = obj.TR;
+    SMD = obj.SMD;
+end
 
 
 end

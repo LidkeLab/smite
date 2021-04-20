@@ -1,11 +1,7 @@
-function [TR, SMD] = generateTrajectories(obj)
+function generateTrajectories(obj)
 %generateTrajectories generates trajectories from localizations in obj.SMD
 % This method will generate trajectories from the localizations in obj.SMD
 % using the parameters present in obj.SMF.
-%
-% OUTPUTS:
-%   TR: Tracking Results structure (see smi_core.TrackingResults)
-%   SMD: Single Molecule Data structure (see smi_core.SingleMoleculeData)
 
 % Created by:
 %   Hanieh Mazloom-Farsibaf (Lidke Lab, unknown date) as track.m
@@ -41,20 +37,19 @@ for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
     Link12 = obj.solveLAP(CostMatrix);
     obj.SMD = obj.connectTrajFF(obj.SMD, Link12, ff);
 end
-obj.SMDPreGapClosing = obj.SMD;
 
 % Perform the gap closing on the trajectory segments.
 CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...
     obj.NonlinkMarker, obj.UseSparseMatrices);
 Link12 = obj.solveLAP(CostMatrix);
-SMD = obj.connectTrajGC(obj.SMD, Link12);
+obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 
 % Add the framerate and pixel size to the outputs.
-[SMD.FrameRate] = deal(obj.SMF.Data.FrameRate);
-[SMD.PixelSize] = deal(obj.SMF.Data.PixelSize);
-obj.SMD = SMD;
-TR = smi_core.TrackingResults.convertSMDToTR(SMD);
-obj.TR = TR;
+% NOTE: This is a short term solution for back compatability.  WE WANT TO
+%       REMOVE THIS EVENTUALLY!
+[obj.SMD.FrameRate] = deal(obj.SMF.Data.FrameRate);
+[obj.SMD.PixelSize] = deal(obj.SMF.Data.PixelSize);
+obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
 
 
 end
