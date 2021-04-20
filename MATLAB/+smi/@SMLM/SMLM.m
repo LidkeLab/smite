@@ -231,15 +231,11 @@ methods
         switch SMF.Data.FileType
             case 'mat'
                 [~, Dataset, SMF] = ...
-                    LD.loadRawData(SMF, SMF.Data.DataVariable, DatasetIndex);
+                    LD.loadRawData(SMF, DatasetIndex, SMF.Data.DataVariable);
 
             case 'h5'
                 [~, Dataset, SMF] = LD.loadRawData(SMF, DatasetIndex);
         end % switch
-        
-        % Isolate the portion of the Dataset defined by DataROI.
-        Dataset = Dataset(SMF.Data.DataROI(1):SMF.Data.DataROI(3), ...
-            SMF.Data.DataROI(2):SMF.Data.DataROI(4), :);
     end
 
     % ---------------------------------------------------------------------

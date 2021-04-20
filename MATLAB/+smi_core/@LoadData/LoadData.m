@@ -38,9 +38,10 @@ classdef LoadData < handle
             % INPUT
             %    SMF - single molecule fitting structure
             %    varargin - input parameters, different for each file type:
-            %       mat: MatVarName, name of matlab variable containing the data
-            %            DatasetNum, number indicating the file in
-            %            SMF.Data.FileName cell array
+            %       mat: DatasetNum, number indicating the file in
+            %               SMF.Data.FileName cell array
+            %           MatVarName, name of matlab variable containing the data
+            %            
             %       ics: no parameters needed
             %       h5: DatasetIdx, index of dataset to be loaded from h5 file
             %           ChannelIdx (optional), index of channel to be loaded, default is 1
@@ -94,6 +95,11 @@ classdef LoadData < handle
                 % didn't work until MATLAB 2019b.
                 SMF.Data.DataROI = [1, 1, DataSize(1:2)];
             end
+            
+                    
+            % Isolate the portion of the Dataset defined by DataROI.
+            Data = Data(SMF.Data.DataROI(1):SMF.Data.DataROI(3), ...
+                SMF.Data.DataROI(2):SMF.Data.DataROI(4), :);
         end
     end
     
@@ -103,9 +109,10 @@ classdef LoadData < handle
             % INPUT
             %    FullFileName - full path to datafile, must be mat
             %    varargin - input parameters
-            %           MatVarName, name of matlab variable containing the data
-            %            DatasetNum, number indicating the file in
+            %           DatasetNum, number indicating the file in
             %            SMF.Data.FileName cell array
+            %           MatVarName, name of matlab variable containing the data
+            %            
             %           Eg:  [Data] = smi_core.LoadData.loadDataMat('FullFileName.mat',sequence,DatasetNum)
             % OUTPUT
             %    Data - data loaded from FileName, converted to type single
@@ -118,11 +125,12 @@ classdef LoadData < handle
                 varargin = [varargin{cellfun(@iscell,varargin)} varargin(~cellfun(@iscell,varargin))];
             end
 
-            MatVarName = varargin{1};
+            DatasetNum = varargin{1};
+            MatVarName = varargin{2};
             if iscell(MatVarName)
-                MatVarName=MatVarName{1};
+                MatVarName=MatVarName{2};
             end
-            DatasetNum = varargin{2};
+            
             % load data
             if iscell(FullFileName)
                 tmp = load(FullFileName{DatasetNum},MatVarName);
