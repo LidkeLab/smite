@@ -58,6 +58,8 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
+    delete(fullfile(tempdir, saveName, '*.*'));
+    rmdir(fullfile(tempdir, saveName, saveName));
     delete(fullfile(tempdir, [saveName, '.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier);
@@ -65,6 +67,8 @@ catch ME
     Success(1) = 0;
 end
 fprintf('Loading and analyzing data saved as mat file done.\n');
+delete(fullfile(tempdir, saveName, '*.*'));
+rmdir(fullfile(tempdir, saveName, saveName));
 delete(fullfile(tempdir, [saveName, '.*']));
 
 %% ----------------------------------------------------------------------------
@@ -95,6 +99,8 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
+    delete(fullfile(tempdir, saveName, '*.*'));
+    rmdir(fullfile(tempdir, saveName, saveName));
     delete(fullfile(tempdir, [saveName '.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier)
@@ -102,6 +108,8 @@ catch ME
     Success(2) = 0;
 end
 fprintf('Loading and analyzing data saved as h5 file done.\n');
+delete(fullfile(tempdir, saveName, '*.*'));
+rmdir(fullfile(tempdir, saveName, saveName));
 delete(fullfile(tempdir,[saveName, '*.*']));
 
 %% ----------------------------------------------------------------------------
@@ -158,6 +166,8 @@ try
 %  SMLMobj.exportFileType='txt';
 %  SMLMobj.exportResults();
 catch ME
+   delete(fullfile(tempdir, saveName, '*.*'));
+   rmdir(fullfile(tempdir, saveName, saveName));
    delete(fullfile(tempdir, [saveName '.*']));
    fprintf('Caught following error during smi.SMLM.unitTest:\n')
    disp(ME.identifier)
@@ -166,5 +176,7 @@ catch ME
 end
 % delete object and data
 clear SMLMobj
-delete(fullfile(tempdir,[saveName '*.*']));
+delete(fullfile(tempdir, saveName, '*.*'));
+rmdir(fullfile(tempdir, saveName, saveName));
+delete(fullfile(tempdir, [saveName '*.*']));
 fprintf('Done.\n');
