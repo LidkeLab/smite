@@ -64,8 +64,13 @@ classdef SimSMLM < handle
 
     methods 
          
-        simkTets(obj, kk, radius_kTet)
         applyLabelEffic(obj)
+        genBlinks(obj, StartState)
+        [Model, Data] = genImageStack(obj)
+        genModel(obj)
+        [SMD_Data] = genNoisySMD(obj, SMD_Model)
+        simkTets(obj, kk, radius_kTet)
+        simStar(obj, NWings)
         
     end 
 
