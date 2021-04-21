@@ -68,7 +68,7 @@ if ((ImageSize(1)*ImageSize(2)*3) > (2^32 - 1))
     % NOTE: The 3 corresponds to the 3 color channels that will
     %       be in the final overlay image.
     ImageSize = floor(2^16 * [1, 1] / sqrt(3));
-    PixelSize = max([XSize,YSize])/size(ImageSize,1);
+    PixelSize = max([XSize,YSize])/ImageSize(1);
 end
 fprintf('ImageSize = %d x %d\n', ImageSize);
 
