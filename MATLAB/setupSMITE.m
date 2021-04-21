@@ -13,5 +13,8 @@ addpath(SMITEPath)
 addpath(fullfile(SMITEPath,'mex'))
 addpath(fullfile(SMITEPath,'ptx'))
 
+ExtSoftPath = fileparts(SMITEPath);
+run(fullfile(ExtSoftPath, 'ExternalSoftware', 'setupExternalSoftware'));
+
 end
 
