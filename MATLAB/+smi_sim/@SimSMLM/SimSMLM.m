@@ -5,7 +5,7 @@ classdef SimSMLM < handle
     % distributed uniformly throughout the frames. The blinking events are
     % produced based on the given rate parameters (K_OnToOff, K_OffToOn and
     % K_OnToBleach). The data has the same uniform background noise for the
-    % whole sequence. The output is corrupted with the Poisson noise.
+    % whole sequence. The output is corrupted with Poisson noise.
     
     % Typical data flows are
     %    produce noisy coordinates:
