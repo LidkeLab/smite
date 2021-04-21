@@ -3,14 +3,14 @@ function genModel(obj)
 %
 % Typical data flows are
 %    produce noisy coordinates:
-%       SMD_True -> SMD_True_Labeled -> SMD_Model -> SMD_Model_Noisy
+%       SMD_True -> SMD_Labeled -> SMD_Model -> SMD_Data
 %    produce noisy image stacks
-%       SMD_True -> SMD_True_Labeled -> SMD_Model -> Model -> Data
+%       SMD_True -> SMD_Labeled -> SMD_Model -> Model -> Data
 % where
 %   SMD_True      true locations of localizations
 %   SMD_Labeled   obj.LabelingEfficiency applied to SMD_True localizations,
 %                 removing localizations that are not labeled
-%   SMD_Model     blinks generated for SMD_True_Labeled localizations applied
+%   SMD_Model     blinks generated for SMD_Labeled localizations applied
 %
 % INPUTS:
 %    obj          smi_sim.SimSMLM object (see SimSMLM for properties)

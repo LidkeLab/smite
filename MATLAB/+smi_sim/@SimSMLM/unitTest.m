@@ -19,13 +19,15 @@ function unitTest()
    obj.simStar(NWings);
    SMD_Data = obj.genNoisySMD(obj.SMD_Model);
    
+   [Model, Data] = obj.genImageStack();
+
    % To generate the blobs without noise, execute the following:
-   [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,obj.SMD_Model,0,0,0);
+%  [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,obj.SMD_Model,0,0,0);
    dipshow(Model)
    
     % To generate the blobs having poisson noise, execute the following:
    %[Data] = obj.genNoisyData(Model);
-   [Data] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,SMD_Data,obj.Bg,0,0);
+%  [Data] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NDatasets*obj.NFrames,SMD_Data,obj.Bg,0,0);
    dipshow(Data)
     
 end

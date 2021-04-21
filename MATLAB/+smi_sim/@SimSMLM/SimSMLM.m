@@ -1,7 +1,7 @@
 classdef SimSMLM < handle
     
     % SimSMLM is a Single Molecule Localization Microscopy data generating
-    % Class. This class can produce Siemen's star shaped data with particles
+    % class. This class can produce Siemen's star shaped data with particles
     % distributed uniformly throughout the frames. The blinking events are
     % produced based on the given rate parameters (K_OnToOff, K_OffToOn and
     % K_OnToBleach). The data has the same uniform background noise for the
@@ -9,27 +9,25 @@ classdef SimSMLM < handle
     
     % Typical data flows are
     %    produce noisy coordinates:
-    %       SMD_True -> SMD_Labeled -> SMD_Model -> SMD_Model_Noisy
-    %    produce noisy image stacks
+    %       SMD_True -> SMD_Labeled -> SMD_Model -> SMD_Data
+    %    produce noisy image stacks:
     %       SMD_True -> SMD_Labeled -> SMD_Model -> Model -> Data
     % where
-    %   SMD_True           true locations of localizations
-    %   SMD_Labeled        obj.LabelingEfficiency applied to SMD_True
-    %                      localizations, removing localizations that are not
-    %                      labeled
-    %   SMD_Model          blinks generated for SMD_True_Labeled localizations
-    %   SMD_Model_Noisy    SMD_Model with positional and intensity noise added
-    %   Model              Gaussian blob image stack produced from SMD_Model
-    %   Data               Model image stack to which Poisson noise has been
-    %                      applied
+    %   SMD_True      true locations of localizations
+    %   SMD_Labeled   obj.LabelingEfficiency applied to SMD_True localizations,
+    %                 removing localizations that are not labeled
+    %   SMD_Model     blinks generated for SMD_Labeled localizations
+    %   SMD_Data      SMD_Model with positional and intensity noise added
+    %   Model         Gaussian blob image stack produced from SMD_Model
+    %   Data          Model image stack to which Poisson noise has been applied
     %
     % Model and Data are image stacks (n x n x f), where n is the linear size
     % of the image in pixels and f is the total number of frames to be
     % generated (f = obj.NDatasets * obj.NFrames).
     %
     % EITHER, generate an SMD structure with positional and intensity noise.
-    % (SMD_Model_Noisy <- genNoisySMD) OR ALTERNATIVELY, generate the blobs
-    % without Poisson noise (Model) then add it in (Data).
+    % (SMD_Data <- genNoisySMD) OR ALTERNATIVELY, generate the blobs without
+    % Poisson noise (Model) and then add it in (Data) [see genImageStack].
 
     properties
         SZ=256            % Linear size of image (pixels)
@@ -83,4 +81,3 @@ classdef SimSMLM < handle
     end
 
 end
-

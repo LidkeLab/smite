@@ -1,13 +1,41 @@
-function [Model,Data]=genImageStack(obj)
+function [Model, Data] = genImageStack(obj)
+%genImageStack generates image stacks without and with Poisson noise.
+%
+% INPUTS:
+%    obj            SimSMLM object
+%       SMD_Model   labeled true coordinates with blinks
+%       PSFSigma    point spread function sigma size (Pixels)
+%       Bg          background count rate (counts/pixel)
+%
+% OUTPUTS:
+%    Model          Gaussian blob image stack that is noiseless
+%    Data           [OPTIONAL] Gaussian blob image stack corrupted with Poisson
+%                   noise
 
-%generate images
+% Created by:
+%    Sajjad Khan and Michael Wester (2021, LidkeLab)
 
-% To generate the blobs without noise, execute the following:
-[Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ,obj.NFrames,obj.SMD_Model,0,0,0);
-Model = Model+obj.Bg;
+   % Generate the blobs without Poisson noise.  Copy the SMD structure.
+   SMD_Model = obj.SMD_Model;
+   % Below needed for generating blob images.
+   SMD_Model.FitBoxSize = ceil(4 * 2 * obj.PSFSigma);
+   % Temporarily convert FrameNum into an absolute frame number for the call
+   % to gaussBlobImage.  Need a less resource intensive way to incorporate
+   % NDatasets > 1.
+   NFrames = obj.NDatasets * obj.NFrames;
+   FrameNum = SMD_Model.FrameNum;
+   SMD_Model.FrameNum = (SMD_Model.DatasetNum - 1) * obj.NFrames + FrameNum;
+   [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ, NFrames, SMD_Model, ...
+                                               0, 0, 0);
+   SMD_Model.FrameNum = FrameNum;
+   % Add in background.
+   Model = Model + obj.Bg;
 
-if nargout>1
-    Data = poissrnd(single(Model));
-end
+   if nargout > 1
+      % Corrupt with Poisson noise.
+      Data = poissrnd(single(Model));
+      NoisyImage = zeros(size(Data(:, :, 1)));
+      Data = Data + randn(size(Data)) .* repmat(NoisyImage, [1, 1, NFrames]);
+   end
 
 end
