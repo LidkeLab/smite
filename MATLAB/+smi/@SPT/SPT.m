@@ -19,6 +19,15 @@ classdef SPT < handle
         % NonlinkMarker can't be inf or NaN. 
         NonlinkMarker = -1;
         
+        % Flag to indicate movies should be made (Default = true)
+        GenerateMovies = true;
+        
+        % Flag to indicate plots should be made (Default = true)
+        GeneratePlots = true;
+        
+        % Flag to make some outputs in physical units (Default = false)
+        UnitFlag = false;
+        
         % Flag to indicate sparse matrix usage (Default = true)
         % For now, this only applies to gap-closing.
         UseSparseMatrices = true;

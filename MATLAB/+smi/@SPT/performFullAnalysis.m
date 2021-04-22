@@ -39,5 +39,8 @@ if nargout
     SMD = obj.SMD;
 end
 
+% Save the results.
+obj.saveResults()
+
 
 end
