@@ -1,9 +1,10 @@
-function [GaussIm] = gaussianImage(SMR,SRImageZoom)
+function [GaussIm] = gaussianImage(SMD,SMF,SRImageZoom)
 %gaussianImage creates gaussian-blob image from SR data.
 %
 % INPUT:
 %   SMR - SMR results structure with fields X, Y, Bg, X_SE, Y_SE, Photons,
 %   FrameNum, XSize, YSize
+%   SMF
 %   SRImageZoom - zoom factor (default value of 10)
 %
 % OUTPUT:
@@ -25,15 +26,19 @@ elseif nargin<2
 end
 
 % creating inputs for smi_sim.GaussBlobs.gaussBlobImage
-RawImageSize=[SMR.YSize SMR.XSize];
+RawImageSize=[SMD.YSize SMD.XSize];
 SZ=RawImageSize*SRImageZoom; %since we need big enough box sizes
-SMDin.Bg=zeros(size(SMR.Bg));
-SMDin.X=SMR.X*SRImageZoom;
-SMDin.Y=SMR.Y*SRImageZoom;
-SMDin.PSFSigma=[SMR.Y_SE,SMR.X_SE]*SRImageZoom;
-SMDin.Photons=ones(size(SMR.Photons))*1000;
-SMDin.FrameNum=ones(size(SMR.FrameNum));
+SMDin=SMD;
+SMDin.XSize=SZ(1);
+SMDin.YSize=SZ(2);
+SMDin.Bg=zeros(size(SMD.Bg));
+SMDin.X=SMD.X*SRImageZoom;
+SMDin.Y=SMD.Y*SRImageZoom;
+SMDin.PSFSigma=[SMD.Y_SE,SMD.X_SE]*SRImageZoom;
+SMDin.Photons=ones(size(SMD.Photons));
+SMDin.FrameNum=ones(size(SMD.FrameNum));
+SMDin.NFrames=1;
 % creating GaussIm
-GaussIm = smi_sim.GaussBlobs.gaussBlobImage(SZ,1,SMDin);
+GaussIm = smi_sim.GaussBlobs.gaussBlobImage(SMDin);
 
 end

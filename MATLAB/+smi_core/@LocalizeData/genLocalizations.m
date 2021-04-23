@@ -63,7 +63,22 @@ else
    SMD = SMDPreThresh;
 end
 obj.SMDPreThresh = SMDPreThresh;
+
+switch obj.SMF.Fitting.FitType
+    case 'XYNB'
+    SMD.PSFSigma=obj.SMF.Fitting.PSFSigma*ones(size(SMD.X));
+end
+
 obj.SMD = SMD;
 
+switch obj.Verbose
+    case 0 %do nothing
+    case 1 %do nothing (command line updates earlier)
+    case 2 %show color overlay
+        obj.colorOverlay();
+    otherwise
+        obj.colorOverlay();
+        %and maybe other things...
+end
 
 end

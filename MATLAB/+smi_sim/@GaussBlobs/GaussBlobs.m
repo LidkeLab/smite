@@ -27,7 +27,10 @@ end
 
 methods (Static)
     [Model,Data] = gaussBlobROIStack(SZ,SMD,VarianceIm,Covariance,PixType)
-    [Model,Data] = gaussBlobImage(SZ,NFrames,SMD,Background,Density,VarianceIm)
+    %[Model,Data] = gaussBlobImage(SZ,NFrames,SMD,Background,Density,VarianceIm)
+    [Model,Data] = gaussBlobImage(SMD,SMF,Bg,Density)
+    [BlobStack]=genRandomBlobImage(SZ,NFrames,Rho,Photons,PSFSigma,Bg)
+    
     
     function unitTest()
     %unitTest Tests static methods using default parameters 

@@ -113,8 +113,12 @@ for ii = 1:Nloops
     Bg = single(SMD.Bg(startFr:endFr));
     xCenters = single(SMD.X(startFr:endFr));
     yCenters = single(SMD.Y(startFr:endFr));
-    xSigma = single(SMD.PSFSigma(startFr:endFr,2));
-    ySigma = single(SMD.PSFSigma(startFr:endFr,1));
+    
+    if ~isempty(SMD.PSFSigma)
+        xSigma = single(SMD.PSFSigma(startFr:endFr,2));
+        ySigma = single(SMD.PSFSigma(startFr:endFr,1));
+    end
+
     Covar = single(Covariance(startFr:endFr));
     % allocate output variables
     subStack = zeros(SZ,SZ,NFramesThisChunk,'single');

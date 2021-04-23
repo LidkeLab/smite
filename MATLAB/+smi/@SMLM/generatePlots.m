@@ -180,7 +180,7 @@ end
 
 if ismember("GaussIm", PlotDo)
    % Gaussian image
-   [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, obj.SRImageZoom);
+   [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, obj.SMF, obj.SRImageZoom);
    dipshow(GaussIm);
    if ~isempty(PlotSaveDir1)
       FileName = [BaseName '_GaussImage'];

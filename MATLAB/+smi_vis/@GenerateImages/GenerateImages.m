@@ -34,7 +34,7 @@ methods(Static)
    [RGBimage] = colorImage(Image, ColorMap, MinMax)
    dispIm()
    [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
-   [GaussIm] = gaussianImage(SMR, SRImageZoom)
+   [GaussIm] = gaussianImage(SMR, SMF,SRImageZoom)
    [CircleImage, CircleImageRGB, SRImageZoom] = ...
         circleImage(SMR, ColorMap, ...
         SRImageZoom, MinPixelsPerCircle, SEScaleFactor);

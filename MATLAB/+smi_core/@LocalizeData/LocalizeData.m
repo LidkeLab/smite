@@ -85,9 +85,10 @@ classdef LocalizeData < handle
                 end
                 SMD = [];
             end
+          
+        [SMD, SMDPreThresh] = genLocalizations(obj);
+
         end
-        
-        [SMD, SMDPreThresh] = genLocalizations(obj)
         
     end
     
