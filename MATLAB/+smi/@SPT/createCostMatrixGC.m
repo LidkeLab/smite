@@ -1,5 +1,5 @@
 function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
-    NonLinkMarker, CreateSparseMatrix)
+    DiffusionConstants, NonLinkMarker, CreateSparseMatrix)
 %createCostMatrixGC creates the cost matrix for gap closing in SPT.
 % This method creates a cost matrix whose elements represent the cost for
 % connecting trajectory segments produced by the frame-to-frame step in the
@@ -12,6 +12,10 @@ function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
+%   DiffusionConstants: Diffusion constants for each localization in SMD.
+%                       If this is not provided, we'll use SMF.Tracking.D
+%                       for all trajectories. 
+%                       (numel(SMD.FrameNum)x1 array)(px^2/frame)
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we
 %                  don't want to select that element in the linear
 %                  assignment problem.
@@ -46,6 +50,9 @@ end
 if (~exist('CreateSparseMatrix', 'var') || isempty(CreateSparseMatrix))
     CreateSparseMatrix = true;
 end
+if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
+    DiffusionConstants = SMF.Tracking.D * ones(numel(SMD.FrameNum), 1);
+end
 
 % Extract some arrays from the SMD/SMF structure.  Doing this outside of
 % for loops can speed things up for very large SMD structures (although for
@@ -59,7 +66,6 @@ FrameNum = SMD.FrameNum;
 ConnectID = SMD.ConnectID;
 MaxFrameGap = SMF.Tracking.MaxFrameGap;
 MaxDistGC = SMF.Tracking.MaxDistGC;
-D = SMF.Tracking.D;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
 Rho_off = SMF.Tracking.Rho_off;
@@ -97,6 +103,7 @@ for ee = 1:NTraj
     X_SEEndCurrent = X_SE(EndIndexCurrent);
     YEndCurrent = Y(EndIndexCurrent);
     Y_SEEndCurrent = Y_SE(EndIndexCurrent);
+    DEndCurrent = DiffusionConstants(EndIndexCurrent);
     
     % Loop through the trajectory beginnings and populate the cost matrix.
     for bb = 1:NTraj
@@ -133,9 +140,11 @@ for ee = 1:NTraj
             % separated in time by DeltaFrame frames, assuming they came
             % from the same emitter which experienced Brownian motion with
             % diffusion constant D.
-            Sigma_X = sqrt(2*D*DeltaFrame ...
+            DSumCurrent = ...
+                DEndCurrent + DiffusionConstants(StartIndexCurrent);
+            Sigma_X = sqrt(DSumCurrent*DeltaFrame ...
                 + X_SEEndCurrent^2 + X_SE(StartIndexCurrent)^2);
-            Sigma_Y = sqrt(2*D*DeltaFrame ...
+            Sigma_Y = sqrt(DSumCurrent*DeltaFrame ...
                 + Y_SEEndCurrent^2 + Y_SE(StartIndexCurrent)^2);
             
             % Define the log-likelihood of the observed X, Y from

@@ -1,5 +1,5 @@
 function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-    FrameNumber, NonLinkMarker)
+    DiffusionConstants, FrameNumber, NonLinkMarker)
 %createCostMatrixFF generates frame-to-frame connection cost matrix.
 % This method creates the cost matrix for the frame-to-frame connection of
 % localizations present in SMD.
@@ -11,6 +11,10 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
+%   DiffusionConstants: Diffusion constants for each localization in SMD.
+%                       If this is not provided, we'll use SMF.Tracking.D
+%                       for all trajectories. 
+%                       (numel(SMD.FrameNum)x1 array)(px^2/frame)
 %   FrameNumber: The frame containing the localizations for which we want
 %                to construct a cost matrix (for connection to
 %                FrameNumber+1).
@@ -36,9 +40,13 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   Revised and added comments, David J. Schodt (Lidke Lab, 2020)
 %   Rewritten for smite, David J. Schodt (Lidke Lab, 2021)
 
+
 % Set defaults as needed.
 if (~exist('NonLinkMarker', 'var') || isempty(NonLinkMarker))
     NonLinkMarker = -1;
+end
+if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
+    DiffusionConstants = SMF.Tracking.D * ones(numel(SMD.FrameNum), 1);
 end
 
 % Determine which emitters in SMD were present in frames FrameNumber and
@@ -58,6 +66,7 @@ for ii = 1:N
     X_SEFrame1 = SMD.X_SE(CurrentIndicesFrame1);
     YFrame1 = SMD.Y(CurrentIndicesFrame1);
     Y_SEFrame1 = SMD.Y_SE(CurrentIndicesFrame1);
+    DFrame1 = DiffusionConstants(CurrentIndicesFrame1);
     for jj = 1:M
         % Isolate the localizations in frame FrameNumber+1 from SMD.
         CurrentIndicesFrame2 = EmitterIndicesFrame2(jj);
@@ -65,6 +74,7 @@ for ii = 1:N
         X_SEFrame2 = SMD.X_SE(CurrentIndicesFrame2);
         YFrame2 = SMD.Y(CurrentIndicesFrame2);
         Y_SEFrame2 = SMD.Y_SE(CurrentIndicesFrame2);
+        DFrame2 = DiffusionConstants(CurrentIndicesFrame2);
         
         % Compute the distance between the localizations and determine if
         % we need to proceed.
@@ -77,8 +87,8 @@ for ii = 1:N
         % and Y separations between two localizations in consecutive
         % frames, assuming they came from the same emitter which
         % experienced Brownian motion with diffusion constant D.
-        Sigma_X = sqrt(2*SMF.Tracking.D + X_SEFrame1^2 + X_SEFrame2^2);
-        Sigma_Y = sqrt(2*SMF.Tracking.D + Y_SEFrame1^2 + Y_SEFrame2^2);
+        Sigma_X = sqrt(DFrame1 + DFrame2 + X_SEFrame1^2 + X_SEFrame2^2);
+        Sigma_Y = sqrt(DFrame1 + DFrame2 + Y_SEFrame1^2 + Y_SEFrame2^2);
         
         % Define the negative log-likelihood of the observed X, Y from
         % FrameNumber and FrameNumber+1 having come from the Normal

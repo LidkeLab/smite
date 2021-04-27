@@ -27,7 +27,37 @@ obj.SMDPreThresh = SMLM.SMDPreThresh;
 % Generate trajectories from the localizations in obj.SMD.
 obj.generateTrajectories()
 
-% Remove short trajectories from the TR.
+% If needed, estimate diffusion constants and recursively track with the
+% new values (until all tracks were marked with a valid diffusion).
+if obj.UseTrackByTrackD
+    AllDValid = false;
+    while ~AllDValid
+        % Estimate the diffusion constants from the previous tracking 
+        % results.
+        obj.DiffusionEstimator.TR = obj.TR;
+        DiffusionStruct = ...
+            obj.DiffusionEstimator.estimateDiffusionConstant();
+        DiffusionConstantCurrent = DiffusionStruct(1).DiffusionConstant;
+        obj.DiffusionConstant = ...
+            ones(numel(obj.SMD.FrameNum), 1) * obj.SMF.Tracking.D;
+        for ii = 1:numel(obj.TR)
+            obj.DiffusionConstant(obj.TR(ii).IndSMD) = ...
+                DiffusionConstantCurrent(ii);
+        end
+        
+        % Filter the diffusion constants, setting those which are negative 
+        % to the value in obj.SMF.Tracking.D.
+        BadValueBool = (obj.DiffusionConstant < 0);
+        AllDValid = ~any(BadValueBool);
+        obj.DiffusionConstant(BadValueBool) = obj.SMF.Tracking.D;
+        
+        % Re-track the data.
+        obj.SMD.ConnectID = [];
+        obj.generateTrajectories();
+    end
+end
+
+% Remove short trajectories from the TR structure.
 % NOTE: I'm leaving everything in SMD.  It might be nice to also threshold
 %       short trajectories in SMD, but for now I'll leave it this way.
 obj.TR = smi_core.TrackingResults.threshTrajLength(obj.TR, ...

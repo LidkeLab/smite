@@ -20,7 +20,7 @@ end
 for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
     % Create the frame-to-frame connection cost matrix.
     CostMatrix = smi.SPT.createCostMatrixFF(obj.SMD, obj.SMF, ...
-        ff, obj.NonlinkMarker);
+        obj.DiffusionConstant, ff, obj.NonlinkMarker);
 
     % Perform the linear assignment problem to determine how we should link
     % together trajectories.
@@ -30,7 +30,7 @@ end
 
 % Perform the gap closing on the trajectory segments.
 CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...
-    obj.NonlinkMarker, obj.UseSparseMatrices);
+    obj.DiffusionConstant, obj.NonlinkMarker, obj.UseSparseMatrices);
 Link12 = obj.solveLAP(CostMatrix);
 obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 

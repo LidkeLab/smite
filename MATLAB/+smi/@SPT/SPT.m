@@ -9,11 +9,22 @@ classdef SPT < handle
         SMF
         
         % Indicate SMF.Tracking.Rho_off can be overwritten (Default = true)
+        % See obj.generateTrajectories() for usage.
         % NOTE: As of this writing, this only makes an appearance in
         %       obj.generateTrajectories(). If you aren't using that
         %       method, the dark emitter density Rho_off will be taken from
         %       SMF.Tracking.Rho_off.
         EstimateRhoFromData = true;
+        
+        % Use track-by-track diffusion constants (Default = false)
+        % See obj.performFullAnalysis() for usage.
+        UseTrackByTrackD = false;
+        
+        % Diffusion estimator class for when UseTrackByTrackD is set.
+        % NOTE: This is used here so that the user can change properties of
+        %       the DiffusionEstimator class as needed when using 
+        %       obj.UseTrackByTrackD
+        DiffusionEstimator
         
         % Marker to ignore entries in cost matrices (Default = -1)
         % NonlinkMarker can't be inf or NaN. 
@@ -50,6 +61,17 @@ classdef SPT < handle
         TR
     end
     
+    properties (Hidden)
+        % Diffusion constants for each localization in trajectories.
+        % NOTE: This is only used when UseTrackByTrackD is set to true.
+        %       I've made this hidden because the user shouldn't really be
+        %       using these values to do anything.  If they're needed, the
+        %       user should produce them in the diffusion estimator class,
+        %       or access them in the appropriate properties of
+        %       obj.DiffusionEstimator.
+        DiffusionConstant = [];
+    end
+    
     methods
         
         function obj = SPT(SMF, StartGUI)
@@ -76,6 +98,11 @@ classdef SPT < handle
             SMF.FrameConnection.On = false;
             obj.SMF = SMF;
             
+            % Create an instance of the diffusion estimator class.
+            obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
+            obj.DiffusionEstimator.FitIndividualTrajectories = true;
+            obj.DiffusionEstimator.UnitFlag = false;
+            
             % Start the GUI if needed.
             if StartGUI
                 obj.gui();
@@ -93,10 +120,10 @@ classdef SPT < handle
     methods(Static)
         [Success] = unitTest();
         [Success] = unitTestFFGC()
-        [CostMatrix] = createCostMatrixFF(SMD, SMF, FrameNumber, ...
-            NonLinkMarker);
+        [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
+            DiffusionConstants, FrameNumber, NonLinkMarker);
         [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
-            NonLinkMarker, CreateSparseMatrix);
+            DiffusionConstants, NonLinkMarker, CreateSparseMatrix);
         [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
