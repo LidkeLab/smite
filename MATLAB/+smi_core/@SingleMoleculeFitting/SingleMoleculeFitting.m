@@ -106,8 +106,8 @@ classdef SingleMoleculeFitting < handle
     %   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
     %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
-    %   MaxSigmaDevFF:  Max. deviations from mean jump for f-to-f connection (Default=2)
-    %   MaxSigmaDevGC:  Max. deviations from mean jump for gap closing (Default=4)
+    %   MaxSigmaDevFF:  Max. deviations from mean jump for f-to-f connection (Default=5)
+    %   MaxSigmaDevGC:  Max. deviations from mean jump for gap closing (Default=5)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
     %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
     
@@ -215,8 +215,8 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.Rho_off=1e-3;
             obj.Tracking.MaxDistFF=5;
             obj.Tracking.MaxDistGC=10;
-            obj.Tracking.MaxSigmaDevFF=2;
-            obj.Tracking.MaxSigmaDevGC=4;
+            obj.Tracking.MaxSigmaDevFF=5;
+            obj.Tracking.MaxSigmaDevGC=5;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             

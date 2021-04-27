@@ -64,8 +64,9 @@ X_SE = SMD.X_SE;
 Y_SE = SMD.Y_SE;
 FrameNum = SMD.FrameNum;
 ConnectID = SMD.ConnectID;
-MaxFrameGap = SMF.Tracking.MaxFrameGap;
 MaxDistGC = SMF.Tracking.MaxDistGC;
+MaxSigmaDevGC = SMF.Tracking.MaxSigmaDevGC;
+MaxFrameGap = SMF.Tracking.MaxFrameGap;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
 Rho_off = SMF.Tracking.Rho_off;
@@ -123,30 +124,38 @@ for ee = 1:NTraj
         % Determine how many frames have elapsed between the end of
         % trajectory ee and the start of trajectory bb.
         DeltaFrame = FrameNum(StartIndexCurrent) - EndFrameCurrent;
+        if (DeltaFrame <= 0)
+            continue
+        end
         
         % Compute the distance between the end of trajectory ee and the
         % start of trajectory bb.
-        DeltaXY = sqrt((XEndCurrent-X(StartIndexCurrent))^2 ...
-            + (YEndCurrent-Y(StartIndexCurrent))^2);
+        XJump = XEndCurrent - X(StartIndexCurrent);
+        YJump = YEndCurrent - Y(StartIndexCurrent);
+        Separation = sqrt(XJump^2 + YJump^2);
+        
+        % Define the standard deviations of the distribution of
+        % observed X and Y separations between two localizations in
+        % separated in time by DeltaFrame frames, assuming they came
+        % from the same emitter which experienced Brownian motion with
+        % diffusion constant D.
+        % NOTE: I think it makes more sense to use D==DEndCurrent, however
+        %       in some cases (e.g., connecting very small trajectories)
+        %       this proved to cause some issues.  Instead, I'll try using
+        %       the average of the two diffusion constants.
+        DSumCurrent = DEndCurrent + DiffusionConstants(StartIndexCurrent);
+        Sigma_X = sqrt(DSumCurrent*DeltaFrame ...
+            + X_SEEndCurrent^2 + X_SE(StartIndexCurrent)^2);
+        Sigma_Y = sqrt(DSumCurrent*DeltaFrame ...
+            + Y_SEEndCurrent^2 + Y_SE(StartIndexCurrent)^2);
         
         % Compute the cost corresponding to linking these two trajectories
         % (unless the MaxDist and MaxFrameGap aren't satisified, in which
         % case we don't care to calculate this cost).
-        if ((DeltaFrame>0) ...
-                && (DeltaFrame<=MaxFrameGap) ...
-                && (DeltaXY<=MaxDistGC))
-            % Define the standard deviations of the distribution of
-            % observed X and Y separations between two localizations in
-            % separated in time by DeltaFrame frames, assuming they came
-            % from the same emitter which experienced Brownian motion with
-            % diffusion constant D.
-            DSumCurrent = ...
-                DEndCurrent + DiffusionConstants(StartIndexCurrent);
-            Sigma_X = sqrt(DSumCurrent*DeltaFrame ...
-                + X_SEEndCurrent^2 + X_SE(StartIndexCurrent)^2);
-            Sigma_Y = sqrt(DSumCurrent*DeltaFrame ...
-                + Y_SEEndCurrent^2 + Y_SE(StartIndexCurrent)^2);
-            
+        if ((DeltaFrame<=MaxFrameGap) ...
+                && (Separation<=MaxDistGC) ...
+                && (abs(XJump/Sigma_X)<=MaxSigmaDevGC) ...
+                && (abs(YJump/Sigma_Y)<=MaxSigmaDevGC))
             % Define the log-likelihood of the observed X, Y from
             % FrameNumber and FrameNumber+1 having come from the Normal
             % distributions defined by Sigma_X and Sigma_Y (i.e., this is

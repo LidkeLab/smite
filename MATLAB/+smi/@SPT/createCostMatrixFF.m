@@ -13,13 +13,13 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %       (see smi_core.SingleMoleculeFitting)
 %   DiffusionConstants: Diffusion constants for each localization in SMD.
 %                       If this is not provided, we'll use SMF.Tracking.D
-%                       for all trajectories. 
+%                       for all trajectories.
 %                       (numel(SMD.FrameNum)x1 array)(px^2/frame)
 %   FrameNumber: The frame containing the localizations for which we want
 %                to construct a cost matrix (for connection to
 %                FrameNumber+1).
-%   NonLinkMarker: A marker in the output CostMatrix that indicates we 
-%                  don't want to select that element in the linear 
+%   NonLinkMarker: A marker in the output CostMatrix that indicates we
+%                  don't want to select that element in the linear
 %                  assignment problem.
 %                  (scalar, ~=inf, ~=nan, and typically < 0)(Default = -1)
 %
@@ -29,7 +29,7 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %               present in SMD, or a "ghost" particle that we don't see) in
 %               frame FrameNumber to a particle in frame FrameNumber+1.
 %               (m+n x m+n numeric array, where n is the number of
-%               localizations in FrameNumber, m is the number of 
+%               localizations in FrameNumber, m is the number of
 %               localizations in FrameNumber+1)
 %
 % CITATION:
@@ -76,33 +76,44 @@ for ii = 1:N
         Y_SEFrame2 = SMD.Y_SE(CurrentIndicesFrame2);
         DFrame2 = DiffusionConstants(CurrentIndicesFrame2);
         
-        % Compute the distance between the localizations and determine if
-        % we need to proceed.
-        Separation = sqrt((XFrame1-XFrame2)^2 + (YFrame1-YFrame2)^2);
-        if (Separation > SMF.Tracking.MaxDistFF)
-            continue
-        end
-        
         % Define the standard deviations of the distribution of observed X
         % and Y separations between two localizations in consecutive
         % frames, assuming they came from the same emitter which
         % experienced Brownian motion with diffusion constant D.
+        % NOTE: When using trajectory-wise D's, I'm not sure which approach
+        %       is more valid: D==DFrame1 in the following equations, or
+        %       D==mean(DFrame1+DFrame2)?  I think D==DFrame1 makes more
+        %       sense, however that might be too tight of a restriction
+        %       (e.g., if one of the localizations was previously estimated 
+        %       to be from a very slow trajectory, that might prevent us 
+        %       from connecting the two localizations).
         Sigma_X = sqrt(DFrame1 + DFrame2 + X_SEFrame1^2 + X_SEFrame2^2);
         Sigma_Y = sqrt(DFrame1 + DFrame2 + Y_SEFrame1^2 + Y_SEFrame2^2);
         
+        % Compute the distance between the localizations and determine if
+        % we need to proceed.
+        XJump = XFrame1 - XFrame2;
+        YJump = YFrame1 - YFrame2;
+        Separation = sqrt(XJump^2 + YJump^2);
+        if ((Separation>SMF.Tracking.MaxDistFF) ...
+                || (abs(XJump/Sigma_X)>SMF.Tracking.MaxSigmaDevFF) ...
+                || (abs(YJump/Sigma_Y)>SMF.Tracking.MaxSigmaDevFF))
+            continue
+        end
+                
         % Define the negative log-likelihood of the observed X, Y from
         % FrameNumber and FrameNumber+1 having come from the Normal
-        % distributions defined by Sigma_X and Sigma_Y (i.e., this is 
+        % distributions defined by Sigma_X and Sigma_Y (i.e., this is
         % -log(Normal(mean = 0, Sigma_X) * Normal(mean = 0, Sigma_Y))
         NegLikelihoodOfXandY = log(2*pi*Sigma_X*Sigma_Y) ...
             + (XFrame1-XFrame2)^2 / (2*Sigma_X^2) ...
             + (YFrame1-YFrame2)^2 / (2*Sigma_Y^2);
         
         % Compute the negative log-likelihood of these two localizations
-        % being the same emitter (i.e., this is 
-        % -log(NormalX * NormalY * P(not turning off)) 
+        % being the same emitter (i.e., this is
+        % -log(NormalX * NormalY * P(not turning off))
         % = -log(NormalX * NormalY * (1-P(dark emitter turning on))
-        % NOTE: There is an implicit DeltaT = 1 frame, i.e., 
+        % NOTE: There is an implicit DeltaT = 1 frame, i.e.,
         %       CM(ii, jj) = -log(1-K_off*DeltaT) with DeltaT = 1 frame
         % NOTE: The additional 0.5 multiplying the link costs comes from
         %       our choice to set the "auxillary" (bottom right) block of
