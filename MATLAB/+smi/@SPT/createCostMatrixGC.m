@@ -202,8 +202,9 @@ for bb = 1:NTraj
     %       normal usage.  This is an artifact resulting from differing
     %       conventions used in MATLAB: usually, MATLAB is column oriented,
     %       but our usage of CMIndices here (and sparse()) is row oriented.
+    FrameGap = min(MaxFrameGap, StartFrameCurrent-FirstFrame);
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
-        -(log(Rho_off*K_on) + (StartFrameCurrent-FirstFrame)*log(1-K_on));
+        -(log(Rho_off*K_on) + FrameGap*log(1-K_on));
 end
 
 % Fill in the "death" block (upper-right) of the cost matrix.
@@ -222,8 +223,9 @@ for ee = 1:NTraj
     %       normal usage.  This is an artifact resulting from differing
     %       conventions used in MATLAB: usually, MATLAB is column oriented,
     %       but our usage of CMIndices here (and sparse()) is row oriented.
+    FrameGap = min(MaxFrameGap, LastFrame-EndFrameCurrent);
     CMElements(sub2ind(CMSize, (NTraj+1):(2*NTraj), ee*OnesArray)) = ...
-        -(log(K_off) + (LastFrame-EndFrameCurrent) * log(1-K_on));
+        -(log(K_off) + FrameGap*log(1-K_on));
 end
 
 % Remove all of the remaining NonLinkMarker elements.
