@@ -16,6 +16,9 @@ classdef SPT < handle
         %       SMF.Tracking.Rho_off.
         EstimateRhoFromData = true;
         
+        % Number of recursions when using UseTrackByTrackD (Default = 3)
+        NRecursions = 3;
+        
         % Use track-by-track diffusion constants (Default = false)
         % See obj.performFullAnalysis() for usage.
         UseTrackByTrackD = false;

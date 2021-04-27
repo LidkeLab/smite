@@ -25,13 +25,13 @@ obj.SMD = SMLM.SMD;
 obj.SMDPreThresh = SMLM.SMDPreThresh;
 
 % Generate trajectories from the localizations in obj.SMD.
+obj.DiffusionConstant = [];
 obj.generateTrajectories()
 
 % If needed, estimate diffusion constants and recursively track with the
-% new values (until all tracks were marked with a valid diffusion).
+% new values.
 if obj.UseTrackByTrackD
-    AllDValid = false;
-    while ~AllDValid
+    for rr = 1:obj.NRecursions
         % Estimate the diffusion constants from the previous tracking 
         % results.
         obj.DiffusionEstimator.TR = obj.TR;
@@ -45,15 +45,17 @@ if obj.UseTrackByTrackD
                 DiffusionConstantCurrent(ii);
         end
         
-        % Filter the diffusion constants, setting those which are negative 
+        % Filter the diffusion constants, setting those which are invalid 
         % to the value in obj.SMF.Tracking.D.
-        BadValueBool = (obj.DiffusionConstant < 0);
-        AllDValid = ~any(BadValueBool);
+        BadValueBool = ((obj.DiffusionConstant < 0) ...
+            | isnan(obj.DiffusionConstant) ...
+            | isinf(obj.DiffusionConstant));
         obj.DiffusionConstant(BadValueBool) = obj.SMF.Tracking.D;
         
         % Re-track the data.
         obj.SMD.ConnectID = [];
         obj.generateTrajectories();
+        disp(rr)
     end
 end
 
