@@ -32,6 +32,12 @@ obj.generateTrajectories()
 % new values.
 if obj.UseTrackByTrackD
     for rr = 1:obj.NRecursions
+        % Send an update to the command window.
+        if (obj.Verbose > 1)
+            fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
+                'tracking recursion iteration %i\n'], rr)
+        end
+        
         % Estimate the diffusion constants from the previous tracking 
         % results.
         obj.DiffusionEstimator.TR = obj.TR;
