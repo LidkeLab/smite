@@ -23,6 +23,15 @@ classdef TrackingResults
     %            the trajectory. (photons)
     %   Bg: The background found for each localization of the trajectory.
     %       (photons)
+    %   PSFSigma: Estimated or fixed sigma of symmetric 2D Gaussian PSF
+    %             model (pixels)
+    %   PSFSigmaX: Estimated or fixed X sigma of symmetric 2D Gaussian PSF
+    %              model (pixels)
+    %   PSFSigmaY: Estimated or fixed Y sigma of symmetric 2D Gaussian PSF
+    %              model (pixels)
+    %   PSFSigma_SE: Standard error of PSFSigma (pixels)
+    %   PSFSigmaX_SE: Standard error of PSFSigmaX (pixels)
+    %   PSFSigmaY_SE: Standard error of PSFSigmaY (pixels)
     %   IndTD: An index back into the associated TD structure, i.e.,
     %          TR(nn).X(ii) can be found in TD.X(TR(nn).IndTD(ii)).
     %   FrameRate: The frame rate used to acquire this data.
@@ -56,6 +65,12 @@ classdef TrackingResults
             TR.FrameNum = [];
             TR.Photons = [];
             TR.Bg = [];
+            TR.PSFSigma = [];
+            TR.PSFSigmaX = [];
+            TR.PSFSigmaY = [];
+            TR.PSFSigma_SE = [];
+            TR.PSFSigmaX_SE = [];
+            TR.PSFSigmaY_SE = [];
             TR.IndTD = [];
             TR.FrameRate = [];
             TR.PixelSize = [];
