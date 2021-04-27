@@ -1,117 +1,118 @@
 classdef SingleMoleculeFitting < handle
-% SingleMoleculeFitting A class defining the Single Molecule Fitting structure
-%
-% The SMF structure is a structure of structures that collectively contain
-% all parameters required to go from raw data to an SMD results structure.
-% The SMF structure is an input of many smi methods. It
-% intended to be extensible to enable new analysis tools and methods.
-% The SMF class implements tools for working with SMF structures,
-% but the data structure itself is not an object of the class.
-%
-% Parameters of sub-structures are explained in more detail in
-% the classes and methods that use them.  An incomplete list of classes
-% that use each sub-structure is listed in {}.
-%
-% The SMF structure has the following sub-structures and fields:
-%
-% SMF:  Fields that are structures: 
-%
-% Data:             {LoadData}
-%   FileName:       File name (cell array of char array)
-%   FileDir:        File directory (char array)
-%   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
-%   AnalysisID:     ID tagged onto saved results (char array)(Default='')
-%   FileType:       Type of data specified by FileName. If using a custom 
-%                   extension, you must set this field manually to the true 
-%                   underlying file type (e.g., if using a .mat file saved 
-%                   as exFile.spt, set obj.Data.FileType = 'mat')
-%                   (char array)(Default set to extension of FileName{1})
-%   DataVariable:   Name of variable saved in FileName which contains the
-%                   raw data. (char array)(Default='sequence')
-%   DatasetList:    List of datasets of the raw data to be analyzed.
-%                   (array of int32)(Default=int32([]))
-%   DatasetMods: Cell array containing datasets to be used/excluded from
-%                analysis (Mods <-> modifiers). This is meant to be the
-%                user-facing lists which define DatasetList, meaning that 
-%                this is what would be set in the GUI. DatasetMods{1} will 
-%                contain an array of the "inclusion" dataset numbers and 
-%                DatasetMods{2} will contain an array of the "exclusion" 
-%                datasets. DatasetList will be set elsewhere (e.g., 
-%                smi_core.LoadData) to include the set 
-%                   intersect(intersect(1:NDatasets, DatasetMods{1}), ...
-%                   setdiff(1:NDatasets, DatasetMods{2})) 
-%                unless DatasetMods{1} is empty, in which case the first
-%                parantheses term is dropped. For example, if 
-%                NDatasets = 20, and you only want to analyze datasets 1:5, 
-%                you can set DatasetMods{1} = 1:5. If you further decide to
-%                exclude datsaets 2 and 4, you could set 
-%                DatasetMods{2} = [2, 4]. 
-%                (cell array of int32 arrays)(Default={[]; []})
-%   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
-%   CameraGain:     Camera Gain, scalar or image (Default=1)
-%   CameraOffset:   Camera Offset, scalar or image (Default=0)
-%   CameraNoise:    Camera readnoise, scalar or image (Default=0)
-%   CalibrationFilePath: Path to the camera calibration file (Default='')
-%   DataROI:        Region of interest of data file to be used (Default=[])
-%   FrameRate:      Data Collection Frame Rate (1/s) 
-%   PixelSize:      Camera back-projected pixel size (micrometers)   
-%
-% BoxFinding:       {FindROI}
-%   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
-%   BoxOverlap:     Overlap of boxes allowed (Pixels)(Default=2)
-%   MinPhotons:     Minimum number of photons from emitter (Default=200)
-%
-% Fitting           {GaussMLE}
-%   PSFSigma:   Initial or fixed Sigma of 2D Gaussian PSF Model (Pixels)(Default=1)
-%   FitType:    See fit class for options  (Default='XYNB')
-%   NParams:    Number of fitting parameters (auto-set based on FitType)
-%   Iterations: Newton Raphson iterations (Default=20)
-%   ZFitStruct: Structure for astigmatic fitting:
-%       Ax:         Astigmatism fit parameter (see GaussMLE)         
-%       Ay:         Astigmatism fit parameter (see GaussMLE)
-%       Bx:         Astigmatism fit parameter (see GaussMLE)
-%       By:         Astigmatism fit parameter (see GaussMLE)
-%       Gamma:      Astigmatism fit parameter (see GaussMLE)
-%       D:          Astigmatism fit parameter (see GaussMLE)
-%
-% Thresholding      {ThresholdFits,SRA}
-%   On              Perform thresholding? (Default=true)
-%   MaxXY_SE:       Maximum allowed precision in x,y (Pixels)(Default=.2)
-%   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
-%   LoS:            Minimum accepted p-value from fit (Default=.01)
-%   MinPSFSigma:    Minimum PSF Sigma from fit (Pixels)(Default=.5);
-%   MaxPSFSigma:    Maximum PSF Sigma from fit (Pixels)(Default=2);
-%   MinPhotons:     Minimum accepted photons from fit (Default=100)
-%   MaxBg:          Maximum background accepted from fit (Default=Inf)
-%
-% FrameConnection:  {FrameConnect,SRA}
-%   On              Perform frame connection? (Default=true)
-%   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
-%   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
-%   LoS:            Minimum accepted p-value for connection (Default=.01)
-%
-% DriftCorrection   {DriftCorrection,SRA}
-%  On               Perform drift correction? (Default=true)
-%  BFRegistration   Was brightfield registration performed? (Default=true)
-%  L_intra          Intra-dataset threshold (Pixel)(Default=1)
-%  L_inter          Inter-dataset threshold (Pixel)(Default=2)
-%  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
-%  PDegree          Degree intra-dataset fitting poly for drift rate (Default=1)
-% 
-% Tracking          {SPT}
-%   Method:         Type of method used for tracking (Default='CostMatrix')
-%   D:              Diffusion Constant (Pixels^2/Frame) (Default=1)
-%   K_on:           Off to On Rate (Frame^-1) (Default=.1)
-%   K_off:          On to Off Rate (Frame^-1) (Default=.1)
-%   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
-%   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
-%   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
-%   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
-%   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
-%
-
-% created by:
-% Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
+    % SingleMoleculeFitting A class defining the Single Molecule Fitting structure
+    %
+    % The SMF structure is a structure of structures that collectively contain
+    % all parameters required to go from raw data to an SMD results structure.
+    % The SMF structure is an input of many smi methods. It
+    % intended to be extensible to enable new analysis tools and methods.
+    % The SMF class implements tools for working with SMF structures,
+    % but the data structure itself is not an object of the class.
+    %
+    % Parameters of sub-structures are explained in more detail in
+    % the classes and methods that use them.  An incomplete list of classes
+    % that use each sub-structure is listed in {}.
+    %
+    % The SMF structure has the following sub-structures and fields:
+    %
+    % SMF:  Fields that are structures:
+    %
+    % Data:             {LoadData}
+    %   FileName:       File name (cell array of char array)
+    %   FileDir:        File directory (char array)
+    %   ResultsDir:     Results directory (char array)(Default='FileDir/Results')
+    %   AnalysisID:     ID tagged onto saved results (char array)(Default='')
+    %   FileType:       Type of data specified by FileName. If using a custom
+    %                   extension, you must set this field manually to the true
+    %                   underlying file type (e.g., if using a .mat file saved
+    %                   as exFile.spt, set obj.Data.FileType = 'mat')
+    %                   (char array)(Default set to extension of FileName{1})
+    %   DataVariable:   Name of variable saved in FileName which contains the
+    %                   raw data. (char array)(Default='sequence')
+    %   DatasetList:    List of datasets of the raw data to be analyzed.
+    %                   (array of int32)(Default=int32([]))
+    %   DatasetMods: Cell array containing datasets to be used/excluded from
+    %                analysis (Mods <-> modifiers). This is meant to be the
+    %                user-facing lists which define DatasetList, meaning that
+    %                this is what would be set in the GUI. DatasetMods{1} will
+    %                contain an array of the "inclusion" dataset numbers and
+    %                DatasetMods{2} will contain an array of the "exclusion"
+    %                datasets. DatasetList will be set elsewhere (e.g.,
+    %                smi_core.LoadData) to include the set
+    %                   intersect(intersect(1:NDatasets, DatasetMods{1}), ...
+    %                   setdiff(1:NDatasets, DatasetMods{2}))
+    %                unless DatasetMods{1} is empty, in which case the first
+    %                parantheses term is dropped. For example, if
+    %                NDatasets = 20, and you only want to analyze datasets 1:5,
+    %                you can set DatasetMods{1} = 1:5. If you further decide to
+    %                exclude datsaets 2 and 4, you could set
+    %                DatasetMods{2} = [2, 4].
+    %                (cell array of int32 arrays)(Default={[]; []})
+    %   CameraType:     'EMCCD','SCMOS' (Default='EMCCD')
+    %   CameraGain:     Camera Gain, scalar or image (Default=1)
+    %   CameraOffset:   Camera Offset, scalar or image (Default=0)
+    %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
+    %   CalibrationFilePath: Path to the camera calibration file (Default='')
+    %   DataROI:        Region of interest of data file to be used (Default=[])
+    %   FrameRate:      Data Collection Frame Rate (1/s)
+    %   PixelSize:      Camera back-projected pixel size (micrometers)
+    %
+    % BoxFinding:       {FindROI}
+    %   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
+    %   BoxOverlap:     Overlap of boxes allowed (Pixels)(Default=2)
+    %   MinPhotons:     Minimum number of photons from emitter (Default=200)
+    %
+    % Fitting           {GaussMLE}
+    %   PSFSigma:   Initial or fixed Sigma of 2D Gaussian PSF Model (Pixels)(Default=1)
+    %   FitType:    See fit class for options  (Default='XYNB')
+    %   NParams:    Number of fitting parameters (auto-set based on FitType)
+    %   Iterations: Newton Raphson iterations (Default=20)
+    %   ZFitStruct: Structure for astigmatic fitting:
+    %       Ax:         Astigmatism fit parameter (see GaussMLE)
+    %       Ay:         Astigmatism fit parameter (see GaussMLE)
+    %       Bx:         Astigmatism fit parameter (see GaussMLE)
+    %       By:         Astigmatism fit parameter (see GaussMLE)
+    %       Gamma:      Astigmatism fit parameter (see GaussMLE)
+    %       D:          Astigmatism fit parameter (see GaussMLE)
+    %
+    % Thresholding      {ThresholdFits,SRA}
+    %   On              Perform thresholding? (Default=true)
+    %   MaxXY_SE:       Maximum allowed precision in x,y (Pixels)(Default=.2)
+    %   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
+    %   LoS:            Minimum accepted p-value from fit (Default=.01)
+    %   MinPSFSigma:    Minimum PSF Sigma from fit (Pixels)(Default=.5);
+    %   MaxPSFSigma:    Maximum PSF Sigma from fit (Pixels)(Default=2);
+    %   MinPhotons:     Minimum accepted photons from fit (Default=100)
+    %   MaxBg:          Maximum background accepted from fit (Default=Inf)
+    %
+    % FrameConnection:  {FrameConnect,SRA}
+    %   On              Perform frame connection? (Default=true)
+    %   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
+    %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
+    %   LoS:            Minimum accepted p-value for connection (Default=.01)
+    %
+    % DriftCorrection   {DriftCorrection,SRA}
+    %  On               Perform drift correction? (Default=true)
+    %  BFRegistration   Was brightfield registration performed? (Default=true)
+    %  L_intra          Intra-dataset threshold (Pixel)(Default=1)
+    %  L_inter          Inter-dataset threshold (Pixel)(Default=2)
+    %  PixelSizeZUnit   X/Y pixel size (3D drift correction) (um)(Default=0.1)
+    %  PDegree          Degree intra-dataset fitting poly for drift rate (Default=1)
+    %
+    % Tracking          {SPT}
+    %   Method:         Type of method used for tracking (Default='CostMatrix')
+    %   D:              Diffusion Constant (Pixels^2/Frame) (Default=0.01)
+    %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
+    %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
+    %   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
+    %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
+    %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
+    %   MaxSigmaDevFF:  Max. deviations from mean jump for f-to-f connection (Default=2)
+    %   MaxSigmaDevGC:  Max. deviations from mean jump for gap closing (Default=4)
+    %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
+    %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
+    
+    % created by:
+    % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
     
     properties
         Data struct {mustBeNonempty} = struct();
@@ -136,17 +137,17 @@ classdef SingleMoleculeFitting < handle
         % This is a structure similar to SMF but field entries define units
         % This is basically an SMF structure but the sub-fields are all
         % char arrays defining the units/datatype/other notes. For example,
-        % SMFFieldNotes.Data.CameraGain.Units = 'ADU'. This can also be 
+        % SMFFieldNotes.Data.CameraGain.Units = 'ADU'. This can also be
         % used to specify a datatype where the unit isn't relevant, e.g.,
         % SMFFieldNotes.Data.FileName.Units = 'cell array'.
         SMFFieldNotes struct = struct();
     end
     
-    methods        
+    methods
         
         function obj = SingleMoleculeFitting()
             % Class constructor used to set default property values.
-                        
+            
             %Data
             obj.Data.FileName={''};
             obj.Data.FileDir='';
@@ -181,7 +182,7 @@ classdef SingleMoleculeFitting < handle
             obj.Fitting.ZFitStruct.By=[];
             obj.Fitting.ZFitStruct.Gamma=[];
             obj.Fitting.ZFitStruct.D=[];
-
+            
             %Thresholding
             obj.Thresholding.On=true;
             obj.Thresholding.MaxXY_SE=.2;
@@ -191,13 +192,13 @@ classdef SingleMoleculeFitting < handle
             obj.Thresholding.MaxPSFSigma=2;
             obj.Thresholding.MinPhotons=100;
             obj.Thresholding.MaxBg=Inf;
-
+            
             %FrameConnection
             obj.FrameConnection.On=true;
-            obj.FrameConnection.MaxSeparation=1; % pixels 
+            obj.FrameConnection.MaxSeparation=1; % pixels
             obj.FrameConnection.MaxFrameGap=4; % frames
             obj.FrameConnection.LoS=.01;
-
+            
             %DriftCorrection
             obj.DriftCorrection.On = true;
             obj.DriftCorrection.BFRegistration = true;
@@ -208,13 +209,15 @@ classdef SingleMoleculeFitting < handle
             
             %Tracking
             obj.Tracking.Method='CostMatrix';
-            obj.Tracking.D=1;
+            obj.Tracking.D=0.01;
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
             obj.Tracking.Rho_off=1e-3;
-            obj.Tracking.MaxFrameGap=10;
-            obj.Tracking.MaxDistGC=10;
             obj.Tracking.MaxDistFF=5;
+            obj.Tracking.MaxDistGC=10;
+            obj.Tracking.MaxSigmaDevFF=2;
+            obj.Tracking.MaxSigmaDevGC=4;
+            obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             
             % Store a note about the unit/type of various sub-fields.
@@ -259,7 +262,7 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Thresholding.MaxBg.Units = 'photons';
             obj.SMFFieldNotes.FrameConnection.On.Units = 'logical';
             obj.SMFFieldNotes.FrameConnection.MaxSeparation.Units = ...
-                'pixels'; 
+                'pixels';
             obj.SMFFieldNotes.FrameConnection.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.FrameConnection.LoS.Units = ...
                 'number between 0 and 1';
@@ -277,13 +280,15 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
-            obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
+            obj.SMFFieldNotes.Tracking.MaxSigmaDevFF.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxSigmaDevGC.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
             
-            % Store a 'tip' for certain sub-fields (intended to be 
+            % Store a 'tip' for certain sub-fields (intended to be
             % displayed in the GUI as a tooltip when hovering over
             % associated GUI elements).
             % NOTE: Sub-structs (e.g., SMF.Fitting.ZFitStruct, should only
@@ -387,11 +392,11 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.FrameConnection.MaxSeparation.Tip = ...
                 sprintf(['Maximum separation between two\n', ...
                 'localizations such that they can still be\n', ...
-                'considered candidates for frame connection']); 
+                'considered candidates for frame connection']);
             obj.SMFFieldNotes.FrameConnection.MaxFrameGap.Tip = ...
                 sprintf(['Maximum number of frames separating two\n', ...
                 'localizations in time such that they can still be\n', ...
-                'considered candidates for frame connection']); 
+                'considered candidates for frame connection']);
             obj.SMFFieldNotes.FrameConnection.LoS.Tip = ...
                 sprintf(['Level of Significance corresponding to\n', ...
                 'p-values computed in the frame-connection\n', ...
@@ -427,18 +432,27 @@ classdef SingleMoleculeFitting < handle
                 'transition to a dark state.']);
             obj.SMFFieldNotes.Tracking.Rho_off.Tip = ...
                 sprintf('Density of emitters in the dark state');
-            obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
-                sprintf(['Maximum number of frames elapsed between\n', ...
-                'localizations such that they can still be\n', ...
-                'considered candidates for the gap closing procedure']);
-            obj.SMFFieldNotes.Tracking.MaxDistGC.Tip = ...
-                sprintf(['Maximum separation between localizations\n', ...
-                'such that they can still be considered candidates\n', ...
-                'for the gap closing procedure']);
             obj.SMFFieldNotes.Tracking.MaxDistFF.Tip = ...
                 sprintf(['Maximum separation between localizations\n', ...
                 'such that they can still be considered candidates\n', ...
                 'for the frame-to-frame connection procedure']);
+            obj.SMFFieldNotes.Tracking.MaxDistGC.Tip = ...
+                sprintf(['Maximum separation between localizations\n', ...
+                'such that they can still be considered candidates\n', ...
+                'for the gap closing procedure']);
+            obj.SMFFieldNotes.Tracking.MaxSigmaDevFF.Tip = ...
+                sprintf(['Maximum number of standard deviations\n', ...
+                'from the expected jump size allowed for\n', ...
+                'frame-to-frame trajectory connections.']);
+            obj.SMFFieldNotes.Tracking.MaxSigmaDevGC.Tip = ...
+                sprintf(['Maximum number of standard deviations\n', ...
+                'from the expected jump size allowed for\n', ...
+                'gap closing trajectory connections.']);
+            obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
+                sprintf(['Maximum number of frames elapsed between\n', ...
+                'localizations such that they can still be\n', ...
+                'considered candidates for the gap closing procedure']);
+            
             obj.SMFFieldNotes.Tracking.MinTrackLength.Tip = ...
                 sprintf(['Minimum number of observations\n', ...
                 '(localizations) a trajectory must have to not be\n', ...
@@ -455,7 +469,7 @@ classdef SingleMoleculeFitting < handle
                     'Please revise in SingleMoleculeFitting.m'])
             end
         end
-                
+        
         function set.Data(obj, DataInput)
             % This is a set method for the class property Data.
             
@@ -608,7 +622,7 @@ classdef SingleMoleculeFitting < handle
                     error('''SMF.Data.PixelSize'' must be numeric.')
                 end
             end
-                        
+            
             % Set the input fields as class properties.
             InputFields = fieldnames(DataInput);
             for ff = 1:numel(InputFields)
@@ -658,7 +672,7 @@ classdef SingleMoleculeFitting < handle
             end
             if isfield(FittingInput, 'FitType')
                 if ismember(FittingInput.FitType, ...
-                    {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'})
+                        {'XYNB', 'XYNBS', 'XYNBSXSY', 'XYZNB'})
                     % Set the NParams field automatically based on this
                     % selection.
                     switch FittingInput.FitType
@@ -883,10 +897,9 @@ classdef SingleMoleculeFitting < handle
                     error('''SMF.Tracking.Rho_off'' must be numeric.')
                 end
             end
-            if isfield(TrackingInput, 'MaxFrameGap')
-                if mod(TrackingInput.MaxFrameGap, 1)
-                    error(['''SMF.Tracking.MaxFrameGap'' ', ...
-                        'must be an integer.'])
+            if isfield(TrackingInput, 'MaxDistFF')
+                if ~isnumeric(TrackingInput.MaxDistFF)
+                    error('''SMF.Tracking.MaxDistFF'' must be numeric.')
                 end
             end
             if isfield(TrackingInput, 'MaxDistGC')
@@ -894,9 +907,20 @@ classdef SingleMoleculeFitting < handle
                     error('''SMF.Tracking.MaxDistGC'' must be numeric.')
                 end
             end
-            if isfield(TrackingInput, 'MaxDistFF')
-                if ~isnumeric(TrackingInput.MaxDistFF)
-                    error('''SMF.Tracking.MaxDistFF'' must be numeric.')
+            if isfield(TrackingInput, 'MaxSigmaDevFF')
+                if ~isnumeric(TrackingInput.MaxSigmaDevFF)
+                    error('''SMF.Tracking.MaxSigmaDevFF'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'MaxSigmaDevGC')
+                if ~isnumeric(TrackingInput.MaxSigmaDevGC)
+                    error('''SMF.Tracking.MaxSigmaDevGC'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'MaxFrameGap')
+                if mod(TrackingInput.MaxFrameGap, 1)
+                    error(['''SMF.Tracking.MaxFrameGap'' ', ...
+                        'must be an integer.'])
                 end
             end
             if isfield(TrackingInput, 'MinTrackLength')
@@ -914,7 +938,7 @@ classdef SingleMoleculeFitting < handle
             end
         end
         
-                
+        
         function [SMFStruct] = packageSMF(obj)
             %packageSMF converts class instance obj to a structure array.
             % This method will convert the class instance into a structure
@@ -956,7 +980,7 @@ classdef SingleMoleculeFitting < handle
         end
         
         [GUIParent] = gui(obj, GUIParent);
-                        
+        
     end
     
     methods (Static)
