@@ -55,7 +55,6 @@ if obj.UseTrackByTrackD
         % Re-track the data.
         obj.SMD.ConnectID = [];
         obj.generateTrajectories();
-        disp(rr)
     end
 end
 
