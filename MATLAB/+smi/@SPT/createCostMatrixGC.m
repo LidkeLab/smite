@@ -1,4 +1,4 @@
-function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
+function [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
     DiffusionConstants, NonLinkMarker, CreateSparseMatrix)
 %createCostMatrixGC creates the cost matrix for gap closing in SPT.
 % This method creates a cost matrix whose elements represent the cost for
@@ -31,8 +31,15 @@ function [CostMatrix] = createCostMatrixGC(SMD, SMF, ...
 %   CostMatrix: The cost matrix whose elements represent the cost for
 %               connecting the end of one trajectory to the start of
 %               another trajectory in a future frame.
-%               (2*NTraj x 2*NTraj numeric, array, where NTraj is the
+%               (2*NTraj x 2*NTraj numeric array, where NTraj is the
 %               number of trajectories in the input SMD structure)
+%   StartEndIndices: Array of SMD indices corresponding to the start and
+%                    end localizations of trajectories.  These indices map
+%                    to the CostMatrix elements as follows: 
+%                    CostMatrix(mm, nn) contains the cost of linking the
+%                    SMD localization with index StartEndIndices(mm, 2) to
+%                    that with index StartEndIndices(nn, 1). 
+%                    (NTraj x 2 numeric array
 %
 % CITATION:
 
