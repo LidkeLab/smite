@@ -39,7 +39,9 @@ obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 %       REMOVE THIS EVENTUALLY!
 [obj.SMD.FrameRate] = deal(obj.SMF.Data.FrameRate);
 [obj.SMD.PixelSize] = deal(obj.SMF.Data.PixelSize);
-obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
+FileInfoStruct.FileDir = obj.SMF.Data.FileDir;
+FileInfoStruct.FileName = obj.SMF.Data.FileName;
+obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD, FileInfoStruct);
 
 
 end
