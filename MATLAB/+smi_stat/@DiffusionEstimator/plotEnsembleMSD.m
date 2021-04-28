@@ -12,7 +12,7 @@ function [PlotAxes] = plotEnsembleMSD(PlotAxes, ...
 %                    (Default = [], meaning no fit results are plotted).
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
-%                   'DiffusionModel'. (Default = 'Brownian')
+%                   'DiffusionModel'. (Default = 'brownian1c')
 %   UnitFlag: Flag to specify camera units (0) or physical units (1).
 %             (Default = 0)
 %
@@ -31,7 +31,7 @@ if (~exist('DiffusionStruct', 'var') || isempty(DiffusionStruct))
     DiffusionStruct = [];
 end
 if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
-    DiffusionModel = 'Brownian';
+    DiffusionModel = 'brownian1c';
 end
 if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
     UnitFlag = 0;
