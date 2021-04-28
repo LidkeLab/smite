@@ -25,6 +25,8 @@ obj.SMD = SMLM.SMD;
 obj.SMDPreThresh = SMLM.SMDPreThresh;
 
 % Generate trajectories from the localizations in obj.SMD.
+% NOTE: On the first pass, the diffusion constant in obj.SMF.Tracking.D
+%       will be used for all cost matrices.
 obj.DiffusionConstant = [];
 obj.generateTrajectories()
 
@@ -44,19 +46,20 @@ if obj.UseTrackByTrackD
         DiffusionStruct = ...
             obj.DiffusionEstimator.estimateDiffusionConstant();
         DiffusionConstantCurrent = DiffusionStruct(1).DiffusionConstant;
-        obj.DiffusionConstant = ...
-            ones(numel(obj.SMD.FrameNum), 1) * obj.SMF.Tracking.D;
+        obj.DiffusionConstant = ones(numel(obj.SMD.FrameNum), 1) ...
+            * DiffusionStruct(2).DiffusionConstant;
         for ii = 1:numel(obj.TR)
             obj.DiffusionConstant(obj.TR(ii).IndSMD) = ...
                 DiffusionConstantCurrent(ii);
         end
         
         % Filter the diffusion constants, setting those which are invalid 
-        % to the value in obj.SMF.Tracking.D.
-        BadValueBool = ((obj.DiffusionConstant < 0) ...
+        % to the previously estimated ensemble value.
+        BadValueBool = ((obj.DiffusionConstant<0) ...
             | isnan(obj.DiffusionConstant) ...
             | isinf(obj.DiffusionConstant));
-        obj.DiffusionConstant(BadValueBool) = obj.SMF.Tracking.D;
+        obj.DiffusionConstant(BadValueBool) = ...
+            DiffusionStruct(2).DiffusionConstant;
         
         % Re-track the data.
         obj.SMD.ConnectID = [];
