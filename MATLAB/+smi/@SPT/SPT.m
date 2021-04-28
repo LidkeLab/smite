@@ -23,6 +23,13 @@ classdef SPT < handle
         % See obj.performFullAnalysis() for usage.
         UseTrackByTrackD = false;
         
+        % Keep low p-value loc.'s for f2f connection (Default = false)
+        % If this flag is enabled, the p-value thresholding won't occur
+        % until after frame-to-frame connections. Any localization
+        % incorporated into a trajectory will not be thresholded,
+        % regardless of the setting in obj.SMF.Thresholding.MinPValue.
+        TryLowPValueLocs = false
+        
         % Diffusion estimator class for when UseTrackByTrackD is set.
         % NOTE: This is used here so that the user can change properties of
         %       the DiffusionEstimator class as needed when using 
@@ -73,6 +80,13 @@ classdef SPT < handle
         %       or access them in the appropriate properties of
         %       obj.DiffusionEstimator.
         DiffusionConstant = [];
+        
+        % Copy of the SMF structure.
+        % This is used for a few random tests/things like 
+        % obj.TryLowPValueLocs which, when enabled, requires us to modify
+        % the SMF.  We will need to revert to the users original SMF if
+        % that's done.
+        SMFCopy
     end
     
     methods
@@ -95,10 +109,7 @@ classdef SPT < handle
                 StartGUI = true;
             end
             
-            % Store the SMF as a class property, ensuring that some vital
-            % "flags" are turned off first.
-            SMF.DriftCorrection.On = false;
-            SMF.FrameConnection.On = false;
+            % Store the SMF as a class property.
             obj.SMF = SMF;
             
             % Create an instance of the diffusion estimator class.
@@ -111,6 +122,17 @@ classdef SPT < handle
                 obj.gui();
             end
             
+        end
+        
+        function set.SMF(obj, SMFInput)
+            %set method for the property SMF.
+            % We want to ensure some fields of the SMF are always turned
+            % off for tracking. Also, we want to just make a copy of the
+            % SMF instead of keeping the original reference to an SMF
+            % class instance.
+            SMFInput.DriftCorrection.On = false;
+            SMFInput.FrameConnection.On = false;
+            obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMFInput);
         end
         
         [TR, SMD] = performFullAnalysis(obj);
@@ -130,6 +152,7 @@ classdef SPT < handle
         [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
+        [ConnectID] = validifyConnectID(ConnectID);
     end
     
     

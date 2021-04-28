@@ -21,11 +21,23 @@ for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
     % Create the frame-to-frame connection cost matrix.
     CostMatrix = smi.SPT.createCostMatrixFF(obj.SMD, obj.SMF, ...
         obj.DiffusionConstant, ff, obj.NonlinkMarker);
-
+    
     % Perform the linear assignment problem to determine how we should link
     % together trajectories.
     Link12 = obj.solveLAP(CostMatrix);
     obj.SMD = obj.connectTrajFF(obj.SMD, Link12, ff);
+end
+
+% Throw away unconnected low p-value localizations.
+if obj.TryLowPValueLocs
+    obj.SMF.Thresholding.MinPValue = obj.SMFCopy.Thresholding.MinPValue;
+    [GroupCounts, GroupIDs] = groupcounts(obj.SMD.ConnectID);
+    UniqueTraj = GroupIDs(GroupCounts == 1);
+    obj.SMD.ThreshFlag = ...
+        ((obj.SMD.PValue<obj.SMF.Thresholding.MinPValue) ...
+        & ismember(obj.SMD.ConnectID, UniqueTraj));
+    obj.SMD = smi_core.Threshold.applyThresh(obj.SMD, obj.Verbose);
+    obj.SMD.ConnectID = smi.SPT.validifyConnectID(obj.SMD.ConnectID);
 end
 
 % Perform the gap closing on the trajectory segments.

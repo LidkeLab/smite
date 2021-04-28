@@ -15,6 +15,10 @@ function [TR, SMD] = performFullAnalysis(obj)
 
 % Prepare an SMLM class (we'll use this to load data, perform gain/offset
 % correction, and fit the data).
+if obj.TryLowPValueLocs
+    obj.SMFCopy = smi_core.SingleMoleculeFitting.reloadSMF(obj.SMF);
+    obj.SMF.Thresholding.MinPValue = 0;
+end
 SMLM = smi.SMLM(obj.SMF);
 SMLM.Verbose = obj.Verbose;
 

@@ -79,14 +79,9 @@ for ee = 1:MaxTrajID
     end
 end
 
-% Ensure SMD.ConnectID consists of the set of integers 1:1:NTraj without
+% Ensure SMD.ConnectID consists of the set of integers 1:NTraj without
 % skipping any integers.
-ConnectIDList = unique(SMD.ConnectID);
-NTraj = numel(ConnectIDList);
-for nn = 1:NTraj
-    % Set all trajectories with ConnectID ConnectIDList(nn) equal to nn.
-    SMD.ConnectID(SMD.ConnectID==ConnectIDList(nn)) = nn;
-end
+SMD.ConnectID = smi.SPT.validifyConnectID(SMD.ConnectID);
 
 
 end
