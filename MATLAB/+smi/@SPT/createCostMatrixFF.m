@@ -11,10 +11,11 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD.
-%                       If this is not provided, we'll use SMF.Tracking.D
-%                       for all trajectories.
-%                       (numel(SMD.FrameNum)x1 array)(px^2/frame)
+%   DiffusionConstants: Diffusion constants for each localization in SMD
+%                       (column 1) and their SEs (column 2). If this is not 
+%                       provided, we'll use SMF.Tracking.D for all
+%                       trajectories.
+%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
 %   FrameNumber: The frame containing the localizations for which we want
 %                to construct a cost matrix (for connection to
 %                FrameNumber+1).
@@ -46,7 +47,8 @@ if (~exist('NonLinkMarker', 'var') || isempty(NonLinkMarker))
     NonLinkMarker = -1;
 end
 if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
-    DiffusionConstants = SMF.Tracking.D * ones(numel(SMD.FrameNum), 1);
+    DiffusionConstants = [SMF.Tracking.D, inf] ...
+        .* ones(numel(SMD.FrameNum), 1);
 end
 
 % Determine which emitters in SMD were present in frames FrameNumber and
@@ -66,7 +68,7 @@ for ii = 1:N
     X_SEFrame1 = SMD.X_SE(CurrentIndicesFrame1);
     YFrame1 = SMD.Y(CurrentIndicesFrame1);
     Y_SEFrame1 = SMD.Y_SE(CurrentIndicesFrame1);
-    DFrame1 = DiffusionConstants(CurrentIndicesFrame1);
+    DFrame1 = DiffusionConstants(CurrentIndicesFrame1, :);
     for jj = 1:M
         % Isolate the localizations in frame FrameNumber+1 from SMD.
         CurrentIndicesFrame2 = EmitterIndicesFrame2(jj);
@@ -74,7 +76,7 @@ for ii = 1:N
         X_SEFrame2 = SMD.X_SE(CurrentIndicesFrame2);
         YFrame2 = SMD.Y(CurrentIndicesFrame2);
         Y_SEFrame2 = SMD.Y_SE(CurrentIndicesFrame2);
-        DFrame2 = DiffusionConstants(CurrentIndicesFrame2);
+        DFrame2 = DiffusionConstants(CurrentIndicesFrame2, :);
         
         % Define the standard deviations of the distribution of observed X
         % and Y separations between two localizations in consecutive
@@ -87,17 +89,22 @@ for ii = 1:N
         %       (e.g., if one of the localizations was previously estimated 
         %       to be from a very slow trajectory, that might prevent us 
         %       from connecting the two localizations).
-        Sigma_X = sqrt(DFrame1 + DFrame2 + X_SEFrame1^2 + X_SEFrame2^2);
-        Sigma_Y = sqrt(DFrame1 + DFrame2 + Y_SEFrame1^2 + Y_SEFrame2^2);
+        Sigma_X = sqrt(DFrame1(1) + DFrame2(1) ...
+            + X_SEFrame1^2 + X_SEFrame2^2);
+        Sigma_Y = sqrt(DFrame1(1) + DFrame2(1) ...
+            + Y_SEFrame1^2 + Y_SEFrame2^2);
         
         % Compute the distance between the localizations and determine if
         % we need to proceed.
         XJump = XFrame1 - XFrame2;
         YJump = YFrame1 - YFrame2;
         Separation = sqrt(XJump^2 + YJump^2);
+        ZScoreD = abs(DFrame1(1)-DFrame2(1)) ...
+            / sqrt(DFrame1(2)^2 + DFrame2(2)^2);
         if ((Separation>SMF.Tracking.MaxDistFF) ...
-                || (abs(XJump/Sigma_X)>SMF.Tracking.MaxSigmaDevFF) ...
-                || (abs(YJump/Sigma_Y)>SMF.Tracking.MaxSigmaDevFF))
+                || (abs(XJump/Sigma_X)>SMF.Tracking.MaxZScoreDist) ...
+                || (abs(YJump/Sigma_Y)>SMF.Tracking.MaxZScoreDist) ...
+                || (ZScoreD>SMF.Tracking.MaxZScoreD))
             continue
         end
                 

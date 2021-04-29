@@ -12,10 +12,11 @@ function [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD.
-%                       If this is not provided, we'll use SMF.Tracking.D
-%                       for all trajectories. 
-%                       (numel(SMD.FrameNum)x1 array)(px^2/frame)
+%   DiffusionConstants: Diffusion constants for each localization in SMD
+%                       (column 1) and their SEs (column 2). If this is not 
+%                       provided, we'll use SMF.Tracking.D for all
+%                       trajectories.
+%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we
 %                  don't want to select that element in the linear
 %                  assignment problem.
@@ -58,7 +59,8 @@ if (~exist('CreateSparseMatrix', 'var') || isempty(CreateSparseMatrix))
     CreateSparseMatrix = true;
 end
 if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
-    DiffusionConstants = SMF.Tracking.D * ones(numel(SMD.FrameNum), 1);
+    DiffusionConstants = [SMF.Tracking.D, inf] ...
+        .* ones(numel(SMD.FrameNum), 1);
 end
 
 % Extract some arrays from the SMD/SMF structure.  Doing this outside of
@@ -69,10 +71,13 @@ X = SMD.X;
 Y = SMD.Y;
 X_SE = SMD.X_SE;
 Y_SE = SMD.Y_SE;
+Photons = SMD.Photons;
 FrameNum = SMD.FrameNum;
 ConnectID = SMD.ConnectID;
 MaxDistGC = SMF.Tracking.MaxDistGC;
-MaxSigmaDevGC = SMF.Tracking.MaxSigmaDevGC;
+MaxZScoreDist = SMF.Tracking.MaxZScoreDist;
+MaxZScorePhotons = SMF.Tracking.MaxZScorePhotons;
+MaxZScoreD = SMF.Tracking.MaxZScoreD;
 MaxFrameGap = SMF.Tracking.MaxFrameGap;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
@@ -82,17 +87,28 @@ Rho_off = SMF.Tracking.Rho_off;
 NTraj = max(ConnectID);
 CMSize = 2 * NTraj * [1, 1];
 
-% Determine the starting and ending indices within SMD of each trajectory
-% (HMF noted that preparing these outside of the nested for loop below will
-% speed up the code).
+% Determine the starting and ending indices within SMD of each trajectory.
+% Also, compute some other quantities that we'll use later.
+% NOTE: For PhotonStDev, a standard deviation of 0 likely means the track
+%       is only one localization, so setting those values to inf will
+%       ensure we can still connect them into longer trajectories.
 StartEndIndices = zeros(NTraj, 2);
+PhotonMean = zeros(NTraj, 1);
+PhotonStDev = PhotonMean;
 for ii = 1:NTraj
+    % Determine the start/end indices.
     CurrentTrajBool = (ConnectID == ii);
     CurrentFrames = FrameNum(CurrentTrajBool);
     StartEndIndices(ii, :) = ...
         [find((FrameNum==min(CurrentFrames)) & CurrentTrajBool), ...
         find((FrameNum==max(CurrentFrames)) & CurrentTrajBool)];
+    
+    % Compute the mean and standard deviation of the photon counts for each
+    % trajectory.
+    PhotonMean(ii) = mean(Photons(CurrentTrajBool));
+    PhotonStDev(ii) = std(Photons(CurrentTrajBool));
 end
+PhotonStDev(PhotonStDev == 0) = inf;
 
 % Initialize the cost matrix index array and element array (this is the
 % best way to create a sparse matrix, but we can also use this for the
@@ -111,7 +127,9 @@ for ee = 1:NTraj
     X_SEEndCurrent = X_SE(EndIndexCurrent);
     YEndCurrent = Y(EndIndexCurrent);
     Y_SEEndCurrent = Y_SE(EndIndexCurrent);
-    DEndCurrent = DiffusionConstants(EndIndexCurrent);
+    DEndCurrent = DiffusionConstants(EndIndexCurrent, :);
+    MeanPhotonsCurrent = PhotonMean(ee);
+    StDevPhotonsCurrent = PhotonStDev(ee);
     
     % Loop through the trajectory beginnings and populate the cost matrix.
     for bb = 1:NTraj
@@ -136,10 +154,11 @@ for ee = 1:NTraj
         end
         
         % Compute the distance between the end of trajectory ee and the
-        % start of trajectory bb.
+        % start of trajectory bb as well as other relevant differences.
         XJump = XEndCurrent - X(StartIndexCurrent);
         YJump = YEndCurrent - Y(StartIndexCurrent);
         Separation = sqrt(XJump^2 + YJump^2);
+        PhotonsDev = abs(MeanPhotonsCurrent - PhotonMean(bb));
         
         % Define the standard deviations of the distribution of
         % observed X and Y separations between two localizations in
@@ -150,7 +169,8 @@ for ee = 1:NTraj
         %       in some cases (e.g., connecting very small trajectories)
         %       this proved to cause some issues.  Instead, I'll try using
         %       the average of the two diffusion constants.
-        DSumCurrent = DEndCurrent + DiffusionConstants(StartIndexCurrent);
+        DSumCurrent = ...
+            DEndCurrent(1) + DiffusionConstants(StartIndexCurrent, 1);
         Sigma_X = sqrt(DSumCurrent*DeltaFrame ...
             + X_SEEndCurrent^2 + X_SE(StartIndexCurrent)^2);
         Sigma_Y = sqrt(DSumCurrent*DeltaFrame ...
@@ -159,10 +179,18 @@ for ee = 1:NTraj
         % Compute the cost corresponding to linking these two trajectories
         % (unless the MaxDist and MaxFrameGap aren't satisified, in which
         % case we don't care to calculate this cost).
+        ZScorePhotons = PhotonsDev ...
+            / sqrt(StDevPhotonsCurrent^2+PhotonStDev(bb)^2);
+        ZScoreD = abs(DEndCurrent(1) ...
+            -DiffusionConstants(StartIndexCurrent, 1)) ...
+            / sqrt(DEndCurrent(2)^2 ...
+            +DiffusionConstants(StartIndexCurrent, 2)^2);
         if ((DeltaFrame<=MaxFrameGap) ...
                 && (Separation<=MaxDistGC) ...
-                && (abs(XJump/Sigma_X)<=MaxSigmaDevGC) ...
-                && (abs(YJump/Sigma_Y)<=MaxSigmaDevGC))
+                && (abs(XJump/Sigma_X)<=MaxZScoreDist) ...
+                && (abs(YJump/Sigma_Y)<=MaxZScoreDist) ...
+                && (ZScorePhotons<=MaxZScorePhotons) ...
+                && (ZScoreD<=MaxZScoreD))
             % Define the log-likelihood of the observed X, Y from
             % FrameNumber and FrameNumber+1 having come from the Normal
             % distributions defined by Sigma_X and Sigma_Y (i.e., this is

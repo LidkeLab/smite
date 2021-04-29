@@ -73,6 +73,7 @@ classdef SPT < handle
     
     properties (Hidden)
         % Diffusion constants for each localization in trajectories.
+        % This array is organized as a two-column array as [D, D_SE]
         % NOTE: This is only used when UseTrackByTrackD is set to true.
         %       I've made this hidden because the user shouldn't really be
         %       using these values to do anything.  If they're needed, the
