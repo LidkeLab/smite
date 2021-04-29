@@ -169,7 +169,7 @@ catch ME
 end
 % delete object and data
 clear SMLMobj
-delete(fullfile(tempdir, saveName, '*.*'));
-rmdir(fullfile(tempdir, saveName));
-delete(fullfile(tempdir, [saveName, '*.*']));
+%delete(fullfile(tempdir, saveName, '*.*'));
+%rmdir(fullfile(tempdir, saveName));
+%delete(fullfile(tempdir, [saveName, '*.*']));
 fprintf('Done.\n');
