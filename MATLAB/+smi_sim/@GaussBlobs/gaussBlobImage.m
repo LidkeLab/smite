@@ -114,11 +114,11 @@ Model=Model+Background;
 if nargout>1
     % poissrnd is faster when used in a loop through all frames
     Data = zeros(size(Model),'single');
-    for ii = 1:NFrames
+    for ii = 1:SMD.NFrames
         Data(:,:,ii)=poissrnd(Model(:,:,ii)); %not implemented in gpu yet
     end
     NoiseIm = sqrt(VarianceIm);
-    Data=Data+randn(size(Data)).*repmat(NoiseIm,[1 1 NFrames]);
+    Data=Data+randn(size(Data)).*repmat(NoiseIm,[1 1 SMD.NFrames]);
 end
 
 end
