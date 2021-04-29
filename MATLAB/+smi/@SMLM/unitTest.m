@@ -23,12 +23,12 @@ saveName = 'SMLM_testData';
 file1 = [saveName, '1.mat'];
 file2 = [saveName, '2.mat'];
 
-% Create SMD structure;
-SMD = smi_core.SingleMoleculeData.createSMD();
-SMD.XSize = 64;
-SMD.YSize = 64;
-SMD.NFrames = 250;
-SMD.PSFSigma = 1.3;
+%% Create SMD structure;
+%SMD = smi_core.SingleMoleculeData.createSMD();
+%SMD.XSize = 64;
+%SMD.YSize = 64;
+%SMD.NFrames = 250;
+%SMD.PSFSigma = 1.3;
 
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
@@ -42,8 +42,8 @@ SMF.Data.CameraOffset = 0;
 
 % Simulate two small datasets.
 fprintf('Simulating data.\n')
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
+[SimData1, ~] = smi_sim.GaussBlobs.genRandomBlobImage(64, 250);
+[SimData2, ~] = smi_sim.GaussBlobs.genRandomBlobImage(64, 250);
 %[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 250);
 %[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(64, 250);
 
@@ -119,15 +119,15 @@ Success(3) = 1;
 % Simulate and save realistic SMLM data.
 fprintf('\nSimulating realistic 2D SMLM data\n');
 
-% Create SMD structure;
-SMD = smi_core.SingleMoleculeData.createSMD();
-SMD.XSize = 256;
-SMD.YSize = 256;
-SMD.NFrames = 1000;
-SMD.PSFSigma = 1.3;
+%% Create SMD structure;
+%SMD = smi_core.SingleMoleculeData.createSMD();
+%SMD.XSize = 256;
+%SMD.YSize = 256;
+%SMD.NFrames = 1000;
+%SMD.PSFSigma = 1.3;
 
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
+[SimData1, ~] = smi_sim.GaussBlobs.genRandomBlobImage(256, 1000);
+[SimData2, ~] = smi_sim.GaussBlobs.genRandomBlobImage(256, 1000);
 %[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
 %[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
 fprintf('Saving realistic SMSR data.\n');
