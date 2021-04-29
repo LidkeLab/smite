@@ -28,6 +28,7 @@ SMD = smi_core.SingleMoleculeData.createSMD();
 SMD.XSize = 64;
 SMD.YSize = 64;
 SMD.NFrames = 250;
+SMD.PSFSigma = 1.3;
 
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
@@ -123,6 +124,7 @@ SMD = smi_core.SingleMoleculeData.createSMD();
 SMD.XSize = 256;
 SMD.YSize = 256;
 SMD.NFrames = 1000;
+SMD.PSFSigma = 1.3;
 
 [SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
 [SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
