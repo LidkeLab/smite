@@ -106,10 +106,10 @@ classdef SingleMoleculeFitting < handle
     %   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
     %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
-    %   MaxSigmaDevFF:  Max. deviations from mean jump for f-to-f connection (Default=5)
-    %   MaxSigmaDevGC:  Max. deviations from mean jump for gap closing (Default=5)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
     %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
+    %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=5)
+    %   MaxZScoreDistPhotons: Max. z-score for photon diffs. (Default=5)
     
     % created by:
     % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
@@ -215,8 +215,8 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.Rho_off=1e-3;
             obj.Tracking.MaxDistFF=5;
             obj.Tracking.MaxDistGC=10;
-            obj.Tracking.MaxSigmaDevFF=5;
-            obj.Tracking.MaxSigmaDevGC=5;
+            obj.Tracking.MaxZScoreDist=5;
+            obj.Tracking.MaxZScorePhotons=5;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             
@@ -282,8 +282,8 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
-            obj.SMFFieldNotes.Tracking.MaxSigmaDevFF.Units = '';
-            obj.SMFFieldNotes.Tracking.MaxSigmaDevGC.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxZScoreDisst.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Units = '';
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
@@ -440,19 +440,16 @@ classdef SingleMoleculeFitting < handle
                 sprintf(['Maximum separation between localizations\n', ...
                 'such that they can still be considered candidates\n', ...
                 'for the gap closing procedure']);
-            obj.SMFFieldNotes.Tracking.MaxSigmaDevFF.Tip = ...
-                sprintf(['Maximum number of standard deviations\n', ...
-                'from the expected jump size allowed for\n', ...
-                'frame-to-frame trajectory connections.']);
-            obj.SMFFieldNotes.Tracking.MaxSigmaDevGC.Tip = ...
-                sprintf(['Maximum number of standard deviations\n', ...
-                'from the expected jump size allowed for\n', ...
-                'gap closing trajectory connections.']);
+            obj.SMFFieldNotes.Tracking.MaxZScoreDist.Tip = ...
+                sprintf(['Maximum number of z-score for jump sizes\n', ...
+                'allowed for trajectory connections.']);
+            obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Tip = ...
+                sprintf(['Maximum number of z-score for photon\n', ...
+                'counts allowed for trajectory connections.']);
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
                 sprintf(['Maximum number of frames elapsed between\n', ...
                 'localizations such that they can still be\n', ...
                 'considered candidates for the gap closing procedure']);
-            
             obj.SMFFieldNotes.Tracking.MinTrackLength.Tip = ...
                 sprintf(['Minimum number of observations\n', ...
                 '(localizations) a trajectory must have to not be\n', ...
@@ -907,14 +904,15 @@ classdef SingleMoleculeFitting < handle
                     error('''SMF.Tracking.MaxDistGC'' must be numeric.')
                 end
             end
-            if isfield(TrackingInput, 'MaxSigmaDevFF')
-                if ~isnumeric(TrackingInput.MaxSigmaDevFF)
-                    error('''SMF.Tracking.MaxSigmaDevFF'' must be numeric.')
+            if isfield(TrackingInput, 'MaxZScoreDist')
+                if ~isnumeric(TrackingInput.MaxZScoreDist)
+                    error('''SMF.Tracking.MaxZScoreDist'' must be numeric.')
                 end
             end
-            if isfield(TrackingInput, 'MaxSigmaDevGC')
-                if ~isnumeric(TrackingInput.MaxSigmaDevGC)
-                    error('''SMF.Tracking.MaxSigmaDevGC'' must be numeric.')
+            if isfield(TrackingInput, 'MaxZScorePhotons')
+                if ~isnumeric(TrackingInput.MaxZScorePhotons)
+                    error(['''SMF.Tracking.MaxZScorePhotons'' ', ...
+                        'must be numeric.'])
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')
