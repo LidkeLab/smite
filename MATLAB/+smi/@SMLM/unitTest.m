@@ -117,8 +117,17 @@ delete(fullfile(tempdir, [saveName, '.*']));
 Success(3) = 1;
 % Simulate and save realistic SMLM data.
 fprintf('\nSimulating realistic 2D SMLM data\n');
-[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
-[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
+
+% Create SMD structure;
+SMD = smi_core.SingleMoleculeData.createSMD();
+SMD.XSize = 256;
+SMD.YSize = 256;
+SMD.NFrames = 1000;
+
+[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
+[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
+%[SimData1, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
+%[SimData2, ~] = smi_sim.GaussBlobs.gaussBlobImage(256, 1000);
 fprintf('Saving realistic SMSR data.\n');
 saveName = 'SMLM_testData';
 h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
