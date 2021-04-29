@@ -18,9 +18,8 @@ function [Model, Data] = genImageStack(obj)
    % Generate the blobs without Poisson noise.  Copy the SMD structure.
    SMD_Model = obj.SMD_Model;
    % Below needed for generating blob images.
-   SMF = smi_core.SingleMoleculeFitting();
-   SMF.BoxFinding.BoxSize = ceil(4 * 2 * obj.PSFSigma);
-   %SMD_Model.FitBoxSize = ceil(4 * 2 * obj.PSFSigma);
+   %SMF = smi_core.SingleMoleculeFitting();
+   %SMF.BoxFinding.BoxSize = ceil(4 * 2 * obj.PSFSigma);
    % Temporarily convert FrameNum into an absolute frame number for the call
    % to gaussBlobImage.  Need a less resource intensive way to incorporate
    % NDatasets > 1.
@@ -29,9 +28,7 @@ function [Model, Data] = genImageStack(obj)
    SMD_Model.NDatasets = 1;
    SMD_Model.NFrames = NFrames;
    SMD_Model.FrameNum = (SMD_Model.DatasetNum - 1) * obj.NFrames + FrameNum;
-   [Model] = smi_sim.GaussBlobs.gaussBlobImage(SMD_Model, SMF);
-   %[Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SZ, NFrames, SMD_Model, ...
-   %                                            0, 0, 0);
+   [Model] = smi_sim.GaussBlobs.gaussBlobImage(SMD_Model);
    % Add in background.
    Model = Model + obj.Bg;
 
