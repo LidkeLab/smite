@@ -25,7 +25,7 @@ function [Model,Data] = gaussBlobImage(SMD,SMF,Background,ROIBoxType)
 %       NFrames:    
 %   SMF:        SMF object with set properties
 %       BoxFinding.BoxSize ( Default=6*max(SMD.PSFSigma) )
-%   Background:     Background (photons/pixel)
+%   Background:     Background (photons/pixel) (Default=0)
 %   ROIBoxType:    Method for calc. box size ['auto','SMF'](Default='auto')
 % 
 % OUTPUTS:
