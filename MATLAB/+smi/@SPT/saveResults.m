@@ -27,7 +27,7 @@ SMFFileName = sprintf('%s_%s_%s.mat', ...
 
 % Move the data structures of interest into the workspace with appropriate
 % names for saving.
-SMD = obj.SMD;
+SMD = obj.SMDPreThresh;
 TR = obj.TR;
 SMF = obj.SMF;
 
