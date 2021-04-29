@@ -25,7 +25,7 @@ function [Model, Data] = genImageStack(obj)
    % to gaussBlobImage.  Need a less resource intensive way to incorporate
    % NDatasets > 1.
    NFrames = obj.NDatasets * obj.NFrames;
-   %FrameNum = SMD_Model.FrameNum;
+   FrameNum = SMD_Model.FrameNum;
    SMD_Model.NDatasets = 1;
    SMD_Model.NFrames = NFrames;
    SMD_Model.FrameNum = (SMD_Model.DatasetNum - 1) * obj.NFrames + FrameNum;
