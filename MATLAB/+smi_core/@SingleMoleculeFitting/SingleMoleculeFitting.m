@@ -109,7 +109,8 @@ classdef SingleMoleculeFitting < handle
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
     %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
     %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=5)
-    %   MaxZScoreDistPhotons: Max. z-score for photon diffs. (Default=5)
+    %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=5)
+    %   MaxZScoreD: Max. abs(z-score) for diffusion constant diffs. (Default=5)
     
     % created by:
     % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
@@ -217,6 +218,7 @@ classdef SingleMoleculeFitting < handle
             obj.Tracking.MaxDistGC=10;
             obj.Tracking.MaxZScoreDist=5;
             obj.Tracking.MaxZScorePhotons=5;
+            obj.Tracking.MaxZScoreD=5;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             
@@ -282,8 +284,9 @@ classdef SingleMoleculeFitting < handle
             obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
-            obj.SMFFieldNotes.Tracking.MaxZScoreDisst.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxZScoreDist.Units = '';
             obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxZScoreD.Units = '';
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
@@ -441,11 +444,14 @@ classdef SingleMoleculeFitting < handle
                 'such that they can still be considered candidates\n', ...
                 'for the gap closing procedure']);
             obj.SMFFieldNotes.Tracking.MaxZScoreDist.Tip = ...
-                sprintf(['Maximum number of z-score for jump sizes\n', ...
-                'allowed for trajectory connections.']);
+                sprintf(['Maximum z-score for jump sizes allowed\n', ...
+                'for trajectory connections.']);
             obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Tip = ...
-                sprintf(['Maximum number of z-score for photon\n', ...
-                'counts allowed for trajectory connections.']);
+                sprintf(['Maximum z-score for photon differences\n', ...
+                'allowed for trajectory connections.']);
+            obj.SMFFieldNotes.Tracking.MaxZScoreD.Tip = ...
+                sprintf(['Maximum z-score for diffusion constant\n', ...
+                'differences allowed for trajectory connections.']);
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
                 sprintf(['Maximum number of frames elapsed between\n', ...
                 'localizations such that they can still be\n', ...
@@ -913,6 +919,11 @@ classdef SingleMoleculeFitting < handle
                 if ~isnumeric(TrackingInput.MaxZScorePhotons)
                     error(['''SMF.Tracking.MaxZScorePhotons'' ', ...
                         'must be numeric.'])
+                end
+            end
+            if isfield(TrackingInput, 'MaxZScoreD')
+                if ~isnumeric(TrackingInput.MaxZScoreD)
+                    error(['''SMF.Tracking.MaxZScoreD'' must be numeric.'])
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')
