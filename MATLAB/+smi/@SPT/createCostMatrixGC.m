@@ -40,7 +40,7 @@ function [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
 %                    CostMatrix(mm, nn) contains the cost of linking the
 %                    SMD localization with index StartEndIndices(mm, 2) to
 %                    that with index StartEndIndices(nn, 1). 
-%                    (NTraj x 2 numeric array
+%                    (NTraj x 2 numeric array)
 %
 % CITATION:
 
