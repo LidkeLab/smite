@@ -49,13 +49,13 @@ RhoOnMean = mean(SMA_SPT.calcDensity(TD));
 RhoOffMean = (SimParams.KBlinkOff/SimParams.KBlinkOn) * RhoOnMean;
 SMF.Tracking.Rho_off = RhoOffMean;
 for ff = min(TD.FrameNum):(max(TD.FrameNum)-1)
-    [CM] = smi.SPT.createCostMatrixFF(TD, SMF, ff, -1);
+    [CM] = smi.SPT.createCostMatrixFF(TD, SMF, [], ff, -1);
     [Link12] = smi.SPT.solveLAP(CM);
     [TD] = smi.SPT.connectTrajFF(TD, Link12, ff);
 end
 
 % Perform the gap-closing process.
-[CM] =smi.SPT.createCostMatrixGC(TD, SMF, -1, 1); 
+[CM] =smi.SPT.createCostMatrixGC(TD, SMF, [], -1, 1); 
 [Link12] = smi.SPT.solveLAP(CM);
 [TD] = smi.SPT.connectTrajGC(TD, Link12);
 TR = smi_core.TrackingResults.convertSMDToTR(TD);
