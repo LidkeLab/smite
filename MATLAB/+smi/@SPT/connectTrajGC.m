@@ -58,18 +58,16 @@ for ee = 1:MaxTrajID
         UpdateBoolean = (SMD.ConnectID == max(ee, Link12(ee)));
                 
         % If the ee-th trajectory ID was already re-assigned, we need to
-        % account for that as well. This was overlooked in the original 
-        % version and fixed by HMF in her revision. Thanks!
-        ReassignedCurrentID = SMD.ConnectID(...
-            find(SMD.PreGCConnectID==ee, 1));
+        % account for that as well.
+        ReassignedCurrentID = min(SMD.ConnectID(SMD.PreGCConnectID == ee));
         
         % If linking to a trajectory which itself had already been given a
         % new trajectory ID (i.e. the trajectory with id Link12(ee) has
-        % been assigned a new ConnectID ~= Link12(ee)), we also
-        % want to consider assigning the current trajectory the updated
-        % ConnectID associated with Link12(ee).
-        ReassigedLinkID = SMD.ConnectID(...
-            find(SMD.PreGCConnectID==Link12(ee), 1));
+        % been assigned a new ConnectID ~= Link12(ee)), we also want to
+        % consider assigning the current trajectory the updated ConnectID
+        % associated with Link12(ee).
+        ReassigedLinkID = ...
+            min(SMD.ConnectID(SMD.PreGCConnectID == Link12(ee)));
         
         % Re-assign the appropriate set of trajectories to their new
         % ConnectID.
