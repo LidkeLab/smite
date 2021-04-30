@@ -65,6 +65,8 @@ for ii = numel(UniqueTrajIDs):-1:1
     TR(ii, 1).TrajectoryID = SMD.ConnectID(CurrentTrajIndices(1));
     TR(ii, 1).IndSMD = CurrentTrajIndices;
 end
+[TR.FileDir] = deal(FileInfoStruct.FileDir);
+[TR.FileName] = deal(FileInfoStruct.FileName);
 
 
 end

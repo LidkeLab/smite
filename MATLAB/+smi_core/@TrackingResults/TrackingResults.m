@@ -81,6 +81,7 @@ classdef TrackingResults
             TR.FileName = '';
         end
         
+        [Durations] = computeTrajDurations(TR);
         [TR] = convertSMDToTR(SMD, FileInfoStruct);
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);

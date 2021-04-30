@@ -68,6 +68,8 @@ function simStar(obj,NWings)
     if isscalar(obj.PSFSigma)
         obj.SMD_True.Z = [];
     end
+    obj.SMD_True.XSize = obj.SZ;
+    obj.SMD_True.YSize = obj.SZ;
 
     obj.genModel()
     
