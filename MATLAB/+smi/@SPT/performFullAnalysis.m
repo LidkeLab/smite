@@ -24,7 +24,6 @@ SMLM.Verbose = obj.Verbose;
 
 % Load data, perform gain/offset correction, and fit the data.
 SMLM.analyzeAll()
-obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMLM.SMF);
 obj.SMD = SMLM.SMD;
 obj.SMDPreThresh = SMLM.SMDPreThresh;
 
