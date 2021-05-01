@@ -510,12 +510,29 @@ classdef SingleMoleculeFitting < handle
                     % Note that if the FileDir isn't being changed, we
                     % don't want to update ResultsDir since that might
                     % overwrite a change to ResultsDir intended by the
-                    % user.
+                    % user. Similarly, if the current ResultsDir isn't the
+                    % expected default value, we should assume the user has
+                    % specified some custom directory that shouldn't be
+                    % changed.
                     if (isfield(obj.Data, 'FileDir') ...
                             && ~strcmp(DataInput.FileDir, ...
                             obj.Data.FileDir))
-                        DataInput.ResultsDir = ...
+                        DefaultResultsDir = ...
                             fullfile(DataInput.FileDir, 'Results');
+                        if isfield(obj.Data, 'ResultsDir')
+                            OldDefaultResultsDir = ...
+                                fullfile(obj.Data.FileDir, 'Results');
+                            if (strcmp(obj.Data.ResultsDir, ...
+                                    OldDefaultResultsDir) ...
+                                    || isempty(obj.Data.ResultsDir))
+                                % If this condition isn't met, I'm assuming
+                                % the ResultsDir is set to a custom
+                                % directory and shouldn't be changed.
+                                DataInput.ResultsDir = DefaultResultsDir;
+                            end
+                        else              
+                            DataInput.ResultsDir = DefaultResultsDir;
+                        end
                     end
                 end
             end
@@ -923,7 +940,7 @@ classdef SingleMoleculeFitting < handle
             end
             if isfield(TrackingInput, 'MaxZScoreD')
                 if ~isnumeric(TrackingInput.MaxZScoreD)
-                    error(['''SMF.Tracking.MaxZScoreD'' must be numeric.'])
+                    error('''SMF.Tracking.MaxZScoreD'' must be numeric.')
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')
