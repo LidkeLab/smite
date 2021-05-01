@@ -1,4 +1,4 @@
-classdef SingleMoleculeFitting < handle
+classdef SingleMoleculeFitting < matlab.mixin.Copyable
     % SingleMoleculeFitting A class defining the Single Molecule Fitting structure
     %
     % The SMF structure is a structure of structures that collectively contain
