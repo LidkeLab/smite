@@ -70,8 +70,14 @@ if obj.UseTrackByTrackD
         BadValueBool = ((obj.DiffusionConstant(:, 1)<0) ...
             | isnan(obj.DiffusionConstant(:, 1)) ...
             | isinf(obj.DiffusionConstant(:, 1)));
-        obj.DiffusionConstant(BadValueBool, 1) = ...
-            DiffusionStruct(2).DiffusionConstant;
+        if isnan(DiffusionStruct(2).DiffusionConstant)
+            % This can happen when no good trajectories were formed, but we
+            % may still wish to iterate.
+            obj.DiffusionConstant(BadValueBool, 1) = obj.SMF.Tracking.D;
+        else
+            obj.DiffusionConstant(BadValueBool, 1) = ...
+                DiffusionStruct(2).DiffusionConstant;
+        end
         obj.DiffusionConstant(BadValueBool, 2) = inf;
         
         % Re-track the data.
