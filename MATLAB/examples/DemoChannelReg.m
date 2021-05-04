@@ -40,8 +40,10 @@ ChannelReg.NNeighborPoints = 12;
 ChannelReg.findTransform();
 
 % Apply the transform to an SMD structure.
-FiducialSize = diff(ChannelReg.FiducialROI([1, 2; 3, 4])) + 1;
+% NOTE: The important code is the call to ChannelReg.transformSMD().  The
+%       rest is just me preparing an arbitrary SMD structure.
 SMD = smi_core.SingleMoleculeData.createSMD();
+FiducialSize = diff(ChannelReg.FiducialROI([1, 2; 3, 4])) + 1;
 SMD.X = linspace(1, FiducialSize(2), 100).';
 SMD.Y = linspace(1, FiducialSize(1), 100).';
 SMDTransformed = ChannelReg.transformSMD(...
