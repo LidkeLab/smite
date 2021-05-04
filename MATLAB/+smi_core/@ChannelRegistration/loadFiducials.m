@@ -19,7 +19,7 @@ if (obj.Verbose > 1)
 end
 LoadData = smi_core.LoadData;
 [~, TempImage] = ...
-    LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, 1);
+    LoadData.loadRawData(obj.SMF, 1, obj.SMF.Data.DataVariable);
 TempImage = mean(TempImage, 3);
 ImageSize = size(TempImage);
 FullROI = [1, 1, ImageSize(1:2)];
@@ -76,7 +76,7 @@ if (NROIs == 1)
         obj.FiducialROI(2):obj.FiducialROI(4));
     for ii = 2:NFiducials
         [~, TempImage] = ...
-            LoadData.loadRawData(obj.SMF, obj.SMF.Data.DataVariable, ii);
+            LoadData.loadRawData(obj.SMF, ii, obj.SMF.Data.DataVariable);
         FiducialImages(:, :, ii) = mean(...
             TempImage(obj.FiducialROI(1):obj.FiducialROI(3), ...
         obj.FiducialROI(2):obj.FiducialROI(4), :), ...

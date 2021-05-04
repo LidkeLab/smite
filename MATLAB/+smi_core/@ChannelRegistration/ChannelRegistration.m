@@ -39,7 +39,7 @@ classdef ChannelRegistration < handle
         %       findTransform(), or manually by the user.
         % NOTE: If you wish to manually define this array, you must set
         %       obj.SplitFormat = [].  Otherwise, the ROI splitting scheme
-        %       defined by obj.SplitFormat takes precedent.
+        %       defined by obj.SplitFormat takes precedence.
         % OPTIONS:
         %   If size(FiducialROI, 1) == 1, each image in FiducialImages will 
         %       be truncated to the ROI specified by FiducialROI before 
