@@ -39,35 +39,18 @@ NFiducials = size(obj.FiducialImages, 3);
 % this up here anyways because it looks cleaner).  If
 % obj.AutoscaleFiducials is set, we'll attempt to autoscale the fiducials
 % instead of doing a proper gain/offset correction.
+if (obj.Verbose > 1)
+    fprintf(['\tChannelRegistration.findTransform(): ', ...
+        'Rescaling fiducial images...\n'])
+end
+ScaledData = obj.rescaleFiducials(obj.FiducialImages, ...
+    obj.SMF, obj.AutoscaleFiducials);
+
+% If autoscaling, multiply by an extra factor so that the counts are 
+% somewhat realistic for a camera (having the range [0, 1] messes up the 
+% fitting, presumably because it seems like 0 photons but I'm not sure).
 if obj.AutoscaleFiducials
-    % Perform a full-scale histogram stretch on each image.
-    if (obj.Verbose > 1)
-        fprintf(['\tChannelRegistration.findTransform(): ', ...
-            'Auto-scaling fiducial images...\n'])
-    end
-    ScaledData = obj.FiducialImages;
-    for ii = 1:NFiducials
-        CurrentImage = obj.FiducialImages(:, :, ii);
-        ScaledData(:, :, ii) = ...
-            (CurrentImage-min(CurrentImage(:))) ...
-            ./ max(max(CurrentImage-min(CurrentImage(:))));
-    end
-    
-    % Multiply by an extra factor so that the counts are somewhat realistic
-    % for a camera (having the range [0, 1] messes up the fitting,
-    % presumably because it seems like 0 photons but I'm not sure).
-    ScaledData = ScaledData * 100;
-else
-    % NOTE: We'll need to update this in the future to specify RawDataROI
-    %       and CalibrationROI.
-    if (obj.Verbose > 1)
-        fprintf(['\tChannelRegistration.findTransform(): ', ...
-            'Performing gain and offset corrections...\n'])
-    end
-    [ScaledData] = smi_core.DataToPhotons.convertToPhotons(...
-        obj.FiducialImages, ...
-        obj.SMF.Data.CameraGain, obj.SMF.Data.CameraOffset, ...
-        []);
+    ScaledData = 100 * ScaledData;
 end
 
 % Proceed based on the setting of obj.TransformationBasis (which defines

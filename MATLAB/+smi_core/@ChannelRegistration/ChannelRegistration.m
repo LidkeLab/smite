@@ -20,8 +20,12 @@ classdef ChannelRegistration < handle
         SMF
         
         % Coords used to compute transforms (cell array of numeric array)
-        % NOTE: The ordering of these coordinates will follow that
-        %       described below for the ordering of RegistrationTransform
+        % These coordinates are ordered as follows: the coordinates used to
+        % find a transform from fiducial m to fiducial n will be stored in
+        % Coordinates{m}.  The coordinates from fiducial m will be in
+        % Coordinates{m}(:, :, m), and those from fiducial n will be in
+        % Coordinates{m}(:, :, n), with each of these being organized as
+        % two-column arrays [X, Y].
         Coordinates cell
         
         % Fiducial images (numeric array, MxP(xNFiducials))
@@ -212,6 +216,7 @@ classdef ChannelRegistration < handle
         end
         
         [RegistrationTransform] = findTransform(obj);
+        [SquaredError] = estimateRegErrorLOO(obj);
         loadFiducials(obj)
         exportTransform(obj, FileName, FileDir)
         gui(obj, GUIParent)
@@ -251,6 +256,7 @@ classdef ChannelRegistration < handle
         [TransformedCoordinates] = transformCoordsDirect(...
             RegistrationTransform, Coordinates);
         [SplitROIs] = convertSplitFormatToROIs(FullROI, SplitFormat)
+        [ScaledFiducials] = rescaleFiducials(Fiducials, SMF, AutoScale);
     end
     
     
