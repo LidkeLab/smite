@@ -58,7 +58,7 @@ for ff = 2:NFiducials
                     obj.TransformationType);
         end
         
-        % Apply the transform the the excluded coordinate and save the
+        % Apply the transform to the excluded coordinate and save the
         % squared error.
         SquaredError{ff}(nn, 1) = obj.estimateRegistrationError(...
             RegistrationTransform, ...
