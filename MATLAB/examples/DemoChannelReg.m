@@ -23,8 +23,9 @@ SMF = smi_core.SingleMoleculeFitting;
 SMF.Fitting.PSFSigma = 1.3;
 
 % Prepare the channel registration class.
+Verbose = 1;
 ChannelReg = smi_core.ChannelRegistration(...
-    FiducialFileDir, FiducialFileNames, SMF, 1);
+    FiducialFileDir, FiducialFileNames, SMF, Verbose);
 
 % Compute a locally weighted mean transform from the fiducials.
 % NOTE: The transform from fiducial 2 to fiducial 1 will be stored in 
