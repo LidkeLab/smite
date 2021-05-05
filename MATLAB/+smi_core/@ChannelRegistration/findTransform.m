@@ -17,8 +17,7 @@ function [RegistrationTransform] = findTransform(obj)
 %   David J. Schodt (Lidke Lab, 2020)
 
 
-% Load the fiducial images (if needed). If the fiducials are already
-% present, we should make sure obj.FiducialROI is set.
+% Load the fiducial images.
 if (obj.Verbose > 0)
     fprintf(['\tChannelRegistration.findTransform(): ', ...
         'Computing channel registration transform...\n'])
@@ -27,11 +26,7 @@ if (obj.Verbose > 1)
     fprintf(['\tChannelRegistration.findTransform(): ', ...
         'Loading fiducials...\n'])
 end
-if isempty(obj.FiducialImages)
-    obj.loadFiducials();
-elseif isempty(obj.FiducialROI)
-    obj.FiducialROI =  [1, 1, size(obj.FiducialImages, [1, 2])];
-end
+obj.loadFiducials()
 NFiducials = size(obj.FiducialImages, 3);
 
 % Perform the gain and offset correction on each of the fiducial images

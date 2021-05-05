@@ -93,7 +93,8 @@ k_integ  = parallel.gpu.CUDAKernel('smi_cuda_gaussBlobROIStack.ptx','smi_cuda_ga
 %gpuDevice gives GPU hardware info
 g = gpuDevice;
 %Find how many loops need to be run so that ROIimStack fits in GPU memory
-Nelem = SZ*SZ*NFrames;
+%Transpose added to prevent an error for an SMD with no localizations.
+Nelem = SZ'*SZ*NFrames;
 Nloops = ceil(4*4*Nelem/(g.TotalMemory));
 %number of frames in each chunk.
 NFramesChunk = ceil(NFrames/Nloops);
