@@ -1,23 +1,34 @@
-function [SquaredError] = estimateRegErrorLOO(obj)
+function [SquaredError] = estimateRegErrorLOO(...
+    TransformationType, TransformationParams, ...
+    MovingCoordinates, FixedCoordinates)
 %estimateRegErrorLOO estimates registration error by leave-one-out analysis
 % This method will estimate the registration error as the squared
 % difference between the fiducial coordinates and the transformed
 % coordinates, with the transform used being computed for all other
 % fiducial coordinates but the current point.  That is, this method
 % estimates the registration error at each fiducial (control) point by a
-% leave-one-out (LOO) analysis.  This method should typically be called
-% after/at the end of running obj.findTransform(), as several pieces of
-% code in that method will populate class properties needed in this
-% analysis.
+% leave-one-out (LOO) analysis.
+%
+% INPUTS:
+%   TransformationType: See smi_core.ChannelRegistration property of the
+%                       same name.
+%   TransformationParams: Cell array of additional parameters needed based
+%                         on the TransformationType. For example, for
+%                         TransformationType = 'lwm', this is a cell array
+%                         with one element: NNeighborPoints. For
+%                         TransformationType = 'polynomial', the one
+%                         parameter is the polynomial degree (see usage
+%                         below).
+%   MovingCoordinates: Coordinates of points in the second fiducial.
+%                      (Nx2 numeric array)
+%   FixedCoordinates: Coordinates of points in the first fiducial.
+%                     (Nx2 numeric array)
 %
 % OUTPUTS:
-%   SquaredError: Squared error computed between the fiducial coordinates
-%                 and the transformed fiducial coordinates.  Each entry of
-%                 the cell array corresponds with the LOO squared error at
-%                 each coordinate for each of the NFiducials.  That is,
-%                 SquaredError{ff} has the LOO squared error at each
-%                 coordinate for fiducial ff transforming to fiducial 1.
-%                 (Pixels)(NFiducialsx1 cell array)
+%   SquaredError: Squared error computed between FixedCoordinates and
+%                 transformed MovingCoordinates, where the transform is
+%                 found using all other points but the current point.
+%                 (Pixels)(Nx1 numeric array)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -26,44 +37,38 @@ function [SquaredError] = estimateRegErrorLOO(obj)
 % Loop through each fiducial coordinate, compute a transform that excludes
 % that point, and then determine the squared error after applying that
 % transform to the fiducial coordinate.
-NFiducials = numel(obj.Coordinates);
-SquaredError = cell(NFiducials, 1);
-SquaredError{1} = zeros(size(obj.Coordinates{1}, 1), 1);
-for ff = 2:NFiducials
-    NCoordinates = size(obj.Coordinates{ff}, 1);
-    IndexArray = 1:NCoordinates;
-    SquaredError{ff} = zeros(NCoordinates, 1);
-    for nn = IndexArray
-        % Recompute the transform from all points but the current point.
-        IndexArrayCurrent = IndexArray(IndexArray ~= nn);
-        MovingCoordsCurrent = ...
-            obj.Coordinates{ff}(IndexArrayCurrent, :, 2);
-        ReferenceCoordsCurrent = ...
-            obj.Coordinates{ff}(IndexArrayCurrent, :, 1);
-        switch obj.TransformationType
-            case 'lwm'
-                RegistrationTransform = fitgeotrans(...
-                    MovingCoordsCurrent, ...
-                    ReferenceCoordsCurrent, ...
-                    obj.TransformationType, obj.NNeighborPoints);
-            case 'polynomial'
-                RegistrationTransform = fitgeotrans(...
-                    MovingCoordsCurrent, ...
-                    ReferenceCoordsCurrent, ...
-                    obj.TransformationType, obj.PolynomialDegree);
-            otherwise
-                RegistrationTransform = fitgeotrans(...
-                    MovingCoordsCurrent, ...
-                    ReferenceCoordsCurrent, ...
-                    obj.TransformationType);
-        end
-        
-        % Apply the transform to the excluded coordinate and save the
-        % squared error.
-        SquaredError{ff}(nn, 1) = obj.estimateRegistrationError(...
-            RegistrationTransform, ...
-            obj.Coordinates{ff}(nn, :, 2), obj.Coordinates{ff}(nn, :, 1));
+NCoordinates = size(MovingCoordinates, 1);
+IndexArray = 1:NCoordinates;
+SquaredError = zeros(NCoordinates, 1);
+for nn = IndexArray
+    % Recompute the transform from all points but the current point.
+    IndexArrayCurrent = IndexArray(IndexArray ~= nn);
+    MovingCoordsCurrent = MovingCoordinates(IndexArrayCurrent, :);
+    FixedCoordinatesCurrent = FixedCoordinates(IndexArrayCurrent, :);
+    switch TransformationType
+        case 'lwm'
+            RegistrationTransform = fitgeotrans(...
+                MovingCoordsCurrent, ...
+                FixedCoordinatesCurrent, ...
+                TransformationType, TransformationParams{1});
+        case 'polynomial'
+            RegistrationTransform = fitgeotrans(...
+                MovingCoordsCurrent, ...
+                FixedCoordinatesCurrent, ...
+                TransformationType, TransformationParams{1});
+        otherwise
+            RegistrationTransform = fitgeotrans(...
+                MovingCoordsCurrent, ...
+                FixedCoordinatesCurrent, ...
+                TransformationType);
     end
+    
+    % Apply the transform to the excluded coordinate and save the
+    % squared error.
+    SquaredError(nn) = ...
+        smi_core.ChannelRegistration.estimateRegistrationError(...
+        RegistrationTransform, ...
+        MovingCoordinates(nn, :), FixedCoordinates(nn, :));
 end
 
 

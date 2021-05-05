@@ -216,7 +216,6 @@ classdef ChannelRegistration < handle
         end
         
         [RegistrationTransform] = findTransform(obj);
-        [SquaredError] = estimateRegErrorLOO(obj);
         loadFiducials(obj)
         exportTransform(obj, FileName, FileDir)
         gui(obj, GUIParent)
@@ -236,7 +235,10 @@ classdef ChannelRegistration < handle
         [PlotAxes] = visualizeImageTransform(PlotAxes, ...
             RegistrationTransform, FrameSize, GridSpacing);
         [SquaredError] = estimateRegistrationError(...
-            RegistrationTransform, Coords1, Coords2);
+            RegistrationTransform, MovingCoordinates, FixedCoordinates);
+        [SquaredError] = estimateRegErrorLOO(...
+            TransformationType, TransformationParams, ...
+            MovingCoordinates, FixedCoordinates);
         [PlotAxes] = visualizeRegistrationError(PlotAxes, ...
             RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
             FOV, GridSpacing)

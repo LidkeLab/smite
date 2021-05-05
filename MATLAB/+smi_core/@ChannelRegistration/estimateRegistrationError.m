@@ -19,9 +19,9 @@ function [SquaredError] = estimateRegistrationError(...
 %                     (Nx2 numeric array)
 %
 % OUTPUTS:
-%   SquaredError: Squared error computed between Coords1 and transformed
-%                 Coords2. This is returned for convenience in other 
-%                 codes (i.e., instead of the RMSE)
+%   SquaredError: Squared error computed between FixedCoordinates and
+%                 transformed MovingCoordinates. This is returned for 
+%                 convenience in other codes (i.e., instead of the RMSE)
 %                 (Pixels)(Nx1 numeric array)
 
 % Created by:
