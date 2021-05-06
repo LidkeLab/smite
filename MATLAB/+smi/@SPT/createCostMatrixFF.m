@@ -119,7 +119,6 @@ for ii = 1:N
         % Compute the negative log-likelihood of these two localizations
         % being the same emitter (i.e., this is
         % -log(NormalX * NormalY * P(not turning off))
-        % = -log(NormalX * NormalY * (1-P(dark emitter turning on))
         % NOTE: There is an implicit DeltaT = 1 frame, i.e.,
         %       CM(ii, jj) = -log(1-K_off*DeltaT) with DeltaT = 1 frame
         % NOTE: The additional 0.5 multiplying the link costs comes from
