@@ -25,12 +25,6 @@ if (obj.Verbose > 1)
     end
 end
 
-% Define the Results directory, which will be in the top level
-% directory obj.CoverslipDir for easy access.
-if isempty(obj.SaveBaseDir)
-    obj.SaveBaseDir = fullfile(obj.CoverslipDir, 'Results');
-end
-
 % Load and analyze the data for the current label, looping through datasets
 % if needed.
 SMLM = smi.SMLM(obj.SMF);
@@ -98,8 +92,7 @@ for ii = 1:NDataFiles
             % associated with the current dataset in the
             % PublishedResultsStruct.
             LabelField = sprintf('%s_%s', CellName, LabelName);
-            DataField = strrep(DataFileNameNoExtension, ...
-                '-', '_');
+            DataField = strrep(DataFileNameNoExtension, '-', '_');
             FieldNames = fieldnames(AlignResultsStruct);
             for jj = 1:numel(FieldNames)
                 obj.PublishedResultsStruct.(LabelField). ...

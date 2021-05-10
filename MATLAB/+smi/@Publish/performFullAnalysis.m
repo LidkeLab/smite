@@ -5,6 +5,12 @@ function [] = performFullAnalysis(obj)
 % this class.
 
 
+% Define the results directory, which will be in the top level directory 
+% obj.CoverslipDir for easy access.
+if isempty(obj.SaveBaseDir)
+    obj.SaveBaseDir = fullfile(obj.CoverslipDir, 'Results');
+end
+
 % Determine the names of the sub-directories of interest within
 % obj.CoverslipDir.  These correspond to individual cells imaged during the
 % experiment.
