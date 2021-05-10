@@ -35,7 +35,7 @@ ValidDirBoolean = ~(strcmp({DirContents.name}, '.') ...
     | strcmp({DirContents.name}, '..'));
 
 % Create a cell array containing the names of the sub-directories.
-DirNames = {DirContents(SubDirBoolean & ValidDirBoolean).name};
+DirNames = {DirContents(SubDirBoolean & ValidDirBoolean).name}.';
 
 
 end
