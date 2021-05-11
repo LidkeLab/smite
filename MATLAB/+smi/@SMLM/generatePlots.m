@@ -170,34 +170,43 @@ end
 if ismember("DriftIm", PlotDo)
    % Drift image
    [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, obj.SRImageZoom);
-   dipshow(DriftImRGB);
    if ~isempty(PlotSaveDir1)
-      FileName = [BaseName '_DriftImage'];
-      saveas(gcf, fullfile(PlotSaveDir1, FileName), 'png');
+      FileName = [BaseName, '_DriftImage.png'];
+      imwrite(single(DriftImRGB), fullfile(PlotSaveDir1, FileName))
    end
-   if ~ShowPlots; close(gcf); end
+   if ShowPlots
+      DriftImFigure = figure();
+      DriftImAxes = axes(DriftImFigure);
+      imshow(DriftImRGB, [], 'Parent', DriftImAxes)
+   end
 end
 
 if ismember("GaussIm", PlotDo)
    % Gaussian image
    [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, obj.SMF, obj.SRImageZoom);
-   dipshow(GaussIm);
    if ~isempty(PlotSaveDir1)
-      FileName = [BaseName '_GaussImage'];
-      saveas(gcf, fullfile(PlotSaveDir1, FileName), 'png');
+      FileName = [BaseName, '_GaussImage.png'];
+      imwrite(GaussIm, fullfile(PlotSaveDir1, FileName))
    end
-   if ~ShowPlots; close(gcf); end
+   if ShowPlots
+      GaussImFigure = figure();
+      GaussImAxes = axes(GaussImFigure);
+      imshow(GaussIm, [], 'Parent', GaussImAxes)
+   end
 end
 
 if ismember("HistIm", PlotDo)
    % Histogram image
-   [~, HistImRGB] = smi_vis.GenerateImages.histogramImage(SMD, obj.SRImageZoom);
-   dipshow(HistImRGB);
+   [HistIm] = smi_vis.GenerateImages.histogramImage(SMD, obj.SRImageZoom);
    if ~isempty(PlotSaveDir2)
-      FileName = [BaseName '_HistImage'];
-      saveas(gcf, fullfile(PlotSaveDir2, FileName), 'png');
+      FileName = [BaseName, '_HistImage.png'];
+      imwrite(single(HistIm), fullfile(PlotSaveDir2, FileName))
    end
-   if ~ShowPlots; close(gcf); end
+   if ShowPlots
+      HistImFigure = figure();
+      HistImAxes = axes(HistImFigure);
+      imshow(HistIm, [], 'Parent', HistImAxes)
+   end
 end
 
 if ismember("CircleIm", PlotDo)
