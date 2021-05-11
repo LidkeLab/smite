@@ -90,10 +90,10 @@ classdef Publish < handle
     end
     
     methods(Static)
-        genSROverlays(ResultsCellDir, SaveDir);
+        genSROverlays(ResultsCellDir, SaveDir)
         [OverlayImage, ColorOrderTag] = overlayNImages(ImageStack);
         genOverlayPlots(ImageShift, RegError, MaxCorr, SRPixelSize, ...
-            BPPixelSize, SaveDir);
+            BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
         [StatsStruct] = genAlignStats(AlignRegStruct, SMR, SaveDir);
         [XCorrStruct] = genAlignXCorr(AlignRegStruct, SaveDir);
