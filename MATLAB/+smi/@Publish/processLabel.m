@@ -27,8 +27,6 @@ end
 
 % Load and analyze the data for the current label, looping through datasets
 % if needed.
-SMLM = smi.SMLM(obj.SMF);
-SMLM.Verbose = obj.Verbose;
 for ii = 1:NDataFiles
     % Determine if this was a bleaching round and decide if we should
     % analyze it.
@@ -49,9 +47,9 @@ for ii = 1:NDataFiles
         FileNameNoExtension);
     
     % Generate the super-resolution results using the smi.SMLM class.
-    SMLM.SMF.Data.FileName = DataFileNames(ii);
+    obj.SMLM.SMF.Data.FileName = DataFileNames(ii);
     if obj.GenerateSR
-        SMLM.SMF.Data.ResultsDir = SaveDir;
+        obj.SMLM.SMF.Data.ResultsDir = SaveDir;
         if (obj.Verbose > 1)
             fprintf(['\t\tPublish.processLabel(): ', ...
                 'Analyzing file %s...\n'], ...
@@ -60,7 +58,7 @@ for ii = 1:NDataFiles
         try
             % Place this in a try/catch so that we can still proceed with
             % the other analyses if this fails.
-            SMLM.fullAnalysis()
+            obj.SMLM.fullAnalysis()
         catch MException
             if obj.Verbose
                 warning(['Publish.processLabel(): ', ...

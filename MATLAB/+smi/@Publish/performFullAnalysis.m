@@ -5,7 +5,8 @@ function [] = performFullAnalysis(obj)
 % this class.
 %
 % REQUIRES:
-%   DipImage when obj.GenerateOverlayStats is true (to use findshift())
+%   matlab-instrument-control when obj.GenerateOverlayStats is true 
+%       (to use MIC_Reg3DTrans.findStackOffset())
 
 
 % Define the results directory, which will be in the top level directory 
@@ -72,9 +73,17 @@ if obj.GenerateOverlayStats
         %       but we can ignore the third color channel
         %       because that information is already contained
         %       in the first channel.
-        ImageShift(ii, :) = findshift(...
+        if (obj.Verbose < 3)
+            % Turn off some warnings that come from findStackOffset().
+            warning('off')
+        end
+        [~, SubPixelShift] = MIC_Reg3DTrans.findStackOffset(...
             OverlayImage(:, :, 2), OverlayImage(:, :, 1), ...
-            'iter').';
+            [size(OverlayImage, [1, 2])-1, 0], [], [], 0, 0);
+        ImageShift(ii, :) = SubPixelShift(1:2);
+        if (obj.Verbose < 3)
+            warning('on')
+        end
     end
     
     % Concatenate the max. correlation coefficients from the
@@ -115,10 +124,11 @@ if obj.GenerateOverlayStats
     end
     
     % Generate the overlay plots across all cells.
-    obj.genOverlayPlots(ImageShift, ...
+    SRPixelSize = obj.SMF.Data.PixelSize / obj.SRImageZoom;
+    obj.makeOverlayPlots(ImageShift, ...
         ConcatenatedRegError, ...
         ConcatenatedMaxCorr, ...
-        obj.SMF.SRPixelSize, obj.SMF.PixelSize, ...
+        SRPixelSize, obj.SMF.Data.PixelSize, ...
         obj.SaveBaseDir)
 end
 

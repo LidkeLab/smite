@@ -35,6 +35,9 @@ classdef Publish < handle
         % Label(s) to be analyzed (Default = [], analyze all labels)
         LabelID = [];
         
+        % Zoom factor for output SR images (Default = 20)
+        SRImageZoom = 20;
+        
         % Flag to indicate SR results should be generated (Default = true)
         GenerateSR = true;
         
@@ -55,6 +58,11 @@ classdef Publish < handle
         
         % Structure containing several concatenated analysis results.
         CellLabelStruct = struct();
+    end
+    
+    properties (SetAccess = 'protected', Hidden)
+        % Instance of SMLM class (for internal use).
+        SMLM
     end
     
     methods
@@ -106,6 +114,8 @@ classdef Publish < handle
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
         [StatsStruct] = genAlignStats(AlignRegStruct, SMDR, SaveDir);
         [XCorrStruct] = genAlignXCorr(AlignRegStruct, SaveDir);
+        makeOverlayPlots(ImageShift, RegError, MaxCorr, ...
+            SRPixelSize, BPPixelSize, SaveDir)
         [CellLabelStruct] = concatenateResults(PublishedResultsStruct);
         genConcatenatedFigures(CellLabelStruct, SaveDir);
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
