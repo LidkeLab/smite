@@ -3,6 +3,9 @@ function [] = performFullAnalysis(obj)
 % This method is the main run method for the smi.Publish class, meaning
 % that it can be used to perform the standard analysis expected for use of
 % this class.
+%
+% REQUIRES:
+%   DipImage when obj.GenerateOverlayStats is true (to use findshift())
 
 
 % Define the results directory, which will be in the top level directory 
@@ -54,7 +57,11 @@ if obj.GenerateOverlayStats
     ImageShift = zeros(NOverlays, 2); % pre-allocate
     for ii = 1:NOverlays
         % Display a status message in the command line.
-        fprintf('Computing shift for overlay image %i\n', ii);
+        if obj.Verbose
+            fprintf(['Publish.performFullAnalysis(): ', ...
+                'Computing shift for overlay image %i of %i\n'], ...
+                ii, NOverlays);
+        end
         
         % Load the image into the workspace.
         OverlayImage = imread(...

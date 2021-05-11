@@ -49,16 +49,14 @@ classdef Publish < handle
         
         % Verbosity of the main analysis workflow. (Default = 1)
         Verbose = 1;
-    end
-    
-    properties (SetAccess = protected)
+        
         % Structure containing several analysis results.
         PublishedResultsStruct = struct();
         
         % Structure containing several concatenated analysis results.
         CellLabelStruct = struct();
     end
-
+    
     methods
         function obj = Publish(SMF, CoverslipDir)
             %Publish is the class constructor for the smi.Publish class.
@@ -81,11 +79,22 @@ classdef Publish < handle
             obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMFInput);
         end
         
+        function saveResults(obj)
+            % This method saves the PublishedResultsStruct into the Results
+            % directory.
+            PublishedResultsStruct = obj.PublishedResultsStruct;
+            CellLabelStruct = obj.CellLabelStruct;
+            save(fullfile(obj.SaveBaseDir, 'ResultsStruct.mat'), ...
+                'PublishedResultsStruct');
+            save(fullfile(...
+                obj.SaveBaseDir, 'ResultsStructConcatenated.mat'), ...
+                'CellLabelStruct');
+        end
+        
         [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir);
         performFullAnalysis(obj)
-        processCell(obj)
-        processLabel(obj)
-        saveResults(obj)
+        processCell(obj, CellName)
+        processLabel(obj, CellName, LabelName)
         
     end
     
@@ -95,10 +104,11 @@ classdef Publish < handle
         genOverlayPlots(ImageShift, RegError, MaxCorr, SRPixelSize, ...
             BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
-        [StatsStruct] = genAlignStats(AlignRegStruct, SMR, SaveDir);
+        [StatsStruct] = genAlignStats(AlignRegStruct, SMDR, SaveDir);
         [XCorrStruct] = genAlignXCorr(AlignRegStruct, SaveDir);
         [CellLabelStruct] = concatenateResults(PublishedResultsStruct);
         genConcatenatedFigures(CellLabelStruct, SaveDir);
+        [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
     end
     
     

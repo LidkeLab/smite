@@ -1,4 +1,4 @@
-function [StatsStruct] = genAlignStats(AlignRegStruct, SMR, SaveDir)
+function [StatsStruct] = genAlignStats(AlignRegStruct, SMD, SaveDir)
 %genAlignStats generates interesting plots from AlignRegStruct.
 % This method will create various plot(s) and analysis data related to the
 % brightfield registration process of the acquistion.  A plot will be
@@ -12,7 +12,7 @@ function [StatsStruct] = genAlignStats(AlignRegStruct, SMR, SaveDir)
 % INPUTS:
 %   AlignRegStruct: Structured array containing the brightfield
 %                   registration data structures for each dataset.
-%   SMR: Single molecule results structure containing data related to the
+%   SMD: Single Molecule Data structure containing data related to the
 %        SR analysis.
 %   SaveDir: Directory associated with Dataset in which the analysis
 %            results will be saved.
@@ -23,7 +23,7 @@ function [StatsStruct] = genAlignStats(AlignRegStruct, SMR, SaveDir)
 %                AlignRegStruct.
 %
 % REQUIRES:
-%   MATLAB 2018a or later (to use set property 'WindowState' of a figure)
+%   MATLAB 2018a or later (to use property 'WindowState' of a figure)
 %   MATLAB Image Processing Toolbox 2014a or later (to use ssim())
 
 % Created by:
@@ -62,11 +62,11 @@ for ii = 1:NSequences
 end
 MinAbsDiff = min(abs(DiffImages(:)));
 MaxAbsDiff = max(abs(DiffImages(:)));
-FigureHandle = figure();
-FigureHandle.WindowState = 'maximized';
+PlotFigure = figure();
+PlotFigure.WindowState = 'maximized';
 for ii = 1:NSequences
     % Create a subplot in the figure for the current histogram.
-    PlotAxes = subplot(NSequences, 1, ii, 'Parent', FigureHandle);
+    PlotAxes = subplot(NSequences, 1, ii, 'Parent', PlotFigure);
     
     % Plot the histogram of pixel values in the difference image.
     DiffImage = DiffImages(:, :, ii);
@@ -98,8 +98,8 @@ for ii = 1:NSequences
 end
 
 % Save the plot in the SaveDir and then close the figure.
-saveas(FigureHandle, fullfile(SaveDir, 'DiffImageHistogram.png'), 'png');
-close(FigureHandle);
+saveas(PlotFigure, fullfile(SaveDir, 'DiffImageHistogram.png'), 'png');
+close(PlotFigure);
 
 % Compute the structural similarity between the full scale histogram
 % stretched reference and current images.
@@ -120,8 +120,8 @@ end
 StatsStruct.SSIM = SSIM;
 
 % Plot the SSIM and save that plot in SaveDir.
-FigureHandle = figure();
-PlotAxes = axes(FigureHandle);
+PlotFigure = figure();
+PlotAxes = axes(PlotFigure);
 hold(PlotAxes, 'on')
 plot(PlotAxes, 1:NSequences, SSIM, 'x')
 plot(PlotAxes, PlotAxes.XLim, ones(2, 1) * mean(SSIM), '--')
@@ -131,16 +131,18 @@ xlabel(PlotAxes, 'Sequence Number')
 ylabel(PlotAxes, 'SSIM')
 title(PlotAxes, ...
     'Structural Similarity between Reference Image and Current Image')
-saveas(FigureHandle, fullfile(SaveDir, 'SSIM.png'), 'png');
-close(FigureHandle);
+saveas(PlotFigure, fullfile(SaveDir, 'SSIM.png'), 'png');
+close(PlotFigure);
 
 % Compute the 'registration error' as found from the residual drift that is
-% corrected during the drift correction process (if the input SMR wasn't
+% corrected during the drift correction process (if the input SMD wasn't
 % empty).
-if ~isempty(SMR)
-    [FigureHandle, RegError] = SMA_SR.plotXYRegistrationError(SMR);
-    saveas(FigureHandle, fullfile(SaveDir, 'XYRegError.png'), 'png');
-    close(FigureHandle)
+if ~isempty(SMD)
+    PlotFigure = figure();
+    PlotAxes = axes(PlotFigure);
+    [~, RegError] = obj.plotXYRegError(PlotAxes, SMD);
+    saveas(PlotFigure, fullfile(SaveDir, 'XYRegError.png'), 'png');
+    close(PlotFigure)
     
     % Store the registration error array in the StatsStruct.
     StatsStruct.RegError = RegError;

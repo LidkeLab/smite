@@ -21,13 +21,14 @@ NDataFiles = numel(DataFileNames);
 if (obj.Verbose > 1)
     fprintf('\tPublish.processLabel(): %i files found:\n', NDataFiles)
     for ii = 1:NDataFiles
-        fprintf('\t%s\n', DataFileNames{ii})
+        fprintf('\t\t%s\n', DataFileNames{ii})
     end
 end
 
 % Load and analyze the data for the current label, looping through datasets
 % if needed.
 SMLM = smi.SMLM(obj.SMF);
+SMLM.Verbose = obj.Verbose;
 for ii = 1:NDataFiles
     % Determine if this was a bleaching round and decide if we should
     % analyze it.
@@ -59,7 +60,7 @@ for ii = 1:NDataFiles
         try
             % Place this in a try/catch so that we can still proceed with
             % the other analyses if this fails.
-            SMLM.analyzeAll()
+            SMLM.fullAnalysis()
         catch MException
             if obj.Verbose
                 warning(['Publish.processLabel(): ', ...
@@ -92,7 +93,7 @@ for ii = 1:NDataFiles
             % associated with the current dataset in the
             % PublishedResultsStruct.
             LabelField = sprintf('%s_%s', CellName, LabelName);
-            DataField = strrep(DataFileNameNoExtension, '-', '_');
+            DataField = strrep(FileNameNoExtension, '-', '_');
             FieldNames = fieldnames(AlignResultsStruct);
             for jj = 1:numel(FieldNames)
                 obj.PublishedResultsStruct.(LabelField). ...

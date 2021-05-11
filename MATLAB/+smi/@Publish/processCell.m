@@ -23,7 +23,7 @@ if (obj.Verbose > 1)
     fprintf('\tPublish.processCell(): %i label directories found:\n', ...
         NLabels)
     for ii = 1:NLabels
-        fprintf('\t%s\n', LabelNames{ii})
+        fprintf('\t\t%s\n', LabelNames{ii})
     end
 end
 
