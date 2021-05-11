@@ -119,6 +119,8 @@ classdef Publish < handle
         [CellLabelStruct] = concatenateResults(PublishedResultsStruct);
         genConcatenatedFigures(CellLabelStruct, SaveDir);
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
+        [PixelOffsets, SubPixelOffsets, BlockROIs] = ...
+            estimateLocalShifts(Image1, Image2, BlockSize, UseGPU);
     end
     
     
