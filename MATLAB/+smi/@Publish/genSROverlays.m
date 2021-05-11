@@ -37,10 +37,8 @@ end
 % single array.
 % NOTE: pre-allocation assumes 5120x5120 images.
 GaussianImages = zeros(5120, 5120, NLabels);
-HistogramImages = zeros(5120, 5120, NLabels);
-CircleImages = zeros(0, 0, 0, 'uint8'); % initialize
-MinPixelsPerCircle = 16; % ~min. num. of pixels in each circle
-BitDepth = 8; % specific to thesave type: this is for a 8 bit png
+HistogramImages = GaussianImages;
+CircleImages = GaussianImages;
 for ii = 1:NLabels
     % Create a list of sub-directories under the current label (there could
     % be multiple for a given label, e.g. an extra for a photobleaching
@@ -48,13 +46,11 @@ for ii = 1:NLabels
     DatasetDirNames = SMA_Publish.getDirectoryNames(...
         fullfile(ResultsCellDir, LabelDirNames{ii}), 'Data*');
     
-    % If more than two datasets exists for this label, throw an error (we
-    % can have two: one desired result, one photobleaching result) since
-    % it's not clear which dataset
-    % to use.
-    if numel(DatasetDirNames) > 2
-        warning('More than two datasets exist for %s', ...
-            LabelDirNames{ii})
+    % If more than two datasets exists for this label, throw an error
+    % (we can have two: one desired result, one photobleaching result)
+    % since it's not clear which dataset to use.
+    if (numel(DatasetDirNames) > 2)
+        error('More than two datasets exist for %s', LabelDirNames{ii})
     end
     
     % Load our images into the appropriate arrays.
@@ -84,15 +80,15 @@ end
 
 % Generate our color overlay images (3 channel images).
 [OverlayImageGaussian, ColorOrderTagGaussian] = ...
-    SMA_Publish.overlayNImages(GaussianImages);
+    smi_vis.GenerateImages.overlayNImages(GaussianImages);
 [OverlayImageHistogram, ColorOrderTagHistogram] = ...
-    SMA_Publish.overlayNImages(HistogramImages);
+    smi_vis.GenerateImages.overlayNImages(HistogramImages);
 [OverlayImageCircle, ColorOrderTagCircle] = ...
-    SMA_Publish.overlayNImages(CircleImages);
+    smi_vis.GenerateImages.overlayNImages(CircleImages);
 
 % Save the overlay images in the top level directory.
 CellName = ResultsCellDir(regexp(ResultsCellDir, 'Cell*'):end);
-CellNameClean = erase(CellName, '_'); % remove underscore(s)
+CellNameClean = erase(CellName, '_');
 OverlayImageGaussianName = sprintf('%s_GaussianOverlay_%s.png', ...
     CellNameClean, ColorOrderTagGaussian);
 imwrite(OverlayImageGaussian, ...
