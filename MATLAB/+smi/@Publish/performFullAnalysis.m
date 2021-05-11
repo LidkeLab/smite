@@ -133,8 +133,9 @@ if obj.GenerateOverlayStats
 end
 
 % Indicate completion of the analysis/generation of results.
-fprintf('Results have been published to %s \n', ...
-    obj.CoverslipDir);
+if obj.Verbose
+    fprintf('Results have been published to %s\n', obj.CoverslipDir);
+end
 
 
 end
