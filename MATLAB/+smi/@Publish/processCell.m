@@ -33,7 +33,7 @@ end
 obj.SMLM = smi.SMLM(obj.SMF);
 obj.SMLM.Verbose = obj.Verbose;
 obj.SMLM.SRImageZoom = obj.SRImageZoom;
-obj.SMLM.SRCircImZoom = obj.SRImageZoom;
+obj.SMLM.SRCircImZoom = obj.SRCircleImageZoom;
 for ii = 1:NLabels
     % If LabelID was specified, skip all labels except those which exist in
     % LabelID.  However, if obj.LabelID is empty, then we wish to analyze

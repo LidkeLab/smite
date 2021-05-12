@@ -38,6 +38,9 @@ classdef Publish < handle
         % Zoom factor for output SR images (Default = 20)
         SRImageZoom = 20;
         
+        % Zoom factor for circle images (Default = 50)
+        SRCircleImageZoom = 50;
+        
         % Flag to indicate SR results should be generated (Default = true)
         GenerateSR = true;
         
