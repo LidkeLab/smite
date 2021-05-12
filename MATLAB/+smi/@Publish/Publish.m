@@ -54,10 +54,7 @@ classdef Publish < handle
         Verbose = 1;
         
         % Structure containing several analysis results.
-        PublishedResultsStruct = struct();
-        
-        % Structure containing several concatenated analysis results.
-        CellLabelStruct = struct();
+        ResultsStruct = struct([]);
     end
     
     properties (SetAccess = 'protected', Hidden)
@@ -90,13 +87,9 @@ classdef Publish < handle
         function saveResults(obj)
             % This method saves the PublishedResultsStruct into the Results
             % directory.
-            PublishedResultsStruct = obj.PublishedResultsStruct;
-            CellLabelStruct = obj.CellLabelStruct;
+            ResultsStruct = obj.ResultsStruct;
             save(fullfile(obj.SaveBaseDir, 'ResultsStruct.mat'), ...
-                'PublishedResultsStruct');
-            save(fullfile(...
-                obj.SaveBaseDir, 'ResultsStructConcatenated.mat'), ...
-                'CellLabelStruct');
+                'ResultsStruct', '-v7.3');
         end
         
         [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir);

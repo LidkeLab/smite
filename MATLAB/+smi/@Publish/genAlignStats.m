@@ -140,7 +140,7 @@ close(PlotFigure);
 if ~isempty(SMD)
     PlotFigure = figure();
     PlotAxes = axes(PlotFigure);
-    [~, RegError] = obj.plotXYRegError(PlotAxes, SMD);
+    [~, RegError] = smi.Publish.plotXYRegError(PlotAxes, SMD);
     saveas(PlotFigure, fullfile(SaveDir, 'XYRegError.png'), 'png');
     close(PlotFigure)
     

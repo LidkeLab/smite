@@ -42,9 +42,7 @@ for ii = 1:NDataFiles
     end
     
     % Define the save directory for this specific file.
-    [~, FileNameNoExtension] = fileparts(DataFileNames{ii});
-    SaveDir = fullfile(obj.SaveBaseDir, CellName, LabelName, ...
-        FileNameNoExtension);
+    SaveDir = fullfile(obj.SaveBaseDir, CellName, LabelName);
     
     % Generate the super-resolution results using the smi.SMLM class.
     obj.SMLM.SMF.Data.FileName = DataFileNames(ii);
@@ -90,12 +88,12 @@ for ii = 1:NDataFiles
             % Store information from the AlignResultsStruct into a field
             % associated with the current dataset in the
             % PublishedResultsStruct.
-            LabelField = sprintf('%s_%s', CellName, LabelName);
-            DataField = strrep(FileNameNoExtension, '-', '_');
             FieldNames = fieldnames(AlignResultsStruct);
+            NData = numel(obj.ResultsStruct);                
+            obj.ResultsStruct(NData+1).Cell = CellName;
+            obj.ResultsStruct(NData+1).Label = LabelName;
             for jj = 1:numel(FieldNames)
-                obj.PublishedResultsStruct.(LabelField). ...
-                    (DataField).(FieldNames{jj}) = ...
+                obj.ResultsStruct(NData+1).(FieldNames{jj}) = ...
                     AlignResultsStruct.(FieldNames{jj});
             end
         end
