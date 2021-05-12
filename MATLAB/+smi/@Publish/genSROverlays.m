@@ -43,7 +43,7 @@ for ii = 1:NLabels
     % Create a list of sub-directories under the current label (there could
     % be multiple for a given label, e.g. an extra for a photobleaching
     % round of imaging).
-    DatasetDirNames = SMA_Publish.getDirectoryNames(...
+    DatasetDirNames = smi_helpers.getDirectoryNames(...
         fullfile(ResultsCellDir, LabelDirNames{ii}), 'Data*');
     
     % If more than two datasets exists for this label, throw an error
@@ -61,8 +61,7 @@ for ii = 1:NLabels
         end
         
         % Create the appropriate filepaths and read in the images.
-        FileDirectory = fullfile(ResultsCellDir, ...
-            LabelDirNames{ii}, DatasetDirNames{jj});
+        FileDirectory = fullfile(ResultsCellDir, LabelDirNames{ii});
         FileNameCircle = sprintf('%s_CircleImage.png', ...
             DatasetDirNames{jj});
         FileNameGaussian = sprintf('%s_GaussImage.png', ...
