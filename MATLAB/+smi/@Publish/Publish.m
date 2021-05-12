@@ -96,6 +96,7 @@ classdef Publish < handle
         end
         
         [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir);
+        genOverlayResults(obj)
         performFullAnalysis(obj)
         processCell(obj, CellName)
         processLabel(obj, CellName, LabelName)
@@ -108,12 +109,10 @@ classdef Publish < handle
         genOverlayPlots(ImageShift, RegError, MaxCorr, SRPixelSize, ...
             BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
-        [StatsStruct] = genAlignStats(AlignRegStruct, SMDR, SaveDir);
+        [StatsStruct] = genAlignStats(AlignRegStruct, SMD, SaveDir);
         [XCorrStruct] = genAlignXCorr(AlignRegStruct, SaveDir);
         makeOverlayPlots(ImageShift, RegError, MaxCorr, ...
             SRPixelSize, BPPixelSize, SaveDir)
-        [CellLabelStruct] = concatenateResults(PublishedResultsStruct);
-        genConcatenatedFigures(CellLabelStruct, SaveDir);
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
         [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
             estimateLocalShifts(Image1, Image2, SubROISize, UseGPU);
