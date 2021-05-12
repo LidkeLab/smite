@@ -1,5 +1,5 @@
-function [PixelOffsets, SubPixelOffsets, BlockROIs] = ...
-    estimateLocalShifts(Image1, Image2, BlockSize, UseGPU)
+function [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
+    estimateLocalShifts(Image1, Image2, SubROISize, UseGPU)
 %estimateLocalShifts estimates local shifts between two images.
 %
 % INPUT:
@@ -7,9 +7,9 @@ function [PixelOffsets, SubPixelOffsets, BlockROIs] = ...
 %           Stack1 is the reference stack. (mxn float array)
 %   Image2: The stack for which the offset relative to Image1 
 %           is to be determined. (mxn float array)
-%   BlockSize: The size of local regions in which the shift will be
-%              computed, ideally evenly divides the [m, n].
-%              (Pixels)(2x1 array)(Default = size(Image1))
+%   SubROISize: The size of local regions in which the shift will be
+%               computed, ideally evenly divides [m, n].
+%               (Pixels)(2x1 array)(Default = size(Image1))
 %
 % OUTPUT:
 %   PixelOffset: The integer pixel offset of Image2 relative to Image1,
@@ -18,7 +18,7 @@ function [PixelOffsets, SubPixelOffsets, BlockROIs] = ...
 %   SubPixelOffset: The sub-pixel offset of Image2 relative to Image1, 
 %                   approximated based on a 2nd order polynomial fit(s) to 
 %                   the cross-correlation. (NROIsx2 float)
-%   BlockROIs: ROIs of the regions corresponding to the pixel offsets.
+%   ImageROIs: ROIs of the regions corresponding to the pixel offsets.
 %              (NROIsx4 array)([YStart, XStart, YEnd, XEnd])
 %
 % REQUIRES: 
@@ -32,37 +32,25 @@ function [PixelOffsets, SubPixelOffsets, BlockROIs] = ...
 
 % Set defaults if needed.
 ImageSize = size(Image1);
-if (~exist('BlockSize', 'var') || isempty(BlockSize))
-    BlockSize = ImageSize.';
+if (~exist('SubROISize', 'var') || isempty(SubROISize))
+    SubROISize = ImageSize.';
 end
 if (~exist('UseGPU', 'var') || isempty(UseGPU))
     UseGPU = logical(gpuDeviceCount());
 end
 
-% Ensure arrays are properly shaped.
-if isrow(BlockSize)
-    BlockSize = BlockSize.';
-end
-
-% Define the ROIs of the local regions which we'll find the shifts within.
-NDivisions = ceil(size(Image1).' ./ BlockSize);
-YStart = repmat(1 + BlockSize(1)*(0:(NDivisions(1)-1)).', ...
-    [NDivisions(2), 1]);
-XStart = repelem(1 + BlockSize(2)*(0:(NDivisions(2)-1)).', ...
-    NDivisions(1));
-BlockROIs = [YStart, XStart, ...
-    min(ImageSize(1), YStart+BlockSize(1)-1), ...
-    min(ImageSize(2), XStart+BlockSize(2)-1)];
+% Split the images up into the sub-ROIs.
+[DividedImages1, ImageROIs] = ...
+    smi_helpers.subdivideImage(Image1, SubROISize);
+DividedImages2 = smi_helpers.subdivideImage(Image2, SubROISize);
 
 % Loop through each ROI and compute the local shift.
-NROIs = prod(NDivisions);
+NROIs = size(ImageROIs, 1);
 PixelOffsets = zeros(NROIs, 2);
 SubPixelOffsets = PixelOffsets;
 for nn = 1:NROIs
-    RowIndices = BlockROIs(nn, 1):BlockROIs(nn, 3);
-    ColIndices = BlockROIs(nn, 2):BlockROIs(nn, 4);
     [Offset, SubOffset] = MIC_Reg3DTrans.findStackOffset(...
-        Image1(RowIndices, ColIndices), Image2(RowIndices, ColIndices), ...
+        DividedImages1{nn}, DividedImages2{nn}, ...
         [ImageSize, 1], [], [], 0, UseGPU);
     PixelOffsets(nn, :) = Offset(1:2);
     SubPixelOffsets(nn, :) = SubOffset(1:2);
