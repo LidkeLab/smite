@@ -26,6 +26,10 @@ if (~exist('MaxDist', 'var') || isempty(MaxDist))
     MaxDist = 1;
 end
 
+% Convert input coordinates to type double.
+Coords1 = double(Coords1);
+Coords2 = double(Coords2);
+
 % Determine the center of mass shift between the coordinates (will be used
 % as an initial guess for the affine transform).
 COMShift = mean(Coords1, 1) - mean(Coords2, 1);
