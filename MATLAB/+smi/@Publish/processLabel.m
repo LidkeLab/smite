@@ -82,18 +82,22 @@ for ii = 1:NDataFiles
                 fprintf(['\t\tPublish.processLabel(): ', ...
                     'Generating cell registration results...\n'])
             end
+            [~, FileNameNoExt] = fileparts(DataFileNames{ii});
+            ImagingStatsSaveDir = fullfile(SaveDir, FileNameNoExt);
             [AlignResultsStruct] = ...
-                obj.genAlignResults(FilePath, SaveDir);
+                obj.genAlignResults(FilePath, ImagingStatsSaveDir);
             
             % Store information from the AlignResultsStruct into a field
             % associated with the current dataset in the
             % PublishedResultsStruct.
             FieldNames = fieldnames(AlignResultsStruct);
-            NData = numel(obj.ResultsStruct);                
-            obj.ResultsStruct(NData+1).Cell = CellName;
-            obj.ResultsStruct(NData+1).Label = LabelName;
+            LabelNumber = str2double(regexp(LabelName, '\d\d', 'match'));
+            CellNumber = str2double(regexp(CellName, '\d\d', 'match'));
+            obj.ResultsStruct(CellNumber, LabelNumber).Cell = CellName;
+            obj.ResultsStruct(CellNumber, LabelNumber).Label = LabelName;
             for jj = 1:numel(FieldNames)
-                obj.ResultsStruct(NData+1).(FieldNames{jj}) = ...
+                obj.ResultsStruct(CellNumber, LabelNumber). ...
+                    (FieldNames{jj}) = ...
                     AlignResultsStruct.(FieldNames{jj});
             end
         end

@@ -5,8 +5,7 @@ function [] = genOverlayResults(obj)
 
 
 % Generate a list of all two color overlay images.
-OverlayFileStruct = ...
-    dir(fullfile(obj.SaveBaseDir, '*GaussianOverlay*'));
+OverlayFileStruct = dir(fullfile(obj.SaveBaseDir, '*GaussianOverlay*'));
 if isempty(OverlayFileStruct)
     % The overlays don't exist, so we can't produce results for the
     % overlays.
@@ -22,7 +21,7 @@ for ii = 1:NOverlays
     % Display a status message in the command line.
     if obj.Verbose
         fprintf(['Publish.performFullAnalysis(): ', ...
-            'Computing shift for overlay image %i of %i\n'], ...
+            'Computing shift for overlay image %i of %i...\n'], ...
             ii, NOverlays);
     end
     
@@ -38,10 +37,10 @@ for ii = 1:NOverlays
         % Turn off some warnings that come from findStackOffset().
         warning('off')
     end
-    [~, SubPixelShift] = MIC_Reg3DTrans.findStackOffset(...
+    PixelShift = MIC_Reg3DTrans.findStackOffset(...
         OverlayImage(:, :, 2), OverlayImage(:, :, 1), ...
         [size(OverlayImage, [1, 2])-1, 0], [], [], 0, 0);
-    ImageShift(ii, :) = SubPixelShift(1:2);
+    ImageShift(ii, :) = PixelShift(1:2);
     if (obj.Verbose < 3)
         warning('on')
     end
@@ -51,32 +50,10 @@ end
 % overlay image (keeping the labels separate) so that we have just one 
 % array containing the max. correlation coefficients from all of the
 % overlay images produced.  Repeat for the registration errors.
-CellLabelFields = fieldnames(obj.ResultsStruct);
-FirstLabelFields = ...
-    CellLabelFields(contains(CellLabelFields, 'Label_01'));
-SecondLabelFields = ...
-    CellLabelFields(contains(CellLabelFields, 'Label_02'));
-ConcatenatedMaxCorr = cell(numel(FirstLabelFields), 2);
-ConcatenatedRegError = cell(numel(FirstLabelFields), 2);
-for ii = 1:numel(FirstLabelFields)
-    % Isolate the sub-structure for this cell/label pair.
-    FirstLabelStructure = obj.ResultsStruct.(FirstLabelFields{ii});
-    FirstLabelFieldName = fieldnames(FirstLabelStructure);
-    SecondLabelStructure = obj.ResultsStruct.(SecondLabelFields{ii});
-    SecondLabelFieldName = fieldnames(SecondLabelStructure);
-    
-    % Add the MaxCorr array for the ii-th cell/label pair to the 
-    % concatenated array, assuming only one dataset existed for this
-    % cell/label pair. Repeat for the RegError array.
-    ConcatenatedMaxCorr{ii, 1} = ...
-        FirstLabelStructure.(FirstLabelFieldName{1}).MaxCorr;
-    ConcatenatedRegError{ii, 1} = ...
-        FirstLabelStructure.(FirstLabelFieldName{1}).RegError;
-    ConcatenatedMaxCorr{ii, 2} = ...
-        SecondLabelStructure.(SecondLabelFieldName{1}).MaxCorr;
-    ConcatenatedRegError{ii, 2} = ...
-        SecondLabelStructure.(SecondLabelFieldName{1}).RegError;
-end
+ConcatenatedRegError = [{obj.ResultsStruct(:, 1).RegError}; ...
+    {obj.ResultsStruct(:, 2).RegError}];
+ConcatenatedMaxCorr = [{obj.ResultsStruct(:, 1).MaxCorr}; ...
+    {obj.ResultsStruct(:, 2).MaxCorr}];
 
 % Generate the overlay plots across all cells.
 SRPixelSize = obj.SMF.Data.PixelSize / obj.SRImageZoom;

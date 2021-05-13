@@ -28,9 +28,9 @@ AlignResultsStruct = struct();
 AlignReg = MIC_H5.readH5File(FilePath, 'AlignReg');
 
 % Load the SMR structure for this dataset.
-FileNameStruct = dir(fullfile(SaveDir, '*ResultsStruct.mat'));
+FileNameStruct = dir(fullfile(SaveDir, '*Results.mat'));
 if ~isempty(FileNameStruct)
-    load(fullfile(SaveDir, FileNameStruct.name), 'SMR');
+    load(fullfile(SaveDir, FileNameStruct.name), 'SMD');
 else
     SMR = struct([]);
 end
@@ -72,7 +72,7 @@ close(FigureHandle);
 
 % Create plots about statistics/information that is derived from the
 % alignment result images.
-[StatsStruct] = obj.genAlignStats(AlignReg, SMR, SaveDir);
+[StatsStruct] = obj.genAlignStats(AlignReg, SMD, SaveDir);
 
 % Create interesting plots from the AlignReg data related to the
 % cross-correlation process.

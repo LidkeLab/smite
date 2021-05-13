@@ -36,7 +36,7 @@ end
 % Extract relevant parameters from the SMD structure.
 DriftX = SMD.DriftX;
 DriftY = SMD.DriftY;
-NDatasets = SMD.Ndatasets;
+NDatasets = SMD.NDatasets;
 
 % Compute the intra-dataset registration errors (the displacement of the
 % starting point of the drift model from [0; 0]), defining the initial
