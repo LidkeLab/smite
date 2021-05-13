@@ -16,11 +16,14 @@ classdef SPT < handle
         %       SMF.Tracking.Rho_off.
         EstimateRhoFromData = true;
         
-        % Number of recursions when using UseTrackByTrackD (Default = 5)
-        NRecursions = 5;
+        % Number of recursions for recursive tracking (Default = 3)
+        % NOTE: When using UseTrackByTrackD = true, this must be at least
+        %       2.
+        NRecursions = 3;
         
         % Use track-by-track diffusion constants (Default = false)
         % See obj.performFullAnalysis() for usage.
+        % NOTE: NRecursions must be at least 2 to use this parameter.
         UseTrackByTrackD = false;
         
         % Keep low p-value loc.'s for f2f connection (Default = false)
@@ -137,7 +140,8 @@ classdef SPT < handle
         end
         
         [TR, SMD] = performFullAnalysis(obj);
-        generateTrajectories(obj);
+        autoTrack(obj)
+        generateTrajectories(obj)
         saveResults(obj)
         gui(obj)
         
@@ -154,6 +158,8 @@ classdef SPT < handle
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
         [ConnectID] = validifyConnectID(ConnectID);
+        [KOn, KOff, KBleach] = estimateRateParameters(SMD, ...
+            MinRate, MaxRate);
     end
     
     
