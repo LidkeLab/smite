@@ -17,7 +17,7 @@ classdef SPT < handle
         EstimateRhoFromData = true;
         
         % Number of recursions for recursive tracking (Default = 3)
-        % NOTE: When using UseTrackByTrackD = true, this must be at least
+        % NOTE: When using UseTrackByTrackD = true, this should be at least
         %       2.
         NRecursions = 3;
         
@@ -72,6 +72,10 @@ classdef SPT < handle
        
         % Tracking Results structure (see smi_core.TrackingResults)
         TR
+        
+        % History of parameters used with iterative tracking.
+        % (see obj.generateTrajectories() for usage and organization)
+        ParamsHistory = cell(0);
     end
     
     properties (Hidden)

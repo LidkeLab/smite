@@ -12,6 +12,7 @@ function [] = autoTrack(obj)
 % NOTE: On the first pass, the diffusion constant in obj.SMF.Tracking.D
 %       will be used for all cost matrices.
 obj.DiffusionConstant = [];
+obj.ParamsHistory = cell(0);
 obj.generateTrajectories()
 
 % If needed, perform the recursive tracking.
@@ -27,6 +28,7 @@ for rr = 1:(obj.NRecursions-1)
     % Estimate the diffusion constants from the previous tracking results.
     obj.DiffusionEstimator.TR = obj.TR;
     DiffusionStruct = obj.DiffusionEstimator.estimateDiffusionConstant();
+    obj.SMF.Tracking.D = DiffusionStruct(2).DiffusionConstant;
     if obj.UseTrackByTrackD
         % Store the trajectory-wise diffusion constants in the TR
         % structures.
@@ -60,8 +62,6 @@ for rr = 1:(obj.NRecursions-1)
                 DiffusionStruct(2).DiffusionConstant;
         end
         obj.DiffusionConstant(BadValueBool, 2) = inf;
-    else
-        obj.SMF.Tracking.D = DiffusionStruct(2).DiffusionConstant;
     end
     
     % Estimate the blinking rates from the previous tracking results.
