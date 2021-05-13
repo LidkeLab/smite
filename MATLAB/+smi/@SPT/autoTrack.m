@@ -12,13 +12,13 @@ function [] = autoTrack(obj)
 % NOTE: On the first pass, the diffusion constant in obj.SMF.Tracking.D
 %       will be used for all cost matrices.
 obj.DiffusionConstant = [];
-obj.ParamsHistory = cell(0);
+obj.ParamsHistory = {obj.SMF.Tracking};
 obj.generateTrajectories()
 
 % If needed, perform the recursive tracking.
 OnesArray = ones(numel(obj.SMD.FrameNum), 1);
 obj.DiffusionEstimator.FitIndividualTrajectories = obj.UseTrackByTrackD;
-for rr = 1:(obj.NRecursions-1)
+for rr = 1:(obj.NRecursionsMax-1)
     % Send an update to the command window.
     if (obj.Verbose > 1)
         fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
@@ -68,6 +68,32 @@ for rr = 1:(obj.NRecursions-1)
     [KOn, KOff] = obj.estimateRateParameters(obj.SMD);
     obj.SMF.Tracking.K_on = KOn;
     obj.SMF.Tracking.K_off = KOff;
+    
+    % Estimate the density of off emitters (if requested).
+    if obj.EstimateRhoFromData
+        RhoOnMean = ...
+            mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
+        obj.SMF.Tracking.Rho_off = RhoOnMean ...
+            * (obj.SMF.Tracking.K_off/obj.SMF.Tracking.K_on);
+    end
+    
+    % Check if the parameters have changed below the requested relative
+    % change.  If so, we can stop early.
+    PreviousParams = obj.ParamsHistory{rr};
+    DChange = abs((PreviousParams.D-obj.SMF.Tracking.D) ...
+        / PreviousParams.D);
+    KOnChange = abs((PreviousParams.K_on-obj.SMF.Tracking.K_on) ...
+        / PreviousParams.K_on);
+    KOffChange = abs((PreviousParams.K_off-obj.SMF.Tracking.K_off) ...
+        / PreviousParams.K_off);
+    RhoOffChange = abs((PreviousParams.Rho_off-obj.SMF.Tracking.Rho_off) ...
+        / PreviousParams.Rho_off);
+    if  all([DChange, KOnChange, KOffChange, RhoOffChange] ...
+            <= obj.MaxRelativeChange)
+        return
+    end
+    % Store the current set of tracking parameters.
+    obj.ParamsHistory{rr+1} = obj.SMF.Tracking;
     
     % Re-track the data.
     obj.SMD.ConnectID = [];

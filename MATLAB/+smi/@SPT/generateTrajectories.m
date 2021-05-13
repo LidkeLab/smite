@@ -9,17 +9,6 @@ function generateTrajectories(obj)
 %   Revised for smite, David J. Schodt (Lidke Lab, 2021)
 
 
-% Estimate the density of off emitters (if requested).
-if obj.EstimateRhoFromData
-    RhoOnMean = mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
-    obj.SMF.Tracking.Rho_off = RhoOnMean ...
-        * (obj.SMF.Tracking.K_off/obj.SMF.Tracking.K_on);
-end
-
-% Store the current set of tracking parameters (nice to keep for recursive
-% tracking).
-obj.ParamsHistory{end+1} = obj.SMF.Tracking;
-
 % Perform the frame-to-frame connection of the localizations.
 for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
     % Create the frame-to-frame connection cost matrix.

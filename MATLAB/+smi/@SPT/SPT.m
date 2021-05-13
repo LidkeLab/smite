@@ -9,21 +9,27 @@ classdef SPT < handle
         SMF
         
         % Indicate SMF.Tracking.Rho_off can be overwritten (Default = true)
-        % See obj.generateTrajectories() for usage.
+        % See obj.autoTrack() for usage.
         % NOTE: As of this writing, this only makes an appearance in
-        %       obj.generateTrajectories(). If you aren't using that
-        %       method, the dark emitter density Rho_off will be taken from
+        %       obj.autoTrack(). If you aren't using that method, the dark
+        %       emitter density Rho_off will be taken from 
         %       SMF.Tracking.Rho_off.
         EstimateRhoFromData = true;
         
-        % Number of recursions for recursive tracking (Default = 3)
+        % Max. number of recursions for recursive tracking (Default = 5)
         % NOTE: When using UseTrackByTrackD = true, this should be at least
         %       2.
-        NRecursions = 3;
+        NRecursionsMax = 5;
+        
+        % Max. relative param. change to end recursion (Default = 1e-5)
+        % NOTE: This can probably be much much lower, as when things
+        %       converge the parameter differences shouldn't change at all,
+        %       so this is more of a tolerance for floating-point errors.
+        MaxRelativeChange = 1e-5;
         
         % Use track-by-track diffusion constants (Default = false)
         % See obj.performFullAnalysis() for usage.
-        % NOTE: NRecursions must be at least 2 to use this parameter.
+        % NOTE: NRecursionsMax should be at least 2 to use this property.
         UseTrackByTrackD = false;
         
         % Keep low p-value loc.'s for f2f connection (Default = false)
@@ -74,7 +80,7 @@ classdef SPT < handle
         TR
         
         % History of parameters used with iterative tracking.
-        % (see obj.generateTrajectories() for usage and organization)
+        % (see obj.autoTrack() for usage and organization)
         ParamsHistory = cell(0);
     end
     
