@@ -108,9 +108,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
     %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
-    %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=5)
-    %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=5)
-    %   MaxZScoreD: Max. abs(z-score) for diffusion constant diffs. (Default=5)
+    %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=inf)
+    %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=inf)
+    %   MaxZScoreD: Max. abs(z-score) for diffusion constant diffs. (Default=inf)
     
     % created by:
     % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
@@ -216,9 +216,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Tracking.Rho_off=1e-3;
             obj.Tracking.MaxDistFF=5;
             obj.Tracking.MaxDistGC=10;
-            obj.Tracking.MaxZScoreDist=5;
-            obj.Tracking.MaxZScorePhotons=5;
-            obj.Tracking.MaxZScoreD=5;
+            obj.Tracking.MaxZScoreDist=inf;
+            obj.Tracking.MaxZScorePhotons=inf;
+            obj.Tracking.MaxZScoreD=inf;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             
