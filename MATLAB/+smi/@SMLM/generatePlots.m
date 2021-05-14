@@ -55,9 +55,10 @@ if ~exist('ShowPlots', 'var')
 end
 
 if ~exist('PlotDo', 'var') || isempty(PlotDo)
+   % Removed: DriftX, DriftY, DritfZ, HistIm
    PlotDo = ["Photons", "Bg", "PSFSigma", "PValue", "X_SE", "Y_SE", "Z_SE", ...
-             "NCombined", "DriftX", "DriftY", "DriftZ", "Drift", "FitFrame",...
-             "DriftIm", "GaussIm", "HistIm", "CircleIm", "CircleImDrift"];
+             "NCombined", "CumDrift", "Drift", "FitFrame", "DriftIm",       ...
+             "GaussIm", "CircleIm", "CircleImDrift"];
 end
 
 SMD = obj.SMD;
@@ -119,6 +120,18 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
       plotAndSaveCum('DriftZ','DriftZ')
    end 
 
+   % Estimated 2D or 3D cumulative drift
+   if ismember("Drift", PlotDo)
+      DC = smi_core.DriftCorrection;
+      DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
+      figDC = DC.plotDriftCorrection(SMD, 'R');
+      if ~isempty(PlotSaveDir2)
+         FileName = [BaseName '_CumDriftCorrection'];
+         saveas(gcf, fullfile(PlotSaveDir2, FileName), 'png');
+      end
+      if ~ShowPlots; close(gcf); end
+   end
+
    % Estimated 2D or 3D drift
    if ismember("Drift", PlotDo)
       DC = smi_core.DriftCorrection;
@@ -170,7 +183,7 @@ end
 if ismember("DriftIm", PlotDo)
    % Drift image
    [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, obj.SRImageZoom);
-   if ~isempty(PlotSaveDir1)
+   if ~isempty(PlotSaveDir2)
       FileName = [BaseName, '_DriftImage.png'];
       imwrite(single(DriftImRGB), fullfile(PlotSaveDir1, FileName))
    end
@@ -185,6 +198,10 @@ if ismember("GaussIm", PlotDo)
    % Gaussian image
    [GaussIm] = smi_vis.GenerateImages.gaussianImage(SMD, obj.SMF, obj.SRImageZoom);
    if ~isempty(PlotSaveDir1)
+      FileName = [BaseName, '_GaussImage.png'];
+      imwrite(GaussIm, fullfile(PlotSaveDir1, FileName))
+   end
+   if ~isempty(PlotSaveDir2)
       FileName = [BaseName, '_GaussImage.png'];
       imwrite(GaussIm, fullfile(PlotSaveDir1, FileName))
    end
