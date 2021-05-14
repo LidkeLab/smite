@@ -13,6 +13,7 @@ fprintf('Creating data...\n');
 rng('default')
 SMR.X = 1 + 98*rand(100000,1);
 SMR.Y = 1 + 48*rand(100000,1);
+SMR.Z = [];
 SMR.X_SE = 0.20*rand(100000,1);
 SMR.Y_SE = 0.20*rand(100000,1);
 SMR.XSize = 100;
