@@ -1,10 +1,9 @@
-function [GaussIm] = gaussianImage(SMD,SMF,SRImageZoom)
+function [GaussIm] = gaussianImage(SMD,SRImageZoom)
 %gaussianImage creates gaussian-blob image from SR data.
 %
 % INPUT:
 %   SMR - SMR results structure with fields X, Y, Bg, X_SE, Y_SE, Photons,
 %   FrameNum, XSize, YSize
-%   SMF
 %   SRImageZoom - zoom factor (default value of 10)
 %
 % OUTPUT:
