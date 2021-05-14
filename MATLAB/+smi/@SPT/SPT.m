@@ -168,8 +168,7 @@ classdef SPT < handle
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
         [ConnectID] = validifyConnectID(ConnectID);
-        [KOn, KOff, KBleach] = estimateRateParameters(SMD, ...
-            MinRate, MaxRate);
+        [KOn, KOff] = estimateRateParameters(SMD);
     end
     
     
