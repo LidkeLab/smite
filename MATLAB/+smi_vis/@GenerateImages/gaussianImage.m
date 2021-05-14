@@ -24,7 +24,7 @@ elseif nargin<2
     SRImageZoom=10;
 end
 
-ScalebarLength = 1; % um
+ScalebarLength = 10; % um
 % creating inputs for smi_sim.GaussBlobs.gaussBlobImage
 RawImageSize=[SMD.YSize SMD.XSize];
 SZ=RawImageSize*SRImageZoom; %since we need big enough box sizes
