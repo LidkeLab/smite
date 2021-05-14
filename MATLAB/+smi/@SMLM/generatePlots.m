@@ -185,7 +185,7 @@ if ismember("DriftIm", PlotDo)
    [~, DriftImRGB] = smi_vis.GenerateImages.driftImage(SMD, obj.SRImageZoom);
    if ~isempty(PlotSaveDir2)
       FileName = [BaseName, '_DriftImage.png'];
-      imwrite(single(DriftImRGB), fullfile(PlotSaveDir1, FileName))
+      imwrite(single(DriftImRGB), fullfile(PlotSaveDir2, FileName))
    end
    if ShowPlots
       DriftImFigure = figure();
