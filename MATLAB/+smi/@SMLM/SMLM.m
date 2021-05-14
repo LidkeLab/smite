@@ -169,6 +169,9 @@ methods
             obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
         end
 
+        % Copy PixelSize from SMF to SMD.
+        obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
+
         THR = smi_core.Threshold;
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
            THR.rejectedLocalizations(obj.SMDPreThresh, '');
