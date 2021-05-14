@@ -25,6 +25,7 @@ elseif nargin<2
     SRImageZoom=10;
 end
 
+ScalebarLength = 1; % um
 % creating inputs for smi_sim.GaussBlobs.gaussBlobImage
 RawImageSize=[SMD.YSize SMD.XSize];
 SZ=RawImageSize*SRImageZoom; %since we need big enough box sizes
@@ -40,5 +41,9 @@ SMDin.FrameNum=ones(size(SMD.FrameNum));
 SMDin.NFrames=1;
 % creating GaussIm
 GaussIm = smi_sim.GaussBlobs.gaussBlobImage(SMDin);
+GaussIm = smi.BaGoL.scaleIm(GaussIm);
+GaussIm = smi_vis.GenerateImages.colorImage(GaussIm);
+GaussIm = smi_vis.GenerateImages.scalebar(GaussIm, SMD.PixelSize, ...
+                                          ScalebarLength);
 
 end
