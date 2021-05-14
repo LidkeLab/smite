@@ -50,18 +50,68 @@ end
 % overlay image (keeping the labels separate) so that we have just one 
 % array containing the max. correlation coefficients from all of the
 % overlay images produced.  Repeat for the registration errors.
-ConcatenatedRegError = [{obj.ResultsStruct(:, 1).RegError}; ...
-    {obj.ResultsStruct(:, 2).RegError}];
-ConcatenatedMaxCorr = [{obj.ResultsStruct(:, 1).MaxCorr}; ...
-    {obj.ResultsStruct(:, 2).MaxCorr}];
+MakeShiftVsCorrPlots = ...
+    all(isfield(obj.ResultsStruct, {'RegError', 'MaxCorr'}));
+if MakeShiftVsCorrPlots
+    ConcatenatedRegError = [{obj.ResultsStruct(:, 1).RegError}; ...
+        {obj.ResultsStruct(:, 2).RegError}];
+    ConcatenatedMaxCorr = [{obj.ResultsStruct(:, 1).MaxCorr}; ...
+        {obj.ResultsStruct(:, 2).MaxCorr}];
+else
+    ConcatenatedRegError = [];
+    ConcatenatedMaxCorr = [];
+end
+
+% Create and save a structure which contains all of the data used to
+% generate these plots.
+OverlayInfoStruct.ImageShift = ImageShift;
+OverlayInfoStruct.RegError = ConcatenatedRegError;
+OverlayInfoStruct.MaxCorr = ConcatenatedMaxCorr;
+save(fullfile(obj.SaveBaseDir, 'OverlayInfoStruct.mat'), ...
+    'OverlayInfoStruct');
+
+% Estimate an affine transform from the coordinates of each label.
+ResultsStructDir = fullfile(obj.SaveBaseDir, 'ResultsStructs');
+Label1Results = dir(fullfile(ResultsStructDir, '*Label_01*'));
+Label1Paths = fullfile(ResultsStructDir, ...
+    {Label1Results(~[Label1Results.isdir]).name});
+NOverlays = numel(Label1Paths);
+AffineTransforms = cell(NOverlays);
+for ii = 1:NOverlays
+    % Display a status message in the command line.
+    if obj.Verbose
+        fprintf(['Publish.performFullAnalysis(): ', ...
+            'Computing affine transform for overlay image %i of %i...\n'], ...
+            ii, NOverlays);
+    end
+    
+    % Load the results structs into the workspace.
+    load(Label1Paths{ii}, 'SMD')
+    SMD1 = SMD;
+    Label2Path = strrep(Label1Paths{ii}, 'Label_01', 'Label_02');
+    if exist(Label2Path, 'file')
+        load(Label2Path, 'SMD')
+        SMD2 = SMD;
+    else
+        continue
+    end
+    
+    % Compute an affine transform between the coordinates.
+    AffineTransforms{ii} = ...
+        smi_stat.findCoordAffine([SMD1.X, SMD1.Y], [SMD2.X, SMD2.Y], 50);
+end
+save(fullfile(obj.SaveBaseDir, 'AffineTransforms.mat'), ...
+    'AffineTransforms', 'Label1Paths')
 
 % Generate the overlay plots across all cells.
-SRPixelSize = obj.SMF.Data.PixelSize / obj.SRImageZoom;
-obj.makeOverlayPlots(ImageShift, ...
-    ConcatenatedRegError, ...
-    ConcatenatedMaxCorr, ...
-    SRPixelSize, obj.SMF.Data.PixelSize, ...
-    obj.SaveBaseDir)
+if MakeShiftVsCorrPlots
+    SRPixelSize = obj.SMF.Data.PixelSize / obj.SRImageZoom;
+    obj.makeOverlayPlots(ImageShift, ...
+        ConcatenatedRegError, ...
+        ConcatenatedMaxCorr, ...
+        SRPixelSize, obj.SMF.Data.PixelSize, ...
+        obj.SaveBaseDir)
+end
 
 
 end

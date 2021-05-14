@@ -57,6 +57,22 @@ for ii = 1:NDataFiles
             % Place this in a try/catch so that we can still proceed with
             % the other analyses if this fails.
             obj.SMLM.fullAnalysis()
+            
+            % Copy the results into a more accessible directory (it's nice
+            % to have them all in one place for certain analyses).
+            [~, FileName] = fileparts(DataFileNames{ii});
+            ResultsFile = dir(fullfile(obj.SMLM.SMF.Data.ResultsDir, ...
+                FileName, '*Results.mat'));
+            if ~isempty(ResultsFile)
+                ResultsStructDir = ...
+                    fullfile(obj.SaveBaseDir, 'ResultsStructs');
+                if ~isfolder(ResultsStructDir)
+                    mkdir(ResultsStructDir)
+                end
+                NewName = [CellName, '_', LabelName, '_', 'Results.mat'];
+                copyfile(fullfile(ResultsFile.folder, ResultsFile.name), ...
+                    fullfile(ResultsStructDir, NewName));
+            end
         catch MException
             if obj.Verbose
                 warning(['Publish.processLabel(): ', ...
@@ -97,8 +113,7 @@ for ii = 1:NDataFiles
             obj.ResultsStruct(CellNumber, LabelNumber).Label = LabelName;
             for jj = 1:numel(FieldNames)
                 obj.ResultsStruct(CellNumber, LabelNumber). ...
-                    (FieldNames{jj}) = ...
-                    AlignResultsStruct.(FieldNames{jj});
+                    (FieldNames{jj}) = AlignResultsStruct.(FieldNames{jj});
             end
         end
     end

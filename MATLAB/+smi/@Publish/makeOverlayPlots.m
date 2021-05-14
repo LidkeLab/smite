@@ -176,12 +176,5 @@ if ~(isempty(MaxCorr) || isempty(RegError))
     close(FigureHandle);
 end
 
-% Create and save a structure which contains all of the data used to
-% generate these plots.
-OverlayInfoStruct.ImageShift = ImageShift;
-OverlayInfoStruct.RegError = RegError;
-OverlayInfoStruct.MaxCorr = MaxCorr;
-save(fullfile(SaveDir, 'OverlayInfoStruct.mat'), 'OverlayInfoStruct');
-
 
 end
