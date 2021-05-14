@@ -21,7 +21,7 @@ SMR.YSize = 50;
 SMR.FrameNum = ones(100000,1);
 SMR.Photons = 1000*rand(100000,1);
 SMR.Bg = 100*rand(100000,1);
-SMR.PixelSize = 100;
+SMR.PixelSize = 0.1;
 SRImageZoom = 4;
 
 % test with no output

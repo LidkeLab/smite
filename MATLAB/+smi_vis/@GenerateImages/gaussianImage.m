@@ -42,7 +42,7 @@ SMDin.NFrames=1;
 GaussIm = smi_sim.GaussBlobs.gaussBlobImage(SMDin);
 GaussIm = smi.BaGoL.scaleIm(GaussIm);
 GaussIm = smi_vis.GenerateImages.colorImage(GaussIm);
-GaussIm = smi_vis.GenerateImages.scalebar(GaussIm, SMD.PixelSize, ...
-                                          ScalebarLength);
+%GaussIm = smi_vis.GenerateImages.scalebar(GaussIm, SMD.PixelSize, ...
+%                                          ScalebarLength);
 
 end
