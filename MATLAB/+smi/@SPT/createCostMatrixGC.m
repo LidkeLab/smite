@@ -225,7 +225,7 @@ for ee = 1:NTraj
             %       CMIndices here (and in sparse()) is row oriented.
             CMElements(sub2ind(CMSize, bb, ee)) = ...
                 0.5 * (NegLogLikelihoodOfXandY ...
-                - log(K_off) - (DeltaFrame-1)*log(1-K_on) - log(K_on));
+                + K_off - (DeltaFrame-1)*log(1-exp(-K_on)) + K_on);
             
             % Store the corresponding element of the "auxillary" block.
             CMElements(sub2ind(CMSize, ee+NTraj, bb+NTraj)) = ...
@@ -257,7 +257,7 @@ for bb = 1:NTraj
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, StartFrameCurrent-FirstFrame);
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
-        -(log(Rho_off*K_on) + FrameGap*log(1-K_on));
+        -log(Rho_off) + K_on - FrameGap*log(1-exp(-K_on));
 end
 
 % Fill in the "death" block (upper-right) of the cost matrix.
@@ -278,7 +278,7 @@ for ee = 1:NTraj
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, LastFrame-EndFrameCurrent);
     CMElements(sub2ind(CMSize, (NTraj+1):(2*NTraj), ee*OnesArray)) = ...
-        -(log(K_off) + FrameGap*log(1-K_on));
+        K_off - FrameGap*log(1-exp(-K_on));
 end
 
 % Remove all of the remaining NonLinkMarker elements.
