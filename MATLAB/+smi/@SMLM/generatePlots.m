@@ -203,7 +203,7 @@ if ismember("GaussIm", PlotDo)
    end
    if ~isempty(PlotSaveDir2)
       FileName = [BaseName, '_GaussImage.png'];
-      imwrite(GaussIm, fullfile(PlotSaveDir1, FileName))
+      imwrite(GaussIm, fullfile(PlotSaveDir2, FileName))
    end
    if ShowPlots
       GaussImFigure = figure();
