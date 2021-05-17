@@ -160,7 +160,7 @@ classdef DiffusionEstimator < handle
             FrameLags, NPoints, LocVarianceSum, NComponents, ...
             Weights, FitMethod, FitOptions);
         [CDFOfJumps] =  brownianJumpCDF(MotionParams, ...
-            SortedJumps, FrameLags, NPoints, LocVarianceSum);
+            SortedSquaredDisp, FrameLags, NPoints, LocVarianceSum);
         
     end
     

@@ -1,5 +1,5 @@
 function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
-    SortedJumps, FrameLags, NPoints, LocVarianceSum)
+    SortedSquaredDisp, FrameLags, NPoints, LocVarianceSum)
 %brownianJumpCDF generates a model of the CDF of Brownian jumps.
 % This method will generate a model of the CDF (CPD) of the jumps made by a
 % Brownian random walker.
@@ -10,13 +10,12 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 %                 model, this is [2*D_1; 2*D_2; alpha]. For N-components,
 %                 this is [2*D_1, 2*D_2, ..., 2*D_N, 
 %                         alpha_1, alpha_2, ..., alpha_{N-1}
-%   SortedJumps: The sorted jumps values used to compute 'CDFOfJumps' in
-%                ascending order. (numeric array)
+%   SortedSquaredDisp: The sorted (in ascending order) squared jumps used 
+%                      to compute 'CDFOfJumps'. (numeric array)
 %   FrameLags: All of the unique frame lags associated with the jumps in
 %              'SortedJumps'. Note that this isn't necessarily the same
 %              size as SortedJumps, since SortedJumps can contain multiple
-%              jumps for each frame lag.
-%              (NFrameLagsx1 array)
+%              jumps for each frame lag. (NFrameLagsx1 array)
 %   NPoints: The number of data points (or jumps) corresponding to each
 %            frame lag in 'FrameLags' (NFrameLagsx1 array)
 %   LocVarianceSum: Sum of the localization variances for the two points
@@ -61,7 +60,7 @@ MotionParams = [MotionParams; ...
 %       ideal, but dealing with those properly becomes too messy/slow
 %       (i.e., we get another integral...).
 NFrameLags = numel(FrameLags);
-ZerosArray = zeros(numel(SortedJumps), 1);
+ZerosArray = zeros(numel(SortedSquaredDisp), 1);
 CDFOfJumps = ZerosArray;
 for nn = 1:NComponents
     % Define the variance term for this component.
@@ -72,7 +71,7 @@ for nn = 1:NComponents
     for ff = 1:NFrameLags
         CDFOfJumpsNN = CDFOfJumpsNN ...
             + (FrameLagProb(ff) ...
-            * (1-exp(-0.5*(SortedJumps.^2)/Variance(ff))));
+            * (1-exp(-0.5*SortedSquaredDisp/Variance(ff))));
     end
     CDFOfJumps = CDFOfJumps + MotionParams(nn+NComponents)*CDFOfJumpsNN;
 end

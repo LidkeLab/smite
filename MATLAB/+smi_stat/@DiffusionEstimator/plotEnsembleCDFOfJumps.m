@@ -41,9 +41,9 @@ end
 FrameRate = DiffusionStruct(2).FrameRate;
 PixelSize = DiffusionStruct(2).PixelSize;
 FrameConversion = ~UnitFlag + UnitFlag/FrameRate;
-JumpConversion = UnitFlag*PixelSize + ~UnitFlag;
-Jumps = MSDEnsemble.SortedJumps * JumpConversion;
-stairs(PlotAxes, Jumps, MSDEnsemble.CDFOfJumps)
+SquaredJumpsConversion = UnitFlag*(PixelSize^2) + ~UnitFlag;
+SquaredJumps = MSDEnsemble.SortedSquaredDisp * SquaredJumpsConversion;
+stairs(PlotAxes, SquaredJumps, MSDEnsemble.CDFOfJumps)
 
 % If needed, plot the fit results.
 if ~isempty(DiffusionStruct)
@@ -62,8 +62,8 @@ if ~isempty(DiffusionStruct)
     % (unlike the MSD structures).
     IsCameraUnits = strcmpi(DiffusionStruct(2).Units, ...
         {'pixels'; 'frames'});
-    JumpUnitConversion = IsCameraUnits(1)*JumpConversion ...
-        + ~IsCameraUnits(1)*(UnitFlag + ~UnitFlag/PixelSize);
+    SqJumpUnitConversion = IsCameraUnits(1)*SquaredJumpsConversion ...
+        + ~IsCameraUnits(1)*(UnitFlag + ~UnitFlag/(PixelSize^2));
     TimeUnitConversion = IsCameraUnits(2)*FrameConversion ...
         + ~IsCameraUnits(2)*(UnitFlag + ~UnitFlag*FrameRate);
     
@@ -71,16 +71,17 @@ if ~isempty(DiffusionStruct)
     hold(PlotAxes, 'on')
     FitParams = DiffusionStruct(2).FitParams;
     FitParams(1:NComponents) = FitParams(1:NComponents) ...
-        * (JumpUnitConversion^2) / TimeUnitConversion;
+        * SqJumpUnitConversion / TimeUnitConversion;
     ModelCDF = smi_stat.DiffusionEstimator.brownianJumpCDF(...
-        FitParams, Jumps, ...
+        FitParams, SquaredJumps, ...
         MSDEnsemble.FrameLags * FrameConversion, ...
         MSDEnsemble.NPoints, ...
-        MSDEnsemble.LocVarianceSum * (JumpConversion^2));
-    plot(PlotAxes, Jumps, ModelCDF)
+        MSDEnsemble.LocVarianceSum * SquaredJumpsConversion);
+    plot(PlotAxes, SquaredJumps, ModelCDF)
 end
-JumpsUnit = smi_helpers.stringMUX({'pixels', 'micrometers'}, UnitFlag);
-xlabel(PlotAxes, sprintf('Jumps (%s)', JumpsUnit))
+SquaredJumpsUnit = smi_helpers.stringMUX({'pixels^2', 'micrometers^2'}, ...
+    UnitFlag);
+xlabel(PlotAxes, sprintf('Squared jumps (%s)', SquaredJumpsUnit))
 ylabel(PlotAxes, 'CDF of jumps')
 legend(PlotAxes, {'CDF of jumps', 'Fit'}, 'Location', 'best')
 

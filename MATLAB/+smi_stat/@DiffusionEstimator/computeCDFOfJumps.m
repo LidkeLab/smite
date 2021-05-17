@@ -20,13 +20,13 @@ function [MSDStruct] = computeCDFOfJumps(MSDStruct)
 for ii = 1:numel(MSDStruct)
     if ~isempty(MSDStruct(ii).MSD)
         % Sort arrays as needed.
-        [MSDStruct(ii).SortedJumps, SortIndices] = ...
-            sort(sqrt(MSDStruct(ii).SquaredDisplacement));
+        [MSDStruct(ii).SortedSquaredDisp, SortIndices] = ...
+            sort(MSDStruct(ii).SquaredDisplacement);
         MSDStruct(ii).FrameLagsAll = ...
             MSDStruct(ii).FrameLagsAll(SortIndices);
         
         % Compute the CDF of the jumps.
-        NJumps = numel(MSDStruct(ii).SortedJumps);
+        NJumps = numel(MSDStruct(ii).SortedSquaredDisp);
         MSDStruct(ii).CDFOfJumps = cumsum(ones(NJumps, 1)) / NJumps;
     end
 end
