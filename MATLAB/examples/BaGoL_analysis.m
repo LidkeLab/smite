@@ -68,6 +68,8 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %       N_Trials2         Length of post-burn-in chain (2nd pass)
 %       Skip1stPass       If true, skip the 1st pass and directly use the
 %                         values for Lambda defined above for the prior
+%       Skip2ndPass       If true, skip the 2nd pass and simply save the
+%                         results from the 1st pass
 %       Make2ndPassExpPrior If true, adjust the 1st pass Lambda posterior to an
 %                         exponential to used as the prior for the 2nd pass
 %
@@ -278,31 +280,37 @@ SMD.Y_SE = PixelSize*SMR.Y_SE(Ind)+SE_Adjust;
 SMD.Z_SE = [];
 SMD.FrameNum = SMR.Nframes*single((SMR.DatasetNum(Ind)-1))+single(SMR.FrameNum(Ind));
 
-%Ajusting the class properties
-BGL.SMD = SMD;
+if ~BaGoLParams.Skip2ndPass
+   %Ajusting the class properties
+   BGL.SMD = SMD;
 
-if ~BaGoLParams.Skip1stPass
-   BGL.Lambda = [PdP.a, PdP.b]; %Mean number of blinking estimated from the
-                                %former section, used for Poisson dist.
+   if ~BaGoLParams.Skip1stPass
+      BGL.Lambda = [PdP.a, PdP.b]; %Mean number of blinking estimated from the
+                                   %former section, used for Poisson dist.
+   end
+   Lambda2Prior = BGL.Lambda;
+
+   BGL.N_Burnin = N_Burnin2; %Length of Burn-in chain
+   BGL.N_Trials = N_Trials2; %Length of post-burn-in chain
+   BGL.PImageSize = ImSize; %size of the posterior image
+   BGL.PixelSize = OutputPixelSize; %Pixel size for the posterior image
+   BGL.PImageFlag = 1; %Producing the posterior image
+   BGL.XStart = 0;
+   BGL.YStart = 0;
+
+   %Analyzing the data
+   tic;
+   BGL.analyze_all()
+   T = toc;
+   nPost = numel(BGL.MAPN.X);
+   fprintf('%s: It took %g seconds to process the selected region.\n', ...
+           FileName,T)
+   fprintf('%s pre- to post-BaGoL localizations: %d -> %d\n', ...
+           FileName, nPre, nPost);
+else   % Skipping the 2nd BaGoL pass, so NOT skipping the 1st pass
+   Lambda2Prior = [PdP.a, PdP.b]; %Mean number of blinking estimated from the
+                                  %former section, used for Poisson dist.
 end
-Lambda2Prior = BGL.Lambda;
-
-BGL.N_Burnin = N_Burnin2; %Length of Burn-in chain
-BGL.N_Trials = N_Trials2; %Length of post-burn-in chain
-BGL.PImageSize = ImSize; %size of the posterior image
-BGL.PixelSize = OutputPixelSize; %Pixel size for the posterior image
-BGL.PImageFlag = 1; %Producing the posterior image
-BGL.XStart = 0;
-BGL.YStart = 0;
-
-%Analyzing the data
-tic;
-BGL.analyze_all()
-T = toc;
-nPost = numel(BGL.MAPN.X);
-fprintf('%s: It took %g seconds to process the selected region.\n',FileName,T)
-fprintf('%s pre- to post-BaGoL localizations: %d -> %d\n', ...
-        FileName, nPre, nPost);
 
 % ---------- Save Results and Plots
 
