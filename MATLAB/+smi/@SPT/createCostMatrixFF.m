@@ -119,9 +119,8 @@ for ii = 1:N
         % Compute the negative log-likelihood of these two localizations
         % being the same emitter (i.e., this is
         % -log(NormalX * NormalY * P(not turning off))
-        % NOTE: There is an implicit DeltaT = 1 frame, i.e.,
-        %       CM(ii, jj) = -log(1-exp(-K_off*DeltaT)) with 
-        %       DeltaT = 1 frame
+        % NOTE: There is an implicit DeltaT = 1 frame, i.e., cost of not
+        %       turning off is K_off*DeltaT with DeltaT = 1 frame
         % NOTE: The additional 0.5 multiplying the link costs comes from
         %       our choice to set the "auxillary" (bottom right) block of
         %       the cost matrix equal to the transpose of the "link"
@@ -133,7 +132,7 @@ for ii = 1:N
         %       selected in the LAP will be consistent with the physically
         %       reasonable costs we've defined otherwise.
         CostMatrix(ii, jj) = ...
-            0.5 * (NegLikelihoodOfXandY - log(1-exp(-SMF.Tracking.K_off)));
+            0.5 * (NegLikelihoodOfXandY+SMF.Tracking.K_off);
     end
 end
 
@@ -141,8 +140,8 @@ end
 % FrameNumber and FrameNumber+1 (the costs of introducing a new emitter
 % appearing in FrameNumber+1/an emitter disappearing in FrameNumber+1,
 % respectively).
-CostBirth = -log(SMF.Tracking.Rho_off) + SMF.Tracking.K_on;
-CostDeath = SMF.Tracking.K_off;
+CostBirth = -log(SMF.Tracking.Rho_off * (1-exp(-SMF.Tracking.K_on)));
+CostDeath = -log(1-exp(-SMF.Tracking.K_off));
 
 % Populate the remaining blocks (lower left, upper right, bottom right) of
 % the cost matrix as appropriate.
