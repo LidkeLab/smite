@@ -119,6 +119,8 @@ CMElements = NonLinkMarker * ones(CMSize(1)^2, 1);
 
 % Fill in the NTraj x NTraj upper-left block (the link block) and the
 % auxillary (bottom-left) block.
+CostTurningOff = -log(1 - exp(-K_off));
+CostTurningBackOn = -log(1 - exp(-K_on));
 for ee = 1:NTraj
     % Isolate the end of the ee-th trajectory.
     EndIndexCurrent = StartEndIndices(ee, 2);
@@ -204,7 +206,7 @@ for ee = 1:NTraj
             % -log(NormalX * NormalY
             %   * P(traj ee turning off)
             %   * P(traj ee not turning on for DeltaFrame-1 frames)
-            %   * P(traj bb turning on)
+            %   * P(traj ee turning back on as traj bb)
             % NOTE: There are implicit DeltaT's multiplying all transition
             %       rates, where DeltaT = 1 frame.
             % NOTE: The additional 0.5 multiplying the gap-closing costs
@@ -225,7 +227,9 @@ for ee = 1:NTraj
             %       CMIndices here (and in sparse()) is row oriented.
             CMElements(sub2ind(CMSize, bb, ee)) = ...
                 0.5 * (NegLogLikelihoodOfXandY ...
-                + K_off - (DeltaFrame-1)*log(1-exp(-K_on)) + K_on);
+                + CostTurningOff ...
+                + (DeltaFrame-1)*K_on ...
+                + CostTurningBackOn);
             
             % Store the corresponding element of the "auxillary" block.
             CMElements(sub2ind(CMSize, ee+NTraj, bb+NTraj)) = ...
@@ -241,6 +245,7 @@ end
 %       frame.
 FirstFrame = 1;
 OnesArray = ones(1, NTraj);
+CostTurningOn = -log(Rho_off * (1-exp(-K_on)));
 for bb = 1:NTraj
     % Find the starting frame for the bb-th trajectory.
     StartIndexCurrent = StartEndIndices(bb, 1);
@@ -257,11 +262,12 @@ for bb = 1:NTraj
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, StartFrameCurrent-FirstFrame);
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
-        -log(Rho_off) + K_on - FrameGap*log(1-exp(-K_on));
+        CostTurningOn + FrameGap*K_on;
 end
 
 % Fill in the "death" block (upper-right) of the cost matrix.
 LastFrame = SMD.NFrames;
+CostTurningOff = -log(1 - exp(-K_off));
 for ee = 1:NTraj
     % Find the ending frame for the ee-th trajectory.
     EndIndexCurrent = StartEndIndices(ee, 2);
@@ -278,7 +284,7 @@ for ee = 1:NTraj
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, LastFrame-EndFrameCurrent);
     CMElements(sub2ind(CMSize, (NTraj+1):(2*NTraj), ee*OnesArray)) = ...
-        K_off - FrameGap*log(1-exp(-K_on));
+        CostTurningOff + FrameGap*K_on;
 end
 
 % Remove all of the remaining NonLinkMarker elements.
