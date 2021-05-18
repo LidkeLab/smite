@@ -238,7 +238,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
       % that the polynomial is of PDegree for the drift correction.
       P0 = zeros(Ndims*PDegree, 1);
       % Test for really sparse datasets.
-      if n <= 1
+      if n <= 1 || SMD.NFrames == 1
          P = P0;
          XYC = XY;
       else
