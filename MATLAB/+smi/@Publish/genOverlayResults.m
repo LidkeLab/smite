@@ -76,7 +76,7 @@ Label1Results = dir(fullfile(ResultsStructDir, '*Label_01*'));
 Label1Paths = fullfile(ResultsStructDir, ...
     {Label1Results(~[Label1Results.isdir]).name});
 NOverlays = numel(Label1Paths);
-AffineTransforms = cell(NOverlays);
+AffineTransforms = cell(NOverlays, 1);
 for ii = 1:NOverlays
     % Display a status message in the command line.
     if obj.Verbose
