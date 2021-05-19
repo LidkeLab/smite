@@ -17,6 +17,7 @@ NOverlays = numel(OverlayFileNames);
 % Loop through all overlay images and compute the shift between the color
 % channels.
 ImageShift = zeros(NOverlays, 2);
+ImageShiftLocal = cell(NOverlays, 3);
 for ii = 1:NOverlays
     % Display a status message in the command line.
     if obj.Verbose
@@ -29,7 +30,7 @@ for ii = 1:NOverlays
     OverlayImage = ...
         imread(fullfile(obj.SaveBaseDir, OverlayFileNames{ii}));
     
-    % Compute overlay stats. for this overlay image.
+    % Compute the shift between labels for this image.
     % NOTE: OverlayImage should be a green-magenta overlay, but we can 
     %       ignore the third color channel because that information is 
     %       already contained in the first channel.
@@ -41,6 +42,14 @@ for ii = 1:NOverlays
         OverlayImage(:, :, 2), OverlayImage(:, :, 1), ...
         [size(OverlayImage, [1, 2])-1, 0], [], [], 0, 0);
     ImageShift(ii, :) = PixelShift(1:2);
+    
+    % Compute the local shift between labels for this image.
+    SubROISize = ceil(size(OverlayImage, [1, 2]) / 10);
+    [PixelOffsets, SubPixelOffsets, ImageROIs] = obj.estimateLocalShifts(...
+        OverlayImage(:, :, 2), OverlayImage(:, :, 1), SubROISize, [], 1);
+    ImageShiftLocal{ii, 1} = PixelOffsets;
+    ImageShiftLocal{ii, 2} = SubPixelOffsets;
+    ImageShiftLocal{ii, 3} = ImageROIs;
     if (obj.Verbose < 3)
         warning('on')
     end
@@ -65,6 +74,7 @@ end
 % Create and save a structure which contains all of the data used to
 % generate these plots.
 OverlayInfoStruct.ImageShift = ImageShift;
+OverlayInfoStruct.ImageShiftLocal = ImageShiftLocal;
 OverlayInfoStruct.RegError = ConcatenatedRegError;
 OverlayInfoStruct.MaxCorr = ConcatenatedMaxCorr;
 save(fullfile(obj.SaveBaseDir, 'OverlayInfoStruct.mat'), ...

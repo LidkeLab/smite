@@ -1,5 +1,5 @@
 function [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
-    estimateLocalShifts(Image1, Image2, SubROISize, UseGPU)
+    estimateLocalShifts(Image1, Image2, SubROISize, MaxOffset, UseGPU)
 %estimateLocalShifts estimates local shifts between two images.
 %
 % INPUT:
@@ -10,6 +10,9 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
 %   SubROISize: The size of local regions in which the shift will be
 %               computed, ideally evenly divides [m, n].
 %               (Pixels)(2x1 array)(Default = size(Image1))
+%   MaxOffset: Max offset for which the cross correlation is computed
+%              between the two images. 
+%              (Pixels)(Default = ceil(SubROISize / 4))
 %
 % OUTPUT:
 %   PixelOffset: The integer pixel offset of Image2 relative to Image1,
@@ -35,6 +38,9 @@ ImageSize = size(Image1);
 if (~exist('SubROISize', 'var') || isempty(SubROISize))
     SubROISize = ImageSize.';
 end
+if (~exist('MaxOffset', 'var') || isempty(MaxOffset))
+    MaxOffset = ceil(SubROISize / 4);
+end
 if (~exist('UseGPU', 'var') || isempty(UseGPU))
     UseGPU = logical(gpuDeviceCount());
 end
@@ -51,7 +57,7 @@ SubPixelOffsets = PixelOffsets;
 for nn = 1:NROIs
     [Offset, SubOffset] = MIC_Reg3DTrans.findStackOffset(...
         DividedImages1{nn}, DividedImages2{nn}, ...
-        [ImageSize, 1], [], [], 0, UseGPU);
+        [MaxOffset, 1], [], [], 0, UseGPU);
     PixelOffsets(nn, :) = Offset(1:2);
     SubPixelOffsets(nn, :) = SubOffset(1:2);
 end
