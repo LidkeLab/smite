@@ -78,7 +78,11 @@ InputExtras = [];
 InputExtrasSE = [];
 SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
 MaxConnectID = max(SMD.ConnectID);
-for nn = unique(SMD.DatasetNum)
+UniqueDatasetNum = unique(SMD.DatasetNum);
+if iscolumn(UniqueDatasetNum)
+    UniqueDatasetNum = UniqueDatasetNum.';
+end
+for nn = UniqueDatasetNum
     % Provide a Command Window update if needed.
     if (obj.Verbose > 2)
         fprintf(['\tFrameConnection.performFrameConnection(): ', ...
