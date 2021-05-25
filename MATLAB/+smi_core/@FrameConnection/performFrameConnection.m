@@ -221,8 +221,7 @@ SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
 NLocTotal = numel(SMDCombined.ConnectID);
 IndSMD = cell(NLocTotal, 1);
 for ii = 1:NLocTotal
-   IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ...
-       SMDCombined.ConnectID(ii)));
+   IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ii));
 end
 SMDCombined.IndSMD = IndSMD;
 
