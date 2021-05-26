@@ -18,6 +18,12 @@ function genBlinks(obj,StartState)
     
  % obj.SMD_Labeled.Z: The Z-positions of particles generated randomly
  % (Number of the generated particles x 1), (um)
+
+ % obj.SparseFlag: If true, turns on using sparse matrices in genBlinks,
+ % allowing it to accomodate larger examples.  However, sparse matrices
+ % are also slower to manipulate than regular ones especially for
+ % smaller examples, so shouldn't be used unless needed, thus the
+ % default is false.
  
  % StartState: A string which determine if the particle starts on or
  % starts randomly on or off. It can be either 'on' or 'Equib'.
