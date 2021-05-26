@@ -44,6 +44,7 @@ classdef SimSMLM < handle
         Bg=5              % Background Count Rate (counts/pixel)
         PSFSigma=1.3      % Point Spread Function Sigma size (Pixels)
         LabelingEfficiency=1 % Fluorophore labeling efficiency [range: 0 - 1]
+        NOnEvents         % Number of on events per localization
         % A string which determine if the particle starts on or starts randomly
         % on or off.  It can be either 'on' or 'Equib'.
         StartState='Equib'

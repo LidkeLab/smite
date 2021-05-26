@@ -67,6 +67,7 @@ FrameNum=[];
 PSFSigma=[];
 Bg=[];
 TotalNFrames = obj.NDatasets*obj.NFrames;
+NOnEvents = zeros(NLabels, 1, 'uint8');   % number of on events
 
 if obj.SparseFlag
    IntArray = sparse(NLabels, TotalNFrames);
@@ -78,7 +79,9 @@ end
 %events for them.
 
 for mm=1:NLabels
-    Temp=blinks(obj.K_OnToOff,obj.K_OffToOn,obj.K_OnToBleach,TotalNFrames,StartState);
+    [Temp, NTime] = blinks(obj.K_OnToOff, obj.K_OffToOn, obj.K_OnToBleach, ...
+                           TotalNFrames, StartState);
+    NOnEvents(mm) = NTime;
     
     %Blinks() makes the blinking events. It takes the following inputs:
     
@@ -122,7 +125,7 @@ obj.SMD_Model.Photons    = Photons;
 obj.SMD_Model.Bg         = 0;
 obj.SMD_Model.NDatasets  = obj.NDatasets;
 obj.SMD_Model.NFrames    = obj.NFrames;
-AbsoluteFrameNum     = FrameNum;
+AbsoluteFrameNum = FrameNum;
 obj.SMD_Model.DatasetNum = zeros(size(AbsoluteFrameNum));
 obj.SMD_Model.FrameNum   = zeros(size(AbsoluteFrameNum));
 % Convert absolute frame numbers to per dataset frame numbers.
@@ -134,9 +137,11 @@ for i = 1 : obj.NDatasets
    obj.SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
    lo = lo + obj.NFrames;
 end
+obj.NOnEvents = NOnEvents;
     
     %Nested function to generate blinking events.
-    function IvsT=blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
+    function [IvsT,NTime]=...
+       blinks(K_OnToOff,K_OffToOn,K_OnToBleach,NFrames,StartState)
     %Blinks() generates blinking time trace for a single
     %particle over the given number of the frames considering
     %the parameters K_OffToOn, K_OnToOff and K_OnToBleach.
