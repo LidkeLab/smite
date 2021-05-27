@@ -61,6 +61,13 @@ classdef SimSMLM < handle
         SMD_True         % True coordinates produced by sim*
         SMD_Labeled      % True labeled coordinates produced by applyLabelEffic
         SMD_Model        % Coordinates with blinks produced by genBlinks
+
+        % Note SMD_Model.ConnectID: SMD_Labeled -> SMD_Model (see genBlinks)
+        % ConnectID produces an indexing array that associates each
+        % localization in SMD_Model with the localization that produced it in
+        % SMD_Labeled.  That is,
+        %
+        %    obj.SMD_Labeled.X(obj.SMD_Model.ConnectID) == obj.SMD_Model.X
     end
 
     methods 
