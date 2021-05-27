@@ -69,6 +69,20 @@ Bg=[];
 TotalNFrames = obj.NDatasets*obj.NFrames;
 NOnEvents = zeros(NLabels, 1, 'uint8');   % number of on events
 
+% obj.SMD_Model.ConnectID: SMD_Labeled -> SMD_Model
+% ConnectID produces an indexing array that associates each localization in
+% SMD_Model with the localization that produced it in SMD_Labeled.  That is,
+%
+%    obj.SMD_Labeled.X(obj.SMD_Model.ConnectID) == obj.SMD_Model.X
+%
+% where SMD_Model.ConnectID has the same dimensions as SMD_Model.X/Y/etc.  For
+% example,
+%
+%    obj.SMD_Model.X(k) == obj.SMD_Labeled.X(obj.SMD_Model.ConnectID(k))
+%
+% for k = 1 : numel(obj.SMD_Model.X).
+ConnectID = [];
+
 if obj.SparseFlag
    IntArray = sparse(NLabels, TotalNFrames);
 else
@@ -112,6 +126,8 @@ for mm=1:NLabels
         %Indiv(:,1)=obj.LabelCoords(mm,2);
         Indiv(:,1)=obj.SMD_Labeled.Y(mm);
         Y = cat(1,Y,Indiv);
+        nF = numel(FrameNumIndiv);
+        ConnectID = [ConnectID; repmat(mm, nF, 1)];
     end
 end
 obj.SMD_Model = obj.SMD_Labeled;
@@ -137,6 +153,7 @@ for i = 1 : obj.NDatasets
    obj.SMD_Model.FrameNum(indx) = AbsoluteFrameNum(indx) - lo + 1;
    lo = lo + obj.NFrames;
 end
+obj.SMD_Model.ConnectID = ConnectID;
 obj.NOnEvents = NOnEvents;
     
     %Nested function to generate blinking events.
