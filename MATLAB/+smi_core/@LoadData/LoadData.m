@@ -93,13 +93,16 @@ classdef LoadData < handle
                 % For now, I'm doing this instead of 
                 % [1, 1, size(Data, [1, 2])] because size(Data, [1, 2])
                 % didn't work until MATLAB 2019b.
-                SMF.Data.DataROI = [1, 1, DataSize(1:2)];
+                SMF.Data.DataROI = [1, 1, DataSize(1:2), 1, 1];
+            elseif (numel(SMF.Data.DataROI) < 6)
+                SMF.Data.DataROI = [SMF.Data.DataROI, ...
+                    ones(6-numel(SMF.Data.DataROI), 1)];
             end
-            
                     
             % Isolate the portion of the Dataset defined by DataROI.
             Data = Data(SMF.Data.DataROI(1):SMF.Data.DataROI(3), ...
-                SMF.Data.DataROI(2):SMF.Data.DataROI(4), :);
+                SMF.Data.DataROI(2):SMF.Data.DataROI(4), ...
+                SMF.Data.DataROI(5):SMF.Data.DataROI(6):end);
         end
     end
     
