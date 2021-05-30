@@ -6,7 +6,7 @@ function [SplitROIs] = convertSplitFormatToROIs(FullROI, SplitFormat)
 % INPUTS:
 %   FullROI: Full ROI of that is being split.  FullROI(3:4) must both be
 %            even numbers UNLESS SplitFormat = [] or 1.
-%            ([YStart, XStart, YEnd, XEnd])
+%            ([YStart, XStart, YEnd, XEnd, ZStart, ZPeriod])
 %   SplitFormat: The format guideline defining how FullROI will be split
 %                into sub-ROIs (integer array)(must consist of the set of
 %                integers 1:numel(SplitFormat))(Default = [])
@@ -33,8 +33,8 @@ function [SplitROIs] = convertSplitFormatToROIs(FullROI, SplitFormat)
 % OUTPUTS:
 %   SplitROIs: Array of ROIs corresponding to the input FullROI split as
 %              guided by SplitFormat.  Each row will have the format
-%              [YStart, XStart, YEnd, XEnd].  Row indices correspond to the
-%              integers specifying ROIs in SplitFormat.
+%              [YStart, XStart, YEnd, XEnd, ZStart, ZPeriod].  Row indices
+%              correspond to the integers specifying ROIs in SplitFormat.
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
@@ -47,7 +47,7 @@ end
 % Return the FullROI if appropriate.
 NROIs = numel(SplitFormat);
 if (isempty(SplitFormat) || (NROIs==1))
-    SplitROIs = FullROI;
+    SplitROIs = [FullROI, 1, 1];
     return
 end
 
@@ -85,7 +85,7 @@ else
     error(['convertSplitFormatToROIs(): size of input ', ...
         'SplitFormat does not match defined options'])
 end
-SplitROIs = SplitROIs(SortIndices, :);
+SplitROIs = [SplitROIs(SortIndices, :), 1, 1];
 
 
 end

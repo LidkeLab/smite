@@ -38,7 +38,7 @@ classdef ChannelRegistration < handle
         %       obj.SplitFormat = [].
         SplitFormat {mustBeInteger(SplitFormat)} = 1;
         
-        % Fiducial ROIs used in transforms ([YStart, XStart, YEnd, XEnd])
+        % Fiducial ROIs ([YStart, XStart, YEnd, XEnd, ZStart, ZPeriod])
         % NOTE: In its current usuage, FiducialROI is set automatically in
         %       findTransform(), or manually by the user.
         % NOTE: If you wish to manually define this array, you must set
@@ -66,7 +66,7 @@ classdef ChannelRegistration < handle
         %       FiducialROI = [1, 1, size(FiducialImages(:, :, 1))]
         %       where FiducialImages will contain the image stored in the
         %       file obj.SMF.Data.FileName.
-        FiducialROI(:, 4) {mustBeInteger(FiducialROI)}
+        FiducialROI(:, 6) {mustBeInteger(FiducialROI)}
         
         % Data used to compute transform (char)(Default = 'coordinates')
         % OPTIONS:
