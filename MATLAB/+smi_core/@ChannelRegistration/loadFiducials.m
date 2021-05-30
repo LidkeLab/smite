@@ -27,7 +27,7 @@ if isempty(obj.SplitFormat)
     % When obj.SplitFormat is empty, the user must manually define
     % obj.FiducialROI!
     if isempty(obj.FiducialROI)
-        error(['findTransform(): If you set obj.SplitFormat = [], ', ...
+        error(['loadFiducials(): If you set obj.SplitFormat = [], ', ...
             'you must also manually define obj.FiducialROI'])
     end
 else
@@ -45,7 +45,7 @@ else
                 obj.SplitFormat = [1, 2];
             end
             if (obj.Verbose > 0)
-                warning(['findTransform(): obj.SplitFormat ', ...
+                warning(['loadFiducials(): obj.SplitFormat ', ...
                     'reset to [%i, %i]'], ...
                     obj.SplitFormat(1), obj.SplitFormat(2))
             end
@@ -59,7 +59,7 @@ else
         obj.SplitFormat = 1;
         obj.FiducialROI = FullROI;
     else
-        error('findTransform(): no files defined in obj.SMF.Data.FileName')
+        error('loadFiducials(): no files defined in obj.SMF.Data.FileName')
     end
 end
 
