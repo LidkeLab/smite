@@ -24,7 +24,8 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
 %                 "DriftX"     cumulative x-drift
 %                 "DriftY"     cumulative y-drift
 %                 "DriftZ"     cumulative z-drift
-%                 "Drift"      estimated 2D or 3D drift
+%                 "CumDrift"   estimated 2D or 3D cumulative drift
+%                 "Drift"      estimated 2D or 3D absolute drift
 %                 "FitFrame"   number of fits per frame
 %                 "DriftIm"    2D drift image from SR data
 %                 "GaussIm"    2D Gaussian blob image from SR data
