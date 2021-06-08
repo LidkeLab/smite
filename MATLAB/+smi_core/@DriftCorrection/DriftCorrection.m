@@ -112,6 +112,7 @@ methods(Static)
                  DriftX_True, DriftY_True, DriftZ_True)
    [FigHandle] = plotCumDrift(SMD, FieldName)
    [FigHandle] = plotXYDriftParametric(SMD)
+   [delta12, Statistics] = regViaDC(SMD1, SMD2)
    [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 
 end % methods(Static)
