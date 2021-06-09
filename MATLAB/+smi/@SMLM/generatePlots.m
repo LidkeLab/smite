@@ -10,7 +10,7 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
 %    PlotSaveDir1 Directory in which to save especially useful (priority 1)
 %                 plots, like GaussIm
 %    PlotSaveDir2 Directory in which to save all the other (priority 2) plots
-%                 (typically, a subdirectory if PlotSaveDir1)
+%                 (typically, a subdirectory of PlotSaveDir1)
 %    ShowPlots:   Flag for showing plots on the screen (Default = false)
 %    PlotDo:      Plots to make chosen from the following list:
 %                 "Photons"    intensity (estimated photons) histogram

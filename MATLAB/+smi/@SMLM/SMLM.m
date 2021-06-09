@@ -2,8 +2,16 @@ classdef SMLM < handle
 % Single Molecule Localization Microscopy Analysis
 %
 % This is a high-level class that provides complete analysis of SMLM data.
-%
-%
+% fullAnalysis/testFit performs an analysis on all/a selected dataset(s).
+% These routines require a Single Molecule Fitting (SMF) structure describing
+% the data and defining the analysis parameters.  This structure is either
+% produced earlier and fed into SMLM or it is created interactively when SMLM
+% is invoked.  The output is a Results.mat file holding the SMF and Single
+% Molecule Data (SMD) structures, the latter containing the processed data.  In
+% addition, various plots describing the processed data are created and placed
+% in a directory under Results identifying the dataset.  This identification is
+% derived from the original dataset's name, optionally with an analysis ID
+% appended.  See generatePlots for more details on the plots produced.
 
 % =========================================================================
 properties
@@ -16,7 +24,7 @@ properties
     %       DataType    % {'File', 'UserDefined'} ?
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
-    Verbose = 1 % Verbosity level
+    Verbose = 1       % Verbosity level
 end
 % =========================================================================
 
@@ -103,7 +111,7 @@ methods
     % ---------------------------------------------------------------------
 
     function fullAnalysis(obj)
-        % fullAnalysis analyzes all data and saves results.
+        % fullAnalysis analyzes all data, saves results and plots.
 
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
@@ -120,7 +128,7 @@ methods
     % ---------------------------------------------------------------------
 
     function testFit(obj, DatasetIndex)
-        %testFit performs detailed analysis and feedback of one dataset.
+        % testFit performs detailed analysis and feedback of one dataset.
         
         obj.Verbose=3;
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
@@ -139,7 +147,22 @@ methods
 
     function analyzeAll(obj, DatasetList)
         % analyzeAll loops over a list of datasets and creates an SMD.
-        % If DatasetList not provided, use obj.SMD.Data.DatasetList
+        % If DatasetList not provided, use obj.SMD.Data.DatasetList .
+        % analyzeAll flow:
+        %
+        % analyzeAll:
+        %    for n = DatasetList
+        %       analyzeDataset:
+        %          DataToPhotons      (gain and offset corrections)
+        %          LocalizeData       (produce localizations for SMD structure)
+        %             Threshold       (thresholding of localizations generated)
+        %          SingleMoleculeData (catSMD for SMDPreThresh)
+        %          FrameConnection    (frame connection)
+        %          DriftCorrection    (intra-dataset)
+        %       SingleMoleculeData    (catSMD for SMD)
+        %    end
+        %    DriftCorrection (inter-dataset)
+        %    Threshold       (rejected localization statistics)
 
         % Define the list of datasets to be processed.
         obj.SMF = smi_core.LoadData.setSMFDatasetList(obj.SMF);
@@ -172,6 +195,7 @@ methods
         % Copy PixelSize from SMF to SMD.
         obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
 
+        % Produce some statistics on rejected localizations.
         THR = smi_core.Threshold;
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
            THR.rejectedLocalizations(obj.SMDPreThresh, '');
@@ -181,7 +205,7 @@ methods
     % ---------------------------------------------------------------------
 
     function SMD=analyzeDataset(obj,DatasetIndex,DatasetCount)
-        % analyzeDataset Load and analyze one dataset
+        % analyzeDataset loads and analyzes one dataset.
 
         if ~exist('DatasetCount', 'var')
             DatasetCount = 1;
@@ -230,7 +254,7 @@ methods
     % ---------------------------------------------------------------------
 
     function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
-        % loadDataset loads a dataset and converts to photons
+        % loadDataset loads a dataset and converts to photons.
         % set obj.Data
         LD = smi_core.LoadData;
         switch SMF.Data.FileType
@@ -249,7 +273,7 @@ methods
         % saveResults saves all results and plots in subfolder.
         % gaussblobs, drift image, fits/frame, NumConnected hist,
         % Driftcorrection plots, precision hist, intensity hist,
-        % mat file with SMD and SMF files.
+        % mat file with SMD and SMF structures.
         if isempty(obj.SMD)
             error('No SMD results structure found to save!');
         end
@@ -286,9 +310,11 @@ methods
             mkdir(ResultsSubDir);
         end
 
+        % Save SMD and SMF structures.
         if ~isempty(ResultsSubDir)
            save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
         end
+        % Generate (and optionally) save various data plots/histograms.
         obj.generatePlots(ResultsDir, ResultsSubDir, ShowPlots, obj.PlotDo);
     end
 
