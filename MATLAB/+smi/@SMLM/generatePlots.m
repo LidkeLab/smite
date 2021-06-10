@@ -151,7 +151,6 @@ end
 
 if ismember("FitFrame", PlotDo)
    Nloc_frame = [];
-   FitFrame = [];
    % Number of localizations per frame
    for jj=1:max(SMD.DatasetNum)
        for ii=1:max(SMD.FrameNum)
@@ -159,11 +158,9 @@ if ismember("FitFrame", PlotDo)
            Nloc_frame{jj}(ii)=length(idx);
        end
    end
-   if length(Nloc_frame)==1
-       FitFrame = Nloc_frame{1};
-   end
+   FitFrame = Nloc_frame{1};
    for ii=1:length(Nloc_frame)-1
-       FitFrame=cat(2,Nloc_frame{ii},Nloc_frame{ii+1});
+       FitFrame=cat(2, FitFrame, Nloc_frame{ii+1});
    end
 
    % plot fits per frame
