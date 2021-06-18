@@ -115,7 +115,7 @@ classdef FrameConnection < handle
             EndFrame, NonLinkMarker)
         [ConnectID, MaxConnectID] = ...
             linkClusters(ConnectID, MaxConnectID, UpdateIndices, Link12);
-        [SMDCombined] = combineLocalizations(SMD);
+        [SMDCombined] = combineLocalizations(SMD, SMF);
         [Success] = unitTest();
     end
     

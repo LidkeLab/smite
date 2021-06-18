@@ -54,7 +54,7 @@ switch lower(obj.SMF.FrameConnection.Method)
     case 'lap-fc'
         obj.SMD = obj.lapFC(obj.SMD, obj.SMF, [], obj.Verbose);
 end
-SMDCombined = obj.combineLocalizations(obj.SMD);
+SMDCombined = obj.combineLocalizations(obj.SMD, obj.SMF);
 
 
 end

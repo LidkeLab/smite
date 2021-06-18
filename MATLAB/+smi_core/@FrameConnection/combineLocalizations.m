@@ -1,4 +1,4 @@
-function [SMDCombined] = combineLocalizations(SMD)
+function [SMDCombined] = combineLocalizations(SMD, SMF)
 %combineLocalizations combines localizations in SMD with the same ConnectID
 % This method combines localizations in SMD which share the same value of
 % SMD.ConnectID.  That is, this method combines the frame-connected
@@ -6,6 +6,9 @@ function [SMDCombined] = combineLocalizations(SMD)
 %
 % INPUTS:
 %   SMD: Single Molecule Data structure with a populated SMD.ConnectID.
+%   SMF: Single Molecule Fitting structure (needed for the field
+%        SMF.Fitting.FitType).  If not provided, a best guess for the fit
+%        type will be inferred from the data.
 %
 % OUTPUTS:
 %   SMDCombined: Single Molecule Data structure with combined
@@ -29,23 +32,30 @@ Photons = SMD.Photons(SortIndices);
 Bg = SMD.Bg(SortIndices);
 LogLikelihood = SMD.LogLikelihood(SortIndices);
 NLocalizations = numel(FrameNum);
-if (isfield(SMD, 'PSFSigma') && (numel(SMD.PSFSigma)==NLocalizations))
-    FitType = 'XYNBS';
-    PSFSigma = SMD.PSFSigma(SortIndices);
-    PSFSigma_SE = SMD.PSFSigma_SE(SortIndices);
-elseif (isfield(SMD, 'PSFSigmaX') ...
-        && (numel(SMD.PSFSigmaX)==NLocalizations))
-    FitType = 'XYNBSXSY';
-    PSFSigmaX = SMD.PSFSigmaX(SortIndices);
-    PSFSigmaY = SMD.PSFSigmaY(SortIndices);
-    PSFSigmaX_SE = SMD.PSFSigmaX_SE(SortIndices);
-    PSFSigmaY_SE = SMD.PSFSigmaY_SE(SortIndices);
-elseif (isfield(SMD, 'Z') && (numel(SMD.Z)==NLocalizations))
-    FitType = 'XYZNB';
-    Z = SMD.Z(SortIndices);
-    Z_SE = SMD.Z_SE(SortIndices);
+if (~exist('SMF', 'var') || isempty(SMF))
+    % Try to determine the fit type based on the presence and size of some
+    % array fields.
+    if (isfield(SMD, 'PSFSigma_SE') ...
+            && (numel(SMD.PSFSigma_SE)==NLocalizations))
+        FitType = 'XYNBS';
+        PSFSigma = SMD.PSFSigma(SortIndices);
+        PSFSigma_SE = SMD.PSFSigma_SE(SortIndices);
+    elseif (isfield(SMD, 'PSFSigmaX_SE') ...
+            && (numel(SMD.PSFSigmaX_SE)==NLocalizations))
+        FitType = 'XYNBSXSY';
+        PSFSigmaX = SMD.PSFSigmaX(SortIndices);
+        PSFSigmaY = SMD.PSFSigmaY(SortIndices);
+        PSFSigmaX_SE = SMD.PSFSigmaX_SE(SortIndices);
+        PSFSigmaY_SE = SMD.PSFSigmaY_SE(SortIndices);
+    elseif (isfield(SMD, 'Z_SE') && (numel(SMD.Z_SE)==NLocalizations))
+        FitType = 'XYZNB';
+        Z = SMD.Z(SortIndices);
+        Z_SE = SMD.Z_SE(SortIndices);
+    else
+        FitType = 'XYNB';
+    end
 else
-    FitType = 'XYNB';
+    FitType = SMF.Fitting.FitType;
 end
 
 % Loop over the unique connect IDs and combine the associated
@@ -70,7 +80,7 @@ for ii = 1:NUnique
     SMDCombined.Bg(ii, 1) = sum(Bg(IndexArray));
     SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
 end
-SMDCombined.NCombined = NLocPerID.';
+SMDCombined.NCombined(:, 1) = NLocPerID;
 
 % If the fit type wasn't 'XYNB', we still need to combine some other fields
 % (I'm doing this in a separate loop down here for speed purposes, since we
