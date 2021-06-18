@@ -102,6 +102,7 @@ classdef FrameConnection < handle
     
     methods (Static)
         [SMDIndex] = findConnected(SMR, SMD, ID);
+        [SMDCombined, SMD] = hypothesisTestFC(SMD, SMF, Verbose);
         [Success] = unitTest();
     end
     
