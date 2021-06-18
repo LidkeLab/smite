@@ -120,12 +120,12 @@ for nn = UniqueDatasetNum
     switch SMF.Fitting.FitType
         case 'XYNBS'
             InputExtras = single(SMD.PSFSigma(CurrentBool));
-            InputExtrasSE = single(SMD.PSFSigma_SE(CurrentBool).^2);
+            InputExtrasSE = single(SMD.PSFSigma_SE(CurrentBool));
         case 'XYNBSXSY'
             InputExtras = single([SMD.PSFSigmaX(CurrentBool), ...
                 SMD.PSFSigmaY(CurrentBool)]);
             InputExtrasSE = single([SMD.PSFSigmaX_SE(CurrentBool), ...
-                SMD.PSFSigmaY_SE(CurrentBool)].^2);
+                SMD.PSFSigmaY_SE(CurrentBool)]);
         case 'XYZNB'
             InputCoords = [InputCoords, ...
                 single(SMD.Z(CurrentBool))];
