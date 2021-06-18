@@ -86,8 +86,10 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %
     % FrameConnection:  {FrameConnect,SRA}
     %   On              Perform frame connection? (Default=true)
+    %   Method:         Frame connection method being used (Default='Hypothesis test') 
     %   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
-    %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=4)
+    %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=5)
+    %   NSigmaDev:      SE multiplier for pre-cluster distance threshold (Default=5)
     %   LoS:            Minimum accepted p-value for connection (Default=.01)
     %
     % DriftCorrection   {DriftCorrection,SRA}
@@ -196,10 +198,12 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             
             %FrameConnection
             obj.FrameConnection.On=true;
+            obj.FrameConnection.Method='Hypothesis test';
             obj.FrameConnection.MaxSeparation=1; % pixels
-            obj.FrameConnection.MaxFrameGap=4; % frames
+            obj.FrameConnection.MaxFrameGap=5; % frames
+            obj.FrameConnection.NSigmaDev=5; 
             obj.FrameConnection.LoS=.01;
-            
+
             %DriftCorrection
             obj.DriftCorrection.On = true;
             obj.DriftCorrection.BFRegistration = true;
@@ -263,9 +267,11 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Thresholding.MinPhotons.Units = 'photons';
             obj.SMFFieldNotes.Thresholding.MaxBg.Units = 'photons';
             obj.SMFFieldNotes.FrameConnection.On.Units = 'logical';
+            obj.SMFFieldNotes.FrameConnection.Method.Units = '';
             obj.SMFFieldNotes.FrameConnection.MaxSeparation.Units = ...
                 'pixels';
             obj.SMFFieldNotes.FrameConnection.MaxFrameGap.Units = 'frames';
+            obj.SMFFieldNotes.FrameConnection.NSigmaDev.Units = '';
             obj.SMFFieldNotes.FrameConnection.LoS.Units = ...
                 'number between 0 and 1';
             obj.SMFFieldNotes.DriftCorrection.On.Units = 'logical';
@@ -396,6 +402,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.FrameConnection.On.Tip = ...
                 sprintf(['Indicates whether or not frame connection\n', ...
                 'will be performed']);
+            obj.SMFFieldNotes.FrameConnection.Method.Tip = ...
+                sprintf(['Method used to connect repeated\n', ...
+                'localizations of the same emitter on event']);
             obj.SMFFieldNotes.FrameConnection.MaxSeparation.Tip = ...
                 sprintf(['Maximum separation between two\n', ...
                 'localizations such that they can still be\n', ...
@@ -404,6 +413,10 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 sprintf(['Maximum number of frames separating two\n', ...
                 'localizations in time such that they can still be\n', ...
                 'considered candidates for frame connection']);
+            obj.SMFFieldNotes.FrameConnection.NSigmaDev.Tip = ...
+                sprintf(['Localization error multiplier used to set\n', ...
+                    'pre-clustering separation threshold when\n', ...
+                    'Method = ''LAP-FC''.']);
             obj.SMFFieldNotes.FrameConnection.LoS.Tip = ...
                 sprintf(['Level of Significance corresponding to\n', ...
                 'p-values computed in the frame-connection\n', ...
@@ -817,6 +830,13 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                         'logical or interpretable as logical (numeric).'])
                 elseif isnumeric(FCInput.On)
                     FCInput.On = logical(FCInput.On);
+                end
+            end
+            if isfield(FCInput, 'Method')
+                if ~ismember(lower(FCInput.Method), ...
+                        lower({'Hypothesis test', 'LAP-FC'}))
+                    error(['''SMF.FrameConnection.Method'' must be ', ...
+                        '''Hypothesis test'' or ''LAP-FC'''])
                 end
             end
             if isfield(FCInput, 'MaxSeparation')
