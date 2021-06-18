@@ -38,19 +38,23 @@ function [SMDCombined, SMD] = performFrameConnection(obj)
 
 
 % Perform frame-connection using the requested method.
+if (obj.Verbose > 0)
+    fprintf(['FrameConnection.performFrameConnection(): ', ...
+        'Performing frame connection...\n'])
+end
 switch lower(obj.SMF.FrameConnection.Method)
     case 'hypothesis test'
-        % As it's written, obj.hypothesisTestFC() is fully self-contained,
-        % so we should return after running it.
+        % As it's written now,  obj.hypothesisTestFC() is fully
+        % self-contained, so we should return after running it.
         [SMDCombined, SMD] = obj.hypothesisTestFC(obj.SMD, obj.SMF, ...
             obj.Verbose);
         obj.SMDCombined = SMDCombined;
         obj.SMD = SMD;
         return
     case 'lap-fc'
+        obj.SMD = obj.lapFC(obj.SMD, obj.SMF, [], obj.Verbose);
 end
-
-
+SMDCombined = obj.combineLocalizations(obj.SMD);
 
 
 end

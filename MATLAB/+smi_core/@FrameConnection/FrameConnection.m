@@ -103,6 +103,19 @@ classdef FrameConnection < handle
     methods (Static)
         [SMDIndex] = findConnected(SMR, SMD, ID);
         [SMDCombined, SMD] = hypothesisTestFC(SMD, SMF, Verbose);
+        [SMD, InternalParams] = lapFC(SMD, SMF, InternalParams, Verbose);
+        [SMD] = preclusterCoords(SMD, SMF);
+        [ClusterData] = organizeClusterData(SMD);
+        [KOn, KOff, KBleach, PMiss, NEmitters] = ...
+            estimateRateParameters(ClusterData);
+        [InitialDensity] = estimateLocalDensity(ClusterData, ...
+            NNearestClusters, KOn, KOff, KBleach, PMiss);
+        [CostMatrix] = createCostMatrix(ClusterData, ...
+            KOn, KOff, KBleach, PMiss, InitialDensity, MaxFrameGap, ...
+            EndFrame, NonLinkMarker)
+        [ConnectID, MaxConnectID] = ...
+            linkClusters(ConnectID, MaxConnectID, UpdateIndices, Link12);
+        [SMDCombined] = combineLocalizations(SMD);
         [Success] = unitTest();
     end
     

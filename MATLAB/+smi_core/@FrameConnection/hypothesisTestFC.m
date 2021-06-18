@@ -30,9 +30,7 @@ function [SMDCombined, SMD] = hypothesisTestFC(SMD, SMF, Verbose)
 % OUTPUTS:
 %   SMDCombined: SMDCombined contains the "frame-connected" localizations,
 %                i.e., the result of performing frame-connection on SMD
-%   SMD: SMD but with the field 'ConnectID' populated (see
-%        smi_core.FrameConnection.findConnected() for a careful description
-%        of 'ConnectID'.
+%   SMD: SMD but with the field 'ConnectID' populated.
 %
 % CITATION:
 %   Wester, M. J., Schodt, D. J., Mazloom-Farsibaf, H., Fazel, M., 
@@ -81,10 +79,6 @@ PSFSigmaY_SE = [];
 %       < 100) I don't anticipate any benefit to making local copies of any
 %       arrays from SMD (as opposed to accessing them from SMD
 %       inside the loop, as I'm doing here).
-if (Verbose > 1)
-    fprintf(['\tFrameConnection.performFrameConnection(): ', ...
-        'Looping over datasets and performing frame connection...\n'])
-end
 InputExtras = [];
 InputExtrasSE = [];
 SMD.ConnectID = zeros(numel(SMD.X), 1, 'uint32');
@@ -96,7 +90,7 @@ end
 for nn = UniqueDatasetNum
     % Provide a Command Window update if needed.
     if (Verbose > 2)
-        fprintf(['\tFrameConnection.performFrameConnection(): ', ...
+        fprintf(['\tFrameConnection.hypothesisTestFC(): ', ...
             'Performing frame connection for dataset %i...\n'], ...
             nn)
     end
@@ -230,7 +224,7 @@ SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
 
 % Provide a final message to summarize the results.
 if (Verbose > 2)
-    fprintf(['\tFrameConnection.performFrameConnection(): ', ...
+    fprintf(['\tFrameConnection.hypothesisTestFC(): ', ...
         '%i localizations combined to %i localizations.\n'], ...
         numel(SMD.FrameNum), numel(SMDCombined.FrameNum))
 end
