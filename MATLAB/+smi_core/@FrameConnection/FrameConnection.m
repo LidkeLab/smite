@@ -11,7 +11,7 @@ classdef FrameConnection < handle
     %   FC = smi_core.FrameConnection(SMD, SMF);
     %   [SMDCombined, SMD] = FC.performFrameConnection();
     %   Alternatively, you can use this class as a "function" as follows:
-    %   [~, SMD, SMDCombined] = smi_core.FrameConnection(SMD, SMF, 1);
+    %   [~, SMDCombined, SMD] = smi_core.FrameConnection(SMD, SMF, 1);
     %
     % REQUIRES:
     %   smi_c_FrameConnection.mex*
@@ -21,12 +21,7 @@ classdef FrameConnection < handle
     
     
     properties
-        BoxSize(1, 1) double = 7; % (Pixels)(Default = 7) see GaussMLE
-        FitType = 'XYNB'; % (Default = 'XYNB') see GaussMLE class
-        LoS(1, 1) double = 0.01; % (Default = 0.01), Level of Significance
-        MaxFrameGap(1, 1) uint32 = 5; % (Frames)(Default = 5)
-        MaxSeparation(1, 1) double = 1; % (Pixels)(Default = 1)
-        NParams(1, 1) double = 4; % (Default = 4) see GaussMLE
+        SMF % see SingleMoleculeFitting class
         SMD % see SingleMoleculeData class
         Verbose = 1; % (Default = 1) Verbosity level of main workflow
     end
@@ -73,27 +68,13 @@ classdef FrameConnection < handle
                 AllFieldsSet = 0;
             end
             
-            % Set class properties based on the input SMF structure (if it
-            % was provided).
+            % Store the SMF as a class property (if it was provided).
             if (exist('SMF', 'var') && ~isempty(SMF))
                 % Pad the input SMF structure to ensure it contains all
                 % fields defined in SingleMoleculeFitting.createSMF().
-                if (obj.Verbose > 2)
-                    fprintf(['\tFrameConnection constructor: ', ...
-                        'Extracting fields from input SMF to store ', ...
-                        'as class properties...\n'])
-                end
-                SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
-                
-                % Set the desired SMF fields to class properties.
-                obj.BoxSize = SMF.BoxFinding.BoxSize;
-                obj.FitType = SMF.Fitting.FitType;
-                obj.NParams = SMF.Fitting.NParams;
-                obj.LoS = SMF.FrameConnection.LoS;
-                obj.MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
-                obj.MaxSeparation = SMF.FrameConnection.MaxSeparation;
+                obj.SMF = smi_core.SingleMoleculeFitting.padSMF(SMF);
             else
-                AllFieldsSet = 0;
+                obj.SMF = smi_core.SingleMoleculeFitting;
             end
             
             % If all required fields are set, run the frame-connection

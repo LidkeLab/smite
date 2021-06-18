@@ -89,7 +89,7 @@ for nn = UniqueDatasetNum
             'Performing frame connection for dataset %i...\n'], ...
             nn)
     end
-        
+    
     % Isolate all valid localizations in the nn-th dataset and typecast
     % certain arrays for smi_c_FrameConnection.mex* .
     CurrentBool = ((SMD.DatasetNum==nn) & (SMD.ThreshFlag==0));
@@ -112,7 +112,7 @@ for nn = UniqueDatasetNum
     
     % Determine if we need to append additional arrays (e.g., for 3D
     % fitting we'll need to append 'Z' associated arrays).
-    switch obj.FitType
+    switch obj.SMF.Fitting.FitType
         case 'XYNBS'
             InputExtras = single(SMD.PSFSigma(CurrentBool));
             InputExtrasSE = single(SMD.PSFSigma_SE(CurrentBool).^2);
@@ -135,10 +135,11 @@ for nn = UniqueDatasetNum
     [OutputCoords, OutputCoordsSE, NConnected, OutputFrames, ...
         OutputExtras, OutputExtrasSE, OutputPhotonsBgLogL, ...
         OutputConnectID, OutputConnectIDCombined] = ...
-        smi_c_FrameConnection(obj.LoS, ...
+        smi_c_FrameConnection(obj.SMF.FrameConnection.LoS, ...
         InputCoords, InputCoordsSE, InputFrameNum, ...
         InputExtras, InputExtrasSE, InputPhotonsBgLogL, ...
-        obj.MaxSeparation, obj.MaxFrameGap, MaxConnectID);
+        obj.SMF.FrameConnection.MaxSeparation, ...
+        obj.SMF.FrameConnection.MaxFrameGap, MaxConnectID);
     
     % Update 'SMD' to contain the current connection information.
     if (obj.Verbose > 2)
@@ -164,7 +165,7 @@ for nn = UniqueDatasetNum
     DatasetNum = [DatasetNum; nn*ones(numel(OutputFrames), 1, 'uint32')];
     
     % Store some FitType dependent outputs if needed.
-    switch obj.FitType
+    switch obj.SMF.Fitting.FitType
         case 'XYNBS'
             PSFSigma = [PSFSigma; OutputExtras];
             PSFSigma_SE = [PSFSigma_SE; OutputExtrasSE];
@@ -203,7 +204,7 @@ SMDCombined.Photons = Photons;
 SMDCombined.Bg = Bg;
 SMDCombined.LogLikelihood = LogLikelihood;
 SMDCombined.PValue = smi_core.GaussMLE.pValue(...
-    obj.NParams, obj.BoxSize, LogLikelihood);
+    obj.SMF.Fitting.NParams, obj.SMF.BoxFinding.BoxSize, LogLikelihood);
 SMDCombined.DatasetNum = DatasetNum;
 SMDCombined.PSFSigma = PSFSigma;
 SMDCombined.PSFSigma_SE = PSFSigma_SE;
@@ -216,15 +217,6 @@ SMDCombined.PSFSigmaY_SE = PSFSigmaY_SE;
 % localizations in SMDCombined which have non-zero ThreshFlag).
 SMDCombined.ThreshFlag = zeros(numel(SMDCombined.FrameNum), 1);
 
-% Add a new field (IndSMD) to SMDCombined that specifies which indices of 
-% SMD were used to generate each entry.
-NLocTotal = numel(SMDCombined.ConnectID);
-IndSMD = cell(NLocTotal, 1);
-for ii = 1:NLocTotal
-   IndSMD{ii} = uint32(obj.findConnected(SMDCombined, SMD, ii));
-end
-SMDCombined.IndSMD = IndSMD;
-
 % Store the updated SMD and SMDCombined in obj.
 obj.SMDCombined = SMDCombined;
 obj.SMD = SMD;
@@ -235,6 +227,6 @@ if (obj.Verbose > 2)
         '%i localizations combined to %i localizations.\n'], ...
         numel(SMD.FrameNum), numel(SMDCombined.FrameNum))
 end
-    
+
 
 end
