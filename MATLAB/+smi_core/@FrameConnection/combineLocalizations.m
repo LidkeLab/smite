@@ -64,13 +64,13 @@ for ii = 1:NUnique
     SMDCombined.X_SE(ii, 1) = sqrt(1 ./ sum(1./X_SE(IndexArray).^2));
     SMDCombined.Y_SE(ii, 1) = sqrt(1 ./ sum(1./Y_SE(IndexArray).^2));
     SMDCombined.ConnectID(ii, 1) = ConnectID(IndexArray(1));
-    SMDCombined.FrameNum(ii, 1) = FrameNum(IndexArray(1));
+    SMDCombined.FrameNum(ii, 1) = FrameNum(IndexArray(NLocPerID(ii)));
     SMDCombined.DatasetNum(ii, 1) = DatasetNum(IndexArray(1));
     SMDCombined.Photons(ii, 1) = sum(Photons(IndexArray));
     SMDCombined.Bg(ii, 1) = sum(Bg(IndexArray));
     SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
 end
-SMD.NCombined = NLocPerID.';
+SMDCombined.NCombined = NLocPerID.';
 
 % If the fit type wasn't 'XYNB', we still need to combine some other fields
 % (I'm doing this in a separate loop down here for speed purposes, since we
@@ -85,7 +85,7 @@ switch FitType
                 sum(PSFSigma(IndexArray)./PSFSigma_SE(IndexArray).^2) ...
                 / sum(1./PSFSigma_SE(IndexArray).^2);
             SMDCombined.PSFSigma_SE(ii, 1) = ...
-                sqrt(sum(1 ./ PSFSigma_SE(IndexArray).^2));
+                sqrt(1 / sum(1./PSFSigma_SE(IndexArray).^2));
         end
     case 'XYNBSXSY'
         for ii = 1:NUnique
@@ -97,9 +97,9 @@ switch FitType
                 sum(PSFSigmaY(IndexArray)./PSFSigmaY_SE(IndexArray).^2) ...
                 / sum(1./PSFSigmaY_SE(IndexArray).^2);
             SMDCombined.PSFSigmaX_SE(ii, 1) = ...
-                sqrt(sum(1 ./ PSFSigmaX_SE(IndexArray).^2));
+                sqrt(1 / sum(1./PSFSigmaX_SE(IndexArray).^2));
             SMDCombined.PSFSigmaY_SE(ii, 1) = ...
-                sqrt(sum(1 ./ PSFSigmaY_SE(IndexArray).^2));
+                sqrt(1 / sum(1./PSFSigmaY_SE(IndexArray).^2));
         end
     case 'XYZNB'
         for ii = 1:NUnique
@@ -107,7 +107,8 @@ switch FitType
             SMDCombined.Z(ii, 1) = ...
                 sum(Z(IndexArray)./Z_SE(IndexArray).^2) ...
                 / sum(1./Z_SE(IndexArray).^2);
-            SMDCombined.Z_SE(ii, 1) = sqrt(sum(1 ./ Z_SE(IndexArray).^2));
+            SMDCombined.Z_SE(ii, 1) = ...
+                sqrt(1 / sum(1./Z_SE(IndexArray).^2));
         end
 end
 

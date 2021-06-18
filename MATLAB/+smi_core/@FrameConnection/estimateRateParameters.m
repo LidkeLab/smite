@@ -1,5 +1,5 @@
 function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
-    estimateRateParameters(ClusterData)
+    estimateRateParameters(ClusterData, Verbose)
 %estimateRateParameters estimates rates from clustered localizations.
 % This method will make an estimate of the blinking kinetics (KOn, KOff,
 % and KBleach) based on the (pre-clustered) localizations in ClusterData.
@@ -16,12 +16,18 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %   PMiss: Probability of missing a localization.
 %   NEmitters: Total number of emitters present at the start of the
 %              experiment.
+%   Verbose: Flag to indicate verbosity of outputs. (Default = 1)
 %
 % CITATION:
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
 
+
+% Set defaults if needed.
+if (~exist('Verbose', 'var') || isempty(Verbose))
+    Verbose = 1;
+end    
 
 % Compute some quantities needed from each cluster.
 NClusters = numel(ClusterData);
@@ -48,8 +54,11 @@ AllData = cell2mat(ClusterData);
 [NLoc, Frames] = groupcounts(double(AllData(:, 5)));
 NLocSum = cumsum(NLoc);
 CostFunction = @(X) mean((NLocSum - X(1)*(1-exp(-X(2)*(Frames-1)))).^2);
+FitOptions = optimset('Display', ...
+    smi_helpers.stringMUX({'none', 'final'}, Verbose));
 LocSumParams = fmincon(CostFunction, ...
-    [NLocSum(end), 1/Frames(end)], [], [], [], [], [0, 0]);
+    [NLocSum(end), 1/Frames(end)], [], [], [], [], [0, 0], [], [], ...
+    FitOptions);
 KOff = NClusters / NLocSum(end);
 KBleach = KOffPKBleach - KOff;
 NEmitters = LocSumParams(1) * KBleach / (1-PMiss);
