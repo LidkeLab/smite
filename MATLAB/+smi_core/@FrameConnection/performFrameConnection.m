@@ -52,7 +52,11 @@ switch lower(obj.SMF.FrameConnection.Method)
         obj.SMD = SMD;
         return
     case 'lap-fc'
-        obj.SMD = obj.lapFC(obj.SMD, obj.SMF, [], obj.Verbose);
+        obj.SMD = obj.lapFC(obj.SMD, obj.SMF, obj.Verbose);
+    case 'classical'
+        obj.SMD = obj.classicalFC(obj.SMD, obj.SMF, obj.Verbose);
+    case 'revised classical'
+        obj.SMD = obj.revisedClassicalFC(obj.SMD, obj.SMF, obj.Verbose);
 end
 SMDCombined = obj.combineLocalizations(obj.SMD, obj.SMF);
 

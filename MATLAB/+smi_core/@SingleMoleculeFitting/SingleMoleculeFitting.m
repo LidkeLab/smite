@@ -851,9 +851,11 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             end
             if isfield(FCInput, 'Method')
                 if ~ismember(lower(FCInput.Method), ...
-                        lower({'Hypothesis test', 'LAP-FC'}))
+                        {'hypothesis test', 'lap-fc', ...
+                        'classical', 'revised classical'})
                     error(['''SMF.FrameConnection.Method'' must be ', ...
-                        '''Hypothesis test'' or ''LAP-FC'''])
+                        '''Hypothesis test'', ''LAP-FC'', ', ...
+                        '''Classical'', or ''Revised classical''.'])
                 end
             end
             if isfield(FCInput, 'MaxSeparation')

@@ -1,10 +1,8 @@
-function [SMD, InternalParams] = lapFC(SMD, SMF, InternalParams, Verbose)
+function [SMD, InternalParams] = lapFC(SMD, SMF, Verbose, InternalParams)
 %lapFC connects localizations in 'SMD' by solving a LAP.
-% This method solves the frame-connection problem using the hypothesis
-% testing method for connecting localizations.  That is, a p-value is
-% computed and compared to the level of significance to test the null
-% hypothesis that the tested localizations arose from the same emitter.
-%
+% This method solves the frame-connection problem by formulating it as a
+% linear assignment problem, where the costs of connection/no connection
+% are influenced by kinetic rates and local densities.
 % NOTE: This method will add an additional field to SMD called
 %       "ConnectID".  SMD.ConnectID is an integer array indicating
 %       which localizations were connected during the frame connection
@@ -25,6 +23,7 @@ function [SMD, InternalParams] = lapFC(SMD, SMF, InternalParams, Verbose)
 %   SMD: SingleMoleculeData structure with the localizations that we wish
 %        to frame-connect.
 %   SMF: SingleMoleculeFitting structure defining relevant parameters.
+%   Verbose: Integer specifying the verbosity level. (Default = 1)
 %   InternalParams: Structure of parameters which are used in this method
 %                   but are not present in SMF.  Typically, this input
 %                   should not be provided (can be entered as []), however
@@ -32,7 +31,6 @@ function [SMD, InternalParams] = lapFC(SMD, SMF, InternalParams, Verbose)
 %                   testing the algorithm performance with perfect inputs).
 %                   (Default = [] so that these parameters are estimated
 %                   internally from the data in SMD).
-%   Verbose: Integer specifying the verbosity level. (Default = 1)
 %
 % OUTPUTS:
 %   SMD: SMD but with the field 'ConnectID' populated.
@@ -151,6 +149,12 @@ for rr = 1:SMF.FrameConnection.NRecursions
     end
     SMD.ConnectID = smi.SPT.validifyConnectID(ConnectID);
 end
+InternalParams.KOn = KOn;
+InternalParams.KOff = KOff;
+InternalParams.KBleach = KBleach;
+InternalParams.PMiss = PMiss;
+InternalParams.NEmitters = NEmitters;
+InternalParams.InitialDensity = InitialDensity;
 
 
 end
