@@ -96,7 +96,7 @@ classdef LoadData < handle
                 SMF.Data.DataROI = [1, 1, DataSize(1:2), 1, 1];
             elseif (numel(SMF.Data.DataROI) < 6)
                 SMF.Data.DataROI = [SMF.Data.DataROI, ...
-                    ones(6-numel(SMF.Data.DataROI), 1)];
+                    ones(1, 6-numel(SMF.Data.DataROI))];
             end
                     
             % Isolate the portion of the Dataset defined by DataROI.
