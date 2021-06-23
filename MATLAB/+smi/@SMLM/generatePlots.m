@@ -241,10 +241,10 @@ end
 
 if ismember("CircleImDrift", PlotDo)
     % Generate a circle image.
-    UniqueFrames = unique(SMD.FrameNum .* SMD.DatasetNum);
-    ColorMap = parula(max(UniqueFrames));
+    ColorMap = parula(SMD.NFrames * SMD.NDatasets);
     [~, CircleImageRGB] = smi_vis.GenerateImages.circleImage(...
-        SMD, ColorMap(SMD.FrameNum .* SMD.DatasetNum, :), obj.SRCircImZoom);
+        SMD, ColorMap(SMD.NFrames*(SMD.DatasetNum-1) + SMD.FrameNum, :), ...
+        obj.SRCircImZoom);
     if ~isempty(PlotSaveDir2)
        FileName = [BaseName, '_CircleImageDrift.png'];
        imwrite(CircleImageRGB, fullfile(PlotSaveDir2, FileName))
