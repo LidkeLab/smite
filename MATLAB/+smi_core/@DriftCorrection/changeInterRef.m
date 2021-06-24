@@ -25,24 +25,13 @@ if (RefDatasetNum > SMD.NDatasets)
     return
 end
 
-% Loop through datasets and shift coordinates to the new reference.
-% NOTE: The strange indexing used was done to improve speed.
-NLocsPerDataset = groupcounts(SMD.DatasetNum);
-NLocsCumulativeDS = [0; cumsum(NLocsPerDataset)];
+% Shift coordinates to the new reference and update the drift arrays.
 XShift = SMD.DriftX(1, RefDatasetNum);
 YShift = SMD.DriftY(1, RefDatasetNum);
-for nn = 1:SMD.NDatasets
-    CurrentDSInd = (1:NLocsPerDataset(nn)) + NLocsCumulativeDS(nn);
-    [NLocsPerFrame, Frames] = groupcounts(SMD.FrameNum(CurrentDSInd));
-    NLocsCumulativeFN = [0; cumsum(NLocsPerFrame)];
-    for ff = 1:numel(Frames)
-        CurrentFrameInd = (1:NLocsPerFrame(ff)) + NLocsCumulativeFN(ff);
-        SMD.X(CurrentFrameInd) = SMD.X(CurrentFrameInd) + XShift;
-        SMD.Y(CurrentFrameInd) = SMD.Y(CurrentFrameInd) + YShift;
-    end
-    SMD.DriftX(:, nn) = SMD.DriftX(:, nn) - XShift;
-    SMD.DriftY(:, nn) = SMD.DriftY(:, nn) - XShift;
-end
+SMD.X = SMD.X + XShift;
+SMD.Y = SMD.Y + YShift;
+SMD.DriftX = SMD.DriftX - XShift;
+SMD.DriftY = SMD.DriftY - YShift;
 
 
 end
