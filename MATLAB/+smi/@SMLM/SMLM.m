@@ -25,14 +25,15 @@ properties
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1       % Verbosity level
+    FullvsTest        % Logical value set by fullAnalysis or testFit to tell
+                      % saveResults to make the proper call to generatePlots
 end
 % =========================================================================
 
 % =========================================================================
 properties (Access=protected)
     DC                % DriftCorrection class object used internally
-    FullvsTest        % Logical value set by fullAnalysis or testFit to tell
-                      % saveResults to make the proper call to generatePlots
+
     % Top level results directory: A few special results/plots (like GaussIm)
     % are saved here.  Default value is obj.SMF.Data.ResultsDir set in testFit
     % and fullAnalysis.  The rest of the results/plots are saved in
@@ -289,7 +290,7 @@ methods
         end
 
         if obj.FullvsTest
-           ResultsDir = obj.ResultsDir;
+           ResultsDir = obj.SMF.Data.ResultsDir;
            ResultsSubDir = fullfile(ResultsDir, SubDir);
            ShowPlots = false;
         else
