@@ -113,6 +113,7 @@ methods(Static)
    [FigHandle] = plotCumDrift(SMD, FieldName)
    [FigHandle] = plotXYDriftParametric(SMD)
    [delta12, Statistics] = regViaDC(SMD1, SMD2)
+   [SMD] = changeInterRef(SMD, RefDatasetNum);
    [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 
 end % methods(Static)
