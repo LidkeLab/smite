@@ -116,7 +116,7 @@ classdef Publish < handle
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
         [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
             estimateLocalShifts(Image1, Image2, ...
-        SubROISize, MaxOffset, UseGPU);
+            SubROISize, MaxOffset, UseGPU);
     end
     
     

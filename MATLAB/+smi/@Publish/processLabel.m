@@ -44,45 +44,6 @@ for ii = 1:NDataFiles
     % Define the save directory for this specific file.
     SaveDir = fullfile(obj.SaveBaseDir, CellName, LabelName);
     
-    % Generate the super-resolution results using the smi.SMLM class.
-    obj.SMLM.SMF.Data.FileName = DataFileNames(ii);
-    if obj.GenerateSR
-        obj.SMLM.SMF.Data.ResultsDir = SaveDir;
-        if (obj.Verbose > 1)
-            fprintf(['\t\tPublish.processLabel(): ', ...
-                'Analyzing file %s...\n'], ...
-                fullfile(DataDir, DataFileNames{ii}))
-        end
-        try
-            % Place this in a try/catch so that we can still proceed with
-            % the other analyses if this fails.
-            obj.SMLM.fullAnalysis()
-            
-            % Copy the results into a more accessible directory (it's nice
-            % to have them all in one place for certain analyses).
-            [~, FileName] = fileparts(DataFileNames{ii});
-            ResultsFile = dir(fullfile(obj.SMLM.SMF.Data.ResultsDir, ...
-                FileName, '*Results.mat'));
-            if ~isempty(ResultsFile)
-                ResultsStructDir = ...
-                    fullfile(obj.SaveBaseDir, 'ResultsStructs');
-                if ~isfolder(ResultsStructDir)
-                    mkdir(ResultsStructDir)
-                end
-                NewName = [CellName, '_', LabelName, '_', 'Results.mat'];
-                copyfile(fullfile(ResultsFile.folder, ResultsFile.name), ...
-                    fullfile(ResultsStructDir, NewName));
-            end
-        catch MException
-            if obj.Verbose
-                warning(['Publish.processLabel(): ', ...
-                    'Unable to generate SR images for %s\n%s, %s'], ...
-                    DataFileNames{ii}, ...
-                    MException.identifier, MException.message)
-            end
-        end
-    end
-    
     % Generate figures associated with the brightfield registration of the
     % cell (if that data exists).
     if obj.GenerateImagingStats
@@ -114,6 +75,70 @@ for ii = 1:NDataFiles
             for jj = 1:numel(FieldNames)
                 obj.ResultsStruct(CellNumber, LabelNumber). ...
                     (FieldNames{jj}) = AlignResultsStruct.(FieldNames{jj});
+            end
+        end
+    end
+    
+    % Generate the super-resolution results using the smi.SMLM class.
+    obj.SMLM.SMF.Data.FileName = DataFileNames(ii);
+    if obj.GenerateSR
+        if (obj.Verbose > 1)
+            fprintf(['\t\tPublish.processLabel(): ', ...
+                'Analyzing file %s...\n'], ...
+                fullfile(DataDir, DataFileNames{ii}))
+        end
+        
+        % Place this in a try/catch so that we can still proceed with
+        % the other analyses if this fails.
+        try
+            % Perform SR analysis, but don't save the results yet!
+            obj.SMLM.SMF.Data.ResultsDir = SaveDir;
+            obj.SMLM.FullvsTest = true;
+            obj.SMLM.analyzeAll();
+
+            % Re-shift the XY coordinates w.r.t. the best registration
+            % dataset (i.e., shift all coordinates as though the
+            % inter-dataset drift correction was applied with dataset n as
+            % the reference, where n is the dataset for which we had the
+            % best brightfield registration performance).
+            if obj.GenerateImagingStats
+                % Determine the best registration result based on the
+                % maximum correlation coefficient.
+                ValidRegInd = find(AlignResultsStruct.OffsetFitSuccess ...
+                    & (~AlignResultsStruct.MaxIterReached));
+                [~, BestReg] = max(AlignResultsStruct.MaxCorr(ValidRegInd));
+                BestRegInd = ValidRegInd(BestReg);
+                
+                % Re-shift coordinates in SMD such that the BestRegInd
+                % dataset is considered the reference.
+                obj.SMLM.SMD = smi_core.DriftCorrection.changeInterRef(...
+                    obj.SMLM.SMD, BestRegInd);
+            end
+            
+            % Save the SR results.
+            obj.SMLM.saveResults();
+            
+            % Copy the results into a more accessible directory (it's nice
+            % to have them all in one place for certain analyses).
+            [~, FileName] = fileparts(DataFileNames{ii});
+            ResultsFile = dir(fullfile(obj.SMLM.SMF.Data.ResultsDir, ...
+                FileName, '*Results.mat'));
+            if ~isempty(ResultsFile)
+                ResultsStructDir = ...
+                    fullfile(obj.SaveBaseDir, 'ResultsStructs');
+                if ~isfolder(ResultsStructDir)
+                    mkdir(ResultsStructDir)
+                end
+                NewName = [CellName, '_', LabelName, '_', 'Results.mat'];
+                copyfile(fullfile(ResultsFile.folder, ResultsFile.name), ...
+                    fullfile(ResultsStructDir, NewName));
+            end
+        catch MException
+            if obj.Verbose
+                warning(['Publish.processLabel(): ', ...
+                    'Unable to generate SR images for %s\n%s, %s'], ...
+                    DataFileNames{ii}, ...
+                    MException.identifier, MException.message)
             end
         end
     end
