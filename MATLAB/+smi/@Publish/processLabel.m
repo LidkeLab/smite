@@ -50,7 +50,7 @@ for ii = 1:NDataFiles
         % Define the path to the .h5 data file.
         FilePath = fullfile(DataDir, DataFileNames{ii});
         
-        % Create a list of the groups available in each dataset
+        % Create a list of the groups available in each dataset.
         H5FileStruct = h5info(FilePath);
         FileGroupList = ...
             {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
