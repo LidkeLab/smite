@@ -1,35 +1,44 @@
-function [Image] = contrastStretch(Image, Low, High)
-%contrastStretch scales images to the range [Low, High].
+function [Image] = contrastStretch(Image, MinMax, ...
+    PercentileCeiling, MinScaleIntensity)
+%contrastStretch scales images to the range MinMax.
 % This method performs a full scale histogram stretch of 'Image' such that
-% the stretched pixel values lie in the range [Low, High].
+% the stretched pixel values lie in the range [MinMax(1), MinMax(2)].
 %
 % INPUTS:
 %   Image: Array of pixel values that will be stretched. (float array)
-%   Low: Minimum pixel value in the output array 'Image'.
-%        (numeric scalar)(Default = 0)
-%   High: Maximum pixel value in the output array 'Image'.
-%         (numeric scalar)(Default = 1)
+%   MinMax: Array containing the minimum and maximum pixel value after
+%           scaling. (Default = [0, 1])
+%   MinScaleIntensity: Minimum scaling intensity (useful for noisy data,
+%                      so that the scaling doesn't just brighten the noise)
+%                      (Default = 1)
+%   PercentileCeiling: Percentile ceiling of pixel values in the raw data
+%                      above which values are clipped. (Default = 100)
 %
 % OUTPUTS:
-%   Image: Input array 'Image' scaled to the range [Low, High].
+%   Image: Input array 'Image' scaled to the range 'MinMax'.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
 
 
 % Set defaults and check some inputs.
-if (~exist('Low', 'var') || isempty(Low))
-    Low = 0;
+if (~exist('MinMax', 'var') || isempty(MinMax))
+    MinMax = [0; 1];
 end
-if (~exist('High', 'var') || isempty(High))
-    High = 1;
+MinMax = sort(MinMax);
+if (~exist('MinScaleIntensity', 'var') || isempty(MinScaleIntensity))
+    MinScaleIntensity = 1;
 end
-assert(Low < High, ...
-    'contrastStretch(): Input ''Low'' must be less than ''High''')
+if (~exist('PercentileCeiling', 'var') || isempty(PercentileCeiling))
+    PercentileCeiling = 100;
+end
 
 % Scale the 'Image' array.
-Image = (Image-min(Image(:))) * (High-Low)/(max(Image(:))-min(Image(:))) ...
-    + Low;
+MaxIntensity = max(prctile(Image(:), PercentileCeiling), MinScaleIntensity);
+Image(Image > MaxIntensity) = MaxIntensity;
+Image = (Image-min(Image(:))) ...
+    * (MinMax(2)-MinMax(1))/(max(Image(:))-min(Image(:))) ...
+    + MinMax(1);
 
 
 end
