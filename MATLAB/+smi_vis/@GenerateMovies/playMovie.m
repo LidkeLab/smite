@@ -96,7 +96,7 @@ if isempty(YSize)
 end
 
 % Set default parameter values where needed.
-if (~exist('DisplayParams', 'var') || isempty(Params))
+if (~exist('Params', 'var') || isempty(Params))
     Params = struct();
 end
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes))
@@ -127,6 +127,10 @@ DefaultParams.TrajColor = lines(NTraj);
 Params = smi_helpers.padParams(Params, DefaultParams);
 
 % Define a few other parameters that'll be used in this method.
+% NOTE: XRange and YRange are defined to resolve some coordinate
+%       differences between raw data plots and the real data.
+XRange = Params.XPixels + [0, 1]; 
+YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
 
@@ -147,8 +151,8 @@ PlotAxes.ActivePositionProperty = 'position';
 PlotAxes.DataAspectRatio = ...
     [1, 1, max(Params.ZFrames)/max([Params.XPixels, Params.YPixels])];
 PlotAxes.YDir = 'reverse';
-PlotAxes.XLim = Params.XPixels;
-PlotAxes.YLim = Params.YPixels;
+PlotAxes.XLim = XRange;
+PlotAxes.YLim = YRange;
 PlotAxes.ZLim = Params.ZFrames;
 view(PlotAxes, Params.LineOfSite(1, :));
 colormap(PlotAxes, 'gray')
@@ -161,7 +165,7 @@ for ff = 1:NFrames
     
     % Display the raw data in the axes.
     CurrentData = repmat(RawData(:, :, ff), [1, 1, 3]);
-    surface(PlotAxes, Params.XPixels, Params.YPixels, ZPosition, ...
+    surface(PlotAxes, XRange, YRange, ZPosition, ...
         CurrentData, 'facecolor', 'texturemap')
     
     % Plot the trajectories.
