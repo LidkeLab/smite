@@ -1,5 +1,5 @@
 function [LineHandles] = plotTrajectories(PlotAxes, ...
-    TR, FrameRange, MaxTrajLength, Color, Marker, LineStyle)
+    TR, FrameRange, MaxTrajLength, Color, varargin)
 %plotTrajectories plots trajectories in the specified axes.
 % This method plots trajectories in 'TR'.  This method is intended to
 % remain "lightweight" for speed purposes, so minimal input checks/default
@@ -12,13 +12,18 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %   MaxTrajLength: Maximum number of points to be plotted for each
 %                  trajectory.
 %   Color: Color of the trajectory lines. (NTrajectoriesx3(4) float array)
+%   varargin: Additional inputs that can be provided as keyword arguments
+%             for the MATLAB line() method (see Line Properties from line()
+%             documentation for options).  For example, you can change
+%             the Marker property to 'x' as plotTrajectories(PlotAxes, TR,
+%             FrameRange, MaxTrajLength, Color, 'Marker', 'x')
 %   Marker: Marker for each localization in the trajectory. (see Line
 %           Properties for MATLAB method line())
 %   LineStyle: Style of line for each trajectory. (see Line Properties
 %              for MATLAB method line())
 %
 % OUTPUTS:
-%   LineHandles: Array of line handles corresponding to the localizations
+%   LineHandles: Array of line handles corresponding to the trajectories
 %                in 'TR'.
 
 % Created by:
@@ -36,6 +41,9 @@ LineHandles = gobjects(NTraj, 1);
 for nn = 1:NTraj
     KeepBool = ((TR(nn).FrameNum>=FrameRange(1)) ...
         & (TR(nn).FrameNum<=FrameRange(2)));
+    if ~any(KeepBool)
+        continue
+    end
     X = TR(nn).X(KeepBool);
     Y = TR(nn).Y(KeepBool);
     FrameNum = TR(nn).FrameNum(KeepBool);
@@ -43,7 +51,7 @@ for nn = 1:NTraj
     IndexArray = (1:min(NLoc, MaxTrajLength));
     LineHandles(nn) = line(PlotAxes, ...
         X(IndexArray), Y(IndexArray), FrameNum(IndexArray), ...
-        'Color', Color(nn, :), 'Marker', Marker, 'LineStyle', LineStyle);
+        'Color', Color(nn, :), varargin{:});
 end
 
 
