@@ -30,13 +30,16 @@ classdef GenerateMovies
         
     end
     
+    methods (Static)
+        playMovie(PlotAxes, TR, RawData, SMD, DisplayParams)
+    end
+    
     methods (Static, Hidden)
         % These methods are Hidden because I don't expect the user to
         % access these directly, however there's no harm in leaving them
         % unrestricted.
         [LineHandles] = plotTrajectories(PlotAxes, ...
-            TR, FrameRange, MaxTrajLength, ...
-            Color, Marker, LineStyle);
+            TR, FrameRange, MaxTrajLength, Color, varargin);
     end
     
     
