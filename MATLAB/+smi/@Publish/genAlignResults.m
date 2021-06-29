@@ -32,12 +32,17 @@ FileNameStruct = dir(fullfile(SaveDir, '*Results.mat'));
 if ~isempty(FileNameStruct)
     load(fullfile(SaveDir, FileNameStruct.name), 'SMD');
 else
-    SMR = struct([]);
+    SMD = struct([]);
 end
 
 % If the AlignReg structure is empty, do not proceed.
 if isempty(AlignReg)
     return
+end
+
+% If needed, make the requested directory.
+if ~exist('SaveDir', 'dir')
+    mkdir(SaveDir)
 end
 
 % Grab the attributes and data from the AlignReg structure, assuming the
