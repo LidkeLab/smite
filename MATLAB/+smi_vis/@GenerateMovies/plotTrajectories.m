@@ -2,7 +2,7 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
     TR, FrameRange, MaxTrajLength, Color, Marker, LineStyle)
 %plotTrajectories plots trajectories in the specified axes.
 % This method plots trajectories in 'TR'.  This method is intended to
-% remain "lightweight" for speed purposes, so no checks on inputs/default
+% remain "lightweight" for speed purposes, so minimal input checks/default
 % settings should be implemented here.
 %
 % INPUTS:
@@ -11,8 +11,7 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %   FrameRange: Range of frames over which trajectories should be plotted.
 %   MaxTrajLength: Maximum number of points to be plotted for each
 %                  trajectory.
-%   Color: Color of the trajectory line. (see Line Properties for
-%              MATLAB method line())
+%   Color: Color of the trajectory lines. (NTrajectoriesx3(4) float array)
 %   Marker: Marker for each localization in the trajectory. (see Line
 %           Properties for MATLAB method line())
 %   LineStyle: Style of line for each trajectory. (see Line Properties
@@ -26,8 +25,13 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Loop through trajectories present in 'TR' and plot them.
+% Make sure the input 'Color' is long enough (this is a convenient input
+% check that doesn't add much overhead).
 NTraj = numel(TR);
+Color = repmat(Color, [min(NTraj-size(Color, 1)+1, NTraj), 1]);
+
+% Loop through trajectories present in 'TR' and plot them, enforcing the
+% requested 'FrameRange' and 'MaxTrajLength'.
 LineHandles = gobjects(NTraj, 1);
 for nn = 1:NTraj
     KeepBool = ((TR(nn).FrameNum>=FrameRange(1)) ...
@@ -39,7 +43,7 @@ for nn = 1:NTraj
     IndexArray = (1:min(NLoc, MaxTrajLength));
     LineHandles(nn) = line(PlotAxes, ...
         X(IndexArray), Y(IndexArray), FrameNum(IndexArray), ...
-        'Color', Color, 'Marker', Marker, 'LineStyle', LineStyle);
+        'Color', Color(nn, :), 'Marker', Marker, 'LineStyle', LineStyle);
 end
 
 
