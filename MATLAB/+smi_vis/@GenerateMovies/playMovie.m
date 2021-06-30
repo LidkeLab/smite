@@ -1,4 +1,4 @@
-function playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
+function playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
 %playMovie prepares a movie of the trajectories in TR.
 % This method prepares a movie of single-particle tracking trajectories for
 % 2D tracking.
@@ -13,6 +13,9 @@ function playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
 %            (Default = zeros(TR(1).YSize, TR(1).XSize, TR(1).NFrames))
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
+%   SMF: Single Molecule Fitting structure with SMF.Data.PixelSize and
+%        SMF.Data.FrameRate populated.
+%        (Default = smi_core.SingleMoleculeFitting)
 %   SMD: Single Molecule Data structure containing additional localizations
 %        that we want to show in the movie (e.g., this might be the results
 %        from a box finding algorithm, where the localizations aren't
@@ -52,8 +55,11 @@ end
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes))
     PlotAxes = gca();
 end
-if ~exist('RawData', 'var')
+if (~exist('RawData', 'var') || isempty(RawData))
     RawData = zeros(YSize, XSize, NFrames);
+end
+if (~exist('SMF', 'var') || isempty(SMF))
+    SMF = smi_core.SingleMoleculeFitting;
 end
 if (~exist('SMD', 'var') || isempty(SMD))
     SMD = smi_core.SingleMoleculeData.createSMD();
@@ -81,7 +87,9 @@ ResolutionString = sprintf('-r%i', Params.Resolution);
 
 % Rescale the raw data after isolating the portion that will be displayed.
 RawData = ...
-    padarray(RawData, [0, 0, min(0, NFrames-size(RawData, 3))], 'post');
+    padarray(RawData, [min(0, YSize-size(RawData, 1)), ...
+    min(0, XSize-size(RawData, 2)), ...
+    min(0, NFrames-size(RawData, 3))], 'post');
 if ~(isempty(Params.XPixels) && isempty(Params.YPixels) ...
         && isempty(Params.ZFrames))
     RawData = RawData(Params.XPixels(1):Params.XPixels(2), ...
@@ -93,17 +101,46 @@ RawData = smi_vis.contrastStretch(single(RawData), [0; 1], ...
 
 % Prepare the designated axes.
 PlotAxes.ActivePositionProperty = 'position';
-PlotAxes.DataAspectRatio = ...
-    [1, 1, max(Params.ZFrames)/max([Params.XPixels, Params.YPixels])];
+PlotAxes.DataAspectRatio = [1, 1, ...
+    max(Params.ZFrames)/max([Params.XPixels, Params.YPixels])];
 PlotAxes.YDir = 'reverse';
+PlotAxes.XLimMode = 'manual';
+PlotAxes.YLimMode = 'manual';
+PlotAxes.ZLimMode = 'manual';
 PlotAxes.XLim = XRange;
 PlotAxes.YLim = YRange;
 PlotAxes.ZLim = Params.ZFrames;
 view(PlotAxes, Params.LineOfSite(1, :));
 colormap(PlotAxes, 'gray')
 
+% Revise axes ticks based on the unit flag.
+PlotAxes.XTickMode = 'manual';
+PlotAxes.YTickMode = 'manual';
+PlotAxes.ZTickMode = 'manual';
+PlotAxes.XTickLabelMode = 'manual';
+PlotAxes.YTickLabelMode = 'manual';
+PlotAxes.ZTickLabelMode = 'manual';
+if Params.UnitFlag
+    PlotAxes.XTick = (linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5)-1) ...
+        * SMF.Data.PixelSize;
+    PlotAxes.YTick = (linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5)-1) ...
+        * SMF.Data.PixelSize;
+    PlotAxes.ZTick = (linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5)-1) ...
+        * SMF.Data.FrameRate;
+    xtickformat(PlotAxes, '%.1g')
+    ytickformat(PlotAxes, '%.1g')
+    ztickformat(PlotAxes, '%.1g')
+else
+    PlotAxes.XTick = linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5);
+    PlotAxes.YTick = linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5);
+    PlotAxes.ZTick = linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5);
+    xtickformat(PlotAxes, '%i')
+    ytickformat(PlotAxes, '%i')
+    ztickformat(PlotAxes, '%i')
+end
+
 % Loop through the frames of raw data and prepare the movie.
-for ff = 1:NFrames
+for ff = Params.ZFrames(1):Params.ZFrames(2)
     % Clear the axes to make sure deleted objects aren't accumulating
     % (which slows things down a lot!).
     cla(PlotAxes)

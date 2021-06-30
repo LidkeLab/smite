@@ -13,13 +13,13 @@ function [Params] = prepDefaults()
 %                          (frames)(Default = inf)
 %           XPixels: Range of X values shown in movie.
 %                    ([MinPixel, MaxPixel])(pixels)
-%                    (Default = [1, XSize])
+%                    (Default = [])
 %           YPixels: Range of Y values shown in movie.
 %                    ([MinPixel, MaxPixel])(pixels)
-%                    (Default = [1, YSize])
+%                    (Default = [])
 %           ZFrames: Range of frames shown in movie.
 %                    ([MinFrame, MaxFrame])(frames)
-%                    (Default = [1, NFrames])
+%                    (Default = [])
 %           MinScaleIntensity: Minimum value that we will use to scale the 
 %                              raw data. If the raw data ranges from 
 %                              [0, MaxIntensity], we scale as
@@ -81,9 +81,9 @@ Params.LineOfSite = [0, 90];
 Params.Is2D = true;
 Params.Resolution = 0;
 Params.FrameRate = 10;
-Params.ZFrames = [1, 1];
-Params.XPixels = [1, 1];
-Params.YPixels = [1, 1];
+Params.ZFrames = [];
+Params.XPixels = [];
+Params.YPixels = [];
 Params.TrajColor = [0, 0, 1];
 
 

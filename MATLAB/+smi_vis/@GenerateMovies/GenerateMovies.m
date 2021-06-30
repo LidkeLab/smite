@@ -12,6 +12,18 @@ classdef GenerateMovies < handle
         % See prepDefaults() for a description of the parameter options and
         % playMovie() for usage.
         Params
+        
+        % Raw data to be displayed under trajectories.
+        RawData
+        
+        % Single Molecule Fitting structure with pixel size and framerate.
+        SMF = smi_core.SingleMoleculeFitting;
+        
+        % Optional SMD containing points to mark in the movie.
+        SMD = smi_core.SingleMoleculeData.createSMD();
+        
+        % Tracking Results structure for the trajectories.
+        TR = smi_core.TrackingResults.createTR();
     end
     
     properties (SetAccess = 'protected')
@@ -20,6 +32,12 @@ classdef GenerateMovies < handle
         
         % MATLAB VideoWriter object used to write a movie to a file.
         VideoObject
+    end
+    
+    properties (Hidden)
+        LengthUnitString
+        TimeDimensionString
+        TimeUnitString
     end
     
     methods
@@ -35,7 +53,8 @@ classdef GenerateMovies < handle
         function set.Params(obj, ParamsInput)
             %set method for the class property 'Params'.
             % This method ensures that the class property 'Params' is
-            % complete, i.e., that it has all necessary fields set.
+            % complete (i.e., that it has all necessary fields set) and
+            % that they are typed correctly (e.g., logical, char, ...).
             DefaultParams = obj.prepDefaults();
             obj.Params = smi_helpers.padParams(ParamsInput, DefaultParams);
         end
@@ -46,8 +65,8 @@ classdef GenerateMovies < handle
     end
     
     methods (Static)
-        playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
-        Params = prepDefaults();
+        playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
+        [Params] = prepDefaults();
     end
     
     methods (Static, Hidden)
