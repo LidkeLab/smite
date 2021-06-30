@@ -16,19 +16,6 @@ PlotFigure = figure('MenuBar', 'none', ...
     'Units', 'pixels', ...
     'Position', [DefaultFigurePosition(1:2), 1000, 500]);
 
-% Define some useful parameters.
-if obj.Params.UnitFlag
-    % UnitFlag == 1 corresponds to physical units (micrometers and seconds)
-    obj.LengthUnitString = '$\mu m$';
-    obj.TimeDimensionString = 'Time';
-    obj.TimeUnitString = 's';
-else
-    % UnitFlag == 0 corresponds to camera units (pixels and frames).
-    obj.LengthUnitString = 'pixels';
-    obj.TimeDimensionString = 'Frame';
-    obj.TimeUnitString = 'frames';
-end
-
 % Add a panel for display options.
 ParamsPanelPos = [0, 0, 0.25, 1];
 ParamsPanel = uipanel(PlotFigure, ...
@@ -70,6 +57,7 @@ MoviePanel = uipanel(PlotFigure, ...
     'Units', 'normalized', 'Position', MoviePanelPos);
 obj.MovieAxes = axes(MoviePanel);
 obj.MovieAxes.ActivePositionProperty = 'position';
+axtoolbar(obj.MovieAxes,'default');
 
 % Add controls to allow for saving a movie.
 SaveMoviePanelPos = [MoviePanelPos(1)+MoviePanelPos(3), 0, ...

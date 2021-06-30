@@ -18,6 +18,9 @@ end
 if isempty(obj.Params.YPixels)
     obj.Params.YPixels = ceil([1, max(cell2mat({obj.TR.Y}.'))]);
 end
+if isempty(obj.Params.TrajColor)
+    obj.Params.TrajColor = lines(numel(obj.TR));
+end
 
 % Add some decorations to the movie axes.
 xlabel(obj.MovieAxes, sprintf('X (%s)', obj.LengthUnitString), ...

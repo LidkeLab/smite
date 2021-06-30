@@ -61,7 +61,7 @@ function [Params] = prepDefaults()
 %                      (Default = 10 fps)
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
-%                      (Default = lines(NTraj))
+%                      (Default = [])
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -84,7 +84,7 @@ Params.FrameRate = 10;
 Params.ZFrames = [];
 Params.XPixels = [];
 Params.YPixels = [];
-Params.TrajColor = [0, 0, 1];
+Params.TrajColor = [];
 
 
 end

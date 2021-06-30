@@ -79,7 +79,7 @@ Params = smi_helpers.padParams(Params, DefaultParams);
 % NOTE: XRange and YRange are defined to resolve some coordinate
 %       differences between raw data plots and the real data.
 XRange = Params.XPixels + [0, 1]; 
-YRange = Params.YPixels + [0, 1];
+YRange = Params.YPixels + [0, 1]; 
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
 HiRes = (Params.Resolution ~= 0);
@@ -92,8 +92,8 @@ RawData = ...
     min(0, NFrames-size(RawData, 3))], 'post');
 if ~(isempty(Params.XPixels) && isempty(Params.YPixels) ...
         && isempty(Params.ZFrames))
-    RawData = RawData(Params.XPixels(1):Params.XPixels(2), ...
-        Params.YPixels(1):Params.YPixels(2), ...
+    RawData = RawData(Params.YPixels(1):Params.YPixels(2), ...
+        Params.XPixels(1):Params.XPixels(2), ...
         Params.ZFrames(1):Params.ZFrames(2));
 end
 RawData = smi_vis.contrastStretch(single(RawData), [0; 1], ...
@@ -117,23 +117,23 @@ colormap(PlotAxes, 'gray')
 PlotAxes.XTickMode = 'manual';
 PlotAxes.YTickMode = 'manual';
 PlotAxes.ZTickMode = 'manual';
-PlotAxes.XTickLabelMode = 'manual';
-PlotAxes.YTickLabelMode = 'manual';
-PlotAxes.ZTickLabelMode = 'manual';
+PlotAxes.XTick = linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5);
+PlotAxes.YTick = linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5);
+PlotAxes.ZTick = linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5);
 if Params.UnitFlag
-    PlotAxes.XTick = (linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5)-1) ...
-        * SMF.Data.PixelSize;
-    PlotAxes.YTick = (linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5)-1) ...
-        * SMF.Data.PixelSize;
-    PlotAxes.ZTick = (linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5)-1) ...
-        * SMF.Data.FrameRate;
-    xtickformat(PlotAxes, '%.1g')
-    ytickformat(PlotAxes, '%.1g')
-    ztickformat(PlotAxes, '%.1g')
+    PlotAxes.XTickLabelMode = 'manual';
+    PlotAxes.YTickLabelMode = 'manual';
+    PlotAxes.ZTickLabelMode = 'manual';
+    XTicks = (PlotAxes.XTick-1) * SMF.Data.PixelSize;
+    YTicks = (PlotAxes.YTick-1) * SMF.Data.PixelSize;
+    ZTicks = (PlotAxes.ZTick-1) / SMF.Data.FrameRate;
+    PlotAxes.XTickLabel = num2str(XTicks, '%.1f');
+    PlotAxes.YTickLabel = num2str(YTicks, '%.1f');
+    PlotAxes.ZTickLabel = num2str(ZTicks, '%.1f');
+    xtickformat(PlotAxes, '%.1f')
+    ytickformat(PlotAxes, '%.1f')
+    ztickformat(PlotAxes, '%.1f')
 else
-    PlotAxes.XTick = linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5);
-    PlotAxes.YTick = linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5);
-    PlotAxes.ZTick = linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5);
     xtickformat(PlotAxes, '%i')
     ytickformat(PlotAxes, '%i')
     ztickformat(PlotAxes, '%i')

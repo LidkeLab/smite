@@ -35,6 +35,12 @@ classdef GenerateMovies < handle
     end
     
     properties (Hidden)
+        LengthUnitOptions = {'pixels', '$\mu m$'};
+        TimeDimensionOptions = {'Frame', 'Time'};
+        TimeUnitOptions = {'frames', 's'};
+    end
+    
+    properties (Hidden, Dependent)
         LengthUnitString
         TimeDimensionString
         TimeUnitString
@@ -51,12 +57,26 @@ classdef GenerateMovies < handle
         end
         
         function set.Params(obj, ParamsInput)
-            %set method for the class property 'Params'.
-            % This method ensures that the class property 'Params' is
-            % complete (i.e., that it has all necessary fields set) and
-            % that they are typed correctly (e.g., logical, char, ...).
+            % Ensure that the class property 'Params' is complete (i.e., 
+            % that it has all necessary fields set) and that they are typed
+            % correctly (e.g., logical, char, ...).
             DefaultParams = obj.prepDefaults();
             obj.Params = smi_helpers.padParams(ParamsInput, DefaultParams);
+        end
+        
+        function [LengthUnitString] = get.LengthUnitString(obj)
+            LengthUnitString = smi_helpers.stringMUX(...
+                obj.LengthUnitOptions, obj.Params.UnitFlag);
+        end
+        
+        function [TimeDimensionString] = get.TimeDimensionString(obj)
+            TimeDimensionString = smi_helpers.stringMUX(...
+                obj.TimeDimensionOptions, obj.Params.UnitFlag);
+        end
+        
+        function [TimeUnitString] = get.TimeUnitString(obj)
+            TimeUnitString = smi_helpers.stringMUX(...
+                obj.TimeUnitOptions, obj.Params.UnitFlag);
         end
         
         generateMovie(obj)
