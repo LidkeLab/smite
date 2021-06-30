@@ -31,7 +31,7 @@ classdef GenerateMovies
     end
     
     methods (Static)
-        playMovie(PlotAxes, TR, RawData, SMD, Params)
+        playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
     end
     
     methods (Static, Hidden)

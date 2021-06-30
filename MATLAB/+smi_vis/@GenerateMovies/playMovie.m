@@ -1,4 +1,4 @@
-function playMovie(PlotAxes, TR, RawData, SMD, Params)
+function playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
 %playMovie prepares a movie of the trajectories in TR.
 % This method prepares a movie of single-particle tracking trajectories for
 % 2D tracking.
@@ -11,10 +11,6 @@ function playMovie(PlotAxes, TR, RawData, SMD, Params)
 %            dimension index is assumed to correspond directly with the
 %            frame number.
 %            (Default = zeros(TR(1).YSize, TR(1).XSize, TR(1).NFrames))
-%   SMD: Single Molecule Data structure containing additional localizations
-%        that we want to show in the movie (e.g., this might be the results
-%        from a box finding algorithm, where the localizations aren't
-%        associated as trajectories yet). (Default is an empty SMD)
 %   Params: Structure of display parameters that will be applied to
 %           the movie.
 %                  UnitFlag: Boolean flag to specify the units of the movie                            false for camera units (pixels, frames)
@@ -69,9 +65,19 @@ function playMovie(PlotAxes, TR, RawData, SMD, Params)
 %                              print() in the actual code below).
 %                              (scalar)(dpi)(Default = 0, which sets to
 %                              screen resolution)
+%                  FrameRate: Approximate playback framerate used when the 
+%                             input 'VideoWriter' is not provided. 
+%                             (Default = 10 fps)
 %                  TrajColor: Color of each trajectory in TR.
 %                             (NTrajx3 numeric array)
 %                             (Default = lines(NTraj))
+%   SMD: Single Molecule Data structure containing additional localizations
+%        that we want to show in the movie (e.g., this might be the results
+%        from a box finding algorithm, where the localizations aren't
+%        associated as trajectories yet). (Default is an empty SMD)
+%   VideoObject: Video writer object defining the movie that will be saved
+%                while preparing this movie (see MATLAB VideoWriter object)
+%                (Default = [] and the movie isn't saved)
 %
 % REQUIRES:
 %   Image Processing Toolbox (to use padarray())
@@ -108,6 +114,9 @@ end
 if (~exist('SMD', 'var') || isempty(SMD))
     SMD = smi_core.SingleMoleculeData.createSMD();
 end
+if (~exist('VideoWriter', 'var') || isempty(VideoObject))
+    VideoObject = [];
+end
 DefaultParams.MaxTrajLength = inf;
 DefaultParams.ZFrames = [1, NFrames];
 DefaultParams.XPixels = [1, XSize];
@@ -122,6 +131,7 @@ DefaultParams.SMDMarker = '.';
 DefaultParams.LineOfSite = [0, 90];
 DefaultParams.Is2D = true;
 DefaultParams.Resolution = 0;
+DefaultParams.FrameRate = 10;
 NTraj = numel(TR);
 DefaultParams.TrajColor = lines(NTraj);
 Params = smi_helpers.padParams(Params, DefaultParams);
@@ -133,6 +143,8 @@ XRange = Params.XPixels + [0, 1];
 YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
+AxesPosition = PlotAxes.Position ...
+    .* repmat(PlotAxes.Parent.Position(3:4), [1, 2]);
 
 % Rescale the raw data after isolating the portion that will be displayed.
 RawData = ...
@@ -185,6 +197,16 @@ for ff = 1:NFrames
     
     % Update the axes to ensure all new objects and changes are present.
     drawnow()
+    
+    % If needed, write this movie frame.
+    if isempty(VideoObject)
+        % This movie isn't being saved: add a pause so the movie doesn't go
+        % too fast.
+        pause(1 / Params.FrameRate);
+    else
+        FrameData = getframe(PlotAxes);
+        VideoObject.writeVideo(FrameData.cdata);
+    end
 end
 
 
