@@ -82,7 +82,7 @@ XRange = Params.XPixels + [0, 1];
 YRange = Params.YPixels + [0, 1]; 
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
-HiRes = (Params.Resolution ~= 0);
+CustomRes = (Params.Resolution ~= 0);
 ResolutionString = sprintf('-r%i', Params.Resolution);
 
 % Rescale the raw data after isolating the portion that will be displayed.
@@ -140,6 +140,7 @@ else
 end
 
 % Loop through the frames of raw data and prepare the movie.
+AxesParent = PlotAxes.Parent;
 for ff = Params.ZFrames(1):Params.ZFrames(2)
     % Clear the axes to make sure deleted objects aren't accumulating
     % (which slows things down a lot!).
@@ -174,11 +175,14 @@ for ff = Params.ZFrames(1):Params.ZFrames(2)
         % too fast.
         pause(1 / Params.FrameRate);
     else
-        if HiRes
-            FrameData = print(PlotFigure, ...
+        if CustomRes
+            FrameData = print(AxesParent, ...
                 '-RGBImage', '-opengl', ResolutionString);
         else
-            FrameData = getframe(PlotAxes);
+            % If the resolution is set to 0 (which uses a default screen
+            % resolution in print() above), we should just use getframe(),
+            % which does something similar but seems to be faster.
+            FrameData = getframe(AxesParent);
         end
         VideoObject.writeVideo(FrameData);
     end
