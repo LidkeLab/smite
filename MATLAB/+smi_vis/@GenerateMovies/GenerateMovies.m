@@ -1,4 +1,4 @@
-classdef GenerateMovies
+classdef GenerateMovies < handle
     %GenerateMovies contains methods for generating movies.
     % This class consists of methods useful for generating movies,
     % particularly for single-particle tracking data.
@@ -8,13 +8,10 @@ classdef GenerateMovies
     
     
     properties
-%         % Clip data to range explored by trajectories (Default = false)
-%         AutoClip = false;
-%         FrameRate = 10;
-%         MaxTrajLength = inf;
-%         Resolution = 0;
-%         SavePath = '';
-%         UnitFlag = false;
+        % Structure of parameters enforced in the generated movie.
+        % See prepDefaults() for a description of the parameter options and
+        % playMovie() for usage.
+        Params
     end
     
     properties (SetAccess = 'protected')
@@ -22,16 +19,28 @@ classdef GenerateMovies
     end
     
     methods
-        function obj = GenerateMovies()
+        function obj = GenerateMovies(Params)
             %GenerateMovies is the class constructor.
+            if (exist('Params', 'var') && ~isempty(Params))
+                obj.Params = Params;
+            end
         end
         
-        makeMovie(obj)
+        function set.Params(obj, ParamsInput)
+            %set method for the class property 'Params'.
+            % This method ensures that the class property 'Params' is
+            % complete, i.e., that it has all necessary fields set.
+            DefaultParams = obj.prepDefaults();
+            obj.Params = smi_helpers.padParams(ParamsInput, DefaultParams);
+        end
+        
+        generateMovie(obj)
         
     end
     
     methods (Static)
         playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
+        Params = prepDefaults();
     end
     
     methods (Static, Hidden)

@@ -117,22 +117,11 @@ end
 if (~exist('VideoWriter', 'var') || isempty(VideoObject))
     VideoObject = [];
 end
-DefaultParams.MaxTrajLength = inf;
+DefaultParams = smi_vis.GenerateMovies.prepDefaults();
+NTraj = numel(TR);
 DefaultParams.ZFrames = [1, NFrames];
 DefaultParams.XPixels = [1, XSize];
 DefaultParams.YPixels = [1, YSize];
-DefaultParams.MinXYRange = 20;
-DefaultParams.NPadPixels = 5;
-DefaultParams.NPadFrames = 10;
-DefaultParams.MinScaleIntensity = 1;
-DefaultParams.PercentileCeiling = 100;
-DefaultParams.PlotMarker = 'none';
-DefaultParams.SMDMarker = '.';
-DefaultParams.LineOfSite = [0, 90];
-DefaultParams.Is2D = true;
-DefaultParams.Resolution = 0;
-DefaultParams.FrameRate = 10;
-NTraj = numel(TR);
 DefaultParams.TrajColor = lines(NTraj);
 Params = smi_helpers.padParams(Params, DefaultParams);
 
@@ -143,8 +132,6 @@ XRange = Params.XPixels + [0, 1];
 YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
-AxesPosition = PlotAxes.Position ...
-    .* repmat(PlotAxes.Parent.Position(3:4), [1, 2]);
 
 % Rescale the raw data after isolating the portion that will be displayed.
 RawData = ...
