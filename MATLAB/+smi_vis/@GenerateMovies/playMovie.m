@@ -124,15 +124,15 @@ if Params.UnitFlag
     PlotAxes.XTickLabelMode = 'manual';
     PlotAxes.YTickLabelMode = 'manual';
     PlotAxes.ZTickLabelMode = 'manual';
-    XTicks = (PlotAxes.XTick-1) * SMF.Data.PixelSize;
-    YTicks = (PlotAxes.YTick-1) * SMF.Data.PixelSize;
-    ZTicks = (PlotAxes.ZTick-1) / SMF.Data.FrameRate;
-    PlotAxes.XTickLabel = num2str(XTicks, '%.1f');
-    PlotAxes.YTickLabel = num2str(YTicks, '%.1f');
-    PlotAxes.ZTickLabel = num2str(ZTicks, '%.1f');
     xtickformat(PlotAxes, '%.1f')
     ytickformat(PlotAxes, '%.1f')
     ztickformat(PlotAxes, '%.1f')
+    XTicks = (PlotAxes.XTick-1) * SMF.Data.PixelSize;
+    YTicks = (PlotAxes.YTick-1) * SMF.Data.PixelSize;
+    ZTicks = (PlotAxes.ZTick-1) / SMF.Data.FrameRate;
+    PlotAxes.XTickLabel = num2str(XTicks.', '%.1f');
+    PlotAxes.YTickLabel = num2str(YTicks.', '%.1f');
+    PlotAxes.ZTickLabel = num2str(ZTicks.', '%.1f');
 else
     xtickformat(PlotAxes, '%i')
     ytickformat(PlotAxes, '%i')
