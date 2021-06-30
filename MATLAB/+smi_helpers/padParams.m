@@ -1,7 +1,8 @@
 function [Params] = padParams(Params, DefaultParams)
 %padParams pads the input 'Params' with defaults in 'DefaultParams'.
 % This method merges the two structures 'Params' and 'DefaultParams', with
-% values in 'Params' taking precedent unless not available. 
+% values in 'Params' taking precedent unless not available.  Furthermore,
+% typecasting is done to match the defaults where appropriate.
 %
 % INPUTS:
 %   Params: Structure array which is to be padded.
@@ -26,6 +27,10 @@ for pp = 1:numel(DefaultParameterNames)
         % Params structure and so the default must be added.
         Params.(DefaultParameterNames{pp}) = ...
             DefaultParams.(DefaultParameterNames{pp});
+    else
+        Params.(DefaultParameterNames{pp}) = ...
+            cast(Params.(DefaultParameterNames{pp}), 'like', ...
+            DefaultParams.(DefaultParameterNames{pp}));
     end
 end
 
