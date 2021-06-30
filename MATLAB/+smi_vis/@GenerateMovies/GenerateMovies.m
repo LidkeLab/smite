@@ -15,6 +15,10 @@ classdef GenerateMovies < handle
     end
     
     properties (SetAccess = 'protected')
+        % Axes in which the movie is prepared if using generateMovie().
+        MovieAxes
+        
+        % MATLAB VideoWriter object used to write a movie to a file.
         VideoObject
     end
     
@@ -23,6 +27,8 @@ classdef GenerateMovies < handle
             %GenerateMovies is the class constructor.
             if (exist('Params', 'var') && ~isempty(Params))
                 obj.Params = Params;
+            else
+                obj.Params = obj.prepDefaults();
             end
         end
         
@@ -35,6 +41,7 @@ classdef GenerateMovies < handle
         end
         
         generateMovie(obj)
+        gui(obj)
         
     end
     

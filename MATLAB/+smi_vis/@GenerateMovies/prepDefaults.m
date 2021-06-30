@@ -49,11 +49,13 @@ function [Params] = prepDefaults()
 %                 true if movie should be 2D (might run faster for long
 %                 movies)(Default = true)
 %           Resolution: Resolution of the movie that gets saved to
-%                       FilePath. This can only be used when
-%                       LiteMode = 1 (see usage of getframe() vs
-%                       print() in the actual code below).
-%                       (scalar)(dpi)(Default = 0, which sets to
-%                       screen resolution)
+%                       FilePath. This should be set to 0 when the movie is
+%                       generated within a "decorated" figure (i.e., within
+%                       a GUI), otherwise the decorations will be stored in
+%                       the saved movie (see usage of getframe() vs print()
+%                       in, e.g., smi_vis.GenerateMovies.playMovie()).
+%                       (scalar)(dpi)(Default = 0, which sets to screen
+%                       resolution)
 %           FrameRate: Approximate playback framerate used when the 
 %                      input 'VideoWriter' is not provided. 
 %                      (Default = 10 fps)
@@ -66,6 +68,7 @@ function [Params] = prepDefaults()
 
 
 % Set some default parameters.
+Params.UnitFlag = false;
 Params.MaxTrajLength = inf;
 Params.MinXYRange = 20;
 Params.NPadPixels = 5;

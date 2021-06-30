@@ -18,7 +18,9 @@ function playMovie(PlotAxes, TR, RawData, Params, SMD, VideoObject)
 %        from a box finding algorithm, where the localizations aren't
 %        associated as trajectories yet). (Default is an empty SMD)
 %   VideoObject: Video writer object defining the movie that will be saved
-%                while preparing this movie (see MATLAB VideoWriter object)
+%                while preparing this movie (see MATLAB VideoWriter
+%                object).  This object should be opened and closed outside
+%                of this method for proper usage.
 %                (Default = [] and the movie isn't saved)
 %
 % REQUIRES:
@@ -74,6 +76,8 @@ XRange = Params.XPixels + [0, 1];
 YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
+HiRes = (Params.Resolution ~= 0);
+ResolutionString = sprintf('-r%i', Params.Resolution);
 
 % Rescale the raw data after isolating the portion that will be displayed.
 RawData = ...
@@ -133,8 +137,13 @@ for ff = 1:NFrames
         % too fast.
         pause(1 / Params.FrameRate);
     else
-        FrameData = getframe(PlotAxes);
-        VideoObject.writeVideo(FrameData.cdata);
+        if HiRes
+            FrameData = print(PlotFigure, ...
+                '-RGBImage', '-opengl', ResolutionString);
+        else
+            FrameData = getframe(PlotAxes);
+        end
+        VideoObject.writeVideo(FrameData);
     end
 end
 
