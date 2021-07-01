@@ -1,4 +1,4 @@
-function generateMovie(obj, SavePath)
+function [] = generateMovie(obj, SavePath)
 %generateMovie generates a movie of 2D trajectories over time.
 % This method is intended to be a wrapper around playMovie() which will add
 % some "decorations" (e.g., axis labels), prepare saved movies, etc.
@@ -9,36 +9,19 @@ function generateMovie(obj, SavePath)
 
 % Ensure some necessary parameters are given meaningful values based on the
 % provided data/trajectories.
-if isempty(obj.Params.ZFrames)
-    obj.Params.ZFrames = ceil([1, max(cell2mat({obj.TR.FrameNum}.'))]);
-end
-if isempty(obj.Params.XPixels)
-    obj.Params.XPixels = ceil([1, max(cell2mat({obj.TR.X}.'))]);
-end
-if isempty(obj.Params.YPixels)
-    obj.Params.YPixels = ceil([1, max(cell2mat({obj.TR.Y}.'))]);
-end
-if isempty(obj.Params.TrajColor)
-    obj.Params.TrajColor = lines(numel(obj.TR));
-end
+obj.setVitalParams()
 
-% Add some decorations to the movie axes.
-xlabel(obj.MovieAxes, sprintf('X (%s)', obj.LengthUnitString), ...
-    'Interpreter', 'Latex')
-ylabel(obj.MovieAxes, sprintf('Y (%s)', obj.LengthUnitString), ...
-    'Interpreter', 'Latex')
-zlabel(obj.MovieAxes, ...
-    sprintf('%s (%s)', obj.TimeDimensionString, obj.TimeUnitString), ...
-    'Interpreter', 'Latex')
+% Rescale the raw data to improve the display.
+obj.rescaleData()
+
+% Prepare the axes based on settings in obj.Params.
+obj.prepAxes()
 
 % If a save path has been defined, prepare a video writer object.
 if exist('SavePath', 'var')
     obj.VideoObject = VideoWriter(SavePath, 'MPEG-4');
     obj.VideoObject.Quality = 100;
 end
-
-% Rescale the raw data to improve the display.
-obj.rescaleData()
 
 % Play the movie.
 obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...

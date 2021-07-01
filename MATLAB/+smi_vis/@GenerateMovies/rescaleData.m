@@ -26,16 +26,8 @@ if isempty(YSize)
     YSize = DataSize(1);
 end
 
-% Set defaults for some obj.Params fields if needed.
-if isempty(obj.Params.ZFrames)
-    obj.Params.ZFrames = [1, NFrames];
-end
-if isempty(obj.Params.XPixels)
-    obj.Params.XPixels = [1, XSize];
-end
-if isempty(obj.Params.YPixels)
-    obj.Params.YPixels = [1, YSize];
-end
+% Make sure other vital parameters are set in obj.Params.
+obj.setVitalParams()
 
 % Rescale the raw data after isolating the portion that will be displayed.
 RawData = ...

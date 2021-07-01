@@ -163,10 +163,18 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         SliderValue = round(get(Source, 'Value'));
         SliderMax = get(Source, 'Max');
         
-        % Ensure obj.ScaledData is populated.
+        % Ensure some needed properties are populated.
+        obj.setVitalParams()
         if isempty(obj.ScaledData)
             obj.rescaleData()
         end
+        
+        % Make sure the axes are prepared based on the settings in
+        % obj.Params (this can be a bit slow since each movement of the
+        % slider calls this, but I haven't found a better way to deal with
+        % this since updates in obj.setVitalParams() can affect the changes
+        % needed to the axes).
+        obj.prepAxes()
         
         % Display the selected movie frame.
         obj.makeFrame(obj.MovieAxes, obj.TR, ...

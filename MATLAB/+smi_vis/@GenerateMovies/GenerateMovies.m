@@ -91,6 +91,14 @@ classdef GenerateMovies < handle
         
     end
     
+    methods (Hidden)
+        % These methods are Hidden because I don't expect the user to
+        % access these directly, however there's no harm in leaving them
+        % unrestricted.
+        setVitalParams(obj)
+        prepAxes(obj)
+    end
+    
     methods (Static)
         playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, VideoObject)
         [Params] = prepDefaults();

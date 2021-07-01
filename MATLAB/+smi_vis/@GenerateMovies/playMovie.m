@@ -52,51 +52,9 @@ Params = smi_helpers.padParams(Params, DefaultParams);
 % Define a few other parameters that'll be used in this method.
 % NOTE: XRange and YRange are defined to resolve some coordinate
 %       differences between raw data plots and the real data.
-XRange = Params.XPixels + [0, 1]; 
-YRange = Params.YPixels + [0, 1]; 
 IsRotating = (size(Params.LineOfSite, 1) > 1);
 CustomRes = (Params.Resolution ~= 0);
 ResolutionString = sprintf('-r%i', Params.Resolution);
-
-% Prepare the designated axes.
-PlotAxes.ActivePositionProperty = 'position';
-PlotAxes.DataAspectRatio = [1, 1, ...
-    max(Params.ZFrames)/max([Params.XPixels, Params.YPixels])];
-PlotAxes.YDir = 'reverse';
-PlotAxes.XLimMode = 'manual';
-PlotAxes.YLimMode = 'manual';
-PlotAxes.ZLimMode = 'manual';
-PlotAxes.XLim = XRange;
-PlotAxes.YLim = YRange;
-PlotAxes.ZLim = Params.ZFrames;
-view(PlotAxes, Params.LineOfSite(1, :));
-colormap(PlotAxes, 'gray')
-
-% Revise axes ticks based on the unit flag.
-PlotAxes.XTickMode = 'manual';
-PlotAxes.YTickMode = 'manual';
-PlotAxes.ZTickMode = 'manual';
-PlotAxes.XTick = linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5);
-PlotAxes.YTick = linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5);
-PlotAxes.ZTick = linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5);
-if Params.UnitFlag
-    PlotAxes.XTickLabelMode = 'manual';
-    PlotAxes.YTickLabelMode = 'manual';
-    PlotAxes.ZTickLabelMode = 'manual';
-    xtickformat(PlotAxes, '%.1f')
-    ytickformat(PlotAxes, '%.1f')
-    ztickformat(PlotAxes, '%.1f')
-    XTicks = (PlotAxes.XTick-1) * SMF.Data.PixelSize;
-    YTicks = (PlotAxes.YTick-1) * SMF.Data.PixelSize;
-    ZTicks = (PlotAxes.ZTick-1) / SMF.Data.FrameRate;
-    PlotAxes.XTickLabel = num2str(XTicks.', '%.1f');
-    PlotAxes.YTickLabel = num2str(YTicks.', '%.1f');
-    PlotAxes.ZTickLabel = num2str(ZTicks.', '%.1f');
-else
-    xtickformat(PlotAxes, '%i')
-    ytickformat(PlotAxes, '%i')
-    ztickformat(PlotAxes, '%i')
-end
 
 % Loop through the frames of raw data and prepare the movie.
 AxesParent = PlotAxes.Parent;

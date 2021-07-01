@@ -1,8 +1,7 @@
-function [] = makeFrame(PlotAxes, TR, ScaledData, Params, SMD, Frame)
+function [] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
+    SMD, Frame, PrepAxes)
 %makeFrame plots a single frame for the trajectory movie.
-% This method plots a single frame of the movie being prepared.  This
-% method is meant to be lightweight without unnecessary code/default
-% settings.
+% This method plots a single frame of the movie being prepared.
 %
 % INPUTS:
 %   PlotAxes: Axes in which the trajectories will be plotted.
@@ -21,22 +20,15 @@ function [] = makeFrame(PlotAxes, TR, ScaledData, Params, SMD, Frame)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Define a few other parameters that'll be used in this method.
-% NOTE: XRange and YRange are defined to resolve some coordinate
-%       differences between raw data plots and the real data.
-XRange = Params.XPixels + [0, 1];
-YRange = Params.YPixels + [0, 1];
-ZPosition = repmat(min(Params.ZFrames), [2, 2]);
-
 % Clear the axes to make sure deleted objects aren't accumulating (which 
 % can slow things down when trying to capture the frame by, e.g.,
 % getframe()).
 cla(PlotAxes)
 
 % Display the raw data in the axes.
-ScaledData = repmat(ScaledData, [1, 1, 3]);
-surface(PlotAxes, XRange, YRange, ZPosition, ...
-    ScaledData, 'facecolor', 'texturemap')
+surface(PlotAxes, Params.XPixels + [0, 1], Params.YPixels + [0, 1], ...
+    repmat(min(Params.ZFrames), [2, 2]), ...
+    repmat(ScaledData, [1, 1, 3]), 'facecolor', 'texturemap')
 
 % Plot the trajectories.
 smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
