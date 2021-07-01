@@ -1,4 +1,5 @@
-function playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
+function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, ...
+    VideoObject)
 %playMovie prepares a movie of the trajectories in TR.
 % This method prepares a movie of single-particle tracking trajectories for
 % 2D tracking.
@@ -7,10 +8,9 @@ function playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
 %   PlotAxes: Axes in which the trajectories will be plotted.
 %             (Default = gca())
 %   TR: Tracking Results structure (see smi_core.TrackingResults).
-%   RawData: Raw data corresponding to the trajectories in 'TR'.  The third
-%            dimension index is assumed to correspond directly with the
-%            frame number.
-%            (Default = zeros(TR(1).YSize, TR(1).XSize, TR(1).NFrames))
+%   ScaledData: Data corresponding to the trajectories in 'TR'.  The third
+%               dimension index is assumed to correspond directly with the
+%               frame number.
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
 %   SMF: Single Molecule Fitting structure with SMF.Data.PixelSize and
@@ -33,30 +33,12 @@ function playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Grab some parameters from 'TR' which may be empty.  If they are empty,
-% we'll need to come up with reasonable guesses for these values.
-NFrames = TR(1).NFrames;
-XSize = TR(1).XSize;
-YSize = TR(1).YSize;
-if isempty(NFrames)
-    NFrames = max(cell2mat({TR.FrameNum}.'));
-end
-if isempty(XSize)
-    XSize = max(cell2mat({TR.X}.'));
-end
-if isempty(YSize)
-    YSize = max(cell2mat({TR.Y}.'));
-end
-
 % Set default parameter values where needed.
 if (~exist('Params', 'var') || isempty(Params))
     Params = struct();
 end
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes))
     PlotAxes = gca();
-end
-if (~exist('RawData', 'var') || isempty(RawData))
-    RawData = zeros(YSize, XSize, NFrames);
 end
 if (~exist('SMF', 'var') || isempty(SMF))
     SMF = smi_core.SingleMoleculeFitting;
@@ -68,11 +50,6 @@ if (~exist('VideoWriter', 'var') || isempty(VideoObject))
     VideoObject = [];
 end
 DefaultParams = smi_vis.GenerateMovies.prepDefaults();
-NTraj = numel(TR);
-DefaultParams.ZFrames = [1, NFrames];
-DefaultParams.XPixels = [1, XSize];
-DefaultParams.YPixels = [1, YSize];
-DefaultParams.TrajColor = lines(NTraj);
 Params = smi_helpers.padParams(Params, DefaultParams);
 
 % Define a few other parameters that'll be used in this method.
@@ -80,24 +57,9 @@ Params = smi_helpers.padParams(Params, DefaultParams);
 %       differences between raw data plots and the real data.
 XRange = Params.XPixels + [0, 1]; 
 YRange = Params.YPixels + [0, 1]; 
-ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 IsRotating = (size(Params.LineOfSite, 1) > 1);
 CustomRes = (Params.Resolution ~= 0);
 ResolutionString = sprintf('-r%i', Params.Resolution);
-
-% Rescale the raw data after isolating the portion that will be displayed.
-RawData = ...
-    padarray(RawData, [min(0, YSize-size(RawData, 1)), ...
-    min(0, XSize-size(RawData, 2)), ...
-    min(0, NFrames-size(RawData, 3))], 'post');
-if ~(isempty(Params.XPixels) && isempty(Params.YPixels) ...
-        && isempty(Params.ZFrames))
-    RawData = RawData(Params.YPixels(1):Params.YPixels(2), ...
-        Params.XPixels(1):Params.XPixels(2), ...
-        Params.ZFrames(1):Params.ZFrames(2));
-end
-RawData = smi_vis.contrastStretch(single(RawData), [0; 1], ...
-    Params.PercentileCeiling, Params.MinScaleIntensity);
 
 % Prepare the designated axes.
 PlotAxes.ActivePositionProperty = 'position';
@@ -145,22 +107,11 @@ for ff = Params.ZFrames(1):Params.ZFrames(2)
     % Clear the axes to make sure deleted objects aren't accumulating
     % (which slows things down a lot!).
     cla(PlotAxes)
-    
-    % Display the raw data in the axes.
-    CurrentData = repmat(RawData(:, :, ff), [1, 1, 3]);
-    surface(PlotAxes, XRange, YRange, ZPosition, ...
-        CurrentData, 'facecolor', 'texturemap')
-    
-    % Plot the trajectories.
-    smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
-        TR, [ff-Params.MaxTrajLength, ff], Params.MaxTrajLength, ...
-        Params.TrajColor, 'Marker', Params.PlotMarker);
-    
-    % Plot the points in the optional input 'SMD'.
-    smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
-        SMD, [ff-Params.MaxTrajLength, ff], Params.MaxTrajLength, ...
-        Params.TrajColor, 'Marker', Params.SMDMarker);
-    
+            
+    % Add the data and trajectories to the axes.
+    smi_vis.GenerateMovies.makeFrame(PlotAxes, TR, ScaledData(:, :, ff), ...
+        Params, SMD, ff)
+        
     % Update the line of site if needed.
     if IsRotating
         view(PlotAxes, Params.LineOfSite(ff, :))

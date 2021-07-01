@@ -1,4 +1,4 @@
-function generateMovie(obj)
+function generateMovie(obj, SavePath)
 %generateMovie generates a movie of 2D trajectories over time.
 % This method is intended to be a wrapper around playMovie() which will add
 % some "decorations" (e.g., axis labels), prepare saved movies, etc.
@@ -31,8 +31,17 @@ zlabel(obj.MovieAxes, ...
     sprintf('%s (%s)', obj.TimeDimensionString, obj.TimeUnitString), ...
     'Interpreter', 'Latex')
 
+% If a save path has been defined, prepare a video writer object.
+if exist('SavePath', 'var')
+    obj.VideoObject = VideoWriter(SavePath, 'MPEG-4');
+    obj.VideoObject.Quality = 100;
+end
+
+% Rescale the raw data to improve the display.
+obj.rescaleData()
+
 % Play the movie.
-obj.playMovie(obj.MovieAxes, obj.TR, obj.RawData, ...
+obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...
     obj.Params, obj.SMF, obj.SMD, obj.VideoObject)
 
 

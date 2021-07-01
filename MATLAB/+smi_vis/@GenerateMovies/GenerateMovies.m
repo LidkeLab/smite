@@ -15,7 +15,7 @@ classdef GenerateMovies < handle
         
         % Raw data to be displayed under trajectories.
         RawData
-        
+
         % Single Molecule Fitting structure with pixel size and framerate.
         SMF = smi_core.SingleMoleculeFitting;
         
@@ -29,6 +29,9 @@ classdef GenerateMovies < handle
     properties (SetAccess = 'protected')
         % Axes in which the movie is prepared if using generateMovie().
         MovieAxes
+                
+        % Rescaled/cropped version of property RawData (see rescaleData())
+        ScaledData
         
         % MATLAB VideoWriter object used to write a movie to a file.
         VideoObject
@@ -79,13 +82,14 @@ classdef GenerateMovies < handle
                 obj.TimeUnitOptions, obj.Params.UnitFlag);
         end
         
-        generateMovie(obj)
+        rescaleData(obj)
+        generateMovie(obj, SavePath)
         gui(obj)
         
     end
     
     methods (Static)
-        playMovie(PlotAxes, TR, RawData, Params, SMF, SMD, VideoObject)
+        playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, VideoObject)
         [Params] = prepDefaults();
     end
     
@@ -95,6 +99,7 @@ classdef GenerateMovies < handle
         % unrestricted.
         [LineHandles] = plotTrajectories(PlotAxes, ...
             TR, FrameRange, MaxTrajLength, Color, varargin);
+        makeFrame(PlotAxes, TR, RawData, Params, SMD, Frame)
     end
     
     

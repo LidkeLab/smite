@@ -35,20 +35,22 @@ FrameSlider = uicontrol('Parent', ControlPanel, ...
     'Style', 'slider', ...
     'Units', 'normalized', 'Position', FrameSliderPos, ...
     'HorizontalAlignment', 'left', ...
-    'Min', 0, 'Max', 1, ...
-    'Enable', 'off', 'Callback', @frameSlider);
-PlayButtonPos = [0, FrameSliderPos(2), ...
-    0.9 * (1-FrameSliderPos(3)), FrameSliderPos(4)];
-PlayButton = uicontrol('Parent', ControlPanel, ...
-    'Style', 'pushbutton', 'String', 'PLAY', ...
-    'Units', 'normalized', 'Position', PlayButtonPos, ...
-    'Callback', @playMovieCallback);
+    'Min', 1, 'Max', obj.TR(1).NFrames, ...
+    'SliderStep', [1, 1]/obj.TR(1).NFrames, ...
+    'Value', 1, ...
+    'Callback', @frameSlider);
 FrameNumDisplayPos = [FrameSliderPos(1), 0, ...
     FrameSliderPos(3), 1 - FrameSliderPos(4)];
 FrameNumDisplay = uicontrol('Parent', ControlPanel, ...
     'Style', 'text', ...
     'Units', 'normalized', 'Position', FrameNumDisplayPos, ...
     'HorizontalAlignment', 'left');
+PlayButtonPos = [0, FrameSliderPos(2), ...
+    0.9 * (1-FrameSliderPos(3)), FrameSliderPos(4)];
+PlayButton = uicontrol('Parent', ControlPanel, ...
+    'Style', 'pushbutton', 'String', 'PLAY', ...
+    'Units', 'normalized', 'Position', PlayButtonPos, ...
+    'Callback', @playMovieCallback);
 
 % Prepare axes for the movie.
 MoviePanelPos = ControlPanelPos ...
@@ -57,7 +59,7 @@ MoviePanel = uipanel(PlotFigure, ...
     'Units', 'normalized', 'Position', MoviePanelPos);
 obj.MovieAxes = axes(MoviePanel);
 obj.MovieAxes.ActivePositionProperty = 'position';
-axtoolbar(obj.MovieAxes,'default');
+axtoolbar(obj.MovieAxes, 'default');
 
 % Add controls to allow for saving a movie.
 SaveMoviePanelPos = [MoviePanelPos(1)+MoviePanelPos(3), 0, ...
@@ -149,56 +151,32 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 %         Source.Enable = 'on';
     end
 
-%
-%     function frameSlider(Source, ~)
-%         % This is a callback function for the event that the user has slid
-%         % the FrameSlider slidebar.  This method will determine the
-%         % location of the slidebar, convert this to a frame within the
-%         % movie, and then plot the trajectories of the movie as they exists
-%         % up through that frame.
-%
-%         % Get the location of the slide bar, as well as the min and max
-%         % values possible for the slider.
-%         SliderValue = get(Source, 'Value');
-%         SliderMin = get(Source, 'Min');
-%         SliderMax = get(Source, 'Max');
-%
-%         % Convert the SliderValue to an appropriate frame within the movie.
-%         % NOTE: Since the frame selected with the slidebar may not
-%         %       necessarily exist in the movie, we instead select the frame
-%         %       in the movie that is nearest to that chosen by the slider.
-%         MinFrame = min(TrajInfoStruct.MovieFrames);
-%         MaxFrame = max(TrajInfoStruct.MovieFrames);
-%         SelectedFrame = round((1 / (SliderMax-SliderMin)) ...
-%             * ((MaxFrame-MinFrame)*SliderValue ...
-%             + SliderMax*MinFrame - SliderMin*MaxFrame)); % ideal endframe
-%         [~, NearestIndex] = min(...
-%             abs(SelectedFrame - TrajInfoStruct.MovieFrames));
-%         EndFrame = TrajInfoStruct.MovieFrames(NearestIndex);
-%
-%         % Prepare the axes for the plots.
-%         cla(TrajInfoStruct.PlotAxes);
-%         iptsetpref('ImshowAxesVisible', 'on');
-%         hold(TrajInfoStruct.PlotAxes, 'on');
-%
-%         % Re-plot the trajectories up through FrameNumber, plotting the
-%         % entire trajectory if EndFrame is the last frame of the movie
-%         % (i.e., don't implement a MaxTrajDisplayLength for the last frame)
-%         if EndFrame == max(TrajInfoStruct.MovieFrames)
-%             % The chosen EndFrame is the last frame of the movie.
-%             plotTrajectories(min(TrajInfoStruct.MovieFrames), ...
-%                 EndFrame, inf);
-%         else
-%             plotTrajectories(min(TrajInfoStruct.MovieFrames), EndFrame, ...
-%                 TrajInfoStruct.MaxTrajDisplayLength);
-%         end
-%
-%         % Update the frame number display within the GUI to show the
-%         % currently selected frame of the movie.
-%         TrajInfoStruct.FrameNumDisplay.String = sprintf(...
-%             'Frame %s of %s', num2str(EndFrame), ...
-%             num2str(max(TrajInfoStruct.MovieFrames)));
-%     end
+
+
+    function frameSlider(Source, ~)
+        % This is a callback function for the event that the user has slid
+        % the FrameSlider slidebar.  This method will determine the
+        % location of the slidebar, convert this to a frame within the
+        % movie, and then plot the trajectories of the movie as they exists
+        % up through that frame.
+
+        % Get the location of the slide bar, as well as the min and max
+        % values possible for the slider.
+        SliderValue = get(Source, 'Value');
+        SliderMax = get(Source, 'Max');
+        
+        % Display the selected movie frame.
+        OldParams = obj.Params;
+        obj.Params.ZFrames = [1, SliderValue];
+        obj.makeFrame(obj.MovieAxes, obj.TR, ...
+            obj.RawData(:, :, SliderValue), Params, SMD, Frame)
+        obj.Params = OldParams;
+
+        % Update the frame number display within the GUI to show the
+        % currently selected frame of the movie.
+        FrameNumDisplay.String = sprintf(...
+            'Frame %s of %s', SliderValue, SliderMax);
+    end
 %
 %
 %     function trajectorySelectedEdit(Source, ~)
