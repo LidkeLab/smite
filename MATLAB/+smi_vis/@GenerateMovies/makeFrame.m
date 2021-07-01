@@ -28,6 +28,11 @@ XRange = Params.XPixels + [0, 1];
 YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 
+% Clear the axes to make sure deleted objects aren't accumulating (which 
+% can slow things down when trying to capture the frame by, e.g.,
+% getframe()).
+cla(PlotAxes)
+
 % Display the raw data in the axes.
 ScaledData = repmat(ScaledData, [1, 1, 3]);
 surface(PlotAxes, XRange, YRange, ZPosition, ...

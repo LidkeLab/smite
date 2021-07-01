@@ -100,12 +100,8 @@ end
 
 % Loop through the frames of raw data and prepare the movie.
 AxesParent = PlotAxes.Parent;
-for ff = Params.ZFrames(1):Params.ZFrames(2)
-    % Clear the axes to make sure deleted objects aren't accumulating
-    % (which slows things down a lot!).
-    cla(PlotAxes)
-            
-    % Add the data and trajectories to the axes.
+for ff = Params.ZFrames(1):Params.ZFrames(2)           
+    % Make the current frame of the movie.
     smi_vis.GenerateMovies.makeFrame(PlotAxes, TR, ScaledData(:, :, ff), ...
         Params, SMD, ff)
         

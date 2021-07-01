@@ -176,7 +176,7 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         % Update the frame number display within the GUI to show the
         % currently selected frame of the movie.
         FrameNumDisplay.String = sprintf(...
-            'Frame %s of %s', SliderValue, SliderMax);
+            'Frame %i of %i', SliderValue, SliderMax);
     end
 %
 %
