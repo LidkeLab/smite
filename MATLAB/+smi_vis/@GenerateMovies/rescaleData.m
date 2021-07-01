@@ -2,6 +2,9 @@ function [] = rescaleData(obj)
 %rescaleData rescales the raw data in obj.RawData for display purposes.
 % This method crops and rescales obj.RawData based on parameters in
 % obj.Params.
+%
+% REQUIRES:
+%   Image Processing Toolbox (to use padarray())
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -21,6 +24,17 @@ if isempty(XSize)
 end
 if isempty(YSize)
     YSize = DataSize(1);
+end
+
+% Set defaults for some obj.Params fields if needed.
+if isempty(obj.Params.ZFrames)
+    obj.Params.ZFrames = [1, NFrames];
+end
+if isempty(obj.Params.XPixels)
+    obj.Params.XPixels = [1, XSize];
+end
+if isempty(obj.Params.YPixels)
+    obj.Params.YPixels = [1, YSize];
 end
 
 % Rescale the raw data after isolating the portion that will be displayed.

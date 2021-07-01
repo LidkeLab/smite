@@ -151,8 +151,6 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 %         Source.Enable = 'on';
     end
 
-
-
     function frameSlider(Source, ~)
         % This is a callback function for the event that the user has slid
         % the FrameSlider slidebar.  This method will determine the
@@ -162,15 +160,18 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 
         % Get the location of the slide bar, as well as the min and max
         % values possible for the slider.
-        SliderValue = get(Source, 'Value');
+        SliderValue = round(get(Source, 'Value'));
         SliderMax = get(Source, 'Max');
         
+        % Ensure obj.ScaledData is populated.
+        if isempty(obj.ScaledData)
+            obj.rescaleData()
+        end
+        
         % Display the selected movie frame.
-        OldParams = obj.Params;
-        obj.Params.ZFrames = [1, SliderValue];
         obj.makeFrame(obj.MovieAxes, obj.TR, ...
-            obj.RawData(:, :, SliderValue), Params, SMD, Frame)
-        obj.Params = OldParams;
+            obj.ScaledData(:, :, SliderValue), ...
+            obj.Params, obj.SMD, SliderValue)
 
         % Update the frame number display within the GUI to show the
         % currently selected frame of the movie.

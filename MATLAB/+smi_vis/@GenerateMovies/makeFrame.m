@@ -1,4 +1,4 @@
-function [] = makeFrame(PlotAxes, TR, RawData, Params, SMD, Frame)
+function [] = makeFrame(PlotAxes, TR, ScaledData, Params, SMD, Frame)
 %makeFrame plots a single frame for the trajectory movie.
 % This method plots a single frame of the movie being prepared.  This
 % method is meant to be lightweight without unnecessary code/default
@@ -7,8 +7,8 @@ function [] = makeFrame(PlotAxes, TR, RawData, Params, SMD, Frame)
 % INPUTS:
 %   PlotAxes: Axes in which the trajectories will be plotted.
 %   TR: Tracking Results structure (see smi_core.TrackingResults).
-%   RawData: Individual raw data image corresponding to the trajectories in
-%            'TR' for frame 'Frame'.
+%   ScaledData: Individual image corresponding to the trajectories in
+%               'TR' for frame 'Frame'.
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
 %   SMD: Single Molecule Data structure containing additional localizations
@@ -29,9 +29,9 @@ YRange = Params.YPixels + [0, 1];
 ZPosition = repmat(min(Params.ZFrames), [2, 2]);
 
 % Display the raw data in the axes.
-RawData = repmat(RawData, [1, 1, 3]);
+ScaledData = repmat(ScaledData, [1, 1, 3]);
 surface(PlotAxes, XRange, YRange, ZPosition, ...
-    RawData, 'facecolor', 'texturemap')
+    ScaledData, 'facecolor', 'texturemap')
 
 % Plot the trajectories.
 smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...

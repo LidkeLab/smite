@@ -25,9 +25,6 @@ function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, ...
 %                object).  This object should be opened and closed outside
 %                of this method for proper usage.
 %                (Default = [] and the movie isn't saved)
-%
-% REQUIRES:
-%   Image Processing Toolbox (to use padarray())
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)

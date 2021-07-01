@@ -31,6 +31,9 @@ classdef GenerateMovies < handle
         MovieAxes
                 
         % Rescaled/cropped version of property RawData (see rescaleData())
+        % NOTE: I've made this a protected property so that we can ensure
+        %       some of obj.Params are updated when this is written to
+        %       (which I only do in obj.rescaleData())
         ScaledData
         
         % MATLAB VideoWriter object used to write a movie to a file.
@@ -99,7 +102,7 @@ classdef GenerateMovies < handle
         % unrestricted.
         [LineHandles] = plotTrajectories(PlotAxes, ...
             TR, FrameRange, MaxTrajLength, Color, varargin);
-        makeFrame(PlotAxes, TR, RawData, Params, SMD, Frame)
+        makeFrame(PlotAxes, TR, ScaledData, Params, SMD, Frame)
     end
     
     
