@@ -45,9 +45,6 @@ function [Params] = prepDefaults()
 %                       prescribed by these angles.
 %                       (1x2 array or NFramesx2 array)(degrees)
 %                       (Default = [0, 90])
-%           Is2D: false if movie should be 3D (LineOfSite~=[0, 90])
-%                 true if movie should be 2D (might run faster for long
-%                 movies)(Default = true)
 %           Resolution: Resolution of the movie that gets saved to
 %                       FilePath.
 %                       (scalar)(dpi)(Default = 0, which sets to screen
@@ -58,6 +55,17 @@ function [Params] = prepDefaults()
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
 %                      (Default = [])
+%           AutoClip: Flag to request clipping to data present in TR.  This
+%                     is enforced in GenerateMovies.rescaleData() and 
+%                     nowhere else as of this writing. (Default = false)
+%           MinXYRange: Minimum XY range allowed when AutoClip = true,
+%                       otherwise this is not used. (pixels)(Default = 20)
+%           NPadPixels: Number of padding pixels added to edges of XY data
+%                       when AutoClip = true, otherwise this is not used.
+%                       (pixels)(Default = 5)
+%           NPadFrames: Number of padding frames added around frames of
+%                       trajectories in TR when AutoClip = true, otherwise
+%                       this is not used. (pixels)(Default = 10)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -66,21 +74,21 @@ function [Params] = prepDefaults()
 % Set some default parameters.
 Params.UnitFlag = false;
 Params.MaxTrajLength = inf;
-Params.MinXYRange = 20;
-Params.NPadPixels = 5;
-Params.NPadFrames = 10;
+Params.ZFrames = [];
+Params.XPixels = [];
+Params.YPixels = [];
 Params.MinScaleIntensity = 1;
 Params.PercentileCeiling = 100;
 Params.PlotMarker = 'none';
 Params.SMDMarker = '.';
 Params.LineOfSite = [0, 90];
-Params.Is2D = true;
 Params.Resolution = 0;
 Params.FrameRate = 10;
-Params.ZFrames = [];
-Params.XPixels = [];
-Params.YPixels = [];
 Params.TrajColor = [];
+Params.AutoClip = false;
+Params.MinXYRange = 20;
+Params.NPadPixels = 5;
+Params.NPadFrames = 10;
 
 
 end

@@ -1,7 +1,7 @@
 function [] = prepAxes(obj)
 %prepAxes prepares some features of the movie axes.
 % This method does a few things to the axes obj.MovieAxes based on fields 
-% in obj.Params. (e.g., setting the axis limits).
+% in obj.Params (e.g., setting the axis limits).
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)

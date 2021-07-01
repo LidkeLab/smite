@@ -100,7 +100,7 @@ classdef GenerateMovies < handle
     end
     
     methods (Static)
-        playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, VideoObject)
+        playMovie(PlotAxes, TR, ScaledData, Params, SMD, VideoObject)
         [Params] = prepDefaults();
     end
     

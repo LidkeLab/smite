@@ -1,5 +1,4 @@
-function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, ...
-    VideoObject)
+function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMD, VideoObject)
 %playMovie prepares a movie of the trajectories in TR.
 % This method prepares a movie of single-particle tracking trajectories for
 % 2D tracking.
@@ -13,9 +12,6 @@ function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, ...
 %               frame number.
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
-%   SMF: Single Molecule Fitting structure with SMF.Data.PixelSize and
-%        SMF.Data.FrameRate populated.
-%        (Default = smi_core.SingleMoleculeFitting)
 %   SMD: Single Molecule Data structure containing additional localizations
 %        that we want to show in the movie (e.g., this might be the results
 %        from a box finding algorithm, where the localizations aren't
@@ -36,9 +32,6 @@ if (~exist('Params', 'var') || isempty(Params))
 end
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes))
     PlotAxes = gca();
-end
-if (~exist('SMF', 'var') || isempty(SMF))
-    SMF = smi_core.SingleMoleculeFitting;
 end
 if (~exist('SMD', 'var') || isempty(SMD))
     SMD = smi_core.SingleMoleculeData.createSMD();

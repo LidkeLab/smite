@@ -7,10 +7,6 @@ function [] = generateMovie(obj, SavePath)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Ensure some necessary parameters are given meaningful values based on the
-% provided data/trajectories.
-obj.setVitalParams()
-
 % Rescale the raw data to improve the display.
 obj.rescaleData()
 
@@ -25,7 +21,7 @@ end
 
 % Play the movie.
 obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...
-    obj.Params, obj.SMF, obj.SMD, obj.VideoObject)
+    obj.Params, obj.SMD, obj.VideoObject)
 
 
 end

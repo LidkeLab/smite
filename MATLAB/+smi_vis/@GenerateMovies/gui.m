@@ -1,9 +1,5 @@
 function gui(obj)
 %gui prepares a movie generation GUI for the GenerateMovies class.
-%
-% INPUTS:
-%   GUIParent: The 'Parent' of this GUI, e.g., a figure handle.
-%              (Default = figure(...))
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
@@ -163,11 +159,9 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         SliderValue = round(get(Source, 'Value'));
         SliderMax = get(Source, 'Max');
         
-        % Ensure some needed properties are populated.
-        obj.setVitalParams()
-        if isempty(obj.ScaledData)
-            obj.rescaleData()
-        end
+        % Ensure some needed properties are populated and updated based on
+        % the current obj.Params.
+        obj.rescaleData()
         
         % Make sure the axes are prepared based on the settings in
         % obj.Params (this can be a bit slow since each movement of the

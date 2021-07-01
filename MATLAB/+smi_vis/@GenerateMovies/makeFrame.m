@@ -1,5 +1,5 @@
 function [] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
-    SMD, Frame, PrepAxes)
+    SMD, Frame)
 %makeFrame plots a single frame for the trajectory movie.
 % This method plots a single frame of the movie being prepared.
 %
