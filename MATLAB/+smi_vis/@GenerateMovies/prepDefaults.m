@@ -49,9 +49,10 @@ function [Params] = prepDefaults()
 %                       FilePath.
 %                       (scalar)(dpi)(Default = 0, which sets to screen
 %                       resolution)
-%           FrameRate: Approximate playback framerate used when the 
-%                      input 'VideoWriter' is not provided. 
-%                      (Default = 10 fps)
+%           FrameRate: Approximate playback framerate used when not saving
+%                      a movie (i.e., if the movie is being displayed but
+%                      not saved, an additional pause(1/FrameRate) is added
+%                      between each frame). (Default = 10 fps)
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
 %                      (Default = [])

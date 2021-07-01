@@ -1,4 +1,4 @@
-function [] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
+function [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
     SMD, Frame)
 %makeFrame plots a single frame for the trajectory movie.
 % This method plots a single frame of the movie being prepared.
@@ -15,6 +15,10 @@ function [] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
 %        from a box finding algorithm, where the localizations aren't
 %        associated as trajectories yet).
 %   Frame: Frame of the movie that will be plotted.
+%
+% OUTPUTS:
+%   LineHandles: Array of line handles corresponding to the trajectories
+%                in 'TR'.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -31,7 +35,7 @@ surface(PlotAxes, Params.XPixels + [0, 1], Params.YPixels + [0, 1], ...
     repmat(ScaledData, [1, 1, 3]), 'facecolor', 'texturemap')
 
 % Plot the trajectories.
-smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
+[LineHandles] = smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
     TR, [Frame-Params.MaxTrajLength, Frame], Params.MaxTrajLength, ...
     Params.TrajColor, 'Marker', Params.PlotMarker);
 

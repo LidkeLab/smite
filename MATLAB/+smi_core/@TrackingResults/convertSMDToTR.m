@@ -5,9 +5,7 @@ function [TR] = convertSMDToTR(SMD, FileInfoStruct)
 % 
 % INPUTS:
 %   SMD: Single Molecule Data structure with a properly populated field
-%        'ConnectID' (which at present, is converted to the field
-%        'TrajectoryID' in the TR structure for the purpose of back
-%        compatability/interpretability).
+%        'ConnectID'.
 %   FileInfoStruct: A structure array with fields FileDir and FileName
 % 
 % OUTPUTS:
@@ -62,7 +60,7 @@ for ii = numel(UniqueTrajIDs):-1:1
     end
     
     % Store some other fields in the TR.
-    TR(ii, 1).TrajectoryID = SMD.ConnectID(CurrentTrajIndices(1));
+    TR(ii, 1).ConnectID = SMD.ConnectID(CurrentTrajIndices(1));
     TR(ii, 1).IndSMD = CurrentTrajIndices;
 end
 [TR.FileDir] = deal(FileInfoStruct.FileDir);

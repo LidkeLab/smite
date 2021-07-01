@@ -69,6 +69,7 @@ uicontrol('Parent', SaveMoviePanel, 'Style', 'pushbutton', ...
     'Callback', @saveMovieButtonClicked);
 
 % Add a panel to contain trajectory information about clicked trajectories.
+CurrentlySelectedTrajectory = [];
 TrajInfoPanelPos = ...
     [SaveMoviePanelPos(1), sum(SaveMoviePanelPos([2, 4])), ...
     SaveMoviePanelPos(3), MoviePanelPos(4)];
@@ -142,7 +143,18 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 
         % Play the movie.
         obj.generateMovie();
-% 
+        
+        % Remake the last frame of the movie showing the entirety of the
+        % trajectories.
+        TempParams = obj.Params;
+        TempParams.MaxTrajLength = inf;
+        obj.LineHandles = obj.makeFrame(obj.MovieAxes, ...
+            obj.TR, obj.ScaledData(:, :, end), TempParams, obj.SMD, ...
+            TempParams.ZFrames(2));
+        
+        % Set the callback function for the line handles.
+        setLineCallbacks()
+        
 %         % Re-enable the PLAY button.
 %         Source.Enable = 'on';
     end
@@ -180,6 +192,73 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         FrameNumDisplay.String = sprintf(...
             'Frame %i of %i', SliderValue, SliderMax);
     end
+
+    function trajectoryClicked(~, ~, TRIndex)
+        % This is a callback function for the event that the user has
+        % clicked on a trajectory (with TR index 'TRIndex') within
+        % the movie.
+        
+        % Remove previous indicator(s) that a trajectory had been selected
+        % prior to this event, ensuring that the line is still valid before
+        % attempting to modify it.
+        [obj.LineHandles(obj.LineHandles.isvalid ...
+            & isgraphics(obj.LineHandles)).LineWidth] = deal(0.5);
+
+        % Add indicators to the selected trajectory to emphasize which one
+        % was selected.
+        if (CurrentlySelectedTrajectory == TRIndex)
+            % If the same trajectory was clicked again, we'll assume the
+            % user was trying to "unclick" it.
+            CurrentlySelectedTrajectory = [];
+            return
+        end
+        [obj.LineHandles(TRIndex).LineWidth] = 3;
+
+        % Update 'CurrentlySelectedTrajectory'  so that other callbacks can 
+        % access this information.
+        CurrentlySelectedTrajectory = TRIndex;
+
+        % Grab useful information about the trajectory to be displayed,
+        % ensuring the units are consistent with the movie.
+        FrameNum = obj.TR(TRIndex).FrameNum;
+        Time = (FrameNum-1)*obj.Params.UnitFlag/obj.SMF.Data.FrameRate ...
+            + FrameNum*(~obj.Params.UnitFlag);
+% 
+%         % Modify text panels within the display panel to provide
+%         % information about the selected trajectory.
+%         for kk = 1:numel(TrajInfoStruct.TrajInfoPanel.Children)
+%             switch TrajInfoStruct.TrajInfoPanel.Children(kk).Tag
+%                 case 'TrajIDDisplay'
+%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
+%                         num2str(ii);
+%                 case 'StartFrameDisplay'
+%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
+%                         sprintf('Start %s (%s): %i', ...
+%                         TrajInfoStruct.TimeDimensionString, ...
+%                         TrajInfoStruct.TimeUnitString, min(Time));
+%                 case 'EndFrameDisplay'
+%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
+%                         sprintf('End %s (%s): %i', ...
+%                         TrajInfoStruct.TimeDimensionString, ...
+%                         TrajInfoStruct.TimeUnitString, max(Time));
+%             end
+%         end
+    end
+
+    function setLineCallbacks()
+        % Loop through the line handles and set their 'Callback' property
+        % so that they can be clicked.
+        for nn = 1:numel(obj.LineHandles)
+            % Specify the ButtonDownFcn.
+            if isgraphics(obj.LineHandles(nn)) ...
+                    && obj.LineHandles(nn).isvalid
+                % If the nn-th line handle has been deleted/is not
+                % valid, we can't set the ButtonDownFcn property.
+                obj.LineHandles(nn).ButtonDownFcn = ...
+                    {@trajectoryClicked, obj.TR(nn).ConnectID};
+            end
+        end
+    end
 %
 %
 %     function trajectorySelectedEdit(Source, ~)
@@ -206,68 +285,7 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 %         trajectorySelected(TrajectoryID)
 %     end
 %
-%     function trajectoryClicked(~, ~, ii)
-%         % This is a callback function for the event that the user has
-%         % clicked on a trajectory (with trajectory ID input as ii) within
-%         % the movie.
-%
-%         % Pass the trajectory ID ii along to the trajectorySelected
-%         % function.
-%         trajectorySelected(ii);
-%     end
-%
-%     function trajectorySelected(ii)
-%         % This is a function used to display misc. information about a
-%         % specific trajectory within the movie figure.
-%
-%         % Remove previous indicator(s) that a trajectory had been selected
-%         % prior to this event, ensuring that the line is still valid before
-%         % attempting to modify it.
-%         [TrajInfoStruct.LineHandles(TrajInfoStruct.LineHandles.isvalid ...
-%             & isgraphics(TrajInfoStruct.LineHandles)).LineWidth] = ...
-%             deal(0.5);
-%
-%         % Add indicators to the selected trajectory to emphasize which one
-%         % was selected.
-%         TrajInfoStruct.LineHandles(...
-%             TrajInfoStruct.LineHandleIDMap == ii).LineWidth = 3;
-%
-%         % Update the CurrentlySelectedTrajectory field within the
-%         % TrajInfoStruct so that other callbacks can access this
-%         % information.
-%         TrajInfoStruct.CurrentlySelectedTrajectory = ii;
-%
-%         % Grab useful information about the trajectory to be displayed,
-%         % ensuring the units are consistent with the movie.
-%         CurrentTrajBool = (cell2mat({TrajInfoStruct.TR.TrajectoryID}) ...
-%             == ii);
-%         FrameNum = TrajInfoStruct.TR(CurrentTrajBool).FrameNum;
-%         FrameNum = (FrameNum-1) ...
-%             * TrajInfoStruct.UnitFlag/TrajInfoStruct.FrameRate ...
-%             + FrameNum*~TrajInfoStruct.UnitFlag;
-%         StartFrame = min(FrameNum); % first frame trajectory appears in
-%         EndFrame = max(FrameNum); % last frame trajectory appears in
-%
-%         % Modify text panels within the display panel to provide
-%         % information about the selected trajectory.
-%         for kk = 1:numel(TrajInfoStruct.TrajInfoPanel.Children)
-%             switch TrajInfoStruct.TrajInfoPanel.Children(kk).Tag
-%                 case 'TrajIDDisplay'
-%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
-%                         num2str(ii);
-%                 case 'StartFrameDisplay'
-%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
-%                         sprintf('Start %s (%s): %i', ...
-%                         TrajInfoStruct.TimeDimensionString, ...
-%                         TrajInfoStruct.TimeUnitString, StartFrame);
-%                 case 'EndFrameDisplay'
-%                     TrajInfoStruct.TrajInfoPanel.Children(kk).String = ...
-%                         sprintf('End %s (%s): %i', ...
-%                         TrajInfoStruct.TimeDimensionString, ...
-%                         TrajInfoStruct.TimeUnitString, EndFrame);
-%             end
-%         end
-%     end
+
 %
 %     function displayPlots(~, ~)
 %         % This is a callback function to respond to clicks of the Display

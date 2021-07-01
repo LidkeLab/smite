@@ -27,6 +27,11 @@ classdef GenerateMovies < handle
     end
     
     properties (SetAccess = 'protected')
+        % Graphics handles to trajectory lines displayed in movie frames.
+        % NOTE: This is index the same way as obj.TR, i.e., obj.TR(n)
+        %       corresponds to obj.LineHandles(n).
+        LineHandles
+        
         % Axes in which the movie is prepared if using generateMovie().
         MovieAxes
                 
@@ -110,7 +115,8 @@ classdef GenerateMovies < handle
         % unrestricted.
         [LineHandles] = plotTrajectories(PlotAxes, ...
             TR, FrameRange, MaxTrajLength, Color, varargin);
-        makeFrame(PlotAxes, TR, ScaledData, Params, SMD, Frame)
+        [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, ...
+            Params, SMD, Frame);
     end
     
     
