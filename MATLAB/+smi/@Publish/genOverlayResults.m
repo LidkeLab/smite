@@ -11,7 +11,7 @@ if isempty(OverlayFileStruct)
     % overlays.
     return
 end
-OverlayFileNames = {OverlayFileStruct.name};
+OverlayFileNames = {OverlayFileStruct.name}.';
 NOverlays = numel(OverlayFileNames);
 
 % Loop through all overlay images and compute the shift between the color
@@ -62,10 +62,10 @@ end
 MakeShiftVsCorrPlots = ...
     all(isfield(obj.ResultsStruct, {'RegError', 'MaxCorr'}));
 if MakeShiftVsCorrPlots
-    ConcatenatedRegError = [{obj.ResultsStruct(:, 1).RegError}, ...
-        {obj.ResultsStruct(:, 2).RegError}];
-    ConcatenatedMaxCorr = [{obj.ResultsStruct(:, 1).MaxCorr}, ...
-        {obj.ResultsStruct(:, 2).MaxCorr}];
+    ConcatenatedRegError = [{obj.ResultsStruct(:, 1).RegError}.',  ...
+        {obj.ResultsStruct(:, 2).RegError}.'];
+    ConcatenatedMaxCorr = [{obj.ResultsStruct(:, 1).MaxCorr}.', ...
+        {obj.ResultsStruct(:, 2).MaxCorr}.'];
 else
     ConcatenatedRegError = [];
     ConcatenatedMaxCorr = [];
