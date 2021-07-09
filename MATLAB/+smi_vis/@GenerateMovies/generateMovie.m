@@ -1,7 +1,7 @@
-function [] = generateMovie(obj, SavePath)
+function [] = generateMovie(obj)
 %generateMovie generates a movie of 2D trajectories over time.
-% This method is intended to be a wrapper around playMovie() which will add
-% some "decorations" (e.g., axis labels), prepare saved movies, etc.
+% This method is intended to be a wrapper around playMovie() which will
+% do a couple of useful things before playing the movie.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -12,12 +12,6 @@ obj.rescaleData()
 
 % Prepare the axes based on settings in obj.Params.
 obj.prepAxes()
-
-% If a save path has been defined, prepare a video writer object.
-if exist('SavePath', 'var')
-    obj.VideoObject = VideoWriter(SavePath, 'MPEG-4');
-    obj.VideoObject.Quality = 100;
-end
 
 % Play the movie.
 obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...

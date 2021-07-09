@@ -36,7 +36,7 @@ end
 if (~exist('SMD', 'var') || isempty(SMD))
     SMD = smi_core.SingleMoleculeData.createSMD();
 end
-if (~exist('VideoWriter', 'var') || isempty(VideoObject))
+if (~exist('VideoObject', 'var') || isempty(VideoObject))
     VideoObject = [];
 end
 DefaultParams = smi_vis.GenerateMovies.prepDefaults();
@@ -46,11 +46,15 @@ Params = smi_helpers.padParams(Params, DefaultParams);
 % NOTE: XRange and YRange are defined to resolve some coordinate
 %       differences between raw data plots and the real data.
 IsRotating = (size(Params.LineOfSite, 1) > 1);
-CustomRes = (Params.Resolution ~= 0);
 ResolutionString = sprintf('-r%i', Params.Resolution);
 
+% If the VideoObject is non-empty, open it.
+if ~isempty(VideoObject)
+    open(VideoObject)
+end
+
 % Loop through the frames of raw data and prepare the movie.
-AxesParent = PlotAxes.Parent;
+PlotFigure = ancestor(PlotAxes, 'figure');
 for ff = Params.ZFrames(1):Params.ZFrames(2)           
     % Make the current frame of the movie.
     smi_vis.GenerateMovies.makeFrame(PlotAxes, TR, ScaledData(:, :, ff), ...
@@ -70,17 +74,15 @@ for ff = Params.ZFrames(1):Params.ZFrames(2)
         % too fast.
         pause(1 / Params.FrameRate);
     else
-        if CustomRes
-            FrameData = print(AxesParent, ...
-                '-RGBImage', '-opengl', ResolutionString);
-        else
-            % If the resolution is set to 0 (which uses a default screen
-            % resolution in print() above), we should just use getframe(),
-            % which does something similar but seems to be faster.
-            FrameData = getframe(AxesParent);
-        end
+        FrameData = print(PlotFigure, ...
+            '-RGBImage', '-opengl', ResolutionString);
         VideoObject.writeVideo(FrameData);
     end
+end
+
+% Close the VideoObject.
+if ~isempty(VideoObject)
+    close(VideoObject)
 end
 
 

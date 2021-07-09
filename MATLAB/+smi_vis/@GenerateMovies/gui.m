@@ -111,6 +111,16 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
     'Units', 'normalized', 'Position', [0, 0, 1, 0.2], ...
     'Callback', @displayPlots);
 
+% If raw data is available, display the first frame.
+if ~isempty(obj.RawData)
+    obj.rescaleData()
+    obj.prepAxes()
+    obj.makeFrame(obj.MovieAxes, ...
+        obj.TR, obj.ScaledData(:, :, end), ...
+        obj.Params, obj.SMD, obj.Params.ZFrames(1));
+end
+
+
     function updateParams(Source, ~)
         % Callback for obj.Params updates.
         
@@ -132,26 +142,29 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         % This is a callback function for the PLAY button, which will call
         % the function playMovie to replay the movie without needing to use
         % the slidebar.
-
-%         % Disable the PLAY button so it can't be clicked multiple times.
-%         Source.Enable = 'off';
-
-        % Play the movie.
-        obj.generateMovie();
         
-        % Remake the last frame of the movie showing the entirety of the
-        % trajectories.
-        TempParams = obj.Params;
-        TempParams.MaxTrajLength = inf;
-        obj.LineHandles = obj.makeFrame(obj.MovieAxes, ...
-            obj.TR, obj.ScaledData(:, :, end), TempParams, obj.SMD, ...
-            TempParams.ZFrames(2));
-        
-        % Set the callback function for the line handles.
-        setLineCallbacks()
-        
-%         % Re-enable the PLAY button.
-%         Source.Enable = 'on';
+        try
+            % Disable the PLAY button so it can't be clicked multiple times
+            Source.Enable = 'off';
+            
+            % Play the movie.
+            obj.generateMovie();
+            
+            % Remake the last frame of the movie showing the entirety of
+            % the trajectories.
+            TempParams = obj.Params;
+            TempParams.MaxTrajLength = inf;
+            obj.LineHandles = obj.makeFrame(obj.MovieAxes, ...
+                obj.TR, obj.ScaledData(:, :, end), TempParams, obj.SMD, ...
+                TempParams.ZFrames(2));
+            
+            % Set the callback function for the line handles.
+            setLineCallbacks()
+        catch MException
+            % Re-enable the Play button before throwing the error.
+            Source.Enable = 'on';
+            rethrow(MException)
+        end
     end
 
     function frameSlider(Source, ~)
@@ -281,6 +294,11 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
         trajectoryClicked([], [], ConnectID)
     end
 
+    function saveMovieButtonClicked(~, ~)
+        % This is a callback function to respond to clicks of the save
+        % movie button.
+        obj.saveMovie()
+    end
 
 %
 %     function displayPlots(~, ~)
@@ -358,42 +376,6 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 %         end
 %     end
 %
-%     function saveMovieButtonClicked(~, ~)
-%         % This is a callback function to respond to clicks of the save
-%         % movie button.  Clicking that button will open a prompt to save a
-%         % file so that the user can enter the filename and directory of
-%         % choice.
-%
-%         % Obtain the filepath chosen by the user, exiting cleanly if no
-%         % file was chosen.
-%         [File, Path] = uiputfile({'*.mp4', 'MPEG-4 (*.mp4)'; ...
-%             '*.avi', 'Uncompressed AVI (*.avi)'});
-%         if (File == 0) % no file chosen
-%             return
-%         end
-%
-%         % Determine how we will be saving the video and proceed from there.
-%         % NOTE: I'm basing the switch/case directly on the file extension
-%         %       instead of the index available from uiputfile above because
-%         %       this will still work even if I change the order of the
-%         %       extensions in uiputfile.
-%         [~, ~, FileExtension] = fileparts(File);
-%         switch FileExtension
-%             case '.mp4'
-%                 % Create a VideoWriter object based on chosen filepath.
-%                 VideoWriterObjectLocal = VideoWriter(...
-%                     fullfile(Path, File), 'MPEG-4');
-%
-%                 % Set video properties specific to this format.
-%                 VideoWriterObjectLocal.Quality = 100;
-%             case '.avi'
-%                 % Create a VideoWriter object based on chosen filepath.
-%                 VideoWriterObjectLocal = VideoWriter(...
-%                     fullfile(Path, File), 'Uncompressed AVI');
-%         end
-%         VideoWriterObjectLocal.FrameRate = TrajInfoStruct.FrameRate;
-%         playMovie(VideoWriterObjectLocal);
-%     end
 
 
 end

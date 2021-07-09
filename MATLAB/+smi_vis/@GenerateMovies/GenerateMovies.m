@@ -91,7 +91,8 @@ classdef GenerateMovies < handle
         end
         
         rescaleData(obj)
-        generateMovie(obj, SavePath)
+        saveMovie(obj, SavePath)
+        generateMovie(obj)
         gui(obj)
         
     end
