@@ -17,7 +17,9 @@ NOverlays = numel(OverlayFileNames);
 % Loop through all overlay images and compute the shift between the color
 % channels.
 ImageShift = zeros(NOverlays, 2);
-ImageShiftLocal = cell(NOverlays, 3);
+ImageShiftLocal = cell(NOverlays, 4);
+SubROIDivisor = 10;
+MaxOffset = 20;
 for ii = 1:NOverlays
     % Display a status message in the command line.
     if obj.Verbose
@@ -40,16 +42,18 @@ for ii = 1:NOverlays
     end
     PixelShift = MIC_Reg3DTrans.findStackOffset(...
         OverlayImage(:, :, 2), OverlayImage(:, :, 1), ...
-        [size(OverlayImage, [1, 2])-1, 0], [], [], 0, 0);
+        [MaxOffset, MaxOffset, 0], [], [], 0, 0);
     ImageShift(ii, :) = PixelShift(1:2);
     
     % Compute the local shift between labels for this image.
-    SubROISize = ceil(size(OverlayImage, [1, 2]) / 10);
-    [PixelOffsets, SubPixelOffsets, ImageROIs] = obj.estimateLocalShifts(...
+    SubROISize = ceil(size(OverlayImage, [1, 2]) / SubROIDivisor);
+    [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
+        obj.estimateLocalShifts(...
         OverlayImage(:, :, 2), OverlayImage(:, :, 1), SubROISize, [], 1);
     ImageShiftLocal{ii, 1} = PixelOffsets;
     ImageShiftLocal{ii, 2} = SubPixelOffsets;
     ImageShiftLocal{ii, 3} = ImageROIs;
+    ImageShiftLocal{ii, 4} = ImageStats;
     if (obj.Verbose < 3)
         warning('on')
     end
@@ -80,38 +84,38 @@ OverlayInfoStruct.MaxCorr = ConcatenatedMaxCorr;
 save(fullfile(obj.SaveBaseDir, 'OverlayInfoStruct.mat'), ...
     'OverlayInfoStruct');
 
-% Estimate an affine transform from the coordinates of each label.
-ResultsStructDir = fullfile(obj.SaveBaseDir, 'ResultsStructs');
-Label1Results = dir(fullfile(ResultsStructDir, '*Label_01*'));
-Label1Paths = fullfile(ResultsStructDir, ...
-    {Label1Results(~[Label1Results.isdir]).name});
-NOverlays = numel(Label1Paths);
-AffineTransforms = cell(NOverlays, 1);
-for ii = 1:NOverlays
-    % Display a status message in the command line.
-    if obj.Verbose
-        fprintf(['Publish.performFullAnalysis(): ', ...
-            'Computing affine transform for overlay image %i of %i...\n'], ...
-            ii, NOverlays);
-    end
-    
-    % Load the results structs into the workspace.
-    load(Label1Paths{ii}, 'SMD')
-    SMD1 = SMD;
-    Label2Path = strrep(Label1Paths{ii}, 'Label_01', 'Label_02');
-    if exist(Label2Path, 'file')
-        load(Label2Path, 'SMD')
-        SMD2 = SMD;
-    else
-        continue
-    end
-    
-    % Compute an affine transform between the coordinates.
-    AffineTransforms{ii} = ...
-        smi_stat.findCoordAffine([SMD1.X, SMD1.Y], [SMD2.X, SMD2.Y], 50);
-end
-save(fullfile(obj.SaveBaseDir, 'AffineTransforms.mat'), ...
-    'AffineTransforms', 'Label1Paths')
+% % Estimate an affine transform from the coordinates of each label.
+% ResultsStructDir = fullfile(obj.SaveBaseDir, 'ResultsStructs');
+% Label1Results = dir(fullfile(ResultsStructDir, '*Label_01*'));
+% Label1Paths = fullfile(ResultsStructDir, ...
+%     {Label1Results(~[Label1Results.isdir]).name});
+% NOverlays = numel(Label1Paths);
+% AffineTransforms = cell(NOverlays, 1);
+% for ii = 1:NOverlays
+%     % Display a status message in the command line.
+%     if obj.Verbose
+%         fprintf(['Publish.performFullAnalysis(): ', ...
+%             'Computing affine transform for overlay image %i of %i...\n'], ...
+%             ii, NOverlays);
+%     end
+%     
+%     % Load the results structs into the workspace.
+%     load(Label1Paths{ii}, 'SMD')
+%     SMD1 = SMD;
+%     Label2Path = strrep(Label1Paths{ii}, 'Label_01', 'Label_02');
+%     if exist(Label2Path, 'file')
+%         load(Label2Path, 'SMD')
+%         SMD2 = SMD;
+%     else
+%         continue
+%     end
+%     
+%     % Compute an affine transform between the coordinates.
+%     AffineTransforms{ii} = ...
+%         smi_stat.findCoordAffine([SMD1.X, SMD1.Y], [SMD2.X, SMD2.Y], 50);
+% end
+% save(fullfile(obj.SaveBaseDir, 'AffineTransforms.mat'), ...
+%     'AffineTransforms', 'Label1Paths')
 
 % Generate the overlay plots across all cells.
 if MakeShiftVsCorrPlots

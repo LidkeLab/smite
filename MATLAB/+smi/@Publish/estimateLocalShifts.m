@@ -1,4 +1,4 @@
-function [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
+function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
     estimateLocalShifts(Image1, Image2, SubROISize, MaxOffset, UseGPU)
 %estimateLocalShifts estimates local shifts between two images.
 %
@@ -13,6 +13,7 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs] = ...
 %   MaxOffset: Max offset for which the cross correlation is computed
 %              between the two images. 
 %              (Pixels)(Default = ceil(SubROISize / 4))
+%   ImageStats: Structure contain misc. stats about the set of sub-images.
 %
 % OUTPUT:
 %   PixelOffset: The integer pixel offset of Image2 relative to Image1,
@@ -60,6 +61,12 @@ for nn = 1:NROIs
         [MaxOffset, 1], [], [], 0, UseGPU);
     PixelOffsets(nn, :) = Offset(1:2);
     SubPixelOffsets(nn, :) = SubOffset(1:2);
+end
+
+% If needed, compute some imaging stats. which might be useful to return.
+if (nargin > 3)
+    ImageStats.Image1Sums = cellfun(@(Image) sum(Image(:)), DividedImages1);
+    ImageStats.Image2Sums = cellfun(@(Image) sum(Image(:)), DividedImages2);
 end
 
 
