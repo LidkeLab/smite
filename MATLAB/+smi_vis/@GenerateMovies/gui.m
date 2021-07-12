@@ -69,7 +69,7 @@ uicontrol('Parent', SaveMoviePanel, 'Style', 'pushbutton', ...
     'Callback', @saveMovieButtonClicked);
 
 % Add a panel to contain trajectory information about clicked trajectories.
-CurrentlySelectedTrajectory = [];
+CurrentTrajectory = min([obj.TR.ConnectID]);
 TrajInfoPanelPos = ...
     [SaveMoviePanelPos(1), sum(SaveMoviePanelPos([2, 4])), ...
     SaveMoviePanelPos(3), MoviePanelPos(4)];
@@ -226,17 +226,17 @@ end
 
         % Add indicators to the selected trajectory to emphasize which one
         % was selected.
-        if (CurrentlySelectedTrajectory == TRIndex)
+        if (CurrentTrajectory == TRIndex)
             % If the same trajectory was clicked again, we'll assume the
             % user was trying to "unclick" it.
-            CurrentlySelectedTrajectory = [];
+            CurrentTrajectory = [];
             return
         end
         [obj.LineHandles(TRIndex).LineWidth] = 3;
 
         % Update 'CurrentlySelectedTrajectory'  so that other callbacks can 
         % access this information.
-        CurrentlySelectedTrajectory = TRIndex;
+        CurrentTrajectory = TRIndex;
 
         % Grab useful information about the trajectory to be displayed,
         % ensuring the units are consistent with the movie.
@@ -300,82 +300,63 @@ end
         obj.saveMovie()
     end
 
-%
-%     function displayPlots(~, ~)
-%         % This is a callback function to respond to clicks of the Display
-%         % Plots button.  Clicking that button will open a small GUI with a
-%         % dropdown menu to allow for display of various plots related to
-%         % the currently clicked trajectory.
-%
-%         % Create the figure for the small GUI.
-%         DisplayGUI = figure('NumberTitle', 'off', 'Resize', 'off', ...
-%             'Units', 'pixels', 'MenuBar', 'none', ...
-%             'ToolBar', 'none', 'Position',[500, 500, 200, 150]);
-%
-%         % Add text to the GUI to guide user control.
-%         uicontrol('Parent', DisplayGUI, 'Style', 'text', ...
-%             'String', 'Select Plot:', 'Position', [70, 125, 60, 15]);
-%
-%         % Add a drop-down menu to the GUI figure.
-%         PlotDropdownMenu = uicontrol('Parent', DisplayGUI, ...
-%             'Style', 'popupmenu', 'String',  {'Photons'}, ...
-%             'Position', [50, 95, 100, 25]);
-%
-%         % Add a display button to the GUI figure.
-%         uicontrol('Parent', DisplayGUI, 'Style', 'pushbutton', ...
-%             'String', 'Display Plot', 'Position', [65, 45, 70, 25], ...
-%             'Callback', @displayPlotPushed);
-%
-%         % Store the handle to the dropdown menu in the TrajInfoStruct (this
-%         % might be a sloppy way to pass this around but I don't see it
-%         % causing any issues).
-%         TrajInfoStruct.PlotDropdownMenu = PlotDropdownMenu;
-%     end
-%
-%     function displayPlotPushed(~, ~)
-%         % This is a callback for the Display Plot button within the display
-%         % plot GUI, which will plot the information about a clicked
-%         % trajectory from the drop down menu.
-%
-%         % Grab various fields from the TrajInfoStruct that we may need.
-%         CurrentTrajectoryID = TrajInfoStruct.CurrentlySelectedTrajectory;
-%         PlotDropdownMenu = TrajInfoStruct.PlotDropdownMenu;
-%         TRLocal = TrajInfoStruct.TR;
-%
-%         % Create a new figure and plot the trajectory information as
-%         % selected by the drop down menu in the display plot GUI.
-%         DropdownString = PlotDropdownMenu.String;
-%         DropdownValue = PlotDropdownMenu.Value;
-%         DesiredPlotString = DropdownString{DropdownValue};
-%         PhotonFigureWindow = findobj('Tag', 'PhotonFigure');
-%         if isempty(PhotonFigureWindow)
-%             PhotonFigureWindow = figure('Tag', 'PhotonFigure');
-%         end
-%         figure(PhotonFigureWindow); % ensure we use the correct figure
-%         hold('on');
-%         switch DesiredPlotString
-%             case 'Photons'
-%                 % Extract the photons array for this trajectory from the TR
-%                 % structure, converting units if necessary.
-%                 CurrentTrajBool = (cell2mat({TRLocal.TrajectoryID}) ...
-%                     == CurrentTrajectoryID);
-%                 FrameNum = TRLocal(CurrentTrajBool).FrameNum;
-%                 FrameNum = (FrameNum-1) ...
-%                     *TrajInfoStruct.UnitFlag/TrajInfoStruct.FrameRate ...
-%                     + FrameNum*~TrajInfoStruct.UnitFlag;
-%                 PhotonsArray = TRLocal(CurrentTrajBool).Photons;
-%
-%                 % Plot the Photons and label the axes.
-%                 plot(FrameNum, PhotonsArray, 'x')
-%                 title('Photons')
-%                 xlabel(sprintf('%s (%s)', ...
-%                     TrajInfoStruct.TimeDimensionString, ...
-%                     TrajInfoStruct.TimeUnitString), ...
-%                     'Interpreter', 'Latex')
-%                 ylabel('Photons', 'Interpreter', 'Latex')
-%         end
-%     end
-%
+
+    function displayPlots(~, ~)
+        % This is a callback function to respond to clicks of the Display
+        % Plots button.  Clicking that button will open a small GUI with a
+        % dropdown menu to allow for display of various plots related to
+        % the currently clicked trajectory.
+        
+        % Create the figure for the small GUI.
+        DisplayGUI = figure('NumberTitle', 'off', 'Resize', 'off', ...
+            'Units', 'pixels', 'MenuBar', 'none', ...
+            'ToolBar', 'none', 'Position', [500, 500, 200, 150]);
+        
+        % Add text to the GUI to guide user control.
+        uicontrol('Parent', DisplayGUI, 'Style', 'text', ...
+            'String', 'Select Plot:', 'Position', [70, 125, 60, 15]);
+        
+        % Add a drop-down menu to the GUI figure.
+        DropdownMenu = uicontrol('Parent', DisplayGUI, ...
+            'Style', 'popupmenu', 'String', obj.DispPlotsOptions, ...
+            'Position', [50, 95, 100, 25]);
+        
+        % Add a display button to the GUI figure.
+        uicontrol('Parent', DisplayGUI, 'Style', 'pushbutton', ...
+            'String', 'Display Plot', 'Position', [65, 45, 70, 25], ...
+            'Callback', {@displayPlotPushed, DropdownMenu});
+    end
+
+
+    function displayPlotPushed(~, ~, DropdownMenu)
+        % This is a callback for the Display Plot button within the display
+        % plot GUI, which will plot the information about a clicked
+        % trajectory from the drop down menu.
+
+        % Create a new figure and plot the trajectory information as
+        % selected by the drop down menu in the display plot GUI.
+        DisplayPlotsFigure = findobj('Tag', 'DisplayPlotsFigure');
+        if isempty(DisplayPlotsFigure)
+            DisplayPlotsFigure = figure('Tag', 'DisplayPlotsFigure');
+        end
+        figure(DisplayPlotsFigure)
+        PlotAxes = axes(DisplayPlotsFigure);
+        hold(PlotAxes, 'on');
+        
+        % Extract the desired field from the TR structure.
+        DropdownString = DropdownMenu.String;
+        DropdownValue = DropdownMenu.Value;
+        DesiredPlotString = DropdownString{DropdownValue};
+        CurrentTrajBool = (cell2mat({obj.TR.ConnectID}) ...
+            == CurrentTrajectory);
+        DesiredField = obj.TR(CurrentTrajBool).(DesiredPlotString);
+        FrameNum = obj.TR(CurrentTrajBool).FrameNum;
+        assert(numel(FrameNum) == numel(DesiredField), ...
+            ['The selected field is not the same length as ', ...
+            'TR.FrameNum and cannot be plotted'])
+        plot(PlotAxes, FrameNum, DesiredField, 'x')
+        xlabel(PlotAxes, 'Frame number (frames)')
+    end
 
 
 end
