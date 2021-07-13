@@ -59,18 +59,20 @@ end
 [Link12] = smi.SPT.solveLAP(CM);
 [TD] = smi.SPT.connectTrajGC(TD, Link12);
 TR = smi_core.TrackingResults.convertSMDToTR(TD);
-[TR.PixelSize] = deal(SimParams.PixelSize);
-[TR.FrameRate] = deal(SimParams.FrameRate);
 
 % Make some plots.
-PlotFigure = figure();
-SMA_SPT.plot2D(PlotFigure, TR)
-PlotFigure = figure();
-SMA_SPT.plot3D(PlotFigure, TR)
-PlotFigure = figure();
-DisplayParams.MaxTrajDisplayLength = 10; % frames
-DisplayParams.AutoPlay = 0;
-SMA_SPT.movieTraj(PlotFigure, TR, RawData, [], [], DisplayParams);
+% PlotFigure = figure();
+% SMA_SPT.plot2D(PlotFigure, TR)
+% PlotFigure = figure();
+% SMA_SPT.plot3D(PlotFigure, TR)
+
+% Make a movie.
+MovieMaker = smi_vis.GenerateMovies;
+MovieMaker.TR = TR;
+MovieMaker.RawData = RawData;
+MovieMaker.SMF.Data.PixelSize = SimParams.PixelSize;
+MovieMaker.SMF.Data.FrameRate = SimParams.FrameRate;
+MovieMaker.gui()
 
 % Indicate success (this should be done in a better way, just setting it to
 % 1 here isn't very useful).
