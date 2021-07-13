@@ -19,9 +19,6 @@ properties
     SMD               % SMD structure with final analysis results
     SMF               % Single Molecule Fitting structure
     PlotDo = [] % Plots to generate (all by default);see generatePlots comments
-    %       Preset      % {'TIRF', 'Sequential'} good idea?
-    %       Data        % Current dataset or used for manual setting of data
-    %       DataType    % {'File', 'UserDefined'} ?
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1       % Verbosity level
@@ -31,7 +28,7 @@ end
 % =========================================================================
 
 % =========================================================================
-properties (Access=protected)
+properties (Hidden)
     DC                % DriftCorrection class object used internally
 
     % Top level results directory: A few special results/plots (like GaussIm)
@@ -40,7 +37,7 @@ properties (Access=protected)
     % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
     % be derived from the dataset name and analysis ID.
     ResultsDir = []   % This is set from SMF.Data.ResultsDir
-end % properties (Access=protected)
+end % properties (Hidden)
 % =========================================================================
 
 % =========================================================================
@@ -88,24 +85,6 @@ methods
         if StartGUI
             obj.gui();
         end
-
-    end
-
-    % ---------------------------------------------------------------------
-
-    function setSMD(obj, SMD)
-        % Interface to set the SMD property of the object.
-
-        obj.SMD = SMD;
-
-    end
-
-    % ---------------------------------------------------------------------
-
-    function SMD = getSMD(obj)
-        % Interface to get the SMD property of the object.
-
-        SMD = obj.SMD;
 
     end
 
