@@ -20,13 +20,20 @@ if nargin<2 || isempty(Hist_Name)
 end
 
 Vector_in = single(Vector_in);
-Nbin=single(50); % number of bins in histogram
+Nbin=50; % number of bins in histogram
+
+% In order to produce a better scaled histogram, filter out the top 1%
+% of the values.
+P = prctile(Vector_in, 99);
+V = Vector_in(Vector_in < P);
 
 % Plot the histogram of Hist_Name
 FigHandle=figure;
-hist(Vector_in,Nbin);
-xlabel(sprintf('%s',Hist_Name));
+hold on
+h = histogram(V, Nbin);
+xlabel(sprintf('%s', Hist_Name));
 ylabel('Frequency');
-title(sprintf('Histogram of %s',Hist_Name));
+title(sprintf('Histogram of %s', Hist_Name));
+hold off
 
 end
