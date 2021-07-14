@@ -30,7 +30,7 @@ for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
     obj.DiffusionEstimator.TR = obj.TR;
     DiffusionStruct = obj.DiffusionEstimator.estimateDiffusionConstant();
     obj.SMF.Tracking.D = DiffusionStruct(2).DiffusionConstant;
-    if obj.UseTrackByTrackD
+    if obj.SMF.Tracking.TrajwiseD
         % Store the trajectory-wise diffusion constants in the TR
         % structures.
         DiffusionConstantCurrent = ...
