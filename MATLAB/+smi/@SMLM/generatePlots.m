@@ -122,7 +122,7 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
    end 
 
    % Estimated 2D or 3D cumulative drift
-   if ismember("Drift", PlotDo)
+   if ismember("CumDrift", PlotDo)
       DC = smi_core.DriftCorrection;
       DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
       figDC = DC.plotDriftCorrection(SMD, 'R');
