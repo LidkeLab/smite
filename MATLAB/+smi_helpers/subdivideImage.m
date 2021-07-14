@@ -34,7 +34,7 @@ if isrow(SubROISize)
 end
 
 % Define the ROIs of the subdivided images.
-NDivisions = ceil(size(Image).' ./ SubROISize);
+NDivisions = ceil(ImageSize.' ./ SubROISize);
 YStart = repmat(1 + SubROISize(1)*(0:(NDivisions(1)-1)).', ...
     [NDivisions(2), 1]);
 XStart = repelem(1 + SubROISize(2)*(0:(NDivisions(2)-1)).', ...
