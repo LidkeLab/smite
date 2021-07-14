@@ -28,7 +28,7 @@ end
 % =========================================================================
 
 % =========================================================================
-properties (Hidden)
+properties %(Hidden)
     DC                % DriftCorrection class object used internally
 
     % Top level results directory: A few special results/plots (like GaussIm)
@@ -37,7 +37,7 @@ properties (Hidden)
     % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
     % be derived from the dataset name and analysis ID.
     ResultsDir = []   % This is set from SMF.Data.ResultsDir
-end % properties (Hidden)
+end % properties %(Hidden)
 % =========================================================================
 
 % =========================================================================
