@@ -23,7 +23,7 @@ function [DividedImages, ImageROIs] = subdivideImage(Image, SubROISize)
 
 
 % Set defaults if needed.
-ImageSize = size(Image);
+ImageSize = size(Image, [1, 2]);
 if (~exist('SubROISize', 'var') || isempty(SubROISize))
     SubROISize = ImageSize.';
 end
@@ -48,7 +48,7 @@ NROIs = prod(NDivisions);
 DividedImages = cell(NROIs, 1);
 for nn = 1:NROIs
     DividedImages{nn} = Image(ImageROIs(nn, 1):ImageROIs(nn, 3), ...
-        ImageROIs(nn, 2):ImageROIs(nn, 4));
+        ImageROIs(nn, 2):ImageROIs(nn, 4), :);
 end
 
 
