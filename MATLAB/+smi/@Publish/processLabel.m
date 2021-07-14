@@ -90,7 +90,7 @@ for ii = 1:NDataFiles
         
         % Place this in a try/catch so that we can still proceed with
         % the other analyses if this fails.
-%         try
+        try
             % Perform SR analysis, but don't save the results yet!
             obj.SMLM.SMF.Data.ResultsDir = SaveDir;
             obj.SMLM.FullvsTest = true;
@@ -133,14 +133,14 @@ for ii = 1:NDataFiles
                 copyfile(fullfile(ResultsFile.folder, ResultsFile.name), ...
                     fullfile(ResultsStructDir, NewName));
             end
-%         catch MException
-%             if obj.Verbose
-%                 warning(['Publish.processLabel(): ', ...
-%                     'Unable to generate SR images for %s\n%s, %s'], ...
-%                     DataFileNames{ii}, ...
-%                     MException.identifier, MException.message)
-%             end
-%         end
+        catch MException
+            if obj.Verbose
+                warning(['Publish.processLabel(): ', ...
+                    'Unable to generate SR images for %s\n%s, %s'], ...
+                    DataFileNames{ii}, ...
+                    MException.identifier, MException.message)
+            end
+        end
     end
 end
 
