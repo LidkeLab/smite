@@ -142,7 +142,8 @@ function DC_fig = plotDriftCorrection(obj, SMD, option)
    if Ndims == 3
       zlabel('z (nm)');
    end
-   
+   axis equal
+
    hold off
 
 end
