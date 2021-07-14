@@ -1,5 +1,5 @@
 classdef LoadData < handle
-    % LoadData has methods to load raw microsope dataset from .mat, .ics or
+    % LoadData has methods to load raw microsope dataset from .mat or
     % .h5 format files.
     %
     % INPUTS:
@@ -10,7 +10,7 @@ classdef LoadData < handle
     %   with a pop-up window.
     %   varargin - input arguments helping to locate the 'data' to be
     %   loaded from the data file. This varies for the different file
-    %   extensions (.mat, .ics and .h5). For details please see
+    %   extensions (.mat and .h5). For details please see
     %   documentation for the methods.
     %
     % OUTPUTS:
@@ -19,7 +19,7 @@ classdef LoadData < handle
     %   if not present.
     %
     % METHODS:
-    %   loadDataMat, loadDataIcs, loadDataH5
+    %   loadDataMat, loadDataH5
     %
     % CITATION:
     %   Sandeep Pallikkuth, Lidke Lab, 2020
@@ -40,9 +40,7 @@ classdef LoadData < handle
             %    varargin - input parameters, different for each file type:
             %       mat: DatasetNum, number indicating the file in
             %               SMF.Data.FileName cell array
-            %           MatVarName, name of matlab variable containing the data
             %            
-            %       ics: no parameters needed
             %       h5: DatasetIdx, index of dataset to be loaded from h5 file
             %           ChannelIdx (optional), index of channel to be loaded, default is 1
             % OUTPUT
@@ -61,7 +59,7 @@ classdef LoadData < handle
             else
                 % If Filename entry not present in SMF, option to choose
                 % the file/s
-                [filename, pathname]=uigetfile('Y:\*.mat;*.mat;*.ics;*.h5','MultiSelect','on');
+                [filename, pathname]=uigetfile('Y:\*.mat;*.mat;*.h5','MultiSelect','on');
                 SMF.Data.FileName=filename;
                 SMF.Data.FileDir=pathname;
                 SMF.Data.ResultsDir=fullfile(pathname,'Results');
@@ -76,10 +74,10 @@ classdef LoadData < handle
             switch obj.FileType
                 case 'mat'
                     % loading images from .mat file/s
+                    % MatVarName, name of matlab variable containing the data
+                    MatVarName = SMF.Data.DataVariable;
+                    varargin = {varargin{:}, MatVarName};
                     Data=smi_core.LoadData.loadDataMat(obj.FullFileName,varargin);
-                case 'ics'
-                    % loading images from .ics file
-                    Data=smi_core.LoadData.loadDataIcs(obj.FullFileName,varargin);
                 case '.h5'
                     % loading images from .h5 file
                     Data=smi_core.LoadData.loadDataH5(obj.FullFileName,varargin);
@@ -143,18 +141,6 @@ classdef LoadData < handle
                 Data = single(tmp.(MatVarName));
             end
                 
-        end
-        
-        function [Data]=loadDataIcs(FullFileName,varargin)
-            % static method for loading .ics file
-            % no input arguments needed
-            % INPUT
-            %    FullFileName - full path to datafile, must be .ics
-            %    Eg:  [Data] = smi_core.LoadData.loadDataIcs('FullFileName.ics')
-            % OUTPUT
-            %    Data - data loaded from FileName, converted to type single
-            tmp = readim(FullFileName);
-            Data = single(tmp);
         end
         
         function [Data] = loadDataH5(FullFileName,varargin)

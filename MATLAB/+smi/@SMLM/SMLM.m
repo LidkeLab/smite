@@ -194,7 +194,9 @@ methods
         if obj.Verbose >= 1
             fprintf('Loading dataset %d ...\n', DatasetIndex);
         end
-        [Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
+        LD = smi_core.LoadData;
+        [~, Dataset, obj.SMF]=LD.loadRawData(obj.SMF,DatasetIndex);
+        %[Dataset, obj.SMF]=obj.loadDataset(obj.SMF,DatasetIndex);
 
         % Perform the gain and offset correction.
         DTP = smi_core.DataToPhotons(obj.SMF, Dataset, [], [], obj.Verbose);
@@ -233,19 +235,19 @@ methods
 
     % ---------------------------------------------------------------------
 
-    function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
-        % loadDataset loads a dataset and converts to photons.
-        % set obj.Data
-        LD = smi_core.LoadData;
-        switch SMF.Data.FileType
-            case 'mat'
-                [~, Dataset, SMF] = ...
-                    LD.loadRawData(SMF, DatasetIndex, SMF.Data.DataVariable);
+%   function [Dataset, SMF]=loadDataset(obj,SMF,DatasetIndex)
+%       % loadDataset loads a dataset and converts to photons.
+%       % set obj.Data
+%       LD = smi_core.LoadData;
+%       switch SMF.Data.FileType
+%           case 'mat'
+%               [~, Dataset, SMF] = ...
+%                   LD.loadRawData(SMF, DatasetIndex, SMF.Data.DataVariable);
 
-            case 'h5'
-                [~, Dataset, SMF] = LD.loadRawData(SMF, DatasetIndex);
-        end % switch
-    end
+%           case 'h5'
+%               [~, Dataset, SMF] = LD.loadRawData(SMF, DatasetIndex);
+%       end % switch
+%   end
 
     % ---------------------------------------------------------------------
 
