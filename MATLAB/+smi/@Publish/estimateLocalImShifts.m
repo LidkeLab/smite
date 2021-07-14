@@ -1,6 +1,6 @@
 function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
-    estimateLocalShifts(Image1, Image2, SubROISize, MaxOffset, UseGPU)
-%estimateLocalShifts estimates local shifts between two images.
+    estimateLocalImShifts(Image1, Image2, SubROISize, MaxOffset, UseGPU)
+%estimateLocalImShifts estimates local shifts between two images.
 %
 % INPUT:
 %   Image1: The stack to which Image2 is compared to, i.e. 
@@ -24,6 +24,7 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
 %                   the cross-correlation. (NROIsx2 float)
 %   ImageROIs: ROIs of the regions corresponding to the pixel offsets.
 %              (NROIsx4 array)([YStart, XStart, YEnd, XEnd])
+%   ImageStats: Structure containing some stats about the ImageROIs.
 %
 % REQUIRES: 
 %   matlab-instrument-control, to use findStackOffset()

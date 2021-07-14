@@ -103,7 +103,7 @@ classdef Publish < handle
         
     end
     
-    methods(Static)
+    methods (Static)
         genSROverlays(ResultsCellDir, SaveDir)
         [OverlayImage, ColorOrderTag] = overlayNImages(ImageStack);
         genOverlayPlots(ImageShift, RegError, MaxCorr, SRPixelSize, ...
@@ -115,7 +115,10 @@ classdef Publish < handle
             SRPixelSize, BPPixelSize, SaveDir)
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
         [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
-            estimateLocalShifts(Image1, Image2, ...
+            estimateLocalImShifts(Image1, Image2, ...
+            SubROISize, MaxOffset, UseGPU);
+        [SubPixelOffsets, SMDROIs, SMDStats] = ...
+            estimateLocalCoordShifts(SMD1, SMD2, ...
             SubROISize, MaxOffset, UseGPU);
     end
     
