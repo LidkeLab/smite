@@ -105,16 +105,21 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     % Tracking          {SPT}
     %   Method:         Type of method used for tracking (Default='CostMatrix')
     %   D:              Diffusion Constant (Pixels^2/Frame) (Default=0.01)
+    %   TrajwiseD:      Use traj.-wise value for D (logical)(Default=true)
     %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
     %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
     %   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
+    %   EstimateRho:    Estimate rho from the data (logical)(Default = true)
     %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
-    %   MinTrackLength  Minimum track length of trajectory (Frames) (Default=3)
+    %   MinTrackLength: Minimum track length of trajectory (Frames) (Default=3)
+    %   NRecursionsMax: Max. number of recursive tracking attempts (Integer)(Default = 10)
+    %   MaxRelativeChange: Max. relative param. change to end recursions (Default = 1e-5)
     %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=inf)
     %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=inf)
     %   MaxZScoreD: Max. abs(z-score) for diffusion constant diffs. (Default=inf)
+    %   TryLowPValueLocs: Try to incorporate low p-val. locs. (Default=false)
     
     % created by:
     % Keith Lidke, Hanieh Mazloom-Farsibaf, David Schodt. Lidke Lab 2018
@@ -219,16 +224,21 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             %Tracking
             obj.Tracking.Method='CostMatrix';
             obj.Tracking.D=0.01;
+            obj.Tracking.TrajwiseD=true;
             obj.Tracking.K_on=.1;
             obj.Tracking.K_off=.1;
             obj.Tracking.Rho_off=1e-3;
+            obj.Tracking.EstimateRho=true;
             obj.Tracking.MaxDistFF=5;
             obj.Tracking.MaxDistGC=10;
+            obj.Tracking.MaxFrameGap=10;
+            obj.Tracking.MinTrackLength=3;
             obj.Tracking.MaxZScoreDist=inf;
             obj.Tracking.MaxZScorePhotons=inf;
             obj.Tracking.MaxZScoreD=inf;
-            obj.Tracking.MaxFrameGap=10;
-            obj.Tracking.MinTrackLength=3;
+            obj.Tracking.NRecursionsMax=10;
+            obj.Tracking.MaxRelativeChange=1e-5;
+            obj.Tracking.TryLowPValueLocs=false;
             
             % Store a note about the unit/type of various sub-fields.
             % NOTE: Sub-structs (e.g., SMF.Fitting.ZFitStruct, should only
@@ -294,9 +304,11 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.Method.Units = ...
                 'must be CostMatrix for now';
             obj.SMFFieldNotes.Tracking.D.Units = 'pixel^2 / frame';
+            obj.SMFFieldNotes.Tracking.TrajwiseD.Units = 'logical';
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
+            obj.SMFFieldNotes.Tracking.EstimateRho.Units = 'logical';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxZScoreDist.Units = '';
@@ -305,6 +317,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
+            obj.SMFFieldNotes.Tracking.NRecursionsMax.Units = '';
+            obj.SMFFieldNotes.Tracking.MaxRelativeChange.Units = '';
+            obj.SMFFieldNotes.Tracking.TryLowPValueLocs.Units = 'logical';
             
             % Store a 'tip' for certain sub-fields (intended to be
             % displayed in the GUI as a tooltip when hovering over
@@ -461,6 +476,10 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.D.Tip = ...
                 sprintf(['Known/anticipated diffusion constant of\n', ...
                 'emitters present in the raw data.']);
+            obj.SMFFieldNotes.Tracking.TrajwiseD.Tip = ...
+                sprintf(['Use trajectory-wise value for D when\n', ...
+                'recursively tracking.  ''NRecursionsMax'' must be\n', ...
+                'at least 2 to use this property']);
             obj.SMFFieldNotes.Tracking.K_on.Tip = ...
                 sprintf(['Known/anticipated rate at which dark\n', ...
                 'emitters become fluorescent/return from a dark state.']);
@@ -469,6 +488,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 'transition to a dark state.']);
             obj.SMFFieldNotes.Tracking.Rho_off.Tip = ...
                 sprintf('Density of emitters in the dark state');
+            obj.SMFFieldNotes.Tracking.EstimateRho.Tip = ...
+                'Estimate emitter densities directly from the data.';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Tip = ...
                 sprintf(['Maximum separation between localizations\n', ...
                 'such that they can still be considered candidates\n', ...
@@ -494,6 +515,16 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 sprintf(['Minimum number of observations\n', ...
                 '(localizations) a trajectory must have to not be\n', ...
                 'culled after tracking']);
+            obj.SMFFieldNotes.Tracking.NRecursionsMax.Tip = ...
+                'Max. # of recursions permitted if recursively tracking.';
+            obj.SMFFieldNotes.Tracking.MaxRelativeChange.Tip = ...
+                sprintf(['Max. relative change in parameters allowed\n', ...
+                'before ending recursive tracking']);
+            obj.SMFFieldNotes.Tracking.TryLowPValueLocs.Tip = ...
+                sprintf(['Attempt to track with localizations that\n', ...
+                'were thresholded based on their p-value.  If those\n', ...
+                'localizations are incorporated into trajectories,\n', ...
+                'they are kept, otherwise they are discarded.']);
             
             % Check that the protected property 'SMFFieldNames' makes
             % sense, i.e., it doesn't have entries that don't exist as
@@ -965,6 +996,16 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                     error('''SMF.Tracking.D'' must be numeric.')
                 end
             end
+            if isfield(TrackingInput, 'TrajwiseD')
+                if ~(islogical(TrackingInput.TrajwiseD) ...
+                        || isnumeric(TrackingInput.TrajwiseD))
+                    error(['''SMF.Tracking.TrajwiseD'' must be ', ...
+                        'logical or interpretable as logical (numeric).'])
+                elseif isnumeric(TrackingInput.TrajwiseD)
+                    TrackingInput.TrajwiseD = ...
+                        logical(TrackingInput.TrajwiseD);
+                end
+            end
             if isfield(TrackingInput, 'K_on')
                 if ~isnumeric(TrackingInput.K_on)
                     error('''SMF.Tracking.K_on'' must be numeric.')
@@ -978,6 +1019,16 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             if isfield(TrackingInput, 'Rho_off')
                 if ~isnumeric(TrackingInput.Rho_off)
                     error('''SMF.Tracking.Rho_off'' must be numeric.')
+                end
+            end
+            if isfield(TrackingInput, 'EstimateRho')
+                if ~(islogical(TrackingInput.EstimateRho) ...
+                        || isnumeric(TrackingInput.EstimateRho))
+                    error(['''SMF.Tracking.EstimateRho'' must be ', ...
+                        'logical or interpretable as logical (numeric).'])
+                elseif isnumeric(TrackingInput.EstimateRho)
+                    TrackingInput.EstimateRho = ...
+                        logical(TrackingInput.EstimateRho);
                 end
             end
             if isfield(TrackingInput, 'MaxDistFF')
@@ -1016,6 +1067,28 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 if mod(TrackingInput.MinTrackLength, 1)
                     error(['''SMF.Tracking.MinTrackLength'' ', ...
                         'must be an integer.'])
+                end
+            end
+            if isfield(TrackingInput, 'NRecursionsMax')
+                if mod(TrackingInput.NRecursionsMax, 1)
+                    error(['''SMF.Tracking.NRecursionsMax'' ', ...
+                        'must be an integer.'])
+                end
+            end
+            if isfield(TrackingInput, 'MaxRelativeChange')
+                if ~isnumeric(TrackingInput.MaxRelativeChange)
+                    error(['''SMF.Tracking.MaxRelativeChange'' ', ...
+                        'must be numeric'])
+                end
+            end
+            if isfield(TrackingInput, 'TryLowPValueLocs')
+                if ~(islogical(TrackingInput.TryLowPValueLocs) ...
+                        || isnumeric(TrackingInput.TryLowPValueLocs))
+                    error(['''SMF.Tracking.TryLowPValueLocs'' must be ', ...
+                        'logical or interpretable as logical (numeric).'])
+                elseif isnumeric(TrackingInput.TryLowPValueLocs)
+                    TrackingInput.TryLowPValueLocs = ...
+                        logical(TrackingInput.TryLowPValueLocs);
                 end
             end
             

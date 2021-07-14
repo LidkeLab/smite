@@ -22,7 +22,7 @@ for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
 end
 
 % Throw away unconnected low p-value localizations.
-if obj.TryLowPValueLocs
+if obj.SMF.Tracking.TryLowPValueLocs
     obj.SMF.Thresholding.MinPValue = obj.SMFCopy.Thresholding.MinPValue;
     [GroupCounts, GroupIDs] = groupcounts(obj.SMD.ConnectID);
     UniqueTraj = GroupIDs(GroupCounts == 1);
@@ -40,10 +40,6 @@ Link12 = obj.solveLAP(CostMatrix);
 obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 
 % Add the framerate and pixel size to the outputs.
-% NOTE: This is a short term solution for back compatability.  WE WANT TO
-%       REMOVE THIS EVENTUALLY!
-[obj.SMD.FrameRate] = deal(obj.SMF.Data.FrameRate);
-[obj.SMD.PixelSize] = deal(obj.SMF.Data.PixelSize);
 FileInfoStruct.FileDir = obj.SMF.Data.FileDir;
 FileInfoStruct.FileName = obj.SMF.Data.FileName{1};
 obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD, FileInfoStruct);

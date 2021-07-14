@@ -17,8 +17,9 @@ obj.generateTrajectories()
 
 % If needed, perform the recursive tracking.
 OnesArray = ones(numel(obj.SMD.FrameNum), 1);
-obj.DiffusionEstimator.FitIndividualTrajectories = obj.UseTrackByTrackD;
-for rr = 1:(obj.NRecursionsMax-1)
+obj.DiffusionEstimator.FitIndividualTrajectories = ...
+    obj.SMF.Tracking.TrajwiseD;
+for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
     % Send an update to the command window.
     if (obj.Verbose > 1)
         fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
@@ -70,7 +71,7 @@ for rr = 1:(obj.NRecursionsMax-1)
     obj.SMF.Tracking.K_off = KOff;
     
     % Estimate the density of off emitters (if requested).
-    if obj.EstimateRhoFromData
+    if obj.SMF.Tracking.EstimateRho
         RhoOnMean = ...
             mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
         obj.SMF.Tracking.Rho_off = RhoOnMean ...
@@ -89,7 +90,7 @@ for rr = 1:(obj.NRecursionsMax-1)
     RhoOffChange = abs((PreviousParams.Rho_off-obj.SMF.Tracking.Rho_off) ...
         / PreviousParams.Rho_off);
     if  all([DChange, KOnChange, KOffChange, RhoOffChange] ...
-            <= obj.MaxRelativeChange)
+            <= obj.SMF.Tracking.MaxRelativeChange)
         return
     end
     % Store the current set of tracking parameters.

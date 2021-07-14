@@ -8,41 +8,10 @@ classdef SPT < handle
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
         SMF
         
-        % Indicate SMF.Tracking.Rho_off can be overwritten (Default = true)
-        % See obj.autoTrack() for usage.
-        % NOTE: As of this writing, this only makes an appearance in
-        %       obj.autoTrack(). If you aren't using that method, the dark
-        %       emitter density Rho_off will be taken from 
-        %       SMF.Tracking.Rho_off.
-        EstimateRhoFromData = true;
-        
-        % Max. number of recursions for recursive tracking (Default = 5)
-        % NOTE: When using UseTrackByTrackD = true, this should be at least
-        %       2.
-        NRecursionsMax = 5;
-        
-        % Max. relative param. change to end recursion (Default = 1e-5)
-        % NOTE: This can probably be much much lower, as when things
-        %       converge the parameter differences shouldn't change at all,
-        %       so this is more of a tolerance for floating-point errors.
-        MaxRelativeChange = 1e-5;
-        
-        % Use track-by-track diffusion constants (Default = false)
-        % See obj.performFullAnalysis() for usage.
-        % NOTE: NRecursionsMax should be at least 2 to use this property.
-        UseTrackByTrackD = false;
-        
-        % Keep low p-value loc.'s for f2f connection (Default = false)
-        % If this flag is enabled, the p-value thresholding won't occur
-        % until after frame-to-frame connections. Any localization
-        % incorporated into a trajectory will not be thresholded,
-        % regardless of the setting in obj.SMF.Thresholding.MinPValue.
-        TryLowPValueLocs = false
-        
         % Diffusion estimator class for when UseTrackByTrackD is set.
         % NOTE: This is used here so that the user can change properties of
         %       the DiffusionEstimator class as needed when using 
-        %       obj.UseTrackByTrackD
+        %       obj.SMF.Tracking.TrajwiseD
         DiffusionEstimator
         
         % Marker to ignore entries in cost matrices (Default = -1)
