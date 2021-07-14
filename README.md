@@ -20,10 +20,63 @@ For full functionality ***smite*** requires:
 - MATLAB Statistics and Machine Learning Toolbox
 
 ## Examples
-### High level SMLM analysis
+### Working with SMF
+SMF is implemented as a class to enable a gui and to provide useful helper methods.  However, the most common use will be as a structure with fixed fields.  
+
+Create an SMF object:
+```
+  SMF=smi_core.SingleMoleculeFitting()
+```
+Get an SMF property
+```
+  B=SMF.BoxFinding.BoxOverlap
+```
+Set an SMF property
+```
+SMF.BoxFinding.BoxOverlap=0
+```
+Use the SMF GUI to interactive set values:
+```
+SMF.gui()
+```
 
 ### Finding coordinates from a stack of images containing blobs
 
+Create a test dataset and make it noisy
+```
+B=smi_sim.GaussBlobs.genRandomBlobImage();
+B=poissrnd(B);
+```
+Create an `SMF` object with default values:
+```
+SMF=smi_core.SingleMoleculeFitting()
+```
+Create a `LocalizeData` object with our `SMF`
+```
+LD = smi_core.LocalizeData(B, SMF)
+```
+Localize
+```
+[SMD] = LD.genLocalizations();
+```
+
+Localize again with `Verbose=2` to show color overlay output
+```
+LD.Verbose=2
+[SMD] = LD.genLocalizations();
+```
+
+### High level SMLM analysis
+
+Create a SMLM object.  When there is no input aruments, it will open the GUI. 
+```
+SMLMobj=smi.SMLM()  
+```
+Use GUI to navigate to a test dataset such as this TIRF DNA-PAINT: 
+
+Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin\Dock2-Cell1-2020-11-12-10-29-58.h5
+
+Set SMF values from within GUI and run either a test dataset or analyze all datasets. 
 
 
 
