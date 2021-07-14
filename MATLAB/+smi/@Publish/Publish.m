@@ -106,8 +106,7 @@ classdef Publish < handle
     methods (Static)
         genSROverlays(ResultsCellDir, SaveDir)
         [OverlayImage, ColorOrderTag] = overlayNImages(ImageStack);
-        genOverlayPlots(ImageShift, RegError, MaxCorr, SRPixelSize, ...
-            BPPixelSize, SaveDir)
+        genOverlayPlots(ImageShift, RegError, MaxCorr, BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
         [StatsStruct] = genAlignStats(AlignRegStruct, SMD, SaveDir);
         [XCorrStruct] = genAlignXCorr(AlignRegStruct, SaveDir);
@@ -118,8 +117,7 @@ classdef Publish < handle
             estimateLocalImShifts(Image1, Image2, ...
             SubROISize, MaxOffset, UseGPU);
         [SubPixelOffsets, SMDROIs, SMDStats] = ...
-            estimateLocalCoordShifts(SMD1, SMD2, ...
-            SubROISize, MaxOffset, UseGPU);
+            estimateLocalCoordShifts(SMD1, SMD2, SubROISize);
     end
     
     

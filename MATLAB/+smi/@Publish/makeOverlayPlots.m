@@ -1,5 +1,5 @@
 function [] = makeOverlayPlots(ImageShift, RegError, MaxCorr, ...
-    SRPixelSize, BPPixelSize, SaveDir)
+    BPPixelSize, SaveDir)
 %makeOverlayPlots makes interesting plots from two color overlays
 % This method will estimate shifts and registration errors from the data
 % used to generate the two images in ImageStack.
@@ -20,8 +20,6 @@ function [] = makeOverlayPlots(ImageShift, RegError, MaxCorr, ...
 %            cell array, with the row index of the cell array corresponding
 %            to a row in ImageShift and the column index corresponding to
 %            the label number.
-%   SRPixelSize: Size of a pixel in the SR images as projected onto the
-%                sample plane. (microns)(default = 0.005)
 %   BPPixelSize: Size of a pixel in the raw data as projected onto the
 %                sample plane. (microns)(default = 0.1)
 %   SaveDir: Directory in which output plots will be saved.
@@ -31,15 +29,12 @@ function [] = makeOverlayPlots(ImageShift, RegError, MaxCorr, ...
 
 
 % Set defaults if needed.
-if (~exist('SRPixelSize', 'var') || isempty(SRPixelSize))
-    SRPixelSize = 0.005; % microns
-end
 if (~exist('BPPixelSize', 'var') || isempty(BPPixelSize))
     BPPixelSize = 0.1; % microns
 end
 
 % Convert ImageShift and RegError to units of nanometers.
-ImageShift = ImageShift * SRPixelSize * 1e3; % pixel -> micron -> nanometer
+ImageShift = ImageShift * BPPixelSize * 1e3; % pixel -> micron -> nanometer
 RegError = cellfun(@(x) x * BPPixelSize * 1e3, RegError, ...
     'UniformOutput', false); % pixel -> micron -> nanometer
 

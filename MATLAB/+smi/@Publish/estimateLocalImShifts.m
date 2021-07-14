@@ -13,7 +13,6 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
 %   MaxOffset: Max offset for which the cross correlation is computed
 %              between the two images. 
 %              (Pixels)(Default = ceil(SubROISize / 4))
-%   ImageStats: Structure contain misc. stats about the set of sub-images.
 %
 % OUTPUT:
 %   PixelOffset: The integer pixel offset of Image2 relative to Image1,

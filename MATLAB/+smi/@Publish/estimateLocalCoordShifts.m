@@ -1,5 +1,5 @@
 function [SubPixelOffsets, SMDROIs, SMDStats] = ...
-    estimateLocalCoordShifts(SMD1, SMD2, SubROISize, MaxOffset, UseGPU)
+    estimateLocalCoordShifts(SMD1, SMD2, SubROISize)
 %estimateLocalCoordShifts estimates local shifts between two SMDs.
 %
 % INPUT:
@@ -13,7 +13,6 @@ function [SubPixelOffsets, SMDROIs, SMDStats] = ...
 %   MaxOffset: Max offset for which the cross correlation is computed
 %              between the two images. 
 %              (Pixels)(Default = ceil(SubROISize / 4))
-%   ImageStats: Structure contain misc. stats about the set of sub-images.
 %
 % OUTPUT:
 %   SubPixelOffsets: The pixel offset of SMD2 relative to SMD1.
@@ -36,12 +35,6 @@ DataSize = [SMD1.YSize, SMD1.XSize];
 if (~exist('SubROISize', 'var') || isempty(SubROISize))
     SubROISize = DataSize.';
 end
-if (~exist('MaxOffset', 'var') || isempty(MaxOffset))
-    MaxOffset = ceil(SubROISize / 4);
-end
-if (~exist('UseGPU', 'var') || isempty(UseGPU))
-    UseGPU = logical(gpuDeviceCount());
-end
 
 % Split the images up into the sub-ROIs.
 [SubSMDs1, SMDROIs] = smi_helpers.subdivideSMD(SMD1, SubROISize);
@@ -49,16 +42,19 @@ SubSMDs2 = smi_helpers.subdivideSMD(SMD2, SubROISize);
 
 % Loop through each ROI and compute the local shift.
 NROIs = size(SMDROIs, 1);
-SubPixelOffsets = zeros(NROIs, 2);
+SubPixelOffsets = NaN(NROIs, 2);
 for nn = 1:NROIs
-    SubPixelOffsets(nn, :) = ...
-        smi_core.DriftCorrection.regViaDC(SubSMDs1(nn), SubSMDs2(nn));
+    % If both SMDs have localizations, estimate the shift.
+    if ((numel(SubSMDs1(nn).X)>0) && (numel(SubSMDs1(nn).Y)>0))
+        SubPixelOffsets(nn, :) = ...
+            smi_core.DriftCorrection.regViaDC(SubSMDs1(nn), SubSMDs2(nn));
+    end
 end
 
 % If needed, compute some imaging stats. which might be useful to return.
-if (nargin > 3)
-    SMDStats.NLoc1 = cellfun(@(X) numel(X), {SubSMDs1.X});
-    SMDStats.NLoc2 = cellfun(@(X) numel(X), {SubSMDs2.X});
+if (nargin > 2)
+    SMDStats.NLoc1 = cellfun(@(X) numel(X), {SubSMDs1.X}).';
+    SMDStats.NLoc2 = cellfun(@(X) numel(X), {SubSMDs2.X}).';
 end
 
 
