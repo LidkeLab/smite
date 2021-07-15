@@ -103,8 +103,11 @@ SMDTransformed = ChannelReg.transformSMD(...
 
 % Apply the transform to an image (not meant to be viewed, just showing how
 % it can be done!).
+% NOTE: You should never transform your raw images before analyzing!  This
+%       should only be used for qualitative purposes, e.g., to make a movie
+%       with SPT data.
 NImages = 100;
-TestImages = randi(123, [FiducialSize, NImages]);
+TestImages = smi_sim.GaussBlobs.genRandomBlobImage(FiducialSize(1), NImages);
 TransformedImages = ChannelReg.transformImages(...
     ChannelReg.RegistrationTransform{2}, ...
     TestImages);
