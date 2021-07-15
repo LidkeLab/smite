@@ -26,6 +26,8 @@ SMF.Fitting.PSFSigma = 1.3;
 Verbose = 1;
 ChannelReg = smi_core.ChannelRegistration(...
     FiducialFileDir, FiducialFileNames, SMF, Verbose);
+ChannelReg.AutoscaleFiducials = true;
+ChannelReg.ManualCull = true;
 
 % Compute a locally weighted mean transform from the fiducials.
 % NOTE: The transform from fiducial 2 to fiducial 1 will be stored in 
@@ -38,25 +40,6 @@ ChannelReg.TransformationType = 'lwm';
 ChannelReg.TransformationBasis = 'coordinates';
 ChannelReg.NNeighborPoints = 12;
 ChannelReg.findTransform();
-
-% Apply the transform to an SMD structure.
-% NOTE: The important code is the call to ChannelReg.transformSMD().  The
-%       rest is just me preparing an arbitrary SMD structure.
-SMD = smi_core.SingleMoleculeData.createSMD();
-FiducialSize = diff(ChannelReg.FiducialROI([1, 2; 3, 4])) + 1;
-SMD.X = linspace(1, FiducialSize(2), 100).';
-SMD.Y = linspace(1, FiducialSize(1), 100).';
-SMDTransformed = ChannelReg.transformSMD(...
-    ChannelReg.RegistrationTransform{2}, ...
-    SMD);
-
-% Apply the transform to an image (not meant to be viewed, just showing how
-% it can be done!).
-NImages = 100;
-TestImages = randi(123, [FiducialSize, NImages]);
-TransformedImages = ChannelReg.transformImages(...
-    ChannelReg.RegistrationTransform{2}, ...
-    TestImages);
 
 % Visualize the performance of the channel registration.
 PlotFigure = figure();
@@ -78,6 +61,7 @@ ChannelReg.visualizeRegistrationError(PlotAxes, ...
 % Visualize the transform magnitude and gradient (this isn't usually useful
 % unless something went very wrong, in which case it might be obvious in
 % this plot!).
+FiducialSize = diff(ChannelReg.FiducialROI([1, 2; 3, 4])) + 1;
 PlotFigure = figure();
 ChannelReg.visualizeCoordTransform(PlotFigure, ...
     ChannelReg.RegistrationTransform{2}, FiducialSize);
@@ -90,8 +74,31 @@ PlotAxes = axes(PlotFigure);
 ChannelReg.visualizeImageTransform(PlotAxes, ...
     ChannelReg.RegistrationTransform{2}, FiducialSize);
 
-% % Save the transform.
-% ChannelReg.exportTransform([], pwd())
+% Apply the transform to an SMD structure.
+% NOTE: The important code is the call to ChannelReg.transformSMD().  The
+%       rest is just me preparing an arbitrary SMD structure.
+SMD = smi_core.SingleMoleculeData.createSMD();
+SMD.X = linspace(1, FiducialSize(2), 100).';
+SMD.Y = linspace(1, FiducialSize(1), 100).';
+SMDTransformed = ChannelReg.transformSMD(...
+    ChannelReg.RegistrationTransform{2}, ...
+    SMD);
+
+% Apply the transform to an image (not meant to be viewed, just showing how
+% it can be done!).
+NImages = 100;
+TestImages = randi(123, [FiducialSize, NImages]);
+TransformedImages = ChannelReg.transformImages(...
+    ChannelReg.RegistrationTransform{2}, ...
+    TestImages);
+
+% Save the transform.
+SaveDir = pwd();
+ChannelReg.exportTransform([], SaveDir)
+
+% Open the GUI, which can do all of the above actions (except transform an
+% SMD/transform images).
+ChannelReg.gui()
 
 %% Single fiducial image with two channels side by side.
 % Define the path to the fiducial files.
@@ -107,8 +114,11 @@ SMF = smi_core.SingleMoleculeFitting;
 SMF.Fitting.PSFSigma = 1.3;
 
 % Prepare the channel registration class.
+Verbose = 1;
 ChannelReg = smi_core.ChannelRegistration(...
-    FiducialFileDir, FiducialFileNames, SMF);
+    FiducialFileDir, FiducialFileNames, SMF, Verbose);
+ChannelReg.AutoscaleFiducials = true;
+ChannelReg.ManualCull = true;
 
 % Specify the fiducial file formatting. In this case, I'm specifying 
 % [1, 2], which means that the fiducial image will be evenly split along
