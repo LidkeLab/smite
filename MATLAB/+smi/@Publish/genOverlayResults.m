@@ -46,7 +46,7 @@ for nn = 1:NOverlays
         [1, 1] * SMD1.XSize / SubROIDivisor);
     
     % Compute an affine transform between the coordinates.
-    AffineTransforms{ii} = ...
+    AffineTransforms{nn} = ...
         smi_stat.findCoordAffine([SMD1.X, SMD1.Y], [SMD2.X, SMD2.Y], 50);
 end
 
