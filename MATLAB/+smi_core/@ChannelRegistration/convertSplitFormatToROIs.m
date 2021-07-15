@@ -85,7 +85,7 @@ else
     error(['convertSplitFormatToROIs(): size of input ', ...
         'SplitFormat does not match defined options'])
 end
-SplitROIs = [SplitROIs(SortIndices, :), 1, 1];
+SplitROIs = [SplitROIs(SortIndices, :), ones(NROIs, 2)];
 
 
 end
