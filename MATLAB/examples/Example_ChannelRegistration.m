@@ -41,22 +41,39 @@ ChannelReg.TransformationBasis = 'coordinates';
 ChannelReg.NNeighborPoints = 12;
 ChannelReg.findTransform();
 
+% Estimate the resulting registration error in two ways: (1) RMSE between
+% fiducial coordinates before and after the transform, and (2) RMSE between
+% fiducial coordinates before and after transform using a leave-one-out
+% (LOO) analysis.
+% NOTE: For the LOO analysis, we have to provide some additional inputs to
+%       estimate the RMSE.  These inputs will change depending on the value
+%       of ChannelReg.TransformationType, e.g., for 'lwm', we have to input
+%       NNeighborPoints, but for 'polynomial', we have to input the
+%       PolynomialDegree.
+FixedCoordinates = ChannelReg.Coordinates{2}(:, :, 1);
+MovingCoordinates = ChannelReg.Coordinates{2}(:, :, 2);
+RMSE = sqrt(mean(ChannelReg.estimateRegistrationError(...
+    ChannelReg.RegistrationTransform{2}, ...
+    MovingCoordinates, FixedCoordinates)));
+RMSELOO = sqrt(mean(ChannelReg.estimateRegErrorLOO(...
+    ChannelReg.TransformationType, {ChannelReg.NNeighborPoints}, ...
+    MovingCoordinates, FixedCoordinates)));
+
 % Visualize the performance of the channel registration.
+FixedImages = ChannelReg.FiducialImages(:, :, 1);
+MovingImages = ChannelReg.FiducialImages(:, :, 2);
 PlotFigure = figure();
 ChannelReg.visualizeRegistrationResults(PlotFigure, ...
     ChannelReg.RegistrationTransform{2}, ...
-    ChannelReg.Coordinates{2}(:, :, 2), ...
-    ChannelReg.Coordinates{2}(:, :, 1), ...
-    ChannelReg.FiducialImages(:, :, 2), ...
-    ChannelReg.FiducialImages(:, :, 1));
+    MovingCoordinates, FixedCoordinates, ...
+    MovingImages, FixedImages);
 
 % Visualize the registration error.
 PlotFigure = figure();
 PlotAxes = axes(PlotFigure);
 ChannelReg.visualizeRegistrationError(PlotAxes, ...
     ChannelReg.RegistrationTransform{2}, ...
-    ChannelReg.Coordinates{2}(:, :, 2), ...
-    ChannelReg.Coordinates{2}(:, :, 1));
+    MovingCoordinates, FixedCoordinates);
 
 % Visualize the transform magnitude and gradient (this isn't usually useful
 % unless something went very wrong, in which case it might be obvious in
