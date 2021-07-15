@@ -41,7 +41,7 @@ if isempty(AlignReg)
 end
 
 % If needed, make the requested directory.
-if ~exist('SaveDir', 'dir')
+if ~isfolder(SaveDir)
     mkdir(SaveDir)
 end
 

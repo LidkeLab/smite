@@ -31,7 +31,7 @@ Publish.CoverslipDir = CoverslipDir;
 Publish.Verbose = 1;
 Publish.GenerateSR = 1;
 Publish.GenerateImagingStats = 1;
-Publish.GenerateOverlayStats = 0;
+Publish.GenerateOverlayStats = 1;
 
 % smi.Publish contains several useful methods, however we'll almost always
 % just call performFullAnalysis().

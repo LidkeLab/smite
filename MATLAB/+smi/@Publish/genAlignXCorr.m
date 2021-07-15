@@ -34,7 +34,9 @@ ReferenceStack = AlignRegStruct(1).Data.ReferenceStack;
 % Loop through each dataset and grab the stack taken directly before the
 % dataset was collected.
 XCorrDirName = fullfile(SaveDir, 'XCorrPlots');
-mkdir(XCorrDirName);
+if ~isfolder(XCorrDirName)
+    mkdir(XCorrDirName);
+end
 MaxCorr = zeros(numel(AlignRegStruct), 1); % pre-allocate
 MaxCorrFit = zeros(numel(AlignRegStruct), 3); % pre-allocate
 OffsetFitSuccess = zeros(NSequences, 1, 'logical'); % pre-allocate
@@ -106,11 +108,15 @@ XCorrStruct.MaxIterReached = MaxIterReached;
 
 % Determine which sequences did not have a succesful registration and
 % create an array of their max-correlations/fits.
-SequenceArray = 1:NSequences;
-SequenceArrayUnsuccessfulFit = SequenceArray(~OffsetFitSuccess);
-SequenceArrayMaxIterReached = SequenceArray(MaxIterReached);
-MaxCorrUnsuccessfulFit = MaxCorr(~OffsetFitSuccess);
-MaxCorrMaxIterReached = MaxCorr(MaxIterReached);
+% NOTE: I've added the NaN points to ensure something is always in the
+%       plot, which will ensure we don't get legend() warnings (NaN's don't
+%       actually show up in the plot, but are still given handles visible
+%       to legend()).
+SequenceArray = (1:NSequences).';
+SequenceArrayUnsuccessfulFit = [NaN; SequenceArray(~OffsetFitSuccess)];
+SequenceArrayMaxIterReached = [NaN; SequenceArray(MaxIterReached)];
+MaxCorrUnsuccessfulFit = [NaN; MaxCorr(~OffsetFitSuccess)];
+MaxCorrMaxIterReached = [NaN; MaxCorr(MaxIterReached)];
 
 % Plot the maximum correlation coefficients found throughout the
 % acquisition.
@@ -119,8 +125,10 @@ PlotAxes = subplot(2, 1, 1, 'Parent', FigureHandle);
 plot(PlotAxes, SequenceArray, MaxCorr, 'x')
 hold(PlotAxes, 'on');
 plot(PlotAxes, [1, NSequences], ones(2, 1) * mean(MaxCorr), ':')
-plot(PlotAxes, SequenceArrayUnsuccessfulFit, MaxCorrUnsuccessfulFit, 'o')
-plot(PlotAxes, SequenceArrayMaxIterReached, MaxCorrMaxIterReached, 's')
+plot(PlotAxes, SequenceArrayUnsuccessfulFit, MaxCorrUnsuccessfulFit, ...
+    'o', 'MarkerSize', 10, 'LineWidth', 2)
+plot(PlotAxes, SequenceArrayMaxIterReached, MaxCorrMaxIterReached, ...
+    's', 'MarkerSize', 10, 'LineWidth', 2)
 if (min(MaxCorr) ~= max(MaxCorr))
     % Change the YTicks displayed on the plot, unless the min and max are
     % the same value.
