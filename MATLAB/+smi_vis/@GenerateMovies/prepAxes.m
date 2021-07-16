@@ -8,6 +8,7 @@ function [] = prepAxes(obj)
 
 
 % Revise several properties of the axes.
+hold(obj.MovieAxes, 'on')
 obj.MovieAxes.ActivePositionProperty = 'position';
 obj.MovieAxes.DataAspectRatio = [1, 1, ...
     max(obj.Params.ZFrames)/max([obj.Params.XPixels, obj.Params.YPixels])];

@@ -17,10 +17,6 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %             documentation for options).  For example, you can change
 %             the Marker property to 'x' as plotTrajectories(PlotAxes, TR,
 %             FrameRange, MaxTrajLength, Color, 'Marker', 'x')
-%   Marker: Marker for each localization in the trajectory. (see Line
-%           Properties for MATLAB method line())
-%   LineStyle: Style of line for each trajectory. (see Line Properties
-%              for MATLAB method line())
 %
 % OUTPUTS:
 %   LineHandles: Array of line handles corresponding to the trajectories
@@ -30,13 +26,9 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Make sure the input 'Color' is long enough (this is a convenient input
-% check that doesn't add much overhead).
-NTraj = numel(TR);
-Color = repmat(Color, [min(NTraj-size(Color, 1)+1, NTraj), 1]);
-
 % Loop through trajectories present in 'TR' and plot them, enforcing the
 % requested 'FrameRange' and 'MaxTrajLength'.
+NTraj = numel(TR);
 LineHandles = gobjects(NTraj, 1);
 for nn = 1:NTraj
     KeepBool = ((TR(nn).FrameNum>=FrameRange(1)) ...
