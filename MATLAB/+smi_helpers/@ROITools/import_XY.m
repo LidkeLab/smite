@@ -125,6 +125,10 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
             XYsize = [256, 256] .* pixel2nm;
          end
          SMDimport = src;
+         if ~isfield(src, 'Z')
+            SMDimport.Z = [];
+            SMDimport.Z_SE = [];
+         end
          if ~isfield(src, 'PixelSize')
             SMDimport.PixelSize = pixel2nm / 1000;
          end
