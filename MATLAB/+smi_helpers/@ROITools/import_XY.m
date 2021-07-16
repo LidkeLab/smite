@@ -36,6 +36,7 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
                 double(src.SMR.Y_SE) .* pixel2nm ];
       XYsize = [src.XSize, src.YSize] .* pixel2nm;
       SMDimport = src.SMR;
+      SMDimport.PixelSize = pixel2nm / 1000;
 
    elseif strcmp(class(src), 'BaGoL') || strcmp(class(src), 'smi.BaGoL')
       % src is a BGL.SMD data structure (from BaGoL)
@@ -50,6 +51,7 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
       SMDimport.Y_SE = SMDimport.Y_SE ./ pixel2nm;
       SMDimport.XSize = XYsize(1) ./ pixel2nm;
       SMDimport.YSize = XYsize(2) ./ pixel2nm;
+      SMDimport.PixelSize = pixel2nm / 1000;
       n_locs = numel(src.MAPN.X);
       SMDimport.Bg = zeros(n_locs, 1);
       SMDimport.Photons = 1000 * ones(n_locs, 1);
