@@ -125,6 +125,9 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
             XYsize = [256, 256] .* pixel2nm;
          end
          SMDimport = src;
+         if ~isfield(src, 'PixelSize')
+            SMDimport.PixelSize = pixel2nm / 1000;
+         end
       else
          error('Fields X, Y not found in src!');
       end
