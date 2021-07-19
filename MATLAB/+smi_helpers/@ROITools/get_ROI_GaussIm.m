@@ -49,7 +49,6 @@ function [n_ROIs, ROI, index_ROI] = ...
    cm(1, :) = [0, 0, 0];
    P = prctile(GaussIm(GaussIm > 0), 99.9);
    GaussIm(GaussIm > P) = P;
-   GaussIm = 255 * GaussIm / P;
    h = dipshow(GaussIm, cm);
 
    %for i = 2 : n_labels
