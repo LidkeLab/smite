@@ -61,7 +61,7 @@ function [n_ROIs, ROI, index_ROI] = ...
    axis off
    title(txt);
    xlabel('x');
-   ylabel('y)');
+   ylabel('y');
 
    done = false;
    while ~done
