@@ -29,7 +29,7 @@ AlignReg = MIC_H5.readH5File(FilePath, 'AlignReg');
 
 % Load the SMR structure for this dataset.
 FileNameStruct = dir(fullfile(SaveDir, '*Results.mat'));
-if ~isempty(FileNameStruct)
+if (~isempty(FileNameStruct) && isfile(FileNameStruct.name))
     load(fullfile(SaveDir, FileNameStruct.name), 'SMD');
 else
     SMD = struct([]);
