@@ -49,6 +49,8 @@ function [n_ROIs, ROI, index_ROI] = ...
    cm(1, :) = [0, 0, 0];
    P = prctile(GaussIm(GaussIm > 0), 99.9);
    GaussIm(GaussIm > P) = P;
+   % Display as nm
+   GaussIm = GaussIm ./ SRzoom .* pixel2nm;
    %h = dipshow(GaussIm, cm);
    h = imshow(GaussIm, cm);
 
@@ -58,9 +60,10 @@ function [n_ROIs, ROI, index_ROI] = ...
    %end
 
    hold on
+   axis off
    title(txt);
    xlabel('x (nm)');
-   ylabel('y (nm)');
+   ylabel('y (nm))');
 
    done = false;
    while ~done
