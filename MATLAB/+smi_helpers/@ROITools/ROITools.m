@@ -53,14 +53,15 @@ classdef ROITools < handle
 % By default, point images will be displayed from which to choose ROIs.  To
 % use Gaussian images (currently only available for one label input), set
 %
-%    RT.GaussIm = true;   RT.XYvsDIP = false;
+%    RT.GaussIm = true;   RT.OriginLLvsUL = false;
 %
 % before invoking RT.getROI.  As a final comment, XYsize is the (x, y) image
-% size (nm) [1 x 2] needed for displaying coordinates like DIPimage does.  This
-% only is needed for BaGoL files when GaussIm is true---see code fragment:
+% size (nm) [1 x 2] needed for displaying coordinates where the origin is in
+% the UL corner.  This only is needed for BaGoL files when GaussIm is true---
+% see code fragment:
 %
 %   Xnm = BGL.MAPN.X;
-%   if RT.GaussIm   % if GaussIm, have DIPimage style coordinates
+%   if RT.GaussIm   % if GaussIm, the origin is in the upper left corner
 %      Ynm = XYsize(2) - BGL.MAPN.Y;
 %   else
 %      Ynm = BGL.MAPN.Y;
@@ -77,18 +78,18 @@ properties
    XYvsYX  = true;    % Coordinate order.
    % GaussIm = true indicates that gaussianImage will be used for the ROI
    %    selection display.
-   % XYvsDIP = true says to use (x, y) coordinates rather than DIPimage
-   %     coordinates in the ROI selection display.
+   % OriginLLvsUL = true says to use lower left origin coordinates rather than
+   %    upper left origin coordinates in the ROI selection display.
    % SRzoom is the zoom factor for displaying Gaussian images.
    %
-   % If GaussIm is true, make XYvsDIP false for consistency.  The default is:
-   % GaussIm = false and XYvsDIP = true.  Currently, GaussIm only works for
-   % single labeled molecules.
-   GaussIm = false;   % Use gaussianImage for ROI selection display.
-   XYvsDIP = true;    % Use (x, y) rather than DIPimage coordinates.
-   SRzoom = 1;        % Zoom factor for gaussianImage.
-   EM = false;        % EM data format for import_XY.
-   Transform = {};    % Coordinate transform from label i -> 1.
+   % If GaussIm is true, make OriginLLvsUL false for consistency.  The default
+   % is: GaussIm = false and OriginLLvsUL = true.  Currently, GaussIm only
+   % works for single labeled molecules.
+   GaussIm = false;       % Use gaussianImage for ROI selection display.
+   OriginLLvsUL = true;   % Use LL origin coordinates rather than UL.
+   SRzoom = 1;            % Zoom factor for gaussianImage.
+   EM = false;            % EM data format for import_XY.
+   Transform = {};        % Coordinate transform from label i -> 1.
 
 end % properties
 % =============================================================================

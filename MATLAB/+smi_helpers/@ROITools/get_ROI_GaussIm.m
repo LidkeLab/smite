@@ -58,6 +58,10 @@ function [n_ROIs, ROI, index_ROI] = ...
    %end
 
    hold on
+   title(txt);
+   xlabel('x (nm)');
+   ylabel('y (nm)');
+
    done = false;
    while ~done
       clickval = waitforbuttonpress;
@@ -117,8 +121,8 @@ function [n_ROIs, ROI, index_ROI] = ...
                           [ymin_p, ymax_p, ymax_p, ymin_p, ymin_p], ...
                           'g-', 'LineWidth', 3);
 
-         % Adjust for DIPimage where y increases going downward as opposed to
-         % normal MATLAB where y increases going upward.
+         % Adjust for image display where y increases going downward as opposed
+         % to normal plots where y increases going upward.
          tmp  = ymin;
          ymin = ymax;
          ymax = tmp;

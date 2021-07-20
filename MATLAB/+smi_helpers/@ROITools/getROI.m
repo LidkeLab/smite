@@ -16,7 +16,7 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
 %       Order       plotting order
 %       Msize       marker size
 %       XYvsYX      coordinate order
-%       XYvsDIP     XY rather than DIPimage coordinates
+%       OriginLLvsUL coordinate origin (llower left vs. upper left)
 %       GaussIm     use Gaussian image for display
 %       EM          if true, data is in EM format
 %    src   cell array of (x, y) coordinate sources, although it is permissible
@@ -30,7 +30,8 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
 %                   X, Y           (x, y) coordinates of points inside
 %                   X_SE, Y_SE     (x, y) localization errors for the above
 %    XYsize      (x, y) image size (nm) [1 x 2]; needed for
-%                displaying coordinates like DIPimage does (XYvsDIP)
+%                displaying coordinates where the origin in the UL corner
+%                (OriginLLvsUL)
 
 % Created by:
 %    Michael J. Wester (2021)

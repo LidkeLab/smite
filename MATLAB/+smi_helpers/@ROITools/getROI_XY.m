@@ -11,7 +11,8 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
 %                     (nm)
 %    txt              text to label the ROI figure
 %    XYsize           [OPTIONAL] (x, y) image size (nm) [1 x 2]; needed for
-%                     displaying coordinates like DIPimage does (XYvsDIP)
+%                     displaying coordinates where the origin in the UL corner
+%                     (OriginLLvsUL)
 %    SMR              [OPTIONAL] SMR structure from an SMA_SR data structure
 %                     needed for gaussianImage in get_ROI (GaussIm)
 %
@@ -39,7 +40,7 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
       iy = 1;
    end
 
-   %if obj.XYvsDIP
+   %if obj.OriginLLvsUL
       ix = 1;
       iy = 2;
    %else   % Below needed for SRtest, but not for SMR.
@@ -54,7 +55,7 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
       X_SE{j} = NaN(n, 1);
       Y_SE{j} = NaN(n, 1);
 
-      if obj.XYvsDIP
+      if obj.OriginLLvsUL
          X{j} = XY{j}(:, ix);
          Y{j} = XY{j}(:, iy);
       else
