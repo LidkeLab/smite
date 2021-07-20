@@ -85,7 +85,7 @@ properties
    % GaussIm = false and XYvsDIP = true.  Currently, GaussIm only works for
    % single labeled molecules.
    GaussIm = false;   % Use gaussianImage for ROI selection display.
-   %XYvsDIP = true;    % Use (x, y) rather than DIPimage coordinates.
+   XYvsDIP = true;    % Use (x, y) rather than DIPimage coordinates.
    SRzoom = 1;        % Zoom factor for gaussianImage.
    EM = false;        % EM data format for import_XY.
    Transform = {};    % Coordinate transform from label i -> 1.
