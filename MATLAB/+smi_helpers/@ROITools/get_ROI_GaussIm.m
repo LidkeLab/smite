@@ -44,12 +44,11 @@ function [n_ROIs, ROI, index_ROI] = ...
    % selected = 0   terminate selection
    %            1   valid button press
    %            2   ignored or region delete
-   GaussIm = smi_vis.GenerateImages.gaussianImage(SMD, SRzoom);
    cm = hot(256);
    cm(1, :) = [0, 0, 0];
+   GaussIm = smi_vis.GenerateImages.gaussianImage(SMD, SRzoom);
    P = prctile(GaussIm(GaussIm > 0), 99.9);
    GaussIm(GaussIm > P) = P;
-   %h = dipshow(GaussIm, cm);
    h = imshow(GaussIm, cm);
 
    %for i = 2 : n_labels
