@@ -54,13 +54,13 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
       X_SE{j} = NaN(n, 1);
       Y_SE{j} = NaN(n, 1);
 
-      if obj.XYvsDIP
+      %if obj.XYvsDIP
          X{j} = XY{j}(:, ix);
          Y{j} = XY{j}(:, iy);
-      else
-         X{j} = XY{j}(:, ix);
-         Y{j} = XYsize(2) - XY{j}(:, iy);
-      end
+      %else
+      %   X{j} = XY{j}(:, ix);
+      %   Y{j} = XYsize(2) - XY{j}(:, iy);
+      %end
       if ~isempty(XY_SE{j})
          X_SE{j} = XY_SE{j}(:, ix);
          Y_SE{j} = XY_SE{j}(:, iy);

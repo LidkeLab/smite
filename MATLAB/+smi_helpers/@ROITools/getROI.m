@@ -17,7 +17,6 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
 %       Msize       marker size
 %       XYvsYX      coordinate order
 %       GaussIm     use Gaussian image for display
-%       XYvsDIP     XY rather than DIPimage coordinates
 %       EM          if true, data is in EM format
 %    src   cell array of (x, y) coordinate sources, although it is permissible
 %          to omit the cell array for a single source
