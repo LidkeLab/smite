@@ -49,7 +49,8 @@ function [n_ROIs, ROI, index_ROI] = ...
    cm(1, :) = [0, 0, 0];
    P = prctile(GaussIm(GaussIm > 0), 99.9);
    GaussIm(GaussIm > P) = P;
-   h = dipshow(GaussIm, cm);
+   %h = dipshow(GaussIm, cm);
+   h = imshow(GaussIm, cm);
 
    %for i = 2 : n_labels
    %   j = obj.Order(i);
