@@ -46,6 +46,25 @@ if isempty(obj.Params.YPixels)
 end
 if isempty(obj.Params.TrajColor)
     obj.Params.TrajColor = lines(numel(obj.TR));
+else
+    % Make sure TrajColor has as many rows as the number of trajectories in
+    % obj.TR.
+    NTraj = numel(obj.TR);
+    NColors = size(obj.Params.TrajColor, 1);
+    obj.Params.TrajColor = cat(1, obj.Params.TrajColor, ...
+        repmat(obj.Params.TrajColor(end, :), ...
+        [max(NTraj-NColors, 1), 1, 1])); 
+end
+if isempty(obj.Params.SMDColor)
+    obj.Params.SMDColor = lines(numel(obj.SMD.FrameNum));
+else
+    % Make sure SMDColor has as many rows as the number of datapoints in
+    % obj.SMD
+    NData = numel(obj.SMD);
+    NColors = size(obj.Params.SMDColor, 1);
+    obj.Params.SMDColor = cat(1, obj.Params.SMDColor, ...
+        repmat(obj.Params.SMDColor(end, :), ...
+        [max(NData-NColors, 1), 1, 1])); 
 end
 
 
