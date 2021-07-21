@@ -14,6 +14,11 @@ classdef SPT < handle
         %       obj.SMF.Tracking.TrajwiseD
         DiffusionEstimator
         
+        % Structure of parameters used when generating movies.
+        % NOTE: This only gets used when calling obj.saveResults() when
+        %       obj.GenerateMovies = true.
+        MovieParams
+        
         % Marker to ignore entries in cost matrices (Default = -1)
         % NonlinkMarker can't be inf or NaN. 
         NonlinkMarker = -1;
@@ -99,6 +104,9 @@ classdef SPT < handle
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
             obj.DiffusionEstimator.FitIndividualTrajectories = true;
             obj.DiffusionEstimator.UnitFlag = false;
+            
+            % Set some default movie parameters.
+            obj.MovieParams = smi_vis.GenerateMovies.prepDefaults();
             
             % Start the GUI if needed.
             if StartGUI

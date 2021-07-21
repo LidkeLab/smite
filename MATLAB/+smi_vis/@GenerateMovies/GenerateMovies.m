@@ -108,7 +108,7 @@ classdef GenerateMovies < handle
         % access these directly, however there's no harm in leaving them
         % unrestricted.
         setVitalParams(obj)
-        prepAxes(obj)
+        prepAxes(obj, PlotAxes)
     end
     
     methods (Static)

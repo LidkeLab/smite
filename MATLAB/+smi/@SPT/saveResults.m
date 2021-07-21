@@ -15,15 +15,11 @@ if (exist(obj.SMF.Data.ResultsDir, 'dir') ~= 7)
     mkdir(obj.SMF.Data.ResultsDir)
 end
 
-% Create the filenames for the saved results.
+% Create the filename for the saved results.
 % NOTE: For now, this is only setup for a single file (hence the {1}).
 [~, FileName] = fileparts(obj.SMF.Data.FileName{1});
-SMDFileName = sprintf('%s_%s_%s.mat', ...
-    FileName, obj.SMF.Data.AnalysisID, 'SMD');
-TRFileName = sprintf('%s_%s_%s.mat', ...
-    FileName, obj.SMF.Data.AnalysisID, 'TR');
-SMFFileName = sprintf('%s_%s_%s.mat', ...
-    FileName, obj.SMF.Data.AnalysisID, 'SMF');
+BaseName = [FileName, '_', obj.SMF.Data.AnalysisID];
+ResultsFileName = [BaseName, '_Results.mat'];
 
 % Move the data structures of interest into the workspace with appropriate
 % names for saving.
@@ -31,40 +27,55 @@ SMD = obj.SMDPreThresh;
 TR = obj.TR;
 SMF = obj.SMF;
 
-% Save the data structures as .mat files.
-save(fullfile(obj.SMF.Data.ResultsDir, SMDFileName), 'SMD');
-save(fullfile(obj.SMF.Data.ResultsDir, TRFileName), 'TR');
-save(fullfile(obj.SMF.Data.ResultsDir, SMFFileName), 'SMF');
+% Save the data in a .mat file.
+save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileName), ...
+    'SMD', 'TR', 'SMF');
 
 % Create a movie of the tracks and save the resulting movie.
 if obj.GenerateMovies
     % Load the raw data.
-    MovieFileName = sprintf('%s_%s_movie.mp4', ...
-        FileName, obj.SMF.Data.AnalysisID);
     LD = smi_core.LoadData;
     [~, RawData, obj.SMF] = ...
         LD.loadRawData(obj.SMF, 1, obj.SMF.Data.DataVariable);
     
-    % Generate the movie.
-    % NOTE: For now, we're using the OLD version of the movie code in
-    %       SMA_SPT (we'll need to change this once a new version is
-    %       written for smite).
-    DisplayParams.UnitFlag = obj.UnitFlag;
-    DisplayParams.LiteMode = 1;
-    PlotFigure = figure();
-    SMA_SPT.movieTraj(PlotFigure, obj.TR, RawData, [], ...
-        fullfile(obj.SMF.Data.ResultsDir, MovieFileName), DisplayParams);
-    close(PlotFigure)
+    % Generate and save the movie.
+    MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
+    MovieMaker.TR = obj.TR;
+    MovieMaker.RawData = RawData;
+    MovieMaker.SMF = obj.SMF;
+    MovieFileName = [BaseName, '_movie.mp4'];
+    MovieMaker.saveMovie(fullfile(obj.SMF.Data.ResultsDir, MovieFileName))
 end
 
-% Create the 2D and 3D tracking results and save these figures.
+% Create and save 2D and 3D trajectory plots.
 if obj.GeneratePlots
+    % Make and save the 2D plot.
     PlotFigure = figure();
-    SMA_SPT.plot2D(PlotFigure, obj.TR, obj.UnitFlag, ...
-        1, obj.SMF.Data.ResultsDir);
-    clf(PlotFigure);
-    SMA_SPT.plot3D(PlotFigure, obj.TR, obj.UnitFlag, ...
-        1, obj.SMF.Data.ResultsDir);
+    PlotAxes = axes(PlotFigure);
+    MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
+    MovieMaker.TR = obj.TR;
+    MovieMaker.setVitalParams()
+    MovieMaker.prepAxes(PlotAxes);
+    EmptySMD = smi_core.SingleMoleculeData.createSMD();
+    MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
+        EmptySMD, obj.TR(1).NFrames);
+    Traj2DFileName = [BaseName, '_plot2D'];
+    saveas(PlotFigure, ...
+        fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
+    saveas(PlotFigure, ...
+        fullfile(obj.SMF.Data.ResultsDir, [Traj2DFileName, '.png']))
+    
+    % Make and save the 3D plot.
+    MovieMaker.Params.LineOfSite = [-45, 15];
+    MovieMaker.prepAxes(PlotAxes);
+    EmptySMD = smi_core.SingleMoleculeData.createSMD();
+    MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
+        EmptySMD, obj.TR(1).NFrames);
+    Traj3DFileName = [BaseName, '_plot3D'];
+    saveas(PlotFigure, ...
+        fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
+    saveas(PlotFigure, ...
+        fullfile(obj.SMF.Data.ResultsDir, [Traj3DFileName, '.png']))
     close(PlotFigure);
 end
 

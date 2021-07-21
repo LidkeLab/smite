@@ -16,10 +16,11 @@ function [] = saveMovie(obj, SavePath)
 if (~exist('SavePath', 'var') || isempty(SavePath))
     [File, Path] = uiputfile({'*.mp4', 'MPEG-4 (*.mp4)'; ...
         '*.avi', 'Uncompressed AVI (*.avi)'});
+    SavePath = fullfile(Path, File);
 end
 
 % Create the video writer.
-[~, ~, FileExtension] = fileparts(File);
+[Path, File, FileExtension] = fileparts(SavePath);
 switch FileExtension
     case '.mp4'
         obj.VideoObject = ...
