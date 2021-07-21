@@ -83,7 +83,7 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'text', ...
     sprintf('(click a trajectory to display trajectory information)'));
 TrajInfoTextPos = [0, TrajInfoTitlePos(2)-TrajInfoTitlePos(4), 0.5, 0.05];
 uicontrol('Parent', TrajInfoPanel, 'Style', 'text', ...
-    'String', 'Trajectory ID: ', ...
+    'String', 'Connect ID: ', ...
     'Units', 'normalized', ...
     'Position', TrajInfoTextPos, ...
     'HorizontalAlignment', 'left');
@@ -219,6 +219,21 @@ end
             'Frame %i of %i', SliderValue, SliderMax);
     end
 
+    function setLineCallbacks()
+        % Loop through the line handles and set their 'Callback' property
+        % so that they can be clicked.
+        for nn = 1:numel(obj.LineHandles)
+            % Specify the ButtonDownFcn.
+            if isgraphics(obj.LineHandles(nn)) ...
+                    && obj.LineHandles(nn).isvalid
+                % If the nn-th line handle has been deleted/is not
+                % valid, we can't set the ButtonDownFcn property.
+                obj.LineHandles(nn).ButtonDownFcn = ...
+                    {@trajectoryClicked, nn};
+            end
+        end
+    end
+
     function trajectoryClicked(~, ~, TRIndex)
         % This is a callback function for the event that the user has
         % clicked on a trajectory (with TR index 'TRIndex') within
@@ -240,7 +255,7 @@ end
         end
         [obj.LineHandles(TRIndex).LineWidth] = 3;
 
-        % Update 'CurrentlySelectedTrajectory'  so that other callbacks can 
+        % Update 'CurrentlySelectedTrajectory' so that other callbacks can 
         % access this information.
         CurrentTrajectory = TRIndex;
 
@@ -259,21 +274,6 @@ end
         EndFrameDisplay.String = sprintf('End %s (%s): %i', ...
             obj.TimeDimensionString, ...
             obj.TimeUnitString, max(Time));
-    end
-
-    function setLineCallbacks()
-        % Loop through the line handles and set their 'Callback' property
-        % so that they can be clicked.
-        for nn = 1:numel(obj.LineHandles)
-            % Specify the ButtonDownFcn.
-            if isgraphics(obj.LineHandles(nn)) ...
-                    && obj.LineHandles(nn).isvalid
-                % If the nn-th line handle has been deleted/is not
-                % valid, we can't set the ButtonDownFcn property.
-                obj.LineHandles(nn).ButtonDownFcn = ...
-                    {@trajectoryClicked, obj.TR(nn).ConnectID};
-            end
-        end
     end
 
     function trajectorySelectedEdit(Source, ~)
@@ -297,7 +297,7 @@ end
 
         % Call the trajectorySelected function, passing along the user
         % input trajectory ID.
-        trajectoryClicked([], [], ConnectID)
+        trajectoryClicked([], [], find([obj.TR.ConnectID] == ConnectID))
     end
 
     function saveMovieButtonClicked(~, ~)
