@@ -60,12 +60,6 @@ end
 [TD] = smi.SPT.connectTrajGC(TD, Link12);
 TR = smi_core.TrackingResults.convertSMDToTR(TD);
 
-% Make some plots.
-% PlotFigure = figure();
-% SMA_SPT.plot2D(PlotFigure, TR)
-% PlotFigure = figure();
-% SMA_SPT.plot3D(PlotFigure, TR)
-
 % Make a movie.
 MovieMaker = smi_vis.GenerateMovies;
 MovieMaker.TR = TR;

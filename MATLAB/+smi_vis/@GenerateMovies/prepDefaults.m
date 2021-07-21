@@ -37,7 +37,7 @@ function [Params] = prepDefaults()
 %                        (char. array)(Default = 'none')
 %           SMDMarker: Marker to be placed on top of each
 %                      localization in SMD. The color is currently
-%                      hard coded to be red. (Default = '.')
+%                      hard coded to be red. (Default = 'o')
 %           LineOfSite: Line of site vector for view() (rotates
 %                       "camera" orientation for 3D movie.  When
 %                       Is2D = 0, LineOfSite can be given as an
@@ -81,7 +81,7 @@ Params.YPixels = [];
 Params.MinScaleIntensity = 1;
 Params.PercentileCeiling = 100;
 Params.PlotMarker = 'none';
-Params.SMDMarker = '.';
+Params.SMDMarker = 'o';
 Params.LineOfSite = [0, 90];
 Params.Resolution = 0;
 Params.FrameRate = 10;
