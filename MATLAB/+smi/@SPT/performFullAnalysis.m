@@ -30,6 +30,24 @@ obj.SMDPreThresh = SMLM.SMDPreThresh;
 % Perform the tracking.
 obj.autoTrack()
 
+% If a channel registration file is provided, apply the transform to our
+% tracking results.
+if ~isempty(obj.SMF.Data.RegistrationFilePath)
+    if isfile(obj.SMF.Data.RegistrationFilePath)
+        % Load the registration transform and apply it to obj.SMD and
+        % recreate obj.TR based on the transformed SMD.
+        load(obj.SMF.Data.RegistrationFilePath, 'RegistrationTransform')
+        obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
+            RegistrationTransform, obj.SMDPreThresh);
+        obj.SMD = smi_core.ChannelRegistration.transformSMD(...
+            RegistrationTransform, obj.SMD);
+        obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
+    elseif (obj.Verbose > 0)
+        warning(['smi.SPT.generateTrajectories(): the specified ', ...
+            'SMF.Data.RegistrationFilePath cannot be found.'])
+    end
+end
+
 % Remove short trajectories from the TR structure.
 % NOTE: I'm leaving everything in SMD.  It might be nice to also threshold
 %       short trajectories in SMD, but for now I'll leave it this way.

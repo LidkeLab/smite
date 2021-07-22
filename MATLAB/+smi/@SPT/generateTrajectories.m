@@ -4,9 +4,7 @@ function generateTrajectories(obj)
 % using the parameters present in obj.SMF.
 
 % Created by:
-%   Hanieh Mazloom-Farsibaf (Lidke Lab, unknown date) as track.m
-%   Reorganized and added comments, David J. Schodt (Lidke Lab, 2020)
-%   Revised for smite, David J. Schodt (Lidke Lab, 2021)
+%   David J. Schodt (Lidke Lab, 2021)
 
 
 % Perform the frame-to-frame connection of the localizations.
@@ -39,10 +37,8 @@ CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...
 Link12 = obj.solveLAP(CostMatrix);
 obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 
-% Add the framerate and pixel size to the outputs.
-FileInfoStruct.FileDir = obj.SMF.Data.FileDir;
-FileInfoStruct.FileName = obj.SMF.Data.FileName{1};
-obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD, FileInfoStruct);
+% Convert obj.SMD to a TR structure.
+obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
 
 
 end
