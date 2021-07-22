@@ -1,4 +1,4 @@
-function exportTransform(obj, TransformIndex, FileDir)
+function [FilePath] = exportTransform(obj, TransformIndex, FileDir)
 %exportTransform exports transform information into a .mat file.
 % This method will save a bunch of relevant class fields into a .mat file
 % in the specified location.
@@ -8,6 +8,9 @@ function exportTransform(obj, TransformIndex, FileDir)
 %                   as obj.RegistrationTransform{TransformNumber}.
 %   FileDir: Directory in which transforms will be saved.
 %            (Default = obj.SMF.Data.FileDir)
+%
+% OUTPUTS:
+%   FilePath: Cell array of path(s) to the exported transforms.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -36,20 +39,23 @@ if (obj.Verbose > 1)
         'Exporting transform(s)...\n'])
 end
 if (exist('TransformIndex', 'var') && ~isempty(TransformIndex))
-    LoopIndices = TransformIndex;
+    TransformIndices = TransformIndex;
 else
-    LoopIndices = 2:numel(obj.RegistrationTransform);
+    TransformIndices = 2:numel(obj.RegistrationTransform);
 end
-for nn = LoopIndices
+NExports = numel(TransformIndices);
+FilePath = cell(NExports, 1);
+for nn = 1:NExports
     % Define a unique file path for this transform.
     FileName = sprintf('RegistrationTransform%ito1_%s.mat', ...
         nn, smi_helpers.genTimeString());
+    FilePath{nn} = fullfile(FileDir, FileName);
     
     % Save the requested transform.
-    RegistrationTransform = obj.RegistrationTransform{nn};
-    Coordinates = obj.Coordinates{nn};
-    TransformIndex = nn;
-    save(fullfile(FileDir, FileName), 'RegistrationTransform', ...
+    RegistrationTransform = obj.RegistrationTransform{TransformIndices(nn)};
+    Coordinates = obj.Coordinates{TransformIndices(nn)};
+    TransformIndex = TransformIndices(nn);
+    save(FilePath{nn}, 'RegistrationTransform', ...
         'Coordinates',  'FiducialROI', 'SplitFormat', ...
         'TransformationBasis', 'TransformationType', ...
         'SeparationThreshold', 'NNeighborPoints', 'PolynomialDegree', ...

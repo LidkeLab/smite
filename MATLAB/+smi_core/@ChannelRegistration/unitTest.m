@@ -61,6 +61,7 @@ SMDFixed.Photons = PhotonSum * OnesArray;
 SMDFixed.Bg = Background * OnesArray;
 SMDFixed.PSFSigma = PSFSigma;
 SMDFixed.FrameNum = ones(NEmitters, 1);
+SMDFixed.NFrames = 1;
 SMDFixed.DatasetNum = OnesArray;
 SMDFixed.ThreshFlag = 0 * OnesArray;
 
@@ -92,10 +93,12 @@ SMDMoving.Y = WarpedCoords(:, 2);
 % Simulate some raw data.
 % NOTE: Warping the first image to make the moving image would be faster,
 %       but I'm not doing that because this is slightly easier to code...
+SMF = smi_core.SingleMoleculeFitting;
+SMF.Data.DataROI = [1, 1, FrameSize, FrameSize];
 [~, RawDataFixed] = smi_sim.GaussBlobs.gaussBlobImage(...
-    FrameSize, 1, SMDFixed, Background);
+    SMDFixed, SMF, Background);
 [~, RawDataMoving] = smi_sim.GaussBlobs.gaussBlobImage(...
-    FrameSize, 1, SMDMoving, Background);
+    SMDMoving, SMF, Background);
 
 % Find a transform to align these channels (testing various components
 % along the way).
