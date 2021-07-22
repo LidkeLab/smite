@@ -48,7 +48,7 @@ FilePath = cell(NExports, 1);
 for nn = 1:NExports
     % Define a unique file path for this transform.
     FileName = sprintf('RegistrationTransform%ito1_%s.mat', ...
-        nn, smi_helpers.genTimeString());
+        TransformIndices(nn), smi_helpers.genTimeString());
     FilePath{nn} = fullfile(FileDir, FileName);
     
     % Save the requested transform.
