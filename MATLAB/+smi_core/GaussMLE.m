@@ -223,6 +223,7 @@ classdef GaussMLE < handle
         
         switch obj.FitType
             case 'XYNB'
+                Results.PSFSigma = obj.PSFSigma * ones(size(Results.X));
             case 'XYNBS'
                 Results.PSFSigma=Params_out(:,5);
                 Results.PSFSigma_SE=sqrt(CRLB_out(:,5));
