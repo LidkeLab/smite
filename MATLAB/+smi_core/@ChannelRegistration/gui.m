@@ -693,12 +693,11 @@ method.
         
         % Allow the user to select the export location and then export the
         % transform(s).
-        [FileName, FileDir] = uiputfile('*.mat', ...
-            'Specify save location for the transform(s)');
-        if isequal(FileName, 0)
+        FileDir = uigetdir('Specify save location for the transform(s)');
+        if isequal(FileDir, 0)
             return
         else
-            obj.exportTransform(FileName, FileDir)
+            obj.exportTransform([], FileDir)
         end
         
     end
