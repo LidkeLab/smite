@@ -24,8 +24,6 @@ SimParams.FrameSize = 64; % pixels
 SimParams.FrameRate = 1; % frames / second
 SimParams.PixelSize = 0.1; % micrometers
 SimParams.PSFSigma = 1.3; % pixels
-SimParams.SigmaNoise = ...
-    SimParams.PSFSigma / sqrt(SimParams.Intensity); % pixels
 SimParams.Bg = 5; % photons
 [TD] = SMA_Sim.simulateTrajectories(SimParams);
 TD.ConnectID = TD.TrajectoryID;

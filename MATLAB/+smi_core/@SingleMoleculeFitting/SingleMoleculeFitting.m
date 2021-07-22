@@ -52,6 +52,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   CameraOffset:   Camera Offset, scalar or image (Default=0)
     %   CameraNoise:    Camera readnoise, scalar or image (Default=0)
     %   CalibrationFilePath: Path to the camera calibration file (Default='')
+    %   RegistrationFilePath: Path to channel registration file (Default='')
     %   DataROI:        Region of interest of data file to be used (Default=[])
     %   FrameRate:      Data Collection Frame Rate (1/s)
     %   PixelSize:      Camera back-projected pixel size (micrometers)
@@ -172,6 +173,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Data.CameraOffset=0;
             obj.Data.CameraReadNoise=0;
             obj.Data.CalibrationFilePath='';
+            obj.Data.RegistrationFilePath='';
             obj.Data.DataROI=[];
             obj.Data.FrameRate=1;
             obj.Data.PixelSize=0.1;
@@ -256,6 +258,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Data.CameraOffset.Units = 'ADU';
             obj.SMFFieldNotes.Data.CameraReadNoise.Units = 'ADU^2';
             obj.SMFFieldNotes.Data.CalibrationFilePath.Units = ...
+                'char array';
+            obj.SMFFieldNotes.Data.RegistrationFilePath.Units = ...
                 'char array';
             obj.SMFFieldNotes.Data.DataROI.Units = ...
                 'pixels, [YStart, XStart, YEnd, XEnd, ZStart, ZPeriod]';
@@ -366,6 +370,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 'used to collect the raw data']);
             obj.SMFFieldNotes.Data.CalibrationFilePath.Tip = ...
                 'Path to the camera calibration file to be used.';
+            obj.SMFFieldNotes.Data.RegistrationFilePath.Tip = ...
+                sprintf(['Path to a channel registration file', ...
+                'containing a\n transform that will be applied to the data']);
             obj.SMFFieldNotes.Data.DataROI.Tip = ...
                 sprintf(['ROI of data to be analyzed (currently only ', ...
                 'used in smi.SPT).\nThis should be organized as ', ...
@@ -684,6 +691,13 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 if ~(ischar(DataInput.CalibrationFilePath) ...
                         || isstring(DataInput.CalibrationFilePath))
                     error(['''SMF.Data.CalibrationFilePath'' must ', ...
+                        'be of type char or string'])
+                end
+            end
+            if isfield(DataInput, 'RegistrationFilePath')
+                if ~(ischar(DataInput.RegistrationFilePath) ...
+                        || isstring(DataInput.RegistrationFilePath))
+                    error(['''SMF.Data.RegistrationFilePath'' must ', ...
                         'be of type char or string'])
                 end
             end
