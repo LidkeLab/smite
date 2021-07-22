@@ -13,8 +13,6 @@ classdef TrackingResults
     %
     % The TR structure is just an array of SMD structures, with each array
     % element being an SMD structure corresponding to a single trajectory.
-    % Some additional fields, such as 'FileDir' and 'FileName', are also
-    % present in TR structures.
     %
     % SEE ALSO:
     %   smi_core.SingleMoleculeData, smi_core.SingleMoleculeFitting
@@ -27,12 +25,10 @@ classdef TrackingResults
         function [TR] = createTR()
             %createTR creates an empty Tracking Results (TR) structure.
             TR = smi_core.SingleMoleculeData.createSMD();
-            TR.FileDir = '';
-            TR.FileName = '';
         end
         
         [Durations] = computeTrajDurations(TR);
-        [TR] = convertSMDToTR(SMD, FileInfoStruct);
+        [TR] = convertSMDToTR(SMD);
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);
         [TR] = threshTrajLength(TR, MinTrackLength);

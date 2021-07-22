@@ -1,4 +1,4 @@
-function [TR] = convertSMDToTR(SMD, FileInfoStruct)
+function [TR] = convertSMDToTR(SMD)
 %convertSMDToTR converts an SMD into a TR structure.
 % This method takes an SMD structure (see smi_core.SingleMoleculeData) and
 % converts it into a TR structure.
@@ -6,7 +6,6 @@ function [TR] = convertSMDToTR(SMD, FileInfoStruct)
 % INPUTS:
 %   SMD: Single Molecule Data structure with a properly populated field
 %        'ConnectID'.
-%   FileInfoStruct: A structure array with fields FileDir and FileName
 % 
 % OUTPUTS:
 %   TR: Tracking Results.  The TR structure is a structure array containing
@@ -21,18 +20,10 @@ function [TR] = convertSMDToTR(SMD, FileInfoStruct)
 %   Rewritten in smite, David J. Schodt (Lidke Lab, 2021)
 
 
-% Set defaults as needed.
-if (~exist('FileInfoStruct', 'var') || isempty(FileInfoStruct))
-    FileInfoStruct.FileDir = '';
-    FileInfoStruct.FileName = '';
-end
-
 % Create an empty TR structure, ending after this piece of code if no SMD
 % was input (it might sometimes be useful to produce an empty TR
 % structure).
 TR = smi_core.TrackingResults.createTR();
-[TR.FileDir] = deal(FileInfoStruct.FileDir);
-[TR.FileName] = deal(FileInfoStruct.FileName);
 SMDFields = fieldnames(SMD);
 if (~exist('SMD', 'var') || isempty(SMD) || isempty(SMDFields))
     return
@@ -63,8 +54,6 @@ for ii = numel(UniqueTrajIDs):-1:1
     TR(ii, 1).ConnectID = SMD.ConnectID(CurrentTrajIndices(1));
     TR(ii, 1).IndSMD = CurrentTrajIndices;
 end
-[TR.FileDir] = deal(FileInfoStruct.FileDir);
-[TR.FileName] = deal(FileInfoStruct.FileName);
 
 
 end
