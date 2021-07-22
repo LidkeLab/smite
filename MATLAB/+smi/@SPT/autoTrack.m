@@ -8,6 +8,14 @@ function [] = autoTrack(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
+% Estimate the density of off emitters (if requested).
+if obj.SMF.Tracking.EstimateRho
+    RhoOnMean = ...
+        mean(smi_core.SingleMoleculeData.computeDensity(obj.SMD));
+    obj.SMF.Tracking.Rho_off = RhoOnMean ...
+        * (obj.SMF.Tracking.K_off/obj.SMF.Tracking.K_on);
+end
+    
 % Generate trajectories from the localizations in obj.SMD.
 % NOTE: On the first pass, the diffusion constant in obj.SMF.Tracking.D
 %       will be used for all cost matrices.

@@ -13,19 +13,37 @@ function [TR, SMD] = performFullAnalysis(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Prepare an SMLM class (we'll use this to load data, perform gain/offset
-% correction, and fit the data).
+% Load data, perform gain/offset correction, fit the data, and threshold
+% the fits.
 if obj.SMF.Tracking.TryLowPValueLocs
     obj.SMFCopy = smi_core.SingleMoleculeFitting.reloadSMF(obj.SMF);
     obj.SMF.Thresholding.MinPValue = 0;
 end
-SMLM = smi.SMLM(obj.SMF);
-SMLM.Verbose = obj.Verbose;
+LD = smi_core.LoadData;
+[~, RawData, obj.SMF] = LD.loadRawData(obj.SMF, 1);
+DTP = smi_core.DataToPhotons(obj.SMF, RawData, [], [], obj.Verbose);
+ScaledData = DTP.convertData();
+LD = smi_core.LocalizeData(ScaledData, obj.SMF, obj.Verbose);
+[obj.SMD, obj.SMDPreThresh] = LD.genLocalizations();
+obj.SMD.NDatasets = 1;
+obj.SMD.DatasetNum = ones(size(obj.SMD.FrameNum));
 
-% Load data, perform gain/offset correction, and fit the data.
-SMLM.analyzeAll()
-obj.SMD = SMLM.SMD;
-obj.SMDPreThresh = SMLM.SMDPreThresh;
+% Add pixel size and framerate to SMD (this is a temporary workaround for
+% other codes, e.g., the diffusion estimator, and should be removed later).
+obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
+obj.SMD.FrameRate = obj.SMF.Data.FrameRate;
+obj.SMDPreThresh.PixelSize = obj.SMF.Data.PixelSize;
+obj.SMDPreThresh.FrameRate = obj.SMF.Data.FrameRate;
+
+% Check if localizations were generated.  If none were generated, issue a
+% warning and do not proceed.
+if isempty(obj.SMD.FrameNum)
+    if (obj.Verbose > 0)
+        warning(['smi.SPT.performFullAnalysis(): no localizations were ', ...
+            'generated from the provided dataset.'])
+    end
+    return
+end
 
 % Perform the tracking.
 obj.autoTrack()
