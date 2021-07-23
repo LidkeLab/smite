@@ -32,6 +32,9 @@ classdef Publish < handle
         % Base directory for saving (Default set in performFullAnalysis())
         SaveBaseDir
         
+        % Log file for errors (Default set in performFullAnalysis())
+        LogFilePath
+        
         % Label(s) to be analyzed (Default = [], analyze all labels)
         LabelID = [];
         
@@ -63,6 +66,9 @@ classdef Publish < handle
     properties (SetAccess = 'protected', Hidden)
         % Instance of SMLM class (for internal use).
         SMLM
+        
+        % Log of errors encountered during analysis.
+        ErrorLog = {};
     end
     
     methods

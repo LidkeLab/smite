@@ -140,6 +140,12 @@ for ii = 1:NDataFiles
                     DataFileNames{ii}, ...
                     MException.identifier, MException.message)
             end
+            
+            % Store the error information in the log file.
+            obj.ErrorLog = [obj.ErrorLog; ...
+                {CellName, LabelName, MException}];
+            ErrorLog = obj.ErrorLog;
+            save(obj.LogFilePath, 'ErrorLog', '-append')
         end
     end
 end

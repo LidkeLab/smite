@@ -52,6 +52,12 @@ for ii = 1:NLabels
                 fullfile(CellName, LabelNames{ii}), ...
                 MException.identifier, MException.message)
         end
+        
+        % Store the error information in the log file.
+        obj.ErrorLog = [obj.ErrorLog; ...
+            {CellName, LabelNames{ii}, MException}];
+        ErrorLog = obj.ErrorLog;
+        save(obj.LogFilePath, 'ErrorLog', '-append')
     end
 end
 
