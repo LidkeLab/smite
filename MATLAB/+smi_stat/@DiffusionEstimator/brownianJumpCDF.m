@@ -6,16 +6,17 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 %
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. For the one
-%                 component model, this is just 2*D. For the two component
-%                 model, this is [2*D_1; 2*D_2; alpha]. For N-components,
-%                 this is [2*D_1, 2*D_2, ..., 2*D_N, 
+%                 component model, this is just D. For the two component
+%                 model, this is [D_1; D_2; alpha]. For N-components,
+%                 this is [D_1, D_2, ..., D_N, 
 %                         alpha_1, alpha_2, ..., alpha_{N-1}
 %   SortedSquaredDisp: The sorted (in ascending order) squared jumps used 
 %                      to compute 'CDFOfJumps'. (numeric array)
 %   FrameLags: All of the unique frame lags associated with the jumps in
-%              'SortedJumps'. Note that this isn't necessarily the same
-%              size as SortedJumps, since SortedJumps can contain multiple
-%              jumps for each frame lag. (NFrameLagsx1 array)
+%              'SortedSquaredDisp'. Note that this isn't necessarily the 
+%              same size as 'SortedSquaredDisp', since 'SortedSquaredDisp'
+%              can contain multiple jumps for each frame lag. 
+%              (NFrameLagsx1 array)
 %   NPoints: The number of data points (or jumps) corresponding to each
 %            frame lag in 'FrameLags' (NFrameLagsx1 array)
 %   LocVarianceSum: Sum of the localization variances for the two points
@@ -64,7 +65,7 @@ ZerosArray = zeros(numel(SortedSquaredDisp), 1);
 CDFOfJumps = ZerosArray;
 for nn = 1:NComponents
     % Define the variance term for this component.
-    Variance = FrameLags*MotionParams(nn) + mean(LocVarianceSum);
+    Variance = 2*FrameLags*MotionParams(nn) + mean(LocVarianceSum);
     
     % Sum over frame lags.
     CDFOfJumpsNN = ZerosArray;

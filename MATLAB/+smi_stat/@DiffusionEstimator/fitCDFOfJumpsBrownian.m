@@ -30,7 +30,7 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 %                (scalar, integer)(Default = 2)
 %   Weights: Weights used for weighted least squares. (NDatax1 array)
 %            (Default = ones(NFrameLags, 1) i.e. no weighting)
-%   FitMethod: A string specifying the fit method. (Default = 'LS')
+%   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
 %   FitOptions: Fit options sent directly to fminsearch (see doc fminsearch
 %               for details)(Default = optimset(@fminsearch) 
 %               or optimoptions('fmincon') as appropriate)
@@ -49,7 +49,7 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 
 % Define default parameters if needed.
 if (~exist('FitMethod', 'var') || isempty(FitMethod))
-    FitMethod = 'LS';
+    FitMethod = 'WeightedLS';
 end
 NJumps = numel(SortedJumps);
 if (~exist('Weights', 'var') || isempty(Weights))
@@ -77,12 +77,13 @@ switch FitMethod
         % Fit the CDF of the displacements using least squares. This
         % process is quite slow due to the bootstrap, so I'll only do the
         % bootstrap if the output FitParamsSE was requested.
-        % NOTE: This model can be found by taking the prob(r|sigma^2=2Dt)
-        %       (which is a product of Gaussians), converting to polar
-        %       coordinates, integrating over theta, and then integrating
-        %       from 0 to r' to get the CDF. For multiple frame lags (as we
-        %       have), we'll also need to integrate over the frame lags
-        %       times the proportion of each frame lag observed.
+        % NOTE: This model can be found by taking the 
+        %       prob(r|sigma^2=2Dt+loc.error) (which is a product of 
+        %       Gaussians), converting to polar coordinates, integrating 
+        %       over theta, and then integrating from 0 to r' to get the 
+        %       CDF. For multiple frame lags (as we have), we'll also need
+        %       to integrate over the frame lags times the proportion of 
+        %       each frame lag observed.
         CostFunction = @(Params, SortedJumps, CDFOfJumps) sum(Weights ...
             .* (smi_stat.DiffusionEstimator.brownianJumpCDF(...
             Params, SortedJumps, FrameLags, NPoints, LocVarianceSum) ...

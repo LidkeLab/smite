@@ -17,11 +17,11 @@ function [FitParams, FitParamsSE] = ...
 %            be displayed (e.g., Command Window updates).
 %
 % OUTPUTS:
-%   FitParams: Fit parameters for the MSD fit.  These will vary based on
+%   FitParams: Fit parameters for the CDF fit.  These will vary based on
 %              'FitMethod'. FitParams(ii, :) will contain the fit
 %              parameters for the fit to MSDStruct(ii).
 %              (numel(MSDStruct)xNParameters array)
-%   FitParamsSE: Standard errors for the MSD fit parameters 'FitParams'.
+%   FitParamsSE: Standard errors for the CDF fit parameters 'FitParams'.
 %                These will vary based on 'Method'.
 
 % Created by:
@@ -62,12 +62,17 @@ FitParamsSE = NaN(NFits, NFitParams);
 for ii = 1:NFits
     % Isolate some arrays needed for the fit.
     CDFOfJumps = double(MSDStruct(ii).CDFOfJumps);
+    if isempty(CDFOfJumps)
+        % This trajectory was too short so we can't make the fit.
+        continue
+    end
     FrameLags = double(MSDStruct(ii).FrameLags);
     NPoints = double(MSDStruct(ii).NPoints);
     LocVarianceSum = double(MSDStruct(ii).LocVarianceSum);
     SortedSquaredDisp = double(MSDStruct(ii).SortedSquaredDisp);
     
     % Fit the CDF of the jumps to the desired diffusion model.
+    % NOTE: We're only allowing Brownian motion for now.
     if (nargout > 1)
         [ParamsHat, ParamsHatSE] = ...
             smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...

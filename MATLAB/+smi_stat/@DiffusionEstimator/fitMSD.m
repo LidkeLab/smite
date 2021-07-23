@@ -55,8 +55,8 @@ for ii = 1:NFits
     MaxFitPoints = numel(FrameLags);
     FitPointsIndices = 1:min(NFitPoints, MaxFitPoints);
     FrameLags = FrameLags(FitPointsIndices);
-    NFrames = numel(FrameLags);
-    if (NFrames < 2)
+    if (numel(FrameLags) < 2)
+        % This trajectory is too short so we won't bother fitting it.
         continue
     end
     
