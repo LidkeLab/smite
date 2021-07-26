@@ -57,7 +57,10 @@ classdef DiffusionEstimator < handle
         % Tracking results structure.
         TR
         
-        % Boolean flag to indicate units of outputs (boolean)(Default = 1)
+        % Single Molecule Fitting structure, for pixel size and framerate.
+        SMF = smi_core.SingleMoleculeFitting;
+        
+        % Boolean flag to indicate units of outputs (boolean)(Default = 0)
         % 1 (true) will make the outputs of estimateDiffusionConstant()
         %   micrometers and seconds.
         % 0 (false) will make the outputs of estimateDiffusionConstant()
@@ -66,7 +69,7 @@ classdef DiffusionEstimator < handle
         %       regardless of obj.UnitFlag. This property will only affect
         %       the "user-facing" wrapper methods, such as
         %       estimateDiffusionConstant() and saveResults()
-        UnitFlag = true;
+        UnitFlag = false;
         
         % Verbosity level for estimateDiffusionConstant() (Default = 0)
         %   Verbose 0: no Command Window outputs
@@ -89,8 +92,7 @@ classdef DiffusionEstimator < handle
     
     methods
         function [obj, DiffusionStruct] = ...
-                DiffusionEstimator(TR, MaxFrameLag, FitMethod, ...
-                Verbose, AutoRun)
+                DiffusionEstimator(TR, SMF, Verbose, AutoRun)
             %DiffusionEstimator is the class constructor.
             % Several optional inputs can be provided to directly set class
             % properties.  'AutoRun' is a boolean flag which specifies
@@ -110,11 +112,8 @@ classdef DiffusionEstimator < handle
             else
                 AllFieldsSet = false;
             end
-            if (exist('MaxFrameLag', 'var') && ~isempty(MaxFrameLag))
-                obj.MaxFrameLag = MaxFrameLag;
-            end
-            if (exist('FitMethod', 'var') && ~isempty(FitMethod))
-                obj.FitMethod = FitMethod;
+            if (exist('SMF', 'var') && ~isempty(SMF))
+                obj.SMF = SMF;
             end
             if (exist('Verbose', 'var') && ~isempty(Verbose))
                 obj.Verbose = Verbose;

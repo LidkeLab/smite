@@ -40,8 +40,8 @@ elseif (obj.Verbose > 0)
     fprintf(['estimateDiffusionConstant(): estimating diffusion ', ...
         'constants...\n']);
 end
-JumpUnitConversion = ~obj.UnitFlag + obj.UnitFlag*obj.TR(1).PixelSize;
-FrameUnitConversion = ~obj.UnitFlag + obj.UnitFlag*obj.TR(1).FrameRate;
+JumpUnitConversion = ~obj.UnitFlag + obj.UnitFlag*obj.SMF.Data.PixelSize;
+FrameUnitConversion = ~obj.UnitFlag + obj.UnitFlag*obj.SMF.Data.FrameRate;
 ParamsSingleTraj = NaN;
 ParamsSingleTrajSE = NaN;
 DiffusionConstantSingleTraj = NaN;
@@ -254,8 +254,8 @@ TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, obj.UnitFlag);
 DiffusionStruct(1).Units = {JumpUnit; TimeUnit};
 DiffusionStruct(1).FitParams = ParamsSingleTraj;
 DiffusionStruct(1).FitParamsSE = ParamsSingleTrajSE;
-DiffusionStruct(1).PixelSize = obj.TR(1).PixelSize;
-DiffusionStruct(1).FrameRate = obj.TR(1).FrameRate;
+DiffusionStruct(1).PixelSize = obj.SMF.Data.PixelSize;
+DiffusionStruct(1).FrameRate = obj.SMF.Data.FrameRate;
 DiffusionStruct(1).DiffusionConstant = DiffusionConstantSingleTraj;
 DiffusionStruct(1).DiffusionConstantSE = DiffusionConstantSingleTrajSE;
 DiffusionStruct(1).PopulationRatios = PopulationRatiosSingleTraj;
@@ -265,8 +265,8 @@ DiffusionStruct(2).Name = 'ensemble';
 DiffusionStruct(2).Units = {JumpUnit; TimeUnit};
 DiffusionStruct(2).FitParams = ParamsEnsemble;
 DiffusionStruct(2).FitParamsSE = ParamsEnsembleSE;
-DiffusionStruct(2).PixelSize = obj.TR(1).PixelSize;
-DiffusionStruct(2).FrameRate = obj.TR(1).FrameRate;
+DiffusionStruct(2).PixelSize = obj.SMF.Data.PixelSize;
+DiffusionStruct(2).FrameRate = obj.SMF.Data.FrameRate;
 DiffusionStruct(2).DiffusionConstant = DiffusionConstantEnsemble;
 DiffusionStruct(2).DiffusionConstantSE = DiffusionConstantEnsembleSE;
 DiffusionStruct(2).PopulationRatios = PopulationRatiosEnsemble;
