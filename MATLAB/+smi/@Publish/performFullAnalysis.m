@@ -25,7 +25,13 @@ if isempty(obj.LogFilePath)
     obj.LogFilePath = fullfile(obj.SaveBaseDir, ...
         ['Log_', FileSuffix, '.mat']);
 end
-save(obj.LogFilePath, 'StartTime')
+LogFileDir = fileparts(obj.LogFilePath);
+if ~isfolder(LogFileDir)
+    % The directory containing the log file doesn't exist yet, so we'll
+    % make it now.
+    mkdir(LogFileDir)
+end
+save(obj.LogFilePath, 'StartTime', '-append')
 
 % Determine the names of the sub-directories of interest within
 % obj.CoverslipDir.  These correspond to individual cells imaged during the
