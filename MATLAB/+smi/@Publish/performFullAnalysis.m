@@ -31,7 +31,7 @@ if ~isfolder(LogFileDir)
     % make it now.
     mkdir(LogFileDir)
 end
-save(obj.LogFilePath, 'StartTime', '-append')
+save(obj.LogFilePath, 'StartTime')
 
 % Determine the names of the sub-directories of interest within
 % obj.CoverslipDir.  These correspond to individual cells imaged during the
