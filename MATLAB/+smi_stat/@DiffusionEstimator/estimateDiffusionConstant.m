@@ -111,8 +111,10 @@ switch obj.FitTarget
         % Compute the CDF (cumulative distribution function, a.k.a.
         % cumulative probability distribution, CPD) of the trajectory-wise
         % displacements.
-        obj.MSDSingleTraj = obj.computeCDFOfJumps(obj.MSDSingleTraj);
-        obj.MSDEnsemble = obj.computeCDFOfJumps(obj.MSDEnsemble);
+        obj.MSDSingleTraj = ...
+            obj.computeCDFOfJumps(obj.MSDSingleTraj, obj.FrameLagRange);
+        obj.MSDEnsemble = ...
+            obj.computeCDFOfJumps(obj.MSDEnsemble, obj.FrameLagRange);
         
         % Fit the trajectory-wise CDFs.
         if obj.FitIndividualTrajectories
