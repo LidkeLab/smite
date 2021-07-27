@@ -1,4 +1,4 @@
-function [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose)
+function [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose)
 %computeSingleTrajMSD computes the mean squared displacement from TR.
 % This method computes the mean squared displacement between localizations
 % in the single trajectory provided in TR.
@@ -11,9 +11,10 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose)
 % INPUTS:
 %   TR: Tracking results structure containing only one trajectory.  To be
 %       sure, only TR(1) will be used in the analysis.
-%   MaxFrameLag: Maximum frame difference between localizations to be used
-%                in the MSD calculation. (Default is max. possible frame 
-%                lag for this trajectory)
+%   FrameLagRange: Range of frame differences between localizations for
+%                  which MSD is computed. (Default is from 1 to 1/4 of the 
+%                  max possible frame lag for this trajectory)
+%                  ([min., max.])
 %   Verbose: Verbosity level specifying how many temporary outputs should
 %            be displayed (e.g., Command Window updates).
 %
@@ -48,19 +49,18 @@ end
 FrameNum = TR(1).FrameNum;
 NLocalizations = numel(FrameNum);
 DefaultMaxFrameLag = FrameNum(NLocalizations) - FrameNum(1);
-if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
-    MaxFrameLag = DefaultMaxFrameLag;
-elseif (MaxFrameLag > DefaultMaxFrameLag)
+if (~exist('FrameLagRange', 'var') || isempty(FrameLagRange))
+    FrameLagRange = [1, DefaultMaxFrameLag];
+elseif (FrameLagRange(2) > DefaultMaxFrameLag)
     if (Verbose > 2)
         % For the highest verbosity levels, we should share more info. than
         % just the warning.
-        fprintf(['computeSingleTrajMSD(): Input MaxFrameLag=%i but\n', ...
+        fprintf(['computeSingleTrajMSD(): Input FrameLagRange=[%i, %i] but\n', ...
             '\tthe maximum possible frame lag is %i frames.\n', ...
-            '\tMaxFrameLag will be set to a default value of\n', ...
-            '\tMaxFrameLag=%i\n'], ...
-            MaxFrameLag, DefaultMaxFrameLag, DefaultMaxFrameLag)
+            '\FrameLagRange will be set to a default value of [1, %i].\n'], ...
+            FrameLagRange, DefaultMaxFrameLag, DefaultMaxFrameLag)
     end
-    MaxFrameLag = DefaultMaxFrameLag;
+    FrameLagRange = [1, DefaultMaxFrameLag];
 end
 
 % Loop through localizations and compute the displacement to later
@@ -71,10 +71,12 @@ if (Verbose > 2)
 end
 Coordinates = [TR(1).X, TR(1).Y];
 MeanVariance = mean([TR(1).X_SE.^2, TR(1).Y_SE.^2], 2);
-SquaredDisplacement = zeros(NLocalizations-1, MaxFrameLag);
+FrameLags = (FrameLagRange(1):FrameLagRange(2)).';
+NFrameLags = numel(FrameLags);
+SquaredDisplacement = zeros(NLocalizations-1, NFrameLags);
 SquaredDisplacementMask = logical(SquaredDisplacement);
 LocVarianceSum = SquaredDisplacement;
-for ff = 1:MaxFrameLag
+for ff = 1:NFrameLags
     % Start with the first localization and find the distance to the
     % localization ff frames away.
     Index1 = 1;
@@ -82,11 +84,11 @@ for ff = 1:MaxFrameLag
     while (Index2 <= NLocalizations)
         % Check if the current frame gap is that desired.
         FrameDiff = FrameNum(Index2) - FrameNum(Index1);
-        if (FrameDiff > ff)
+        if (FrameDiff > FrameLags(ff))
             % This frame gap is too large, so we need a new Index1.
             Index1 = Index1 + 1;
             Index2 = Index1 + 1;
-        elseif (FrameDiff == ff)
+        elseif (FrameDiff == FrameLags(ff))
             % Compute the displacement.
             SquaredDisplacement(Index1, ff) = ...
                 (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
@@ -117,7 +119,6 @@ end
 MSD = sum(SquaredDisplacement, 1).' ./ NPoints;
 NPoints = NPoints(KeepBool);
 MSD = MSD(KeepBool);
-FrameLags = (1:MaxFrameLag).';
 FrameLagsAll = FrameLags.' .* SquaredDisplacementMask;
 FrameLags = FrameLags(KeepBool);
 MSDSingleTraj.ConnectID = TR(1).ConnectID;

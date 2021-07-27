@@ -20,7 +20,7 @@ if (obj.Verbose > 0)
     fprintf('estimateDiffusionConstant(): computing MSDs...\n');
 end
 [obj.MSDSingleTraj, obj.MSDEnsemble] = ...
-    obj.computeMSD(obj.TR, obj.MaxFrameLag, obj.Verbose);
+    obj.computeMSD(obj.TR, obj.FrameLagRange, obj.Verbose);
 
 % Determine how many diffusion components are used in the desired model.
 switch lower(obj.DiffusionModel)

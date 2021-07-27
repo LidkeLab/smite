@@ -1,14 +1,15 @@
 function [MSDSingleTraj, MSDEnsemble] = ...
-    computeMSD(TR, MaxFrameLag, Verbose)
+    computeMSD(TR, FrameLagRange, Verbose)
 %computeMSD computes the mean squared displacement from TR.
 % This method computes the trajectory-wise and ensemble mean squared
 % displacements of the trajectories given in 'TR'.
 %
 % INPUTS:
 %   TR: Tracking results structure.
-%   MaxFrameLag: Maximum frame difference between localizations to be used
-%                in the MSD calculation. (Default is 1/4 of the max 
-%                possible frame lag for the ensemble calculation)
+%   FrameLagRange: Range of frame differences between localizations for
+%                  which MSD is computed. (Default is from 1 to 1/4 of the 
+%                  max possible frame lag for the ensemble
+%                  calculation)([min., max.])
 %   Verbose: Verbosity level specifying how many temporary outputs should
 %            be displayed (e.g., Command Window updates).
 %
@@ -31,22 +32,22 @@ MaxFrameDiff = ...
     max(cell2mat(cellfun(@(X) X(end) - X(1), {TR.FrameNum}, ...
     'UniformOutput', false).'));
 DefaultMaxFrameLag = ceil(MaxFrameDiff / 4);
-if (~exist('MaxFrameLag', 'var') || isempty(MaxFrameLag))
-    MaxFrameLag = DefaultMaxFrameLag;
-elseif (MaxFrameLag > MaxFrameDiff)
+if (~exist('FrameLagRange', 'var') || isempty(FrameLagRange))
+    FrameLagRange = [1, DefaultMaxFrameLag];
+elseif (FrameLagRange(2) > MaxFrameDiff)
     if (Verbose > 2)
         % For the highest verbosity levels, we should share more info. than
         % just the warning.
-        fprintf(['computeMSD(): Input MaxFrameLag=%i but the maximum\n',...
-            '\tpossible frame lag is %i frames. MaxFrameLag will be\n', ...
-            '\tset to a default value of MaxFrameLag=%i\n'], ...
-            MaxFrameLag, MaxFrameDiff, DefaultMaxFrameLag)
+        fprintf(['computeMSD(): Input max(FrameLagRange)=%i but the\n', ...
+            '\tmaximum possible frame lag is %i frames. FrameLagRange\n', ...
+            '\twill be set to a default value of [1, %i]\n'], ...
+            FrameLagRange(2), MaxFrameDiff, DefaultMaxFrameLag)
     elseif (Verbose > 0)
-        warning(['computeMSD(): Input MaxFrameLag = %i is too large. ', ...
+        warning(['computeMSD(): Input max(FrameLagRange)=%i is too large. ', ...
             'Using default of %i.'], ...
-            MaxFrameLag, DefaultMaxFrameLag)
+            FrameLagRange(2), DefaultMaxFrameLag)
     end
-    MaxFrameLag = DefaultMaxFrameLag;
+    FrameLagRange = [1, DefaultMaxFrameLag];
 end
 
 % Loop through all trajectories in TR and compute the trajectory-wise and
@@ -57,7 +58,7 @@ if (Verbose > 1)
         'localizations.\n'], NTraj)
 end
 MSDSingleTraj = struct([]);
-MSDMatrix = zeros(NTraj, MaxFrameLag);
+MSDMatrix = zeros(NTraj, FrameLagRange(2));
 NPointsMatrix = MSDMatrix;
 SquaredDisplacement = [];
 LocVarianceSum = [];
@@ -69,7 +70,7 @@ for ii = 1:NTraj
             'trajectory TR(%i)...\n'], ii)
     end
     MSDCurrent = smi_stat.DiffusionEstimator.computeSingleTrajMSD(...
-        TR(ii), MaxFrameLag, Verbose);
+        TR(ii), FrameLagRange, Verbose);
     MSDSingleTraj = [MSDSingleTraj; MSDCurrent];
     
     % Store the single trajectory MSD in a matrix with all of the
@@ -85,7 +86,7 @@ end
 if (Verbose > 1)
     fprintf('computeMSD(): computing ensemble MSD...\n')
 end
-FrameLags = (1:MaxFrameLag).';
+FrameLags = (FrameLagRange(1):FrameLagRange(2)).';
 MSDMatrix = MSDMatrix(:, FrameLags);
 NPointsMatrix = NPointsMatrix(:, FrameLags);
 NPoints = sum(NPointsMatrix, 1).';

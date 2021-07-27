@@ -29,9 +29,9 @@ classdef DiffusionEstimator < handle
         % Target data that will be fit (char array/string)
         FitTarget{mustBeMember(FitTarget, ...
             {'MSD', 'CDFOfJumps', 'LikelihoodOfJumps'})} = 'MSD';
-        
-        % Max. frame lag of the MSD (scalar, integer)(Default = inf)
-        MaxFrameLag = inf;
+
+        % Range of frame lags used to estimate D (Default = [1, inf])
+        FrameLagRange = [1, inf];
         
         % Number of MSD points to be fit (scalar, integer)(Default = 5)
         NFitPoints = 5;
@@ -132,8 +132,8 @@ classdef DiffusionEstimator < handle
     
     methods (Static)
         [MSDSingleTraj, MSDEnsemble] = ...
-            computeMSD(TR, MaxFrameLag, Verbose);
-        [MSDStruct] = computeCDFOfJumps(MSDStruct);
+            computeMSD(TR, FrameLagRange, Verbose);
+        [MSDStruct] = computeCDFOfJumps(MSDStruct, FrameLagRange);
         [FitParams, FitParamsSE] = ...
             fitMSD(MSDStruct, FitMethod, NFitPoints, ...
             DiffusionModel, Verbose);
@@ -153,7 +153,7 @@ classdef DiffusionEstimator < handle
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSDSingleTraj] = computeSingleTrajMSD(TR, MaxFrameLag, Verbose);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose);
         [FitParams, FitParamsSE] = ...
             fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
         [FitParams, FitParamsSE] = ...
