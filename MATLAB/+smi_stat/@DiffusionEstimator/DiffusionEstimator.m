@@ -18,7 +18,7 @@ classdef DiffusionEstimator < handle
         %   'Brownian2C': Simple Brownian motion with two diffusing
         %                 populations (i.e., two diffusion constants).
         %                 This model can only be used when
-        %                 FitTarget = 'CDFOfJumps'
+        %                 FitTarget = 'CDFOfJumps' or 'LikelihoodOfJumps'.
         DiffusionModel{mustBeMember(DiffusionModel, ...
             {'Brownian1C', 'Brownian2C'})} = 'Brownian1C';
         
@@ -30,8 +30,8 @@ classdef DiffusionEstimator < handle
         FitTarget{mustBeMember(FitTarget, ...
             {'MSD', 'CDFOfJumps', 'LikelihoodOfJumps'})} = 'MSD';
 
-        % Range of frame lags used to estimate D (Default = [1, inf])
-        FrameLagRange = [1, inf];
+        % Range of frame lags used to estimate D (Default = [1, 5])
+        FrameLagRange = [1, 5];
         
         % Number of MSD points to be fit (scalar, integer)(Default = 5)
         NFitPoints = 5;
