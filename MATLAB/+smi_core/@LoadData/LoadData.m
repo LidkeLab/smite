@@ -48,12 +48,6 @@ classdef LoadData < handle
             %    SMF - single molecule fitting structure with FileName,
             %    FileDir and ResultsDir added.
             
-            % Make a copy of the input SMF (this way, the user can choose
-            % whether or not their SMF is updated, i.e., if they want the
-            % SMF changed they can request the third output argument from
-            % this method).
-            SMF = copy(SMF);
-            
             if isfield(SMF.Data,'FileName')&&~isempty(SMF.Data.FileName)
                 % determining FileTye from SMF entries of FileName
                 if iscell(SMF.Data.FileName)
