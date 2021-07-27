@@ -65,6 +65,9 @@ ZerosArray = zeros(numel(SortedSquaredDisp), 1);
 CDFOfJumps = ZerosArray;
 for nn = 1:NComponents
     % Define the variance term for this component.
+    % NOTE: For emphasis, 'LocVarianceSum' is the sum of the localization
+    %       variances of the two localizations, thus we don't need to
+    %       multiply it by a factor of 2.
     Variance = 2*FrameLags*MotionParams(nn) + mean(LocVarianceSum);
     
     % Sum over frame lags.

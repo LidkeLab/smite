@@ -50,6 +50,9 @@ MotionParams = [MotionParams; ...
 % NOTE: I'm taking the mean of the localization variance sums.  That's not
 %       ideal, but dealing with those properly becomes too messy/slow
 %       (i.e., we get another integral...).
+% NOTE: For emphasis, 'LocVarianceSum' is the sum of the localization
+%       variances of the two localizations, thus we don't need to
+%       multiply it by a factor of 2.
 Variance = 2*FrameLagsAll*MotionParams(1:NComponents) ...
     + mean(LocVarianceSum);
 LogLikelihood = sum(log(sum((sqrt(SquaredDisplacement)./Variance) ...
