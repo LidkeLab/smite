@@ -40,7 +40,7 @@ if (~exist('VideoObject', 'var') || isempty(VideoObject))
     VideoObject = [];
 end
 DefaultParams = smi_vis.GenerateMovies.prepDefaults();
-Params = smi_helpers.padParams(Params, DefaultParams);
+Params = smi_helpers.padStruct(Params, DefaultParams);
 
 % Define a few other parameters that'll be used in this method.
 % NOTE: XRange and YRange are defined to resolve some coordinate

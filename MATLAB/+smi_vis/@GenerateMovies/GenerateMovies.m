@@ -78,7 +78,7 @@ classdef GenerateMovies < handle
             % that it has all necessary fields set) and that they are typed
             % correctly (e.g., logical, char, ...).
             DefaultParams = obj.prepDefaults();
-            obj.Params = smi_helpers.padParams(ParamsInput, DefaultParams);
+            obj.Params = smi_helpers.padStruct(ParamsInput, DefaultParams);
         end
         
         function [LengthUnitString] = get.LengthUnitString(obj)
