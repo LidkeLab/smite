@@ -133,7 +133,7 @@ methods
         % analyzeAll:
         %    for n = DatasetList
         %       analyzeDataset:
-        %          LoadData           (lowad raw data)
+        %          LoadData           (load raw data)
         %          DataToPhotons      (gain and offset corrections)
         %          LocalizeData       (produce localizations for SMD structure)
         %             Threshold       (thresholding of localizations generated)
