@@ -108,6 +108,10 @@ switch obj.FitTarget
         PopulationRatiosEnsemble = 1;
         PopulationRatiosEnsembleSE = 0;
     case 'CDFOfJumps'
+        % Modify obj.NFitPoints to reflect the fact that we're fitting the
+        % entire CDF, no matter what the user has requested!
+        obj.NFitPoints = numel(obj.MSDEnsemble.FrameLagsAll);
+        
         % Compute the CDF (cumulative distribution function, a.k.a.
         % cumulative probability distribution, CPD) of the trajectory-wise
         % displacements.
@@ -182,6 +186,10 @@ switch obj.FitTarget
             [ParamsEnsembleSE((NComponents+1):end); ...
             NaN];
     case 'LikelihoodOfJumps'
+        % Modify obj.NFitPoints to reflect the fact that we're using all of
+        % the data in the MLE.
+        obj.NFitPoints = numel(obj.MSDEnsemble.FrameLagsAll);
+        
         % Compute the trajectory-wise MLEs.
         % NOTE: This is the same model as the 'CDFOfJumps', but making an
         %       MLE from the PDF instead of fitting the CDF.

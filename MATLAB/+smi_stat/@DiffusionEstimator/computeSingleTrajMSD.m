@@ -48,19 +48,8 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
 end
 FrameNum = TR(1).FrameNum;
 NLocalizations = numel(FrameNum);
-DefaultMaxFrameLag = FrameNum(NLocalizations) - FrameNum(1);
 if (~exist('FrameLagRange', 'var') || isempty(FrameLagRange))
-    FrameLagRange = [1, DefaultMaxFrameLag];
-elseif (FrameLagRange(2) > DefaultMaxFrameLag)
-    if (Verbose > 2)
-        % For the highest verbosity levels, we should share more info. than
-        % just the warning.
-        fprintf(['computeSingleTrajMSD(): Input FrameLagRange=[%i, %i] but\n', ...
-            '\tthe maximum possible frame lag is %i frames.\n', ...
-            '\FrameLagRange will be set to a default value of [1, %i].\n'], ...
-            FrameLagRange, DefaultMaxFrameLag, DefaultMaxFrameLag)
-    end
-    FrameLagRange = [1, DefaultMaxFrameLag];
+    FrameLagRange = [1, FrameNum(NLocalizations) - FrameNum(1)];
 end
 
 % Loop through localizations and compute the displacement to later
