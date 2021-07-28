@@ -18,7 +18,7 @@ SimParams.D = 0.0123 ...
     / (SimParams.FrameRate * SimParams.PixelSize^2); % px^2 / subframe
 SimParams.Intensity = 300;
 [SMD, ~, ~, SimParams] = SMA_Sim.simulateTrajectories(SimParams);
-SMD.ConnectID = SMD.TrajectoryID; % relich from SMA_Sim.simulateTrajectories()
+SMD.ConnectID = SMD.TrajectoryID; % fix for SMA_Sim.simulateTrajectories()
 TR = smi_core.TrackingResults.convertSMDToTR(SMD);
 
 % Prepare the DiffusionEstimator class and estimate D.
@@ -84,3 +84,22 @@ DE.estimateDiffusionConstant();
 DE.plotEnsembleCDFOfJumps(axes(figure()), ...
     DE.MSDEnsemble, DE.DiffusionStruct, DE.DiffusionModel, DE.UnitFlag);
 
+%% Two diffusing populations, estimating D with an MLE for the jumps.
+% (If estimating standard errors, this is faster than fitting the CDF, and
+% the results are similar).
+
+% Prepare the DiffusionEstimator class and estimate D.
+% NOTE: For LikelihoodOfJumps maximization, the important parameters are
+%       'DiffusionModel' and 'FrameLagRange'.
+SMF = smi_core.SingleMoleculeFitting; % used for PixelSize and FrameRate
+SMF.Data.PixelSize = SimParams.PixelSize;
+SMF.Data.FrameRate = SimParams.FrameRate;
+DE = smi_stat.DiffusionEstimator(TR, SMF);
+DE.FitTarget = 'LikelihoodOfJumps';
+DE.DiffusionModel = 'Brownian2C';
+DE.FrameLagRange = [2, 2]; % range of frame lags computed in MSD
+DE.EstimateSEs = true; % estimate standard errors of fit D values
+DE.FitIndividualTrajectories = false; % fit each trajectory MSD
+DE.UnitFlag = true;
+DE.Verbose = 1;
+DE.estimateDiffusionConstant();

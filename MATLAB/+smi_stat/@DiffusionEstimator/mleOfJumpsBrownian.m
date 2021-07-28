@@ -85,7 +85,7 @@ if (nargout > 1)
     % Errors were requested for our MLE, so we'll return those as the CRLB
     % (which isn't correct, since we expect our parameters to be
     % constrained [at the least to be positive values]).
-    DeltaHFraction = 1e-9;
+    DeltaHFraction = 1e-2;
     DeltaHBound = [1e-9; 1e-1];
     HessianAboutMLE = smi_stat.computeHessian(CostFunction, MLEParams, ...
         DeltaHFraction, DeltaHBound);
