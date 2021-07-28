@@ -133,6 +133,7 @@ methods
         % analyzeAll:
         %    for n = DatasetList
         %       analyzeDataset:
+        %          LoadData           (lowad raw data)
         %          DataToPhotons      (gain and offset corrections)
         %          LocalizeData       (produce localizations for SMD structure)
         %             Threshold       (thresholding of localizations generated)
@@ -239,6 +240,12 @@ methods
         % gaussblobs, drift image, fits/frame, NumConnected hist,
         % Driftcorrection plots, precision hist, intensity hist,
         % mat file with SMD and SMF structures.
+        % saveResults flow:
+        %
+        % saveResults:
+        %    Save SMD and SMF structures
+        %    generatePlots (plots saved for fullAnalysis, displayed for testFit)
+
         if isempty(obj.SMD)
             error('No SMD results structure found to save!');
         end
