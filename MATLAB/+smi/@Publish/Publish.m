@@ -38,6 +38,9 @@ classdef Publish < handle
         % Label(s) to be analyzed (Default = [], analyze all labels)
         LabelID = [];
         
+        % Cell(s) to be analyzed (Default = [], analyze all cells)
+        CellList = [];
+        
         % Zoom factor for output SR images (Default = 20)
         SRImageZoom = 20;
         

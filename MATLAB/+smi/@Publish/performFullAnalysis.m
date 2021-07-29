@@ -36,11 +36,28 @@ save(obj.LogFilePath, 'StartTime')
 % Determine the names of the sub-directories of interest within
 % obj.CoverslipDir.  These correspond to individual cells imaged during the
 % experiment.
-CellNames = smi_helpers.getDirectoryNames(obj.CoverslipDir, 'Cell*');
+CellNamesFound = smi_helpers.getDirectoryNames(obj.CoverslipDir, 'Cell*');
+CellNames = CellNamesFound;
+NCellsFound = numel(CellNamesFound);
+if ~isempty(obj.CellList)
+    KeepCells = ones(NCellsFound, 1, 'logical');
+    for ii = 1:NCellsFound
+        CellNumber = sscanf(CellNames{ii}, 'Cell_%d');
+        if ~ismember(CellNumber, obj.CellList)
+            KeepCells(ii) = false;
+        end
+    end
+    CellNames = CellNames(KeepCells);
+end
 NCells = numel(CellNames);
 if (obj.Verbose > 1)
     fprintf(['Publish.performFullAnalysis(): %i ', ...
-        'cell directories found:\n'], NCells)
+        'cell directories found:\n'], NCellsFound)
+    for ii = 1:NCellsFound
+        fprintf('\t%s\n', CellNamesFound{ii})
+    end
+    fprintf(['Publish.performFullAnalysis(): %i ', ...
+        'cell directories to be analyzed:\n'], NCells)
     for ii = 1:NCells
         fprintf('\t%s\n', CellNames{ii})
     end
@@ -51,9 +68,16 @@ end
 
 % Loop through the cell directories and analyze the contents.
 for ii = 1:NCells
+    % Determine if this cell should be analyzed.
+    if ~isempty(obj.CellList)
+        CellNumber = sscanf(CellNames{ii}, 'Cell_%d');
+        if ~ismember(CellNumber, obj.CellList)
+            continue
+        end
+    end
     if (obj.Verbose > 1)
         fprintf(['Publish.performFullAnalysis(): analyzing ', ...
-            'cell %i of %i...\n'], ii, NCells)
+            'cell directory %i of %i: %s...\n'], ii, NCells, CellNames{ii})
     end
     obj.processCell(CellNames{ii});
 end
