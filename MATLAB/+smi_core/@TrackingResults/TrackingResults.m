@@ -32,6 +32,8 @@ classdef TrackingResults
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);
         [TR] = threshTrajLength(TR, MinTrackLength);
+        [TR] = padTR(TR, TRPadding);
+        [TR] = catTR(TR1, TR2);
         
     end
 end
