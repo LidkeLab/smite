@@ -17,7 +17,7 @@ function [HessianMatrix] = computeHessian(FunctionHandle, Location, ...
 %                   (Default = 1e-2 chosen arbitrarily)
 %   DeltaHBound: Bounds to the step size Delta h.
 %                ([min. value, max. value])
-%                (Default = min(Location)*[1e-9; 1e-1] chosen arbitrarily)
+%                (Default = [1e-9; 1e-1] chosen arbitrarily)
 %
 % OUTPUTS:
 %   HessianMatrix: The matrix containing an estimate of the Hessian of
@@ -34,7 +34,7 @@ if (~exist('DeltaHFraction', 'var') || isempty(DeltaHFraction))
     DeltaHFraction = 1e-2;
 end
 if (~exist('DeltaHBound', 'var') || isempty(DeltaHBound))
-    DeltaHBound = min(Location)  * [1e-9; 1e-1];
+    DeltaHBound = [1e-9; 1e-1];
 end
 
 % Loop through the parameters and construct the Hessian element by element.
