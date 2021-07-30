@@ -259,8 +259,8 @@ end
 
 % Store the results in the DiffusionStruct.
 DiffusionStruct(1).Name = 'trajectory';
-JumpUnit = smi_helpers.stringMUX({'pixels', 'micrometers'}, obj.UnitFlag);
-TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, obj.UnitFlag);
+JumpUnit = smi_helpers.arrayMUX({'pixels', 'micrometers'}, obj.UnitFlag);
+TimeUnit = smi_helpers.arrayMUX({'frames', 'seconds'}, obj.UnitFlag);
 DiffusionStruct(1).Units = {JumpUnit; TimeUnit};
 DiffusionStruct(1).FitParams = ParamsSingleTraj;
 DiffusionStruct(1).FitParamsSE = ParamsSingleTrajSE;

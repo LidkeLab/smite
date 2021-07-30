@@ -79,7 +79,7 @@ if ~isempty(DiffusionStruct)
         MSDEnsemble.LocVarianceSum * SquaredJumpsConversion);
     plot(PlotAxes, SquaredJumps, ModelCDF)
 end
-SquaredJumpsUnit = smi_helpers.stringMUX({'pixels^2', 'micrometers^2'}, ...
+SquaredJumpsUnit = smi_helpers.arrayMUX({'pixels^2', 'micrometers^2'}, ...
     UnitFlag);
 xlabel(PlotAxes, sprintf('Squared jumps (%s)', SquaredJumpsUnit))
 ylabel(PlotAxes, 'CDF of jumps')

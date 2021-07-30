@@ -60,7 +60,7 @@ save(FilePath, 'DiffusionStruct', 'FitMethod', 'NFitPoints', ...
 
 % Generate and save a plot of the fit.
 if SaveParams.MakeFitPlot
-    VisiblePlot = smi_helpers.stringMUX({'off', 'on'}, obj.Verbose);
+    VisiblePlot = smi_helpers.arrayMUX({'off', 'on'}, (obj.Verbose > 0));
     PlotFigure = figure('Visible', VisiblePlot);
     PlotAxes = axes(PlotFigure);
     FilePath = fullfile(obj.SaveDir, ...

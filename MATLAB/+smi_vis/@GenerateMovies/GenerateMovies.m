@@ -82,17 +82,17 @@ classdef GenerateMovies < handle
         end
         
         function [LengthUnitString] = get.LengthUnitString(obj)
-            LengthUnitString = smi_helpers.stringMUX(...
+            LengthUnitString = smi_helpers.arrayMUX(...
                 obj.LengthUnitOptions, obj.Params.UnitFlag);
         end
         
         function [TimeDimensionString] = get.TimeDimensionString(obj)
-            TimeDimensionString = smi_helpers.stringMUX(...
+            TimeDimensionString = smi_helpers.arrayMUX(...
                 obj.TimeDimensionOptions, obj.Params.UnitFlag);
         end
         
         function [TimeUnitString] = get.TimeUnitString(obj)
-            TimeUnitString = smi_helpers.stringMUX(...
+            TimeUnitString = smi_helpers.arrayMUX(...
                 obj.TimeUnitOptions, obj.Params.UnitFlag);
         end
         

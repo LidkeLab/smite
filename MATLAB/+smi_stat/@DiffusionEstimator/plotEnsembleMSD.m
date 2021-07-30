@@ -69,8 +69,8 @@ if ~isempty(DiffusionStruct)
                 FrameLags, FitParams(2)*FrameLags + FitParams(1))
     end
 end
-TimeUnit = smi_helpers.stringMUX({'frames', 'seconds'}, UnitFlag);
-MSDUnit = smi_helpers.stringMUX(...
+TimeUnit = smi_helpers.arrayMUX({'frames', 'seconds'}, UnitFlag);
+MSDUnit = smi_helpers.arrayMUX(...
     {'pixels^2', 'micrometers^2'}, UnitFlag);
 xlabel(PlotAxes, sprintf('Time lag (%s)', TimeUnit))
 ylabel(PlotAxes, sprintf('MSD (%s)', MSDUnit))
