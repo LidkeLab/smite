@@ -27,7 +27,7 @@ FrameRate = 20;
 SMFChannel1 = smi_core.SingleMoleculeFitting;
 SMFChannel1.Data.AnalysisID = 'Channel1';
 SMFChannel1.Data.FileDir = FileDir;
-SMFChannel1.Data.DataROI = [1, 1, 64, 64]; % left half of data
+SMFChannel1.Data.DataROI = [1, 1, 64, 64]; % left half of data [YStart, XStart, YEnd, XEnd]
 SMFChannel1.Data.RegistrationFilePath = '';
 SMFChannel1.Data.PixelSize = PixelSize;
 SMFChannel1.Data.FrameRate = FrameRate;
@@ -67,7 +67,7 @@ end
 
 %% Interactively prepare a movie for each channel.
 % Define the index of 'FileList' which we'd like to see a movie for.
-FileIndex = 7;
+FileIndex = 3;
 
 % Reload our tracking results (these contain TR, SMD, and SMF).
 [~, Channel1FileName] = fileparts(FileList(FileIndex).name);
@@ -94,11 +94,11 @@ LD = smi_core.LoadData;
 
 % If needed, transform the raw data (to make sure the trajectories overlay
 % nicely on the raw data!).
-if ~isempty(SMFChannel2.Data.RegistrationFilePath)
+if Channel2Results.SMD.IsTransformed
     load(SMFChannel2.Data.RegistrationFilePath, 'RegistrationTransform')
+    RawDataChannel2 = smi_core.ChannelRegistration.transformImages(...
+        RegistrationTransform, RawDataChannel2);
 end
-RawDataChannel2 = smi_core.ChannelRegistration.transformImages(...
-    RegistrationTransform, RawDataChannel2);
 
 % Prepare the movies using the GUI.
 MovieMaker1 = smi_vis.GenerateMovies;
