@@ -115,9 +115,6 @@ function obj = PairCorrelation(SMF)
    obj.ResultsDir  = SMF.Data.ResultsDir;
    obj.HistBinSize = SMF.Data.PixelSize;
    obj.PixelSize   = SMF.Data.PixelSize;
-   if ~isempty(SMF.Data.DataROI)
-      obj.ROI = SMF.Data.DataROI * SMF.Data.PixelSize;
-   end
 
 end
 
