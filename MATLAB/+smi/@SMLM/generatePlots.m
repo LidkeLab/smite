@@ -85,7 +85,8 @@ end
 
 if ismember("PValue", PlotDo)
    %create PValue histogram
-   plotAndSaveHist('PValue','P value')
+   %plotAndSaveHist('PValue','P value')
+   plotAndSavePValueHist('PValue','P value')
 end
 
 if ismember("X_SE", PlotDo)
@@ -261,6 +262,28 @@ end
        if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
           Vector_in=SMD.(FieldName);
           FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
+          [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+          if ~isempty(PlotSaveDir2)
+             FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
+             saveas(FigH,(fullfile(PlotSaveDir2,FileName)),'png');
+          end
+          if ~ShowPlots; close(gcf); end
+       end
+    end
+
+    % nested function for plotting and saving the PValue histogram, which is
+    % plotted specially with log axes.
+    function plotAndSavePValueHist(FieldName,HistName)
+       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
+          Vector_in=SMD.(FieldName);
+          % Convert data values near zero to slightly larger values so that
+          % they show up in the histogram plot below.
+          %Vector_in(Vector_in <= 0.001) = 0.001;
+          FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
+          %set(gca, 'xscale', 'log');
+          set(gca, 'yscale', 'log');
+          xlim([0, 1]);
+
           [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
           if ~isempty(PlotSaveDir2)
              FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
