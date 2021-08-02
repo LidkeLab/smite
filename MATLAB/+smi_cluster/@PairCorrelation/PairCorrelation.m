@@ -77,7 +77,7 @@ properties
    % calculated using the (x_min, x_max, y_min, y_max) computed from the data
    % as
    %    xy_size = min(x_max - x_min, y_max - y_min)
-   ROI = [];   % [x_min, x_max, x_max, y_max]
+   ROI = [];   % [x_min, x_max, x_max, y_max]   % nm
 
    BaseName = ''; % descriptive name for the result files.
    Font_props = {'FontSize', 15, 'FontWeight', 'bold'};
@@ -115,6 +115,9 @@ function obj = PairCorrelation(SMF)
    obj.ResultsDir  = SMF.Data.ResultsDir;
    obj.HistBinSize = SMF.Data.PixelSize;
    obj.PixelSize   = SMF.Data.PixelSize;
+   if ~isempty(SMF.Data.DataROI)
+      obj.ROI = SMF.Data.DataROI * SMF.Data.PixelSize;
+   end
 
 end
 
