@@ -39,7 +39,7 @@ classdef HMM < handle
         % coefficients (one for each channel), or 
         % size(TRArray, 1)x2 diffusion coefficients corresponding to the 
         % candidates in TRArray.
-        DiffusionCoefficient {mustBeFloat(DiffusionCoefficient)} = 0.1;
+        DiffusionCoefficient {mustBeFloat(DiffusionCoefficient)}
         
         % Error in registration between two channels (pixels)(Default = 0)
         % If this value is a scalar, the same registration error is used
@@ -48,11 +48,18 @@ classdef HMM < handle
         % each trajectory pair in TRArray.
         RegistrationError {mustBeFloat(RegistrationError)} = 0;
         
+        % Identifier for one of the pre-built models. (Default = 'DF')
+        % OPTIONS:
+        %   'DF': dimer or free
+        %   'DDF': dimer, domain, or free
+        ModelSpecifier {mustBeText(ModelSpecifier)} = 'DF';
+                
         % Handles to the state PDFs used in the HMM (cell array)
         PDFHandles(:, 1) cell
         
         % Initial guess of rate parameters (NRatesx1 float)
-        RateParametersGuess {mustBeFloat(RateParametersGuess)}
+        RateParametersGuess(:, 1) {mustBeFloat(RateParametersGuess)} = ...
+            0.01 * [1; 1];
         
         % Array of TR structures corresponding to dimer candidates. (Nx2)
         % This is organized as a NCandidatex2 structure, with each column
@@ -83,7 +90,17 @@ classdef HMM < handle
         % NOTE: This is used when running obj.performFullAnalysis().
         GeneratePlots logical = true;
         
+        % Structure of parameters (see smi_core.SingleMoleculeFitting)
+        % NOTE: As of this writing, this class uses SMF.Data.FrameRate and
+        %       SMF.Data.PixelSize (when UnitFlag = true).  If
+        %       DiffusionCoefficient is empty, obj.performFullAnalysis()
+        %       will use the value in SMF.Tracking.D.
+        SMF
+        
         % Top level directory for saving results.
+        % NOTE: If left empty, obj.saveResults() will try to use
+        %       obj.SMF.Data.ResultsDir.  If that is also empty, a default
+        %       will be set to pwd().
         SaveDir {mustBeText(SaveDir)} = '';
         
         % Verbosity level of obj.performFullAnalysis(). (Default = 1)
@@ -97,12 +114,24 @@ classdef HMM < handle
         % Standard error estimates of rate parameters. (float array)
         RateParametersSE(:, 1) {mustBeFloat(RateParametersSE)}
         
-        % Pre-processed obj.TRArray as seen by the HMM analysis. (2xN)
-        TRArrayTrunc(2, :) struct
+        % Pre-processed obj.TRArray as seen by the HMM analysis. (Nx2)
+        TRArrayTrunc(:, 2) struct
+    end
+    
+    properties (Hidden)
+        % Tolerance used in a check in obj.performFullAnalysis().
+        DiscrepancyTol(1, 1) {mustBeFloat(DiscrepancyTol)} = 0.1;
     end
     
     methods
-        function obj = HMM()
+        function obj = HMM(TRArray, SMF)
+            % Class constructor which allows option inputs.
+            if exist('TRArray', 'var')
+                obj.TRArray = TRArray;
+            end
+            if exist('SMF', 'var')
+                obj.SMF = SMF;
+            end
         end
         
         function set.ConditionLabel(obj, InputValue)

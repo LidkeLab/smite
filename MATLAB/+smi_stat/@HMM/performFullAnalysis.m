@@ -17,6 +17,15 @@ if (obj.Verbose > 0)
     fprintf('HMM.performFullAnalysis(): beginning analysis...\n')
 end
 
+% If needed, prepare a set of emission PDFs based on the requested model.
+% NOTE: I've added this in an attempt to generalize the
+%       performFullAnalysis() method.  While not yet complete, the goal is
+%       that the user may set custom handles for obj.PDFHandles if desired
+%       and still run performFullAnalysis() in a meaningful way.
+if isempty(obj.PDFHandles)
+    obj.PDFHandles = obj.generateEmissionPDFs(obj.ModelSpecifier);
+end
+
 % Make local copies of various arrays and define misc. parameters.
 TRArray = obj.TRArray;
 NStates = numel(obj.PDFHandles);
@@ -38,6 +47,9 @@ if (NRegError ~= NCandidates)
     % use it for all candidates.
     obj.RegistrationError = ...
         obj.RegistrationError(1) * ones(NCandidates, 1);
+end
+if isempty(obj.DiffusionCoefficient)
+    obj.DiffusionCoefficient = obj.SMF.Tracking.D;
 end
 DSize = size(obj.DiffusionCoefficient);
 if ((DSize(1)==NCandidates) && (DSize(2)==2))
@@ -108,12 +120,12 @@ for ii = 1:NCandidates
     
     % Estimate the state sequence that resulted in these observations.
     EmissionProbabilitySeries = EmissionPDFCell{ii}.';
-    [StateSequence] = obj.estimateStateSequence(StateSpace, ...
+    [StateSequence] = obj.computeViterbiPath(StateSpace, ...
         EmissionProbabilitySeries(:, 1), TransitionMatrixSeries, ...
         EmissionProbabilitySeries);
     
     % Find the apparent durations of each dimer event (as found by the
-    % Viterbi algorithm in obj.estimateStateSequence() above).
+    % Viterbi algorithm in obj.computeViterbiPath() above).
     DimerDurations = obj.computeDimerDurations(...
         StateSequence, TRArrayTrunc(ii, 1).FrameNum);
     
@@ -157,12 +169,13 @@ end
 % agreement.
 DimerDurations = cell2mat({TRArrayTrunc(:, 1).DimerDurations}.');
 ViterbiOffRate = -log(1 - 1/mean(DimerDurations));
-if (NStates == 2)
-    HMMOffRate = RateParameters(2);
-elseif (NStates == 3)
-    HMMOffRate = RateParameters(3) + RateParameters(5);
-else
-    error('Update performFullAnalysis() for new state model!!!');
+switch NStates
+    case 2
+        HMMOffRate = RateParameters(2);
+    case 3
+        HMMOffRate = RateParameters(3) + RateParameters(5);
+    otherwise
+        error('Update HMM.performFullAnalysis() for new state model!!!');
 end
 RelativeDiff = (abs(ViterbiOffRate-HMMOffRate) ...
     / abs(ViterbiOffRate+HMMOffRate));

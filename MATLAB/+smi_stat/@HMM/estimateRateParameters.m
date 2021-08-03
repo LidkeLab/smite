@@ -75,7 +75,8 @@ LogLikelihood = -NegLogLikelihood(RateParameters);
 
 % Estimate the errors in the found model parameters.
 [HessianMatrix] = ...
-    smi_stat.computeHessian(NegLogLikelihood, RateParameters, 0.05, 1e-7);
+    smi_stat.computeHessian(NegLogLikelihood, RateParameters, ...
+    0.05, 1e-7 * [1, 1]);
 RateParametersSE = sqrt(diag(inv(HessianMatrix)));
 
 
