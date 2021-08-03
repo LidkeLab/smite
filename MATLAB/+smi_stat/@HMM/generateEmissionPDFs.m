@@ -59,19 +59,19 @@ function [PDFHandles] = generateEmissionPDFs(ModelSpecifier)
 switch ModelSpecifier
     case 'DF'
         % Generate the function handle for the dimer state.
-        PDFHandles{1} = @(X) generateDimerPDF(X);
+        PDFHandles{1, 1} = @(X) generateDimerPDF(X);
         
         % Generate the function handle for the free state.
-        PDFHandles{2} = @(X) generateFreePDF(X);
+        PDFHandles{2, 1} = @(X) generateFreePDF(X);
     case 'DDF'
         % Generate the function handle for the dimer state.
-        PDFHandles{1} = @(X) generateDimerPDF(X);
+        PDFHandles{1, 1} = @(X) generateDimerPDF(X);
         
         % Generate the function handle for the domain state.
-        PDFHandles{2} = @(X) generateDomainPDF(X);
+        PDFHandles{2, 1} = @(X) generateDomainPDF(X);
         
         % Generate the function handle for the free state.
-        PDFHandles{3} = @(X) generateFreePDF(X);
+        PDFHandles{3, 1} = @(X) generateFreePDF(X);
 end
 
     function [DimerPDF] = generateDimerPDF(X)
@@ -80,11 +80,11 @@ end
         % Extract some arrays from X to make the code more readable.
         Separation = X{1};
         PositionSE = X{2};
-        SigmaOverlay = X{4};
+        SigmaReg = X{4};
         SeparationDimer = X{5};
         
         % Define the dimer state pdf.
-        VarianceDimer = sum(PositionSE.^2, 2) + SigmaOverlay;
+        VarianceDimer = sum(PositionSE.^2, 2) + SigmaReg;
         DimerPDF = (Separation./VarianceDimer) ...
             .* exp(-0.5*(Separation.^2+SeparationDimer^2)./VarianceDimer) ...
             .* besseli(0, Separation*SeparationDimer./VarianceDimer);

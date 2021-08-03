@@ -24,10 +24,7 @@ classdef HMM < handle
     %   David J. Schodt (Lidke Lab, 2021)
     
     
-    properties
-        % Diffusion constant(s) for the trajectories (pixel^2 / frame)
-        DiffusionConstant {mustBeFloat(DiffusionConstant)}
-        
+    properties        
         % Separation between fluorophores on a dimer (pixels)
         DimerSeparation(1, 1) {mustBeFloat(DimerSeparation)} = 0.5;
         
@@ -35,27 +32,41 @@ classdef HMM < handle
         DomainSeparation(1, 1) {mustBeFloat(DomainSeparation)} = 2;
         
         % Max. separation for dimer candidates (pre-processing) (pixels)
-        MaxSeparation = 5;
+        MaxSeparation(1, 1) {mustBeFloat(MaxSeparation)} = 5;
+        
+        % Diffusion coefficient(s) for the trajectories (pixel^2 / frame)
+        % This can be either a single diffusion constant, two diffusion
+        % coefficients (one for each channel), or 
+        % size(TRArray, 1)x2 diffusion coefficients corresponding to the 
+        % candidates in TRArray.
+        DiffusionCoefficient {mustBeFloat(DiffusionCoefficient)} = 0.1;
+        
+        % Error in registration between two channels (pixels)(Default = 0)
+        % If this value is a scalar, the same registration error is used
+        % for all entries of obj.TRArray.  Alternatively, this can be a
+        % size(TRArray, 1)x1 array defining a unique registration error for
+        % each trajectory pair in TRArray.
+        RegistrationError {mustBeFloat(RegistrationError)} = 0;
         
         % Handles to the state PDFs used in the HMM (cell array)
-        PDFHandles cell
+        PDFHandles(:, 1) cell
         
         % Initial guess of rate parameters (NRatesx1 float)
         RateParametersGuess {mustBeFloat(RateParametersGuess)}
         
-        % Array of TR structures corresponding to dimer candidates (2xN)
-        % This is organized as a 2xNCandidate structure, with each column
+        % Array of TR structures corresponding to dimer candidates. (Nx2)
+        % This is organized as a NCandidatex2 structure, with each column
         % being a dimer candidate.
-        TRArray struct
+        TRArray(:, 2) struct
         
         % Data channel names added to certain outputs. (cell array of char)
-        ChannelNames cell = {'Channel 1', 'Channel 2'};
+        ChannelNames cell = {'Channel 1'; 'Channel 2'};
         
         % Model state names added to certain outputs. (cell array of char)
-        StateNames cell = {'Dimer', 'Domain', 'Free'};
+        StateNames cell = {'Dimer'; 'Domain'; 'Free'};
         
         % Label for save directory to indicate a condition. (char/string)
-        ConditionLabel {mustBeText(ConditionLabel)}
+        ConditionLabel {mustBeText(ConditionLabel)} = '';
         
         % Indicate results should be saved. (Default = true)
         % NOTE: This is used when running obj.performFullAnalysis().
@@ -73,28 +84,26 @@ classdef HMM < handle
         GeneratePlots logical = true;
         
         % Top level directory for saving results.
-        SaveDir {mustBeText(SaveDir)}
+        SaveDir {mustBeText(SaveDir)} = '';
+        
+        % Verbosity level of obj.performFullAnalysis(). (Default = 1)
+        Verbose {mustBeInteger(Verbose)} = 1;
     end
     
     properties (SetAccess = 'protected')
         % Rate parameters found by HMM analysis. (float array)
-        RateParameters {mustBeFloat(RateParameters)}
+        RateParameters(:, 1) {mustBeFloat(RateParameters)}
         
         % Standard error estimates of rate parameters. (float array)
-        RateParametersSE {mustBeFloat(RateParametersSE)}
+        RateParametersSE(:, 1) {mustBeFloat(RateParametersSE)}
         
         % Pre-processed obj.TRArray as seen by the HMM analysis. (2xN)
-        TRArrayTrunc struct
+        TRArrayTrunc(2, :) struct
     end
     
     methods
         function obj = HMM()
-            
         end
-        
-        [RateParameters, RateParametersSE, LogLikelihood] = ...
-            performFullAnalysis(obj);
-        saveResults(obj);
         
         function set.ConditionLabel(obj, InputValue)
             % This set method ensures that the user defined ConditionLabel
@@ -104,6 +113,10 @@ classdef HMM < handle
             obj.ConditionLabel = replace(InputValue, ' ', '_');
         end
         
+        [RateParameters, RateParametersSE, LogLikelihood] = ...
+            performFullAnalysis(obj);
+        saveResults(obj);
+                
     end
     
     methods (Static)
@@ -141,5 +154,6 @@ classdef HMM < handle
         [FigureHandle] = createSummaryPlot(TRArray, DisplayParams, ...
             FigureHandle);
     end
+    
     
 end

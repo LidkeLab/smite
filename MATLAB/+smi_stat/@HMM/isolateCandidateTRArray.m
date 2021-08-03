@@ -11,9 +11,9 @@ function [TRArrayTrunc] = isolateCandidateTRArray(TRArray)
 %            structures correspond to dimer candidate trajectories.  The 
 %            first index corresponds to the "channel" of the trajectory and 
 %            the second index corresponds to the pair number.  For example,
-%            TRArray(1, j) will contain information about a trajectory from 
+%            TRArray(j, 1) will contain information about a trajectory from 
 %            TR1 that was observed within MaxDimerDistance of
-%            TRArray(2, j), a trajectory in TR2.
+%            TRArray(j, 2), a trajectory in TR2.
 %
 % OUTPUTS:
 %   TRArrayTrunc: The input structure TRArray with all fields truncated to
@@ -30,23 +30,23 @@ TRArrayFields = fieldnames(TRArray);
 % Loop through all fields and apply the DimerCandidateBool mask where
 % relevant.
 TRArrayTrunc = TRArray;
-for ii = 1:size(TRArray, 2)
-    DimerCandidateBool1 = logical(TRArray(1, ii).DimerCandidateBool);
-    DimerCandidateBool2 = logical(TRArray(2, ii).DimerCandidateBool);
+for ii = 1:size(TRArray, 1)
+    DimerCandidateBool1 = logical(TRArray(ii, 1).DimerCandidateBool);
+    DimerCandidateBool2 = logical(TRArray(ii, 2).DimerCandidateBool);
     for jj = 1:numel(TRArrayFields)
         % Determine how many datapoints exist in each of the two
         % trajectories in this pairing.
-        NDataPoints1 = numel(TRArray(1, ii).FrameNum);
-        NDataPoints2 = numel(TRArray(2, ii).FrameNum);
+        NDataPoints1 = numel(TRArray(ii, 1).FrameNum);
+        NDataPoints2 = numel(TRArray(ii, 2).FrameNum);
         
         % Apply the DimerCandidateBool mask to relevant fields.
-        if (numel(TRArray(1, ii).(TRArrayFields{jj})) == NDataPoints1)
-            TRArrayTrunc(1, ii).(TRArrayFields{jj}) = ...
-                TRArray(1, ii).(TRArrayFields{jj})(DimerCandidateBool1);
+        if (numel(TRArray(ii, 1).(TRArrayFields{jj})) == NDataPoints1)
+            TRArrayTrunc(ii, 1).(TRArrayFields{jj}) = ...
+                TRArray(ii, 1).(TRArrayFields{jj})(DimerCandidateBool1);
         end
-        if (numel(TRArray(2, ii).(TRArrayFields{jj})) == NDataPoints2)
-            TRArrayTrunc(2, ii).(TRArrayFields{jj}) = ...
-                TRArray(2, ii).(TRArrayFields{jj})(DimerCandidateBool2);
+        if (numel(TRArray(ii, 2).(TRArrayFields{jj})) == NDataPoints2)
+            TRArrayTrunc(ii, 2).(TRArrayFields{jj}) = ...
+                TRArray(ii, 2).(TRArrayFields{jj})(DimerCandidateBool2);
         end
     end
 end

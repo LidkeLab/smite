@@ -35,14 +35,14 @@ function [TRArray] = findDimerCandidates(TR1, TR2, ...
 %            structures correspond to dimer candidate trajectories.  The 
 %            first index corresponds to the "channel" of the trajectory and 
 %            the second index corresponds to the pair number.  For example,
-%            TRArray(1, j) will contain information about a trajectory from 
+%            TRArray(j, 1) will contain information about a trajectory from 
 %            TR1 that was observed within MaxDimerDistance of
-%            TRArray(2, j), a trajectory in TR2.
+%            TRArray(j, 2), a trajectory in TR2.
 %            NOTE: The entirety of the two trajectories will be saved in
 %                  the TRArray, and a new field DimerCandidateBool will be
 %                  added to describe which datapoints correspond to the
 %                  trajectories being close to each other (e.g., 
-%                  TRArray(1, j).FrameNum(TRArray(1, j).DimerCandidateBool)
+%                  TRArray(j, 1).FrameNum(TRArray(j, 1).DimerCandidateBool)
 %                  will give the frames during which the trajectories were
 %                  close).  Another field, ObservationStatus is defined as
 %                  followed: ObservationStatus(1) is a boolean indicating
@@ -244,7 +244,7 @@ for ii = 1:numel(TR1)
                 continue
             end
             % Store the dimer candidate segments in the TRArray.
-            TRArrayCurrent(1, :) = TR1(ii); % initialize
+            TRArrayCurrent(1, 1) = TR1(ii);
             TRArrayCurrent(1).DimerCandidateBool = ...
                 DimerCandidateBoolChannel1;
             SeparationChannel1 = NaNChannel1;
@@ -258,7 +258,7 @@ for ii = 1:numel(TR1)
             TRArrayCurrent(1).ObservationStatus = ObservationStatus;
             TRArrayCurrent(1).Separation = SeparationChannel1;
             TRArrayCurrent(1).AverageSE = AverageSEChannel1;
-            TRArrayCurrent(2, :) = TR2(jj);
+            TRArrayCurrent(1, 2) = TR2(jj);
             TRArrayCurrent(2).DimerCandidateBool = ...
                 DimerCandidateBoolChannel2;
             TRArrayCurrent(2).ObservationStatus = ObservationStatus;
@@ -267,7 +267,7 @@ for ii = 1:numel(TR1)
                 CenterToCenterSeparation;
             TRArrayCurrent(2).Separation = SeparationChannel2;
             TRArrayCurrent(2).AverageSE = AverageSEChannel2;
-            TRArray = [TRArray, TRArrayCurrent];
+            TRArray = [TRArray; TRArrayCurrent];
             
             % Construct the ObservationStatus struct.
             CandidateSeparation = ...
