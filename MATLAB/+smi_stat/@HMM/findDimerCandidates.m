@@ -243,6 +243,7 @@ for ii = 1:numel(TR1)
                     && any(MedianPhotonsCh2>=MinMedianPhotons))
                 continue
             end
+            
             % Store the dimer candidate segments in the TRArray.
             TRArrayCurrent(1, 1) = TR1(ii);
             TRArrayCurrent(1).DimerCandidateBool = ...

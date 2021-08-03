@@ -23,7 +23,7 @@ end
 FrameRate = obj.SMF.Data.FrameRate;
 UnitFlag = obj.UnitFlag;
 NStates = numel(obj.PDFHandles);
-TimeUnitString = smi_helpers.arrayMUX({'second', 'frame'}, UnitFlag);
+TimeUnitString = smi_helpers.arrayMUX({'frame', 'second'}, UnitFlag);
 
 % Create a list of directories in the top level save directory.  We will
 % check if there are directories named "Condition" followed by a number,
@@ -147,7 +147,8 @@ if obj.GeneratePlots
     % Create a histogram of the event durations found from the Viterbi
     % algorithm, with the exponential distribution found in HMM plotted on
     % top.
-    FigureHandle = figure('Visible', 'off');
+    FiguresVisible = smi_helpers.arrayMUX({'off', 'on'}, (obj.Verbose > 1));
+    FigureHandle = figure('Visible', FiguresVisible);
     PlotAxes = axes(FigureHandle);
     hold(PlotAxes, 'on');
     BinWidth = max(1, round(mean(DimerDurations)));
@@ -173,18 +174,19 @@ if obj.GeneratePlots
     % viewed quickly as a summary.
     FigureHandle = figure('Units', 'inches', ...
         'Position', [0, 0, 8.5, 11], ...
-        'PaperSize', [8.5, 11]);
+        'PaperSize', [8.5, 11], ...
+        'Visible', FiguresVisible);
     DisplayParams.ChannelNames = obj.ChannelNames;
     DisplayParams.StateNames = obj.StateNames;
-    DisplayParams.StateColormap = colormap(lines(NStates));
+    DisplayParams.StateColormap = lines(NStates);
     DisplayParams.UnitFlag = UnitFlag;
-    DisplayParams.MinXYRange = 10; % pixels
-    DisplayParams.MaxYDisplaySep = obj.MaxSeparation; % pixels
-    for ii = 1:size(TRArrayDimer, 2)
+    DisplayParams.MinXYRange = 10;
+    DisplayParams.MaxYDisplaySep = obj.MaxSeparation;
+    for ii = 1:size(TRArrayDimer, 1)
         % Generate the plot.
         DisplayParams.PairNumber = ii;
-        obj.createSummaryPlot(TRArrayDimer(:, ii), DisplayParams, ...
-            FigureHandle);
+        obj.createSummaryPlot(FigureHandle, ...
+            TRArrayDimer(ii, :), obj.SMF, DisplayParams);
         
         % Save the plot.
         FileName = fullfile(DimerDir, sprintf('DimerPair%i', ii));
@@ -201,9 +203,9 @@ if obj.GenerateMovies
     DisplayParams.UnitFlag = 1;
     DisplayParams.MaxTrajDisplayLength = inf;
     DisplayParams.AutoClip = 1;
-    DisplayParams.MinXYRange = 20; % pixels
-    DisplayParams.NPadPixels = 5; % pixels
-    DisplayParams.NPadFrames = 10; % frames
+    DisplayParams.MinXYRange = 20;
+    DisplayParams.NPadPixels = 5;
+    DisplayParams.NPadFrames = 10;
     DisplayParams.IndicateDimer = 1;
     DisplayParams.IndicateHMMData = 1;
     obj.createAllMovies(TRArrayDimer, DimerDir, '', DisplayParams);

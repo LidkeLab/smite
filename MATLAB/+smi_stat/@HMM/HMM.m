@@ -121,6 +121,12 @@ classdef HMM < handle
     properties (Hidden)
         % Tolerance used in a check in obj.performFullAnalysis().
         DiscrepancyTol(1, 1) {mustBeFloat(DiscrepancyTol)} = 0.1;
+        
+        % Filenames corresponding to dimer candidates in TRArray.
+        FileNames(:, 2) cell
+        
+        % Registration files corresponding to dimer candidates in TRArray.
+        RegFileNames(:, 1) cell
     end
     
     methods
@@ -169,8 +175,6 @@ classdef HMM < handle
             TransitionMatrix, EmissionMatrix);
         [DimerDurations] = computeDimerDurations(...
             StateSequence, FrameNum, DimerState);
-        [PlotAxes, DisplayParams] = plotDimerPairInfo(TRArray, ...
-            DisplayParams, PlotType, PlotAxes);
         [PlotAxes] = plotOffRateBarGraph(OffRates, OffRatesSE, ...
             XBarLocations, ConditionColorMap, ConditionNames, UnitFlag, ...
             PlotAxes);
@@ -180,8 +184,23 @@ classdef HMM < handle
             FilePath, DisplayParams, PlotAxes);
         [DisplayParams] = createAllMovies(TRArray, ...
             SaveDir, RawDataBaseDir, DisplayParams);
-        [FigureHandle] = createSummaryPlot(TRArray, DisplayParams, ...
-            FigureHandle);
+        [FigureHandle] = ...
+            createSummaryPlot(FigureHandle, TRArray, SMF, DisplayParams);
+    end
+    
+    methods (Static, Hidden)
+        % These methods should still be accesible to the user, but it's
+        % probably best that we don't overwhelm the user with too many
+        % visible methods that they aren't likely to use!
+        
+        [PlotAxes, DisplayParams] = plotDimerPairInfo(PlotAxes, ...
+            TRArray, SMF, DisplayParams, PlotType);
+        plotViterbiPath
+        plotEmissionProbabilities
+        plotDimerTraj2D
+        plotDimerTraj3D
+        plotRegistration
+        plotXYSeparation
     end
     
     
