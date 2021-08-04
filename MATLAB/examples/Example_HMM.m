@@ -1,4 +1,6 @@
-% Simulate some trajectories.
+% This script demonstrates the basic usage of smi_stat.HMM.
+
+%% Simulate some trajectories with dimerization.
 % NOTE: For now, this requires sma-core-alpha to use
 %       SMA_Sim.simulateTrajectories(), which hasn't been ported to smite.
 SimParams.AllowOligomers = 0; % allows higher order oligomers
@@ -23,13 +25,13 @@ TR = smi_core.TrackingResults.convertSMDToTR(SMD);
 TR1 = TR(1:floor(numel(TR)/2));
 TR2 = TR(floor(numel(TR)/2)+1:end);
 
-%% 
+%% Isolate dimer candidate events from the TR structures.
 MaxDimerSeparation = 2;
 MaxSeparation = 5;
 TRArray = smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
     MaxDimerSeparation, MaxSeparation);
 
-%%
+%% Prepare the HMM class and run the analysis.
 SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.FrameRate = SimParams.FrameRate;
 SMF.Data.PixelSize = SimParams.PixelSize;
@@ -38,7 +40,8 @@ HMM.DimerSeparation = SimParams.InteractionDistance;
 HMM.MaxSeparation = MaxSeparation;
 HMM.DiffusionCoefficient = SimParams.D;
 HMM.RegistrationError = 0;
-HMM.GeneratePlots = true;
+HMM.SaveDir = 'C:\Users\David\Documents\MATLAB\spt_demos\HMM_demo\smite_test';
+HMM.GeneratePlots = false;
 HMM.GenerateMovies = false;
 HMM.UnitFlag = false;
 HMM.performFullAnalysis()
