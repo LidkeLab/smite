@@ -33,6 +33,12 @@ if (~exist('PercentileCeiling', 'var') || isempty(PercentileCeiling))
     PercentileCeiling = 100;
 end
 
+% If the image is identically zero, return.
+if ~any(Image(:))
+    Image = Image + MinMax(1);
+    return
+end
+
 % Scale the 'Image' array.
 MaxIntensity = max(prctile(Image(:), PercentileCeiling), MinScaleIntensity);
 Image(Image > MaxIntensity) = MaxIntensity;

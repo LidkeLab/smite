@@ -57,8 +57,8 @@ end
 PlotFigure = ancestor(PlotAxes, 'figure');
 for ff = Params.ZFrames(1):Params.ZFrames(2)           
     % Make the current frame of the movie.
-    smi_vis.GenerateMovies.makeFrame(PlotAxes, TR, ScaledData(:, :, ff), ...
-        Params, SMD, ff);
+    smi_vis.GenerateMovies.makeFrame(PlotAxes, ...
+        TR, ScaledData(:, :, :, ff), Params, SMD, ff);
         
     % Update the line of site if needed.
     if IsRotating

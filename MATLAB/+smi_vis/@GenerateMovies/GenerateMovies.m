@@ -11,9 +11,9 @@ classdef GenerateMovies < handle
         % Structure of parameters enforced in the generated movie.
         % See prepDefaults() for a description of the parameter options and
         % playMovie() for usage.
-        Params
+        Params struct = struct([])
         
-        % Raw data to be displayed under trajectories.
+        % Raw data displayed under trajectories. (YSizexXSizex3xNFrames)
         RawData
 
         % Single Molecule Fitting structure with pixel size and framerate.
@@ -64,13 +64,9 @@ classdef GenerateMovies < handle
     end
     
     methods
-        function obj = GenerateMovies(Params)
+        function obj = GenerateMovies()
             %GenerateMovies is the class constructor.
-            if (exist('Params', 'var') && ~isempty(Params))
-                obj.Params = Params;
-            else
-                obj.Params = obj.prepDefaults();
-            end
+            obj.Params = obj.prepDefaults();
         end
         
         function set.Params(obj, ParamsInput)

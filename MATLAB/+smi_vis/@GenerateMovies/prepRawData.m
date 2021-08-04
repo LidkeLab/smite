@@ -16,9 +16,9 @@ function [] = prepRawData(obj)
 NFrames = obj.TR(1).NFrames;
 XSize = obj.TR(1).XSize;
 YSize = obj.TR(1).YSize;
-DataSize = size(obj.RawData, 1:3);
+DataSize = size(obj.RawData, 1:4);
 if isempty(NFrames)
-    NFrames = DataSize(3);
+    NFrames = DataSize(4);
 end
 if isempty(XSize)
     XSize = DataSize(2);
@@ -65,25 +65,35 @@ if obj.Params.AutoClip
     obj.Params.YPixels = [YStart, YEnd];
 end
 
-% Rescale the raw data after isolating the portion that will be displayed.
+% Crop the raw data to the desired ROI if needed.
 RawData = ...
-    padarray(obj.RawData, [max(0, YSize-DataSize(1)), ...
+    single(padarray(obj.RawData, [max(0, YSize-DataSize(1)), ...
     max(0, XSize-DataSize(2)), ...
-    max(0, NFrames-DataSize(3))], 'post');
-DataSize = size(RawData);
+    max(0, 3-DataSize(3)), ...
+    max(0, NFrames-DataSize(4))], 'post'));
+    DataSize = size(RawData);
 if ~(isempty(obj.Params.XPixels) && isempty(obj.Params.YPixels) ...
         && isempty(obj.Params.ZFrames))
-    % Make sure the indexing ranges make sense and then isolate the desired
-    % ROI.
     obj.Params.XPixels = [max(1, round(obj.Params.XPixels(1))), ...
         min(DataSize(2), round(obj.Params.XPixels(2)))];
     obj.Params.YPixels = [max(1, round(obj.Params.YPixels(1))), ...
         min(DataSize(1), round(obj.Params.YPixels(2)))];
     RawData = RawData(obj.Params.YPixels(1):obj.Params.YPixels(2), ...
-        obj.Params.XPixels(1):obj.Params.XPixels(2), :);
+        obj.Params.XPixels(1):obj.Params.XPixels(2), :, :);
 end
-obj.ScaledData = smi_vis.contrastStretch(single(RawData), [0; 1], ...
-    obj.Params.PercentileCeiling, obj.Params.MinScaleIntensity);
+if isempty(RawData)
+    obj.ScaledData = RawData;
+    return
+end
+
+% Rescale the cropped data, treating each color channel independently.
+NColorChannels = 3;
+obj.ScaledData = zeros(size(RawData));
+for cc = 1:NColorChannels
+    obj.ScaledData(:, :, cc, :) = ...
+        smi_vis.contrastStretch(RawData(:, :, cc, :), [0; 1], ...
+        obj.Params.PercentileCeiling, obj.Params.MinScaleIntensity);
+end
 
 
 end

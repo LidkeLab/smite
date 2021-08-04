@@ -115,7 +115,7 @@ if ~isempty(obj.RawData)
     obj.prepRawData()
     obj.prepAxes()
     obj.makeFrame(obj.MovieAxes, ...
-        obj.TR, obj.ScaledData(:, :, end), ...
+        obj.TR, obj.ScaledData(:, :, :, end), ...
         obj.Params, obj.SMD, obj.Params.ZFrames(1));
 end
 
@@ -161,7 +161,7 @@ end
             TempParams = obj.Params;
             TempParams.MaxTrajLength = inf;
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, ...
-                obj.TR, obj.ScaledData(:, :, end), TempParams, obj.SMD, ...
+                obj.TR, obj.ScaledData(:, :, :, end), TempParams, obj.SMD, ...
                 TempParams.ZFrames(2));
             
             % Set the callback function for the line handles.
@@ -185,8 +185,7 @@ end
         SliderValue = round(get(Source, 'Value'));
         SliderMax = get(Source, 'Max');
         
-        % Ensure some needed properties are populated and updated based on
-        % the current obj.Params.
+        % Update the scaled data based on the current obj.Params.
         obj.prepRawData()
         
         % Make sure the axes are prepared based on the settings in
@@ -202,11 +201,11 @@ end
             TempParams = obj.Params;
             TempParams.MaxTrajLength = inf;
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, obj.TR, ...
-                obj.ScaledData(:, :, SliderValue), ...
+                obj.ScaledData(:, :, :, SliderValue), ...
                 TempParams, obj.SMD, SliderValue);
         else
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, obj.TR, ...
-                obj.ScaledData(:, :, SliderValue), ...
+                obj.ScaledData(:, :, :, SliderValue), ...
                 obj.Params, obj.SMD, SliderValue);
         end
         
