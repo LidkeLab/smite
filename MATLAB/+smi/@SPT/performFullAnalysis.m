@@ -20,7 +20,7 @@ if obj.SMF.Tracking.TryLowPValueLocs
     obj.SMF.Thresholding.MinPValue = 0;
 end
 LD = smi_core.LoadData;
-[~, RawData, obj.SMF] = LD.loadRawData(obj.SMF, 1);
+[~, RawData] = LD.loadRawData(obj.SMF, 1);
 DTP = smi_core.DataToPhotons(obj.SMF, RawData, [], [], obj.Verbose);
 ScaledData = DTP.convertData();
 LD = smi_core.LocalizeData(ScaledData, obj.SMF, obj.Verbose);
