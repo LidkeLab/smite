@@ -1,4 +1,4 @@
-function [FigureHandle] = ...
+function [FigureHandle, DisplayParams] = ...
     createSummaryPlot(FigureHandle, TRArray, SMF, DisplayParams)
 %createSummaryPlot creates a multi-panel summary plot of the HMM analysis.
 % This method creates a multi-panel plot with several sub-plots
@@ -50,6 +50,8 @@ function [FigureHandle] = ...
 %
 % OUTPUTS:
 %   FigureHandle: Figure in which we plotted stuff.
+%   DisplayParams: Set of parameters used to produce plots, including the
+%                  defaults set internally.
 %
 % CITATION:
 
@@ -89,16 +91,7 @@ DefaultDisplayParams.PairNumber = 1;
 DefaultDisplayParams.StateNames = {'Dimer'; 'Free'};
 DefaultDisplayParams.StateColormap = lines(NStates);
 DefaultDisplayParams.UnitFlag = 1;
-DefaultParameterNames = fieldnames(DefaultDisplayParams);
-InputParameterNames = fieldnames(DisplayParams);
-for ii = 1:numel(DefaultParameterNames)
-    if ~any(ismember(DefaultParameterNames{ii}, InputParameterNames))
-        % The field DefaultParameterNames{ii} is not present in the
-        % DisplayParams structure and so the default must be added.
-        DisplayParams.(DefaultParameterNames{ii}) = ...
-            DefaultDisplayParams.(DefaultParameterNames{ii});
-    end
-end
+DisplayParams = smi_helpers.padStruct(DisplayParams, DefaultDisplayParams);
 
 % Define some more parameters.
 LengthUnitString = ...

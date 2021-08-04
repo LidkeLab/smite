@@ -86,6 +86,12 @@ classdef HMM < handle
         % NOTE: This is used when running obj.performFullAnalysis().
         GenerateMovies logical = false;
         
+        % Set of movie parameters (see createDimerMovie())        
+        MovieParams struct = struct();
+        
+        % Set of plot parameters (see plotDimerPairInfo())
+        PlotParams struct = struct();
+        
         % Indicate plots should be generated and saved. (Default = true)
         % NOTE: This is used when running obj.performFullAnalysis().
         GeneratePlots logical = true;
@@ -179,12 +185,12 @@ classdef HMM < handle
             XBarLocations, ConditionColorMap, ConditionNames, UnitFlag, ...
             PlotAxes);
         [PlotAxes] = plotDimerDurationCDF(DimerDurations, PlotAxes);
-        [DisplayParams] = createDimerMovie(TRArray, ...
+        [DisplayParams] = createDimerMovie(PlotAxes, TRArray, ...
             RawDataChannel1, RawDataChannel2, ...
-            FilePath, DisplayParams, PlotAxes);
+            FilePath, DisplayParams);
         [DisplayParams] = createAllMovies(TRArray, ...
             SaveDir, RawDataBaseDir, DisplayParams);
-        [FigureHandle] = ...
+        [FigureHandle, DisplayParams] = ...
             createSummaryPlot(FigureHandle, TRArray, SMF, DisplayParams);
     end
     

@@ -176,17 +176,11 @@ if obj.GeneratePlots
         'Position', [0, 0, 8.5, 11], ...
         'PaperSize', [8.5, 11], ...
         'Visible', FiguresVisible);
-    DisplayParams.ChannelNames = obj.ChannelNames;
-    DisplayParams.StateNames = obj.StateNames;
-    DisplayParams.StateColormap = lines(NStates);
-    DisplayParams.UnitFlag = UnitFlag;
-    DisplayParams.MinXYRange = 10;
-    DisplayParams.MaxYDisplaySep = obj.MaxSeparation;
     for ii = 1:size(TRArrayDimer, 1)
         % Generate the plot.
-        DisplayParams.PairNumber = ii;
-        obj.createSummaryPlot(FigureHandle, ...
-            TRArrayDimer(ii, :), obj.SMF, DisplayParams);
+        obj.PlotParams.PairNumber = ii;
+        [~, obj.PlotParams] = obj.createSummaryPlot(FigureHandle, ...
+            TRArrayDimer(ii, :), obj.SMF, obj.PlotParams);
         
         % Save the plot.
         FileName = fullfile(DimerDir, sprintf('DimerPair%i', ii));
@@ -198,18 +192,9 @@ if obj.GeneratePlots
 end
 
 % Generate dimer movies (if requested).
-if obj.GenerateMovies
-    DisplayParams.ChannelNames = obj.ChannelNames;
-    DisplayParams.UnitFlag = 1;
-    DisplayParams.MaxTrajDisplayLength = inf;
-    DisplayParams.AutoClip = 1;
-    DisplayParams.MinXYRange = 20;
-    DisplayParams.NPadPixels = 5;
-    DisplayParams.NPadFrames = 10;
-    DisplayParams.IndicateDimer = 1;
-    DisplayParams.IndicateHMMData = 1;
-    obj.createAllMovies(TRArrayDimer, DimerDir, '', DisplayParams);
-end
+% if obj.GenerateMovies
+%     obj.createAllMovies(TRArrayDimer, DimerDir, '', obj.MovieParams);
+% end
 
 
 end

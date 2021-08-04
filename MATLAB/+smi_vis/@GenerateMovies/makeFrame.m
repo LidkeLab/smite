@@ -1,5 +1,5 @@
-function [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, Params, ...
-    SMD, Frame)
+function [LineHandles] = makeFrame(PlotAxes, ...
+    TR, ScaledData, Params, SMD, Frame)
 %makeFrame plots a single frame for the trajectory movie.
 % This method plots a single frame of the movie being prepared.
 %
