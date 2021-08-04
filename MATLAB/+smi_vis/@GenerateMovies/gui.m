@@ -112,7 +112,7 @@ uicontrol('Parent', TrajInfoPanel, 'Style', 'pushbutton', ...
 
 % If raw data is available, display the first frame.
 if ~isempty(obj.RawData)
-    obj.rescaleData()
+    obj.prepRawData()
     obj.prepAxes()
     obj.makeFrame(obj.MovieAxes, ...
         obj.TR, obj.ScaledData(:, :, end), ...
@@ -187,7 +187,7 @@ end
         
         % Ensure some needed properties are populated and updated based on
         % the current obj.Params.
-        obj.rescaleData()
+        obj.prepRawData()
         
         % Make sure the axes are prepared based on the settings in
         % obj.Params (this can be a bit slow since each movement of the

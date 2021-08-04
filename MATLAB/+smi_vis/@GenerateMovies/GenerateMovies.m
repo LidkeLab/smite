@@ -96,7 +96,7 @@ classdef GenerateMovies < handle
                 obj.TimeUnitOptions, obj.Params.UnitFlag);
         end
         
-        rescaleData(obj)
+        prepRawData(obj)
         saveMovie(obj, SavePath)
         generateMovie(obj)
         gui(obj)

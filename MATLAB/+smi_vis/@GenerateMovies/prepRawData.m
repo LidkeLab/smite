@@ -1,5 +1,5 @@
-function [] = rescaleData(obj)
-%rescaleData crops and rescales the movie data for display purposes.
+function [] = prepRawData(obj)
+%prepRawData crops and rescales the movie data for display purposes.
 % This method crops and rescales obj.RawData based on parameters in
 % obj.Params.  Furthermore, this method will also revise some fields of
 % obj.Params to ensure obj.Params.AutoClip is being enforced.
@@ -70,6 +70,7 @@ RawData = ...
     padarray(obj.RawData, [max(0, YSize-DataSize(1)), ...
     max(0, XSize-DataSize(2)), ...
     max(0, NFrames-DataSize(3))], 'post');
+DataSize = size(RawData);
 if ~(isempty(obj.Params.XPixels) && isempty(obj.Params.YPixels) ...
         && isempty(obj.Params.ZFrames))
     % Make sure the indexing ranges make sense and then isolate the desired

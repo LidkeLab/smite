@@ -57,7 +57,7 @@ function [Params] = prepDefaults()
 %                      (NTrajx3 numeric array)
 %                      (Default = [])
 %           AutoClip: Flag to request clipping to data present in TR.  This
-%                     is enforced in GenerateMovies.rescaleData() and 
+%                     is enforced in GenerateMovies.prepRawData() and 
 %                     nowhere else as of this writing. (Default = false)
 %           MinXYRange: Minimum XY range allowed when AutoClip = true,
 %                       otherwise this is not used. (pixels)(Default = 20)

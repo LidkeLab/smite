@@ -7,8 +7,8 @@ function [] = generateMovie(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Rescale the raw data to improve the display.
-obj.rescaleData()
+% Rescale/crop the raw data to improve the display.
+obj.prepRawData()
 
 % Prepare the axes based on settings in obj.Params.
 obj.prepAxes()
