@@ -1,5 +1,6 @@
 function [PlotAxes, DisplayParams] = ...
-    plotDimerPairInfo(PlotAxes, TRArray, SMF, DisplayParams, PlotType)
+    plotDimerPairInfo(PlotAxes, PlotType, TRArray, ...
+    SMF, DisplayParams, UnitFlag)
 %plotDimerPairInfo creates various plots related to dimer pair trajectories
 % This method organizes several plotting codes meant to plot information
 % related to a pair of dimer trajectories.
@@ -9,44 +10,7 @@ function [PlotAxes, DisplayParams] = ...
 %       different method.  For now, we'll leave this as is.
 % 
 % INPUTS:
-%   TRArray: A structure array of TR structures, where the constituent TR
-%            structures correspond to the relevant segments of dimer
-%            trajectories.  TRArray(1) will contain information about a 
-%            trajectory from TR1 that was found to have dimerized with
-%            TRArray(2).  TRArray can additionally contain a "PairIDs" 
-%            cell array, which contains the trajectory ID's of trajectories
-%            which were part of an oligomer in each frame (this information
-%            will be plotted when PlotType = 'ViterbiSequence') as might be 
-%            known for a simulated TRArray.  For example, if
-%            TRArray(1).PairIDs(23) = [5; 8], this means that the
-%            trajectory TRArray(1) was part of an oligomer with
-%            trajectories 5 and 8 in frame 23.
-%   SMF: Single Molecule Fitting structure (for now, only
-%        SMF.Data.PixelSize and SMF.Data.FrameRate are  used).
-%        (Default = smi_core.SingleMoleculeFitting)
-%   DisplayParams: A structure of display parameters for the plots.
-%                  StateColormap: A colormap corresponding to the states
-%                                 given in ModelSpecifier/StateNames
-%                                 (NStates x 3 array)
-%                                 (Default = colormap(lines(NStates)))
-%                  UnitFlag: 0 for camera units (pixels, frames) 
-%                            1 for physical units (micrometers, seconds)
-%                            (Default = 1)
-%                  MinXYRange: Minimum XY display range of the movie
-%                              (pixels)(Default = 10) 
-%                  MaxYDisplaySep: Maximum of y axis for any plots of
-%                                  separation vs time (pixels)(Default =
-%                                  max(cell2mat({TRArray.Separation}))
-%                  MaxYDisplayState: Maximum of y axis for state plots.
-%                                    (Default = 1.1*NStates)
-%                  PairNumber: The pair number identifying the dimer pair 
-%                              being plotted. (Default = 1)
-%                  StateNames: see smi_stat.HMM 
-%                              (Default = {'Dimer'; 'Free'})
-%                  StateToMark: Numeric value corresponding to a specific 
-%                               state that should be marked when
-%                               PlotType = 'TrajectoryPlot'
-%                               (Default = 1)
+%   PlotAxes: Axes in which we should plot stuff. (Default = gca())
 %   PlotType: Type of plot that will be created. 
 %             ViterbiSequence: Plot of the separation vs. time with state
 %                              as identified by Viterbi algorithm overlain.
@@ -69,7 +33,43 @@ function [PlotAxes, DisplayParams] = ...
 %                               trajectories separately in x, y as a
 %                               scatterplot.
 %             (Default = 'ViterbiSequence')
-%   PlotAxes: Axes in which we should plot stuff. (Default = gca())
+%   TRArray: A structure array of TR structures, where the constituent TR
+%            structures correspond to the relevant segments of dimer
+%            trajectories.  TRArray(1) will contain information about a 
+%            trajectory from TR1 that was found to have dimerized with
+%            TRArray(2).  TRArray can additionally contain a "PairIDs" 
+%            cell array, which contains the trajectory ID's of trajectories
+%            which were part of an oligomer in each frame (this information
+%            will be plotted when PlotType = 'ViterbiSequence') as might be 
+%            known for a simulated TRArray.  For example, if
+%            TRArray(1).PairIDs(23) = [5; 8], this means that the
+%            trajectory TRArray(1) was part of an oligomer with
+%            trajectories 5 and 8 in frame 23.
+%   SMF: Single Molecule Fitting structure (for now, only
+%        SMF.Data.PixelSize and SMF.Data.FrameRate are  used).
+%        (Default = smi_core.SingleMoleculeFitting)
+%   DisplayParams: A structure of display parameters for the plots.
+%                  StateColormap: A colormap corresponding to the states
+%                                 given in ModelSpecifier/StateNames
+%                                 (NStates x 3 array)
+%                                 (Default = colormap(lines(NStates)))
+%                  MinXYRange: Minimum XY display range of the movie
+%                              (pixels)(Default = 10) 
+%                  MaxYDisplaySep: Maximum of y axis for any plots of
+%                                  separation vs time (pixels)(Default =
+%                                  max(cell2mat({TRArray.Separation}))
+%                  MaxYDisplayState: Maximum of y axis for state plots.
+%                                    (Default = 1.1*NStates)
+%                  PairNumber: The pair number identifying the dimer pair 
+%                              being plotted. (Default = 1)
+%                  StateNames: see smi_stat.HMM 
+%                              (Default = {'Dimer'; 'Free'})
+%                  StateToMark: Numeric value corresponding to a specific 
+%                               state that should be marked when
+%                               PlotType = 'TrajectoryPlot'
+%                               (Default = 1)
+%   UnitFlag: Flag indicating we should use physical units. 
+%             (Default = false)
 % 
 % OUTPUTS:
 %   PlotAxes: Axes object in which we've plotted stuff.
@@ -83,11 +83,14 @@ function [PlotAxes, DisplayParams] = ...
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes))
     PlotAxes = gca();
 end
+if (~exist('PlotType', 'var') || isempty(PlotType))
+    PlotType = 'ViterbiSequence';
+end
 if (~exist('SMF', 'var') || isempty(SMF))
     SMF = smi_core.SingleMoleculeFitting;
 end
-if (~exist('PlotType', 'var') || isempty(PlotType))
-    PlotType = 'ViterbiSequence';
+if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
+    UnitFlag = false;
 end
 
 % Define some parameters that we'll need for setting some defaults.
@@ -106,7 +109,6 @@ if (~exist('DisplayParams', 'var') || isempty(DisplayParams))
 end
 DefaultDisplayParams.StateNames = {'Dimer'; 'Free'};
 DefaultDisplayParams.StateColormap = lines(NStates);
-DefaultDisplayParams.UnitFlag = 1;
 DefaultDisplayParams.MinXYRange = 10;
 DefaultDisplayParams.MaxYDisplaySep = ...
     max(cell2mat({TRArray.Separation}.'));
@@ -132,11 +134,11 @@ end
 FrameRate = SMF.Data.FrameRate;
 PixelSize = SMF.Data.PixelSize;
 MaxYDisplaySepConverted = DisplayParams.MaxYDisplaySep ...
-    * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+    * (UnitFlag*PixelSize + ~UnitFlag);
 FrameNum = TRArray(1).FrameNum(DimerCandidateBool1) ...
-    * (DisplayParams.UnitFlag/FrameRate + ~DisplayParams.UnitFlag);
+    * (UnitFlag/FrameRate + ~UnitFlag);
 Separation = TRArray(1).Separation(DimerCandidateBool1) ...
-    * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+    * (UnitFlag*PixelSize + ~UnitFlag);
 if isfield(TRArray(1), 'PairIDs')
     PairIDs = TRArray(1).PairIDs(DimerCandidateBool1);
     IsDimerGroundTruth = cellfun(...
@@ -277,13 +279,13 @@ switch PlotType
         view(PlotAxes, -45, 5) % force corner view
         axis(PlotAxes, 'tight'); % will be overridden in x, y below
         XCurrent1 = TRArray(1).X(DimerCandidateBool1) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YCurrent1 = TRArray(1).Y(DimerCandidateBool1) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         XCurrent2 = TRArray(2).X(DimerCandidateBool2) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YCurrent2 = TRArray(2).Y(DimerCandidateBool2) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         line(PlotAxes, XCurrent1, YCurrent1, FrameNum, ...
             'Color', [0, 0, 0], 'LineWidth', 1.5, 'LineStyle', '--');
         line(PlotAxes, XCurrent2, YCurrent2, FrameNum, ...
@@ -320,13 +322,11 @@ switch PlotType
         XRange = [min(min(XCurrent1), min(XCurrent2)), ...
             max(max(XCurrent1), max(XCurrent2))]; % x range of data
         XWidth = max(XRange(2) - XRange(1), DisplayParams.MinXYRange ...
-            * (DisplayParams.UnitFlag*PixelSize ...
-            + ~DisplayParams.UnitFlag));
+            * (UnitFlag*PixelSize + ~UnitFlag));
         YRange = [min(min(YCurrent1), min(YCurrent2)), ...
             max(max(YCurrent1), max(YCurrent2))];
         YWidth = max(YRange(2)-YRange(1), DisplayParams.MinXYRange ...
-            * (DisplayParams.UnitFlag*PixelSize ...
-            + ~DisplayParams.UnitFlag));
+            * (UnitFlag*PixelSize + ~UnitFlag));
         PlotAxes.XLim = mean(XRange) + [-XWidth, XWidth]/2;
         PlotAxes.YLim = mean(YRange) + [-YWidth, YWidth]/2;
     case 'TrajectoryPlot2D'
@@ -334,13 +334,13 @@ switch PlotType
         view(PlotAxes, 2)
         axis(PlotAxes, 'equal')
         XCurrent1 = TRArray(1).X(DimerCandidateBool1) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YCurrent1 = TRArray(1).Y(DimerCandidateBool1) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         XCurrent2 = TRArray(2).X(DimerCandidateBool2) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YCurrent2 = TRArray(2).Y(DimerCandidateBool2) ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         line(PlotAxes, XCurrent1, YCurrent1, ...
             'Color', [0, 0, 0], 'LineWidth', 1.5, 'LineStyle', '--');
         line(PlotAxes, XCurrent2, YCurrent2, ...
@@ -373,20 +373,20 @@ switch PlotType
         
         % Modify the x, y plot limits to improve appearance.
         PlotAxes.XLim = [0, TRArray(1).XSize] ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         PlotAxes.YLim = [0, TRArray(1).YSize] ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
     case 'RegistrationPlot'
         XRegCorrection = sum(...
             [cell2mat({TRArray(1).XRegCorrection(DimerCandidateBool1)}),...
             cell2mat({TRArray(2).XRegCorrection(DimerCandidateBool2)})], 2);
         XRegCorrection = XRegCorrection ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YRegCorrection = sum(...
             [cell2mat({TRArray(1).YRegCorrection(DimerCandidateBool1)}),...
             cell2mat({TRArray(2).YRegCorrection(DimerCandidateBool2)})], 2);
         YRegCorrection = YRegCorrection ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         plot(PlotAxes, FrameNum, XRegCorrection, 'kx')
         plot(PlotAxes, FrameNum, YRegCorrection, 'ko')
     case 'XYSeparationPlot'
@@ -394,11 +394,11 @@ switch PlotType
         XSeparation = cell2mat({TRArray(2).X(DimerCandidateBool2)}.') ...
             - cell2mat({TRArray(1).X(DimerCandidateBool1)}.');
         XSeparation = XSeparation ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         YSeparation = cell2mat({TRArray(2).Y(DimerCandidateBool2)}.') ...
             - cell2mat({TRArray(1).Y(DimerCandidateBool1)}.');
         YSeparation = YSeparation ...
-            * (DisplayParams.UnitFlag*PixelSize + ~DisplayParams.UnitFlag);
+            * (UnitFlag*PixelSize + ~UnitFlag);
         plot(PlotAxes, XSeparation, YSeparation, 'k-')
         
         % Mark the appropriate state (if requested) in the plot.
@@ -425,12 +425,10 @@ switch PlotType
         % Modify the x and y limits to improve plot appearance.
         XRange = [min(XSeparation), max(XSeparation)];
         XWidth = max(2*max(abs(XRange)), DisplayParams.MinXYRange ...
-            * (DisplayParams.UnitFlag*PixelSize ...
-            + ~DisplayParams.UnitFlag));
+            * (UnitFlag*PixelSize + ~UnitFlag));
         YRange = [min(YSeparation), max(YSeparation)];
         YWidth = max(2*max(abs(YRange)), DisplayParams.MinXYRange ...
-            * (DisplayParams.UnitFlag*PixelSize ...
-            + ~DisplayParams.UnitFlag));
+            * (UnitFlag*PixelSize + ~UnitFlag));
         PlotAxes.XLim = [-XWidth, XWidth] / 2;
         PlotAxes.YLim = [-YWidth, YWidth] / 2;
         plot(PlotAxes, [0, 0], PlotAxes.YLim, 'm:')

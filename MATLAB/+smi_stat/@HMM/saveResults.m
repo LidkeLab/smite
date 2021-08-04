@@ -182,7 +182,7 @@ if obj.GeneratePlots
         % Generate the plot.
         obj.PlotParams.PairNumber = ii;
         [~, obj.PlotParams] = obj.createSummaryPlot(FigureHandle, ...
-            TRArrayDimer(ii, :), obj.SMF, obj.PlotParams);
+            TRArrayDimer(ii, :), obj.SMF, obj.PlotParams, obj.UnitFlag);
         
         % Save the plot.
         FileName = fullfile(DimerDir, sprintf('DimerPair%i', ii));

@@ -190,8 +190,8 @@ classdef HMM < handle
             FilePath, DisplayParams);
         [DisplayParams] = createAllMovies(TRArray, ...
             SaveDir, RawDataBaseDir, DisplayParams);
-        [FigureHandle, DisplayParams] = ...
-            createSummaryPlot(FigureHandle, TRArray, SMF, DisplayParams);
+        [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
+            TRArray, SMF, DisplayParams, UnitFlag);
     end
     
     methods (Static, Hidden)
@@ -200,13 +200,13 @@ classdef HMM < handle
         % visible methods that they aren't likely to use!
         
         [PlotAxes, DisplayParams] = plotDimerPairInfo(PlotAxes, ...
-            TRArray, SMF, DisplayParams, PlotType);
-        plotViterbiPath
-        plotEmissionProbabilities
-        plotDimerTraj2D
-        plotDimerTraj3D
-        plotRegistration
-        plotXYSeparation
+            PlotType, TRArray, SMF, DisplayParams, UnitFlag);
+%         plotViterbiPath
+%         plotEmissionProbabilities
+%         plotDimerTraj2D
+%         plotDimerTraj3D
+%         plotRegistration
+%         plotXYSeparation
     end
     
     
