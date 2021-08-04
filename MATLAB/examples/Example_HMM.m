@@ -11,8 +11,7 @@ FileListChannel2 = uipickfiles('Prompt', 'Pick the channel 2 files');
 %       selected files by just removing those strings.
 IgnoreText = {'Channel1', 'Channel2'};
 [PairedChannel1, PairedChannel2] = ...
-    smi_helpers.pairText(FileListChannel1, FileListChannel2, ...
-    {'Channel1', 'Channel2'});
+    smi_helpers.pairText(FileListChannel1, FileListChannel2, IgnoreText);
 
 %% Isolate dimer candidate events from the TR structures.
 MaxDimerSeparation = 2; % pixels
@@ -44,5 +43,5 @@ HMM.DiffusionCoefficient = 0.0615; % px^2 / frame, specific to the loaded TRs ab
 HMM.RegistrationError = 0; % pixels, specific to the loaded TRs above
 HMM.SaveDir = 'C:\Users\David\Documents\MATLAB\spt_demos\HMM_demo\smite_test';
 HMM.GeneratePlots = true;
-HMM.UnitFlag = false;
+HMM.UnitFlag = true;
 HMM.performFullAnalysis()
