@@ -12,9 +12,10 @@ function setupExternalSoftware()
 
 ExternalSoftwarePath = fileparts(which('setupExternalSoftware'));
 
-addpath(ExternalSoftwarePath)
+%addpath(ExternalSoftwarePath)
 addpath(fullfile(ExternalSoftwarePath, 'FRCresolution_software', ...
                  'matlabdistribution', 'FRCresolutionfunctions'));
 addpath(fullfile(ExternalSoftwarePath, 'PlotSpread'));
+addpath(fullfile(ExternalSoftwarePath, 'uipickfiles'));
 
 end
