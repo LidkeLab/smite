@@ -1,18 +1,20 @@
 function saveResults(obj)
 %saveResults saves useful results of the Hidden Markov model analysis.
 % This method contains a collection of various plot generation codes and
-% result saving codes that can be used after smi.HMM.performFullAnalysis 
+% result saving codes that can be used after smi.HMM.performFullAnalysis
 % has been run.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
-    
+
 
 % Make sure that the top level save directory (obj.SaveDir) exists.
-if (isempty(obj.SaveDir) && ~isempty(obj.SMF.Data.ResultsDir))
-    obj.SaveDir = obj.SMF.Data.ResultsDir;
-else
-    obj.SaveDir = pwd();
+if isempty(obj.SaveDir)
+    if  ~isempty(obj.SMF.Data.ResultsDir)
+        obj.SaveDir = obj.SMF.Data.ResultsDir;
+    else
+        obj.SaveDir = pwd();
+    end
 end
 if ~exist(obj.SaveDir, 'dir')
     mkdir(obj.SaveDir);
@@ -32,7 +34,7 @@ TimeUnitString = smi_helpers.arrayMUX({'frame', 'second'}, UnitFlag);
 % we won't do that.
 % NOTE: We'll always just add 1 to the highest number used, so if a
 %       directory named "Condition3" exists, but 1 and 2 don't, we'll still
-%       just create our new directory as "Condition4".  If "Condition" is 
+%       just create our new directory as "Condition4".  If "Condition" is
 %       followed by a string, it shouldn't affect what we're doing here...
 if isempty(obj.ConditionLabel)
     % Isolate items that follow the "Condition*" naming pattern in the
@@ -69,7 +71,7 @@ for ii = 1:size(TRArrayTemp, 1)
     % Search for pairs that had a 1 in their StateSequence (state 1 is the
     % dimer state).
     StateSequenceCurrent = TRArrayTemp(ii, 1).StateSequence;
-    KeepBool(ii) = any(StateSequenceCurrent == 1); 
+    KeepBool(ii) = any(StateSequenceCurrent == 1);
 end
 TRArrayDimer = TRArrayTemp(logical(KeepBool), :);
 TRArrayNotDimer = TRArrayTemp(~logical(KeepBool), :);
@@ -164,7 +166,7 @@ if obj.GeneratePlots
     title(PlotAxes, sprintf('%s, %i dimer events', ...
         obj.ConditionLabel, numel(DimerDurations)), 'Interpreter', 'none')
     xlabel(PlotAxes, sprintf('Dimer duration (%ss)', TimeUnitString), ...
-            'Interpreter', 'Latex')
+        'Interpreter', 'Latex')
     ylabel(PlotAxes, 'PDF', 'Interpreter', 'Latex')
     FileName = fullfile(DimerDir, 'DimerDurationsHistogram');
     saveas(FigureHandle, FileName, 'png');
