@@ -15,8 +15,8 @@ IgnoreText = {'Channel1', 'Channel2'};
     {'Channel1', 'Channel2'});
 
 %% Isolate dimer candidate events from the TR structures.
-MaxDimerSeparation = 2;
-MaxSeparation = 5;
+MaxDimerSeparation = 2; % pixels
+MaxSeparation = 5; % pixels
 TRArray = struct([]);
 for ff = 1:numel(PairedChannel1)
     % Load the channel 1 TR structure.
@@ -35,13 +35,13 @@ end
 
 %% Prepare the HMM class and run the analysis.
 SMF = smi_core.SingleMoleculeFitting;
-SMF.Data.FrameRate = SimParams.FrameRate;
-SMF.Data.PixelSize = SimParams.PixelSize;
+SMF.Data.FrameRate = 20; % fps, specific to the loaded TRs above
+SMF.Data.PixelSize = 0.1; % micrometers, specific to the loaded TRs above
 HMM = smi_stat.HMM(TRArray, SMF);
-HMM.DimerSeparation = SimParams.InteractionDistance;
 HMM.MaxSeparation = MaxSeparation;
-HMM.DiffusionCoefficient = SimParams.D;
-HMM.RegistrationError = 0;
+HMM.DimerSeparation = 0.5; % pixels, TRUE physical separation between dimers
+HMM.DiffusionCoefficient = 0.0615; % px^2 / frame, specific to the loaded TRs above
+HMM.RegistrationError = 0; % pixels, specific to the loaded TRs above
 HMM.SaveDir = 'C:\Users\David\Documents\MATLAB\spt_demos\HMM_demo\smite_test';
 HMM.GeneratePlots = true;
 HMM.UnitFlag = false;
