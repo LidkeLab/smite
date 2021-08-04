@@ -1,35 +1,37 @@
 % This script demonstrates the basic usage of smi_stat.HMM.
 
-%% Simulate some trajectories with dimerization.
-% NOTE: For now, this requires sma-core-alpha to use
-%       SMA_Sim.simulateTrajectories(), which hasn't been ported to smite.
-SimParams.AllowOligomers = 0; % allows higher order oligomers
-SimParams.ParticleDensity = 0.005; % particles / px^2
-SimParams.NSubFrames = 10000;
-SimParams.NFrames = 10000;
-SimParams.FrameSize = 128; % pixels (square only)
-SimParams.PixelSize = 0.1;
-SimParams.FrameRate = 20;
-SimParams.InteractionDistance = 0.5;
-SimParams.InteractionProb = 0.5;
-SimParams.BoundaryCondition = 'Periodic';
-SimParams.KBlinkOn = 1;
-SimParams.KBlinkOff = 0;
-SimParams.KOff = 0.01;
-SimParams.D = 0.0123 ...
-    / (SimParams.FrameRate * SimParams.PixelSize^2); % px^2 / subframe
-SimParams.Intensity = 300;
-[SMD, ~, ~, SimParams] = SMA_Sim.simulateTrajectories(SimParams);
-SMD.ConnectID = SMD.TrajectoryID; % fix for SMA_Sim.simulateTrajectories()
-TR = smi_core.TrackingResults.convertSMDToTR(SMD);
-TR1 = TR(1:floor(numel(TR)/2));
-TR2 = TR(floor(numel(TR)/2)+1:end);
+%% Reload some results from smi.SPT tracking.
+% Select the desired tracking results.
+FileListChannel1 = uipickfiles('Prompt', 'Pick the channel 1 files');
+FileListChannel2 = uipickfiles('Prompt', 'Pick the channel 2 files');
+
+% Match the files based on their time stamps.
+% NOTE: The channel 1 and channel 2 tracking results differ only by the
+%       filename tags 'Channel1' and 'Channel2', so we can pair the
+%       selected files by just removing those strings.
+IgnoreText = {'Channel1', 'Channel2'};
+[PairedChannel1, PairedChannel2] = ...
+    smi_helpers.pairText(FileListChannel1, FileListChannel2, ...
+    {'Channel1', 'Channel2'});
 
 %% Isolate dimer candidate events from the TR structures.
 MaxDimerSeparation = 2;
 MaxSeparation = 5;
-TRArray = smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
-    MaxDimerSeparation, MaxSeparation);
+TRArray = struct([]);
+for ff = 1:numel(PairedChannel1)
+    % Load the channel 1 TR structure.
+    load(PairedChannel1{ff}, 'TR')
+    TR1 = TR;
+    
+    % Load the channel 2 TR structure.
+    load(PairedChannel2{ff}, 'TR')
+    TR2 = TR;
+    
+    % Find dimerization event candidates between TR1 and TR2 trajectories
+    % and add those candidates to the concatenated 'TRArray'.
+    TRArray = [TRArray; smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
+        MaxDimerSeparation, MaxSeparation)];
+end
 
 %% Prepare the HMM class and run the analysis.
 SMF = smi_core.SingleMoleculeFitting;
@@ -41,11 +43,6 @@ HMM.MaxSeparation = MaxSeparation;
 HMM.DiffusionCoefficient = SimParams.D;
 HMM.RegistrationError = 0;
 HMM.SaveDir = 'C:\Users\David\Documents\MATLAB\spt_demos\HMM_demo\smite_test';
-HMM.GeneratePlots = false;
-HMM.GenerateMovies = false;
+HMM.GeneratePlots = true;
 HMM.UnitFlag = false;
 HMM.performFullAnalysis()
-
-
-
-
