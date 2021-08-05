@@ -16,21 +16,8 @@ IgnoreText = {'Channel1', 'Channel2'};
 %% Isolate dimer candidate events from the TR structures.
 MaxDimerSeparation = 2; % pixels
 MaxSeparation = 5; % pixels
-TRArray = struct([]);
-for ff = 1:numel(PairedChannel1)
-    % Load the channel 1 TR structure.
-    load(PairedChannel1{ff}, 'TR')
-    TR1 = TR;
-    
-    % Load the channel 2 TR structure.
-    load(PairedChannel2{ff}, 'TR')
-    TR2 = TR;
-    
-    % Find dimerization event candidates between TR1 and TR2 trajectories
-    % and add those candidates to the concatenated 'TRArray'.
-    TRArray = [TRArray; smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
-        MaxDimerSeparation, MaxSeparation)];
-end
+[TRArray, FileList] = smi_stat.HMM.findDimerCandidatesFromFiles(...
+    PairedChannel1, PairedChannel2, MaxDimerSeparation, MaxSeparation);
 
 %% Prepare the HMM class and run the analysis.
 SMF = smi_core.SingleMoleculeFitting;
