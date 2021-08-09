@@ -99,7 +99,7 @@ for ii = 1:numel(DatasetArray)
             end
         end
     end
-    ConnectID(CurrentDatasetInd) = ConnectIDCDs;
+    ConnectID(CurrentDatasetInd(SortIndicesFN)) = ConnectIDCDs;
 end
 SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
 
