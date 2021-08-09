@@ -156,9 +156,6 @@ if (numel(unique(SMD.PSFSigma)) == 1)
     SMD.PSFSigma = unique(SMD.PSFSigma);
     SMD.PSFSigma_SE = unique(SMD.PSFSigma_SE);
 end
-if (numel(unique(SMD.DatasetNum)) == 1)
-    SMD.DatasetNum = unique(SMD.DatasetNum);
-end
 
 % Revise the drift related fields, which should be treated differently.
 % NOTE: The dimensions of drift will be [NFrames, NDatasets], so if one of 
