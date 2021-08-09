@@ -59,6 +59,7 @@ switch lower(obj.SMF.FrameConnection.Method)
         obj.SMD = obj.revisedClassicalFC(obj.SMD, obj.SMF, obj.Verbose);
 end
 SMDCombined = obj.combineLocalizations(obj.SMD, obj.SMF);
+obj.SMDCombined = SMDCombined;
 
 
 end
