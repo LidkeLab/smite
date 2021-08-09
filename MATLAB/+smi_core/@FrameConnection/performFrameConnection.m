@@ -60,6 +60,10 @@ switch lower(obj.SMF.FrameConnection.Method)
 end
 SMDCombined = obj.combineLocalizations(obj.SMD, obj.SMF);
 obj.SMDCombined = SMDCombined;
+if (obj.Verbose > 0)
+    fprintf(['FrameConnection.performFrameConnection(): ', ...
+        'Frame connection complete.\n'])
+end
 
 
 end
