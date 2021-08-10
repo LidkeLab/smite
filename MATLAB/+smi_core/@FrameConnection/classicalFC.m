@@ -77,31 +77,23 @@ for ii = 1:numel(DatasetArray)
     [NLocPerFrame, FrameArray] = groupcounts(FrameNumCDs);
     CumulativeLocs = [0; cumsum(NLocPerFrame)];
     for ff = 1:numel(FrameArray)
-        % Determine which localizations should be considered for clustering.
-        % NOTE: Even though we don't want clusters with multiple 
-        %       localizations in the same frame for the final results, we 
-        %       don't want to exclude those until later (since inclusion of
-        %       WRONG localizations now can exclude CORRECT localizations 
-        %       if we restrict same frame localizations).
+        % Determine which localizations should be considered for clustering
         CurrentFrameInd = (1:NLocPerFrame(ff)) + CumulativeLocs(ff);
         CandidateFrameInd = ...
             find((FrameNumCDs >= (FrameArray(ff)-MaxFrameGap)) ...
             & (FrameNumCDs<FrameArray(ff)));
         if isempty(CandidateFrameInd)
-            MaxID = MaxID + 1;
             ConnectID(CurrentFrameInd) = (1:NLocPerFrame(ff)).' + MaxID;
+            MaxID = MaxID + NLocPerFrame(ff);
             continue
         end
         
         % Determine the nearest neighbor to the current localizations in
-        % all candidate frames (noting that we're allowing comparisons to
-        % the current frame as well).
+        % all candidate frames.
         [NNIndices, NNDistances] = knnsearch(...
             [XCDs(CandidateFrameInd), YCDs(CandidateFrameInd)], ...
             [XCDs(CurrentFrameInd), YCDs(CurrentFrameInd)], ...
-            'k', 2);
-        NNIndices = NNIndices(:, 2:end);
-        NNDistances = NNDistances(:, 2:end);
+            'k', 1);
         
         % Place the CurrentFrameInd localizations into clusters.
         ValidNNInd = find(NNDistances <= MaxSeparation);

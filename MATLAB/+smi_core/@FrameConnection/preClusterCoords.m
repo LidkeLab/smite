@@ -64,8 +64,8 @@ for ii = 1:numel(DatasetArray)
             find((FrameNumCDs >= (FrameArray(ff)-MaxFrameGap)) ...
             & (FrameNumCDs<=FrameArray(ff)));
         if isempty(CandidateFrameInd)
-            MaxID = MaxID + 1;
             ConnectID(CurrentFrameInd) = (1:NLocPerFrame(ff)).' + MaxID;
+            MaxID = MaxID + NLocPerFrame(ff);
             continue
         end
         
