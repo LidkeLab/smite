@@ -31,6 +31,14 @@ DatasetNum = SMD.DatasetNum(SortIndices);
 Photons = SMD.Photons(SortIndices);
 Bg = SMD.Bg(SortIndices);
 LogLikelihood = SMD.LogLikelihood(SortIndices);
+PSFSigma = SMD.PSFSigma(SortIndices(1:numel(SMD.PSFSigma)));
+PSFSigma_SE = SMD.PSFSigma_SE(SortIndices(1:numel(SMD.PSFSigma_SE)));
+PSFSigmaX = SMD.PSFSigmaX(SortIndices(1:numel(SMD.PSFSigmaX)));
+PSFSigmaY = SMD.PSFSigmaY(SortIndices(1:numel(SMD.PSFSigmaY)));
+PSFSigmaX_SE = SMD.PSFSigmaX_SE(SortIndices(1:numel(SMD.PSFSigmaX_SE)));
+PSFSigmaY_SE = SMD.PSFSigmaY_SE(SortIndices(1:numel(SMD.PSFSigmaY_SE)));
+Z = SMD.Z(SortIndices(1:numel(SMD.Z)));
+Z_SE = SMD.Z_SE(SortIndices(1:numel(SMD.Z_SE)));
 NLocalizations = numel(FrameNum);
 if (~exist('SMF', 'var') || isempty(SMF))
     % Try to determine the fit type based on the presence and size of some
@@ -38,19 +46,11 @@ if (~exist('SMF', 'var') || isempty(SMF))
     if (isfield(SMD, 'PSFSigma_SE') ...
             && (numel(SMD.PSFSigma_SE)==NLocalizations))
         FitType = 'XYNBS';
-        PSFSigma = SMD.PSFSigma(SortIndices);
-        PSFSigma_SE = SMD.PSFSigma_SE(SortIndices);
     elseif (isfield(SMD, 'PSFSigmaX_SE') ...
             && (numel(SMD.PSFSigmaX_SE)==NLocalizations))
         FitType = 'XYNBSXSY';
-        PSFSigmaX = SMD.PSFSigmaX(SortIndices);
-        PSFSigmaY = SMD.PSFSigmaY(SortIndices);
-        PSFSigmaX_SE = SMD.PSFSigmaX_SE(SortIndices);
-        PSFSigmaY_SE = SMD.PSFSigmaY_SE(SortIndices);
     elseif (isfield(SMD, 'Z_SE') && (numel(SMD.Z_SE)==NLocalizations))
         FitType = 'XYZNB';
-        Z = SMD.Z(SortIndices);
-        Z_SE = SMD.Z_SE(SortIndices);
     else
         FitType = 'XYNB';
     end
