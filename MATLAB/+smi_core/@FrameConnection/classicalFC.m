@@ -122,7 +122,7 @@ for ii = 1:numel(DatasetArray)
             end
         end
     end
-    ConnectID(CurrentDatasetInd) = ConnectIDCDs;
+    ConnectID(CurrentDatasetInd(SortIndicesFN)) = ConnectIDCDs;
 end
 SMD.ConnectID(SortIndices, 1) = smi.SPT.validifyConnectID(ConnectID);
 
