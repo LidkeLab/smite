@@ -17,17 +17,17 @@ mex(fullfile(sourcePath,'smi_c_FrameConnection.cpp'), '-outdir', mexFilePath);
  
 %% c_HistRecon
 
-%mex(fullfile(sourcePath,'c_HistRecon.cpp'), '-outdir', mexFilePath);
+mex(fullfile(sourcePath,'c_HistRecon.cpp'), '-outdir', mexFilePath);
 %copyfile(fullfile(sourcePath,'c_HistRecon.m'),mexFilePath);
 
 %% c_HistImTime
 
-%mex(fullfile(sourcePath,'c_HistImTime.cpp'), '-outdir', mexFilePath);
+mex(fullfile(sourcePath,'c_HistImTime.cpp'), '-outdir', mexFilePath);
 %copyfile(fullfile(sourcePath,'c_HistImTime.m'),mexFilePath);
 
 %% c_GenColorChannels
 
-%mex(fullfile(sourcePath,'c_GenColorChannels.cpp'), '-outdir', mexFilePath);
+mex(fullfile(sourcePath,'c_GenColorChannels.cpp'), '-outdir', mexFilePath);
 %copyfile(fullfile(sourcePath,'c_GenColorChannels.m'),mexFilePath);
 
 %% c_lap

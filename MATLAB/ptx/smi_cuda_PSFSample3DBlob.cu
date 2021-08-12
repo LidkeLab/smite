@@ -1,4 +1,3 @@
-
 #include "device_launch_parameters.h"
 #include "math.h"
 
