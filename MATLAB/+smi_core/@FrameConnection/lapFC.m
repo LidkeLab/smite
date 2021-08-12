@@ -61,7 +61,8 @@ else
     KOff = InternalParams.KOff;
     KBleach = InternalParams.KBleach;
     PMiss = InternalParams.PMiss; 
-    InitialDensity = InitialParams.InitialDensity;
+    InitialDensity = InternalParams.InitialDensity;
+    EstimateParams = false;
 end
 if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 1;
@@ -102,6 +103,7 @@ for rr = 1:SMF.FrameConnection.NRecursions
         [KOn, KOff, KBleach, PMiss, NEmitters] = ...
             smi_core.FrameConnection.estimateRateParameters(...
             ClusterData, Verbose);
+        InternalParams.NEmitters = NEmitters;
        
         % Estimate the local density around each cluster.
         if (Verbose > 1)
@@ -131,7 +133,8 @@ for rr = 1:SMF.FrameConnection.NRecursions
     UniqueIDs = unique(ConnectID, 'sorted');
     NIDsInitial = numel(UniqueIDs);
     MaxConnectID = NIDsInitial;
-    for nn = 1:NIDsInitial
+    ClustersToAnalyze = find(cellfun(@(X) size(X, 1) > 1, ClusterData));
+    for nn = ClustersToAnalyze.'
         % Construct the cost matrix.
         CostMatrix = smi_core.FrameConnection.createCostMatrix(...
             ClusterData{nn}, ...
@@ -153,7 +156,6 @@ InternalParams.KOn = KOn;
 InternalParams.KOff = KOff;
 InternalParams.KBleach = KBleach;
 InternalParams.PMiss = PMiss;
-InternalParams.NEmitters = NEmitters;
 InternalParams.InitialDensity = InitialDensity;
 
 
