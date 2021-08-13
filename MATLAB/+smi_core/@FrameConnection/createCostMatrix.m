@@ -88,8 +88,10 @@ end
 StartFrame = 1;
 DutyCycle = KOn / (KOn+KOff+KBleach);
 FrameArray = (1:max(FrameNum)).';
+Lambda1 = KBleach * DutyCycle;
+Lambda2 = (KOn+KOff+KBleach) - Lambda1;
 RhoOn = InitialDensity * DutyCycle ...
-    * exp(-KBleach*DutyCycle*(FrameArray-1));
+    * (exp(-Lambda1*(FrameArray-1)) - exp(-Lambda2*(FrameArray-1)));
 RhoOff = RhoOn * KOff / KOn;
 IndexArray = 1:NLocalizations;
 for nn = 1:NLocalizations

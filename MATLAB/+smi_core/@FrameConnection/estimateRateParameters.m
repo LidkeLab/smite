@@ -9,7 +9,7 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 % NOTE: Many of the output parameters are bounded either implicitly or
 %       explicitly:
 %       KOn: [1e-5, NLocalizations/NFrames]
-%       KOff: [0, 1]
+%       KOff: [1/NLocalizations, 1]
 %       KBleach: [0, inf]
 %       PMiss: [0, 1]
 %       NEmitters: [0, NClusters]
