@@ -105,8 +105,11 @@ for nn = 1:NLocalizations
     CostMatrix(nn, IndexArray+NLocalizations) = DeathCost;
 end
 
-% Set infinite costs to the NonLinkMarker.
-CostMatrix(isinf(CostMatrix) | isnan(CostMatrix)) = NonLinkMarker;
+% Set NaN/inf costs to be so high that they won't be chosen unless they're
+% the only choice left.
+BadValues = (isinf(CostMatrix) | isnan(CostMatrix));
+CostMatrix(BadValues) = ...
+    2 * sum(CostMatrix(~BadValues & (CostMatrix~=NonLinkMarker)));
 
 
 end
