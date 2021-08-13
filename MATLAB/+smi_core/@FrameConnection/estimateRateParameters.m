@@ -6,6 +6,14 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 % These are computed by assuming that each cluster corresponds to a single
 % emitter.
 %
+% NOTE: Many of the output parameters are bounded either implicitly or
+%       explicitly:
+%       KOn: [1e-5, NLocalizations/NFrames]
+%       KOff: [0, 1]
+%       KBleach: [0, inf]
+%       PMiss: [0, 1]
+%       NEmitters: [0, NClusters]
+%
 % INPUTS:
 %   ClusterData: Cell array of cluster data (see organizeClusterData())
 %
@@ -31,12 +39,12 @@ end
 
 % Compute some quantities needed from each cluster.
 NClusters = numel(ClusterData);
-TotalDurations = NaN(NClusters, 1);
+ClusterDurations = NaN(NClusters, 1);
 NObservations = NaN(NClusters, 1);
 for nn = 1:NClusters
     % Compute the total duration of the cluster.
     CurrentFrames = ClusterData{nn}(:, 5);
-    TotalDurations(nn) = max(CurrentFrames) - min(CurrentFrames) + 1;
+    ClusterDurations(nn) = max(CurrentFrames) - min(CurrentFrames) + 1;
     
     % Compute the total number of observed localizations (clusters might
     % have multiple localizations per frame due to generous pre-clustering,
@@ -46,8 +54,8 @@ end
 
 % Estimate KOff+KBleach and PMiss, assuming each cluster was a single 
 % blinking event of a single emitter.
-KOffPKBleach = -log(1 - 1/mean(TotalDurations));
-PMiss = mean(abs((NObservations-TotalDurations)) ./ TotalDurations);
+KOffPKBleach = -log(1 - 1/mean(ClusterDurations));
+PMiss = 1 - (mean(NObservations./ClusterDurations));
 
 % Compute some parameters from the sum of localizations present over time.
 AllData = cell2mat(ClusterData);
