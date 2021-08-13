@@ -54,15 +54,20 @@ AllData = cell2mat(ClusterData);
 [NLoc, Frames] = groupcounts(double(AllData(:, 5)));
 NLocSum = cumsum(NLoc);
 KOff = NClusters / NLocSum(end);
-KBleach = KOffPKBleach - KOff;
+KBleach = max(1e-5, KOffPKBleach - KOff);
 FitOptions = optimset('Display', ...
     smi_helpers.arrayMUX({'none', 'final'}, (Verbose > 1)));
-CostFunction = @(X) mean((NLocSum - X(1)*(1-exp(-X(2)*(Frames-1)))).^2);
+K = @(KOn) KOn + KOffPKBleach;
+L1 = @(KOn) KOn * KBleach / K(KOn);
+L2 = @(KOn) (KOn+KOffPKBleach) - L1(KOn);
+CostFunction = @(X) mean((NLocSum ...
+    - X(1)*(1-PMiss)*(X(2)/K(X(2)))*((1/L1(X(2)))*(1-exp(-L1(X(2))*(Frames-1))) ...
+    - (1/L2(X(2)))*(1-exp(-L2(X(2))*(Frames-1))))).^2);
 LocSumParams = fmincon(CostFunction, ...
     [NLocSum(end), 1/Frames(end)], [], [], [], [], ...
-    [0, 0], [inf, KBleach], [], FitOptions);
-NEmitters = LocSumParams(1) * KBleach / (1-PMiss);
-KOn = LocSumParams(2) * KOffPKBleach / (KBleach-LocSumParams(2));
+    [0, 0], [NClusters, NLocSum(end)/Frames(end)], [], FitOptions);
+NEmitters = LocSumParams(1);
+KOn = LocSumParams(2);
 
 
 end

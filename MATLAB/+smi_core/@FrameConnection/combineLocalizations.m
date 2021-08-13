@@ -71,7 +71,7 @@ for ii = 1:NUnique
     SMDCombined.Bg(ii, 1) = sum(Bg(IndexArray));
     SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
 end
-SMDCombined.NCombined(:, 1) = NLocPerID;
+SMDCombined.NCombined = NLocPerID;
 
 % If the fit type wasn't 'XYNB', we still need to combine some other fields
 % (I'm doing this in a separate loop down here for speed purposes, since we

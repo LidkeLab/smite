@@ -52,7 +52,8 @@ switch lower(obj.SMF.FrameConnection.Method)
         obj.SMD = SMD;
         return
     case 'lap-fc'
-        obj.SMD = obj.lapFC(obj.SMD, obj.SMF, obj.Verbose);
+        [obj.SMD, obj.InternalParams] = ...
+            obj.lapFC(obj.SMD, obj.SMF, obj.Verbose, obj.InternalParams);
     case 'classical'
         obj.SMD = obj.classicalFC(obj.SMD, obj.SMF, obj.Verbose);
     case 'revised classical'

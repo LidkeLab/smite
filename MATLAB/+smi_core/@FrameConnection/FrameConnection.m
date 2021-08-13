@@ -26,8 +26,12 @@ classdef FrameConnection < handle
         Verbose = 1; % (Default = 1) Verbosity level of main workflow
     end
     
+    properties (Hidden)
+        InternalParams = struct([]); % set of parameters used in LAP-FC
+    end
+    
     properties (SetAccess = 'protected')
-        SMDCombined % frame-connected SMD structure.
+        SMDCombined % frame-connected SMD structure
     end
     
     methods
