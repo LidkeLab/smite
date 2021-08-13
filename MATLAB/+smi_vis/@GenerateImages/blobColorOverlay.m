@@ -47,10 +47,10 @@ else
     Model2=Model;
 end
 % overlay onto data
-OverlayImage=joinchannels('RGB',Sequence,Model2);
+OverlayImage=smi_vis.GenerateImages.rgbImage(Sequence,Model2,Model2*0);
 
 if nargout == 0
-    dipshow(OverlayImage)
+    smi_vis.GenerateImages.showim(OverlayImage);
 end
 
 end

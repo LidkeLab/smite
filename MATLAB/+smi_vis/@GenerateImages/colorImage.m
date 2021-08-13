@@ -34,6 +34,5 @@ end
 % combine channels
 Image=single(Image);
 [r, g, b]=c_GenColorChannels(Image,ColorMap,MinMax(1),MinMax(2));
-RGBimage=dip_array(joinchannels('RGB',r,g,b));
-%RGBimage=joinchannels('RGB',r,g,b);
+RGBimage=smi_vis.GenerateImages.rgbImage(r,g,b);
 end
