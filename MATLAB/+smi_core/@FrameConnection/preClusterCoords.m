@@ -102,6 +102,7 @@ for ii = 1:numel(DatasetArray)
     ConnectID(CurrentDatasetInd(SortIndicesFN)) = ConnectIDCDs;
 end
 SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
+SMDClustered.ConnectID = smi.SPT.validifyConnectID(SMDClustered.ConnectID);
 
 
 end

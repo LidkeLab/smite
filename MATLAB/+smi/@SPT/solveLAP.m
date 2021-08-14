@@ -60,7 +60,7 @@ end
 % Validate the input CostMatrix.
 CostMatrix = double(CostMatrix);
 if (any(isnan(CostMatrix(:))) || any(isinf(CostMatrix(:))))
-    error(['SMA_SPT.solveLAP(): The input cost matrix cannot contain ', ...
+    error(['smi.SPT.solveLAP(): The input cost matrix cannot contain ', ...
         'NaNs or infs'])
 end
 if issparse(CostMatrix)
@@ -68,7 +68,7 @@ if issparse(CostMatrix)
     % number of rows/columns (meaning that a unique assignment can be made
     % for every row/column).
     if (sprank(CostMatrix) < CostMatrixSize)
-        error(['SMA_SPT.solveLAP(): The input cost matrix must allow ', ...
+        error(['smi.SPT.solveLAP(): The input cost matrix must allow ', ...
             'for at least one assignment per row/column'])
     end
 else
@@ -76,7 +76,7 @@ else
     % we just want to ignore the NonlinkMarker elements.
     ValidCosts = (CostMatrix ~= NonlinkMarker);
     if (sprank(ValidCosts) < CostMatrixSize)
-        error(['SMA_SPT.solveLAP(): The input cost matrix must allow ', ...
+        error(['smi.SPT.solveLAP(): The input cost matrix must allow ', ...
             'for at least one assignment per row/column'])
     end
 end
