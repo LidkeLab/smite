@@ -11,8 +11,8 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %       KOn: [1e-5, NLocalizations/NFrames]
 %       KOff: [1/NLocalizations, 1]
 %       KBleach: [0, inf]
-%       PMiss: [0, 1]
-%       NEmitters: [0, NClusters]
+%       PMiss: [0, 1-1/NFrames]
+%       NEmitters: [max(NLocOverTime), NClusters]
 %
 % INPUTS:
 %   ClusterData: Cell array of cluster data (see organizeClusterData())
@@ -73,7 +73,7 @@ CostFunction = @(X) mean((NLocSum ...
     - (1/L2(X(2)))*(1-exp(-L2(X(2))*(Frames-1))))).^2);
 LocSumParams = fmincon(CostFunction, ...
     [NLocSum(end), 1/Frames(end)], [], [], [], [], ...
-    [0, 0], [NClusters, NLocSum(end)/Frames(end)], [], FitOptions);
+    [max(NLoc), 0], [NClusters, NLocSum(end)/Frames(end)], [], FitOptions);
 NEmitters = LocSumParams(1);
 KOn = LocSumParams(2);
 
