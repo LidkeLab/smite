@@ -35,7 +35,7 @@ ConnectID = (1:NLocalizations).';
 % Loop through datasets and perform the pre-clustering.
 [NLocPerDataset, DatasetArray] = groupcounts(DatasetNum);
 CumulativeDatasetLocs = [0; cumsum(NLocPerDataset)];
-MaxID = NLocalizations;
+MaxID = NLocalizations + 1;
 MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
 NSigmaDev = SMF.FrameConnection.NSigmaDev;
 for ii = 1:numel(DatasetArray)
