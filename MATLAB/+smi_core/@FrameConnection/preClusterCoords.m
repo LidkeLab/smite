@@ -20,8 +20,6 @@ function [SMDClustered] = preClusterCoords(SMD, SMF)
 
 
 % Gather/revise/reorganize some arrays for further use.
-SMDClustered = SMD;
-NLocalizations = numel(SMD.FrameNum);
 [DatasetNum, SortIndices] = sort(SMD.DatasetNum);
 X = SMD.X(SortIndices);
 Y = SMD.Y(SortIndices);
@@ -29,24 +27,26 @@ X_SE = SMD.X_SE(SortIndices);
 Y_SE = SMD.Y_SE(SortIndices);
 FrameNum = SMD.FrameNum(SortIndices);
 MeanXYSE = mean([X_SE, Y_SE], 2);
-MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
-NSigmaDev = SMF.FrameConnection.NSigmaDev;
 
 % Initialize each localization as a new cluster.
+NLocalizations = numel(SMD.FrameNum);
 ConnectID = (1:NLocalizations).';
 
 % Loop through datasets and perform the pre-clustering.
 [NLocPerDataset, DatasetArray] = groupcounts(DatasetNum);
 CumulativeDatasetLocs = [0; cumsum(NLocPerDataset)];
 MaxID = NLocalizations;
+MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
+NSigmaDev = SMF.FrameConnection.NSigmaDev;
 for ii = 1:numel(DatasetArray)
     % Isolate some arrays for the current dataset (CDS = current dataset)
     CurrentDatasetInd = (1:NLocPerDataset(ii)) + CumulativeDatasetLocs(ii);
     [FrameNumCDs, SortIndicesFN] = sort(FrameNum(CurrentDatasetInd));
-    XCDs = X(CurrentDatasetInd(SortIndicesFN));
-    YCDs = Y(CurrentDatasetInd(SortIndicesFN));
-    MeanXYSECDs = MeanXYSE(CurrentDatasetInd(SortIndicesFN));
-    ConnectIDCDs = ConnectID(CurrentDatasetInd(SortIndicesFN));
+    CurrentDatasetInd = CurrentDatasetInd(SortIndicesFN);
+    XCDs = X(CurrentDatasetInd);
+    YCDs = Y(CurrentDatasetInd);
+    MeanXYSECDs = MeanXYSE(CurrentDatasetInd);
+    ConnectIDCDs = ConnectID(CurrentDatasetInd);
     
     % Loop through frames and add localizations to clusters.
     IsClustered = zeros(NLocPerDataset(ii), 1, 'logical');
@@ -99,8 +99,9 @@ for ii = 1:numel(DatasetArray)
             end
         end
     end
-    ConnectID(CurrentDatasetInd(SortIndicesFN)) = ConnectIDCDs;
+    ConnectID(CurrentDatasetInd) = ConnectIDCDs;
 end
+SMDClustered = SMD;
 SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
 SMDClustered.ConnectID = smi.SPT.validifyConnectID(SMDClustered.ConnectID);
 
