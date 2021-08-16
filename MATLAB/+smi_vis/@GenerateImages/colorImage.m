@@ -15,7 +15,6 @@ function [RGBimage]=colorImage(Image,ColorMap,MinMax)
 %
 %   REQUIRES
 %      Matlab 2014b or higher
-%      Dipimage toolbox (http://www.diplib.org/)
 
 % Created by
 %    Marjolein Meddens, Lidke Lab 2017
