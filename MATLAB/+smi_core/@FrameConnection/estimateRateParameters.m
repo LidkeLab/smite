@@ -10,7 +10,7 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %       explicitly:
 %       KOn: [1e-5, NLocalizations/NFrames]
 %       KOff: [1/NLocalizations, 1]
-%       KBleach: [0, inf]
+%       KBleach: [1e-5, inf]
 %       PMiss: [0, 1-1/NFrames]
 %       NEmitters: [max(NLocOverTime), NClusters]
 %
@@ -62,7 +62,7 @@ AllData = cell2mat(ClusterData);
 [NLoc, Frames] = groupcounts(double(AllData(:, 5)));
 NLocSum = cumsum(NLoc);
 KOff = NClusters / NLocSum(end);
-KBleach = max(0, KOffPKBleach - KOff);
+KBleach = max(1e-5, KOffPKBleach - KOff);
 FitOptions = optimset('Display', ...
     smi_helpers.arrayMUX({'none', 'final'}, (Verbose > 1)));
 K = @(KOn) KOn + KOffPKBleach;
