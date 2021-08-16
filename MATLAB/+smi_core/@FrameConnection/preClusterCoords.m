@@ -35,7 +35,7 @@ ConnectID = (1:NLocalizations).';
 % Loop through datasets and perform the pre-clustering.
 [NLocPerDataset, DatasetArray] = groupcounts(DatasetNum);
 CumulativeDatasetLocs = [0; cumsum(NLocPerDataset)];
-MaxID = NLocalizations + 1;
+MaxID = NLocalizations;
 MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
 NSigmaDev = SMF.FrameConnection.NSigmaDev;
 for ii = 1:numel(DatasetArray)
@@ -64,6 +64,7 @@ for ii = 1:numel(DatasetArray)
             find((FrameNumCDs >= (FrameArray(ff)-MaxFrameGap)) ...
             & (FrameNumCDs<=FrameArray(ff)));
         if isempty(CandidateFrameInd)
+            MaxID = MaxID + 1;
             ConnectID(CurrentFrameInd) = (1:NLocPerFrame(ff)).' + MaxID;
             MaxID = MaxID + NLocPerFrame(ff);
             continue
