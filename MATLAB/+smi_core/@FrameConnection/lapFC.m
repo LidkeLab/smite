@@ -130,9 +130,7 @@ for rr = 1:SMF.FrameConnection.NRecursions
         fprintf(['\tFrameConnection.lapFC(): ', ...
             'Looping over clusters and solving the LAP...\n'])
     end
-    UniqueIDs = unique(ConnectID, 'sorted');
-    NIDsInitial = numel(UniqueIDs);
-    MaxConnectID = NIDsInitial;
+    MaxConnectID = numel(unique(ConnectID));
     ClustersToAnalyze = find(cellfun(@(X) size(X, 1) > 1, ClusterData));
     for nn = ClustersToAnalyze.'
         % Construct the cost matrix.
