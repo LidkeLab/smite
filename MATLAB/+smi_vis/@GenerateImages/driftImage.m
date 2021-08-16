@@ -15,7 +15,6 @@ function [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
 %
 %   REQUIRES
 %      Matlab 2014b or higher
-%      Dipimage toolbox (http://www.diplib.org/)
 
 % Created by:
 %    Marjolein Meddens, Lidke Lab 2017
@@ -49,8 +48,8 @@ DriftIm = c_HistImTime(ysize,xsize,y,x,t);
 cm=jet(256);
 cm(1,:)=[0 0 0];
 if nargout==0
-    dipshow(DriftIm);
-    colormap(cm);
+    imshow(DriftIm,cm);
+    %colormap(cm);
 elseif nargout == 2
     [DriftImRGB]=smi_vis.GenerateImages.colorImage(DriftIm,cm);
 end

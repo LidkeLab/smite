@@ -5,8 +5,8 @@ success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.histogramImage...\n');
 
 % setting display options
-TrueSize = dipgetpref('TrueSize');
-dipsetpref('TrueSize',true)
+%TrueSize = dipgetpref('TrueSize');
+%dipsetpref('TrueSize',true)
 
 % create random input
 fprintf('Creating data...\n');
@@ -26,26 +26,28 @@ close all
 % test with output
 fprintf('Testing with output and all input...\n');
 [histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
-dipshow(histIm)
-h = dipshow(RGBim);
-pos = h.Position;
-pos(2) = pos(2)-300;
-h.Position = pos;
+imshow(histIm)
+h = imshow(RGBim);
+% DIPimage:
+%pos = h.Position;
+%pos(2) = pos(2)-300;
+%h.Position = pos;
 pause(3)
 close all
 % test without colormap (default should be hot)
 fprintf('Testing with output and no colormap input...\n');
 [histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom);
-dipshow(histIm)
-h = dipshow(RGBim);
-pos = h.Position;
-pos(2) = pos(2)-300;
-h.Position = pos;
+imshow(histIm)
+h = imshow(RGBim);
+% DIPimage:
+%pos = h.Position;
+%pos(2) = pos(2)-300;
+%h.Position = pos;
 pause(3)
 close all
 
 % setting display options back
-dipsetpref('TrueSize',TrueSize)
+%dipsetpref('TrueSize',TrueSize)
 
 % finish
 fprintf('Done, test successful!\n\n');
