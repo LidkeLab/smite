@@ -105,7 +105,7 @@ SRImageZoom = 4;
 TrueIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
 P = prctile(TrueIm(TrueIm > 0), 99.9);
 TrueIm(TrueIm > P) = P;
-TrueIm = 255 * TrueIm / P;
+%TrueIm = 255 * TrueIm / P;
 figure; imshow(TrueIm); % what we should get afterwards
 
 X_True = single(SMDin.X);
@@ -130,7 +130,7 @@ SMDsave = SMDin;
 DriftIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
 P = prctile(DriftIm(DriftIm > 0), 99.9);
 DriftIm(DriftIm > P) = P;
-DriftIm = 255 * DriftIm / P;
+%DriftIm = 255 * DriftIm / P;
 figure; imshow(DriftIm)  %synthetic drift image
 %GaussIm = smi_vis.GenerateImages.gaussianImage(SMDin, SRImageZoom);
 %figure; imshow(GaussIm);
@@ -189,7 +189,7 @@ correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
 % 99.9% intensity value.
 P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
-correctedDriftIm = 255 * correctedDriftIm / P;
+%correctedDriftIm = 255 * correctedDriftIm / P;
 figure; imshow(correctedDriftIm)
 
 % Plot the drift correction as a function of time.
@@ -323,7 +323,7 @@ correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
 % 99.9% intensity value.
 P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
-correctedDriftIm = 255 * correctedDriftIm / P;
+%correctedDriftIm = 255 * correctedDriftIm / P;
 figure; imshow(correctedDriftIm)
 
 % Plot the drift correction as a function of time.
