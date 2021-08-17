@@ -103,10 +103,10 @@ SMDin.PixelSizeZUnit = PixelSizeZUnit;
 % Histogram image of this data.
 SRImageZoom = 4;
 TrueIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
-P = prctile(TrueIm(TrueIm > 0), 99.9);
-TrueIm(TrueIm > P) = P;
+%P = prctile(TrueIm(TrueIm > 0), 99.9);
+%TrueIm(TrueIm > P) = P;
 %TrueIm = 255 * TrueIm / P;
-figure; imshow(TrueIm); % what we should get afterwards
+figure; imagesc(TrueIm); colormap(gray); % what we should get afterwards
 
 X_True = single(SMDin.X);
 Y_True = single(SMDin.Y);
@@ -128,12 +128,12 @@ end
 SMDsave = SMDin;
 
 DriftIm = smi_vis.GenerateImages.histogramImage(SMDin, SRImageZoom); %new
-P = prctile(DriftIm(DriftIm > 0), 99.9);
-DriftIm(DriftIm > P) = P;
+%P = prctile(DriftIm(DriftIm > 0), 99.9);
+%DriftIm(DriftIm > P) = P;
 %DriftIm = 255 * DriftIm / P;
-figure; imshow(DriftIm)  %synthetic drift image
+figure; imagesc(DriftIm); colormap(gray);  %synthetic drift image
 %GaussIm = smi_vis.GenerateImages.gaussianImage(SMDin, SRImageZoom);
-%figure; imshow(GaussIm);
+%figure; imagesc(GaussIm); colormap(gray);
 
 SMF = smi_core.SingleMoleculeFitting();
 SMF.DriftCorrection.BFRegistration = false;
@@ -184,13 +184,13 @@ fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y = %f nm\n', ...
         consistency_in * P2nm);
 
 correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
-%figure; imshow(DriftIm)
+%figure; imagesc(DriftIm); colormap(gray);
 % Clean up the sum image by setting the 0.1% top intensity pixels to the
 % 99.9% intensity value.
 P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
 %correctedDriftIm = 255 * correctedDriftIm / P;
-figure; imshow(correctedDriftIm)
+figure; imagesc(correctedDriftIm); colormap(gray);
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
@@ -318,13 +318,13 @@ fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y = %f nm\n', ...
         consistency_in * P2nm);
 
 correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
-%figure; imshow(DriftIm)
+%figure; imagesc(DriftIm); colormap(gray);
 % Clean up the sum image by setting the 0.1% top intensity pixels to the
 % 99.9% intensity value.
 P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
 %correctedDriftIm = 255 * correctedDriftIm / P;
-figure; imshow(correctedDriftIm)
+figure; imagesc(correctedDriftIm); colormap(gray);
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
