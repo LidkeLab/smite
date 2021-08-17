@@ -10,7 +10,7 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %       explicitly:
 %       KOn: [1e-5, NLocalizations/NFrames]
 %       KOff: [1/NLocalizations, 1]
-%       KBleach: [1e-5, inf]
+%       KBleach: [1e-5, inf)
 %       PMiss: [0, 1-1/NFrames]
 %       NEmitters: [max(NLocOverTime), NClusters]
 %
@@ -55,6 +55,7 @@ end
 % Estimate KOff+KBleach and PMiss, assuming each cluster was a single 
 % blinking event of a single emitter.
 KOffPKBleach = -log(1 - 1/mean(ClusterDurations));
+KOffPKBleach = smi_helpers.arrayMUX({KOffPKBleach, 1}, isinf(KOffPKBleach));
 PMiss = 1 - (mean(NObservations./ClusterDurations));
 
 % Compute some parameters from the sum of localizations present over time.
