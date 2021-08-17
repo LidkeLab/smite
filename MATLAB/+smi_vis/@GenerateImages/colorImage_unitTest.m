@@ -19,19 +19,19 @@ MinMax = [sortedVals(round(NumEl*0.1)),sortedVals(round(NumEl*0.9))];
 % test with only image input
 fprintf('Testing with image as only input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data);
-dipshow(RGBim);
+imshow(RGBim);
 pause(3);
 close all
 % test with image and colormap input
 fprintf('Testing with image and colormap input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data,ColorMap);
-dipshow(RGBim)
+imshow(RGBim)
 pause(3)
 close all
 % test without colormap (default should be hot)
 fprintf('Testing with image, colormap and minmax input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data,ColorMap,MinMax);
-dipshow(RGBim)
+imshow(RGBim)
 pause(3)
 close all
 

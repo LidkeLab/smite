@@ -12,7 +12,6 @@ function [RGBimage]=rgbImage(R,G,B)
 %
 %   REQUIRES
 %      Matlab 2014b or higher
-%      Dipimage toolbox (http://www.diplib.org/)
 
 % check input
 if nargin < 3
