@@ -8,7 +8,7 @@ fprintf('Creating image...\n');
 % create image
 SZ = 256;
 NFrames = 1;
-[Data,~] = smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames);
+Data = smi_sim.GaussBlobs.genRandomBlobImage(SZ,NFrames);
 
 % inputs
 ColorMap = parula(256);
