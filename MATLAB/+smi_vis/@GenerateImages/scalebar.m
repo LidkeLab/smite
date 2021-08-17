@@ -18,7 +18,6 @@ function [ImageOut,Image] = scalebar(Image,PixelSize,Length,Location)
 % REQUIRES:
 %   Matlab
 %   Statistics Toolbox
-%   Dipimage toolbox
 
 % Created by
 %   Sandeep Pallikkuth, Lidke Lab, 2017       
@@ -85,7 +84,7 @@ end
 ImageOut=in;
 
 if nargout == 0
-    dipshow(ImageOut)
+    imshow(ImageOut)
 end
 
 end
