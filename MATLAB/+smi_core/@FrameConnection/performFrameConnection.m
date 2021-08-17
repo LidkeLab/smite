@@ -37,6 +37,15 @@ function [SMDCombined, SMD] = performFrameConnection(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
+% Make sure obj.SMD contains temporal data.  If it doesn't, exit here
+% (since there's nothing to frame-connect).
+if (isempty(obj.SMD.FrameNum) || (numel(obj.SMD.FrameNum)==1))
+    SMD = obj.SMD;
+    SMDCombined = SMD;
+    obj.SMDCombined = obj.SMDCombined;
+    return
+end
+
 % Perform frame-connection using the requested method.
 if (obj.Verbose > 0)
     fprintf(['FrameConnection.performFrameConnection(): ', ...
