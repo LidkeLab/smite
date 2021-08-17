@@ -74,6 +74,12 @@ if (Verbose > 2)
 end
 SMDPreClustered = smi_core.FrameConnection.preClusterCoords(SMD, SMF);
 SMD.ConnectID = SMDPreClustered.ConnectID;
+if (numel(unique(SMDPreClustered)) == numel(SMDPreClustered.FrameNum))
+    % This condition checks if pre-clustering actually did anything.  If
+    % not, we don't need to proceed (since each pre-cluster already has
+    % only 1 localization).
+    return
+end
 
 % Recursively perform the frame-connection, using updated density and
 % fluorophore transition rate estimates from the previous iteration.

@@ -54,6 +54,11 @@ end
 
 % Estimate KOff+KBleach and PMiss, assuming each cluster was a single 
 % blinking event of a single emitter.
+% NOTE: I've added the isinf() check to KOffPKBleach just to avoid crashing
+%       this code (in case the user wants to run it in some strange
+%       scenario).  It's important to note that if KOffPKBleach = inf, we
+%       won't be using these parameters for frame-connection, as this can
+%       only happen when each pre-cluster only had a single localization!
 KOffPKBleach = -log(1 - 1/mean(ClusterDurations));
 KOffPKBleach = smi_helpers.arrayMUX({KOffPKBleach, 1}, isinf(KOffPKBleach));
 PMiss = 1 - (mean(NObservations./ClusterDurations));
