@@ -25,7 +25,6 @@ function [OverlayImage] = blobColorOverlay(Sequence,SMD,AutoScale)
 % REQUIRES:
 %   Statistics Toolbox
 %   Parallel Procesing Toolbox
-%   Dipimage toolbox
 %   NVidia GPU
 
 % Created by:
@@ -38,7 +37,9 @@ end
 % generate blob stack for fits
 SZ = [size(Sequence,1),size(Sequence,2)];
 NFrames = size(Sequence,3);
-[Model] = smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames,SMD);
+SMD.XSize = SZ(1);
+SMD.YSize = SZ(2);
+[Model] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
 
 % scale the intensity of the Model based on the Max(data)
 if AutoScale && max(Sequence(:))>max(Model(:))
@@ -54,4 +55,3 @@ if nargout == 0
 end
 
 end
-
