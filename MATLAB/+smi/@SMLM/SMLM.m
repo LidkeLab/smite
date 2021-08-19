@@ -22,6 +22,7 @@ properties
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1       % Verbosity level
+    VerboseTest = 3   % Verbosity level for testFits
     FullvsTest        % Logical value set by fullAnalysis or testFit to tell
                       % saveResults to make the proper call to generatePlots
 end
@@ -110,7 +111,7 @@ methods
     function testFit(obj, DatasetIndex)
         % testFit performs detailed analysis and feedback of one dataset.
         
-        obj.Verbose=3;
+        %obj.Verbose=3;
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         obj.FullvsTest = false;
@@ -154,7 +155,8 @@ methods
 
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
-        obj.DC.Verbose = max(0,obj.Verbose-1);
+        obj.DC.Verbose = obj.Verbose;
+        %obj.DC.Verbose = max(0,obj.Verbose-1);
         obj.SMD=[];
         obj.SMDPreThresh=[];
         if obj.Verbose >= 1
@@ -203,7 +205,12 @@ methods
         ScaledDataset = DTP.convertData();
         
         % Generate localizations from the current Dataset.
-        V= max(0,obj.Verbose-1);
+        %V= max(0,obj.Verbose-1);
+        if obj.FullvsTest
+           V = obj.Verbose;
+        else
+           V = obj.VerboseTest;
+        end
         LD = smi_core.LocalizeData(ScaledDataset, obj.SMF, V);
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
