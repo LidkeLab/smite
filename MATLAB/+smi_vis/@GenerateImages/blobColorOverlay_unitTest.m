@@ -12,15 +12,20 @@ Background = 5;
 
 SMD.X = (SZ-1)*rand(NBlobs,1);
 SMD.Y = (SZ-1)*rand(NBlobs,1);
+SMD.Z = [];
 SMD.Photons=1000+100*randn(NBlobs,1);
 SMD.Photons(SMD.Photons<=0) = 0;
 SMD.Background=zeros(NBlobs,1); % no background for individual emitters
 SMD.PSFSigma=1.3+0.1*randn(NBlobs,1);
 SMD.FrameNum = 1+round((NFrames-1)*rand(NBlobs,1));
 SMD.Bg=5*ones(NBlobs,1); % now add background to SMD for overlay
-[~,Sequence] = smi_sim.GaussBlobs.gaussBlobImage(SZ,NFrames,SMD);
+SMD.XSize = SZ;
+SMD.YSize = SZ;
+SMD.NFrames = NFrames;
+[~,Sequence] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
+
 Sequence = Sequence+Background; % add background to the whole sequence
-% remove particles from SMD to simulated not all got fit
+% remove particles from SMD to simulate not all getting fit
 SMD.X = SMD.X(1:NBlobs/2);
 SMD.Y = SMD.Y(1:NBlobs/2);
 SMD.Photons=SMD.Photons(1:NBlobs/2);

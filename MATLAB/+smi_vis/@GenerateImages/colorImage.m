@@ -15,7 +15,6 @@ function [RGBimage]=colorImage(Image,ColorMap,MinMax)
 %
 %   REQUIRES
 %      Matlab 2014b or higher
-%      Dipimage toolbox (http://www.diplib.org/)
 
 % Created by
 %    Marjolein Meddens, Lidke Lab 2017
@@ -34,6 +33,5 @@ end
 % combine channels
 Image=single(Image);
 [r, g, b]=c_GenColorChannels(Image,ColorMap,MinMax(1),MinMax(2));
-RGBimage=dip_array(joinchannels('RGB',r,g,b));
-%RGBimage=joinchannels('RGB',r,g,b);
+RGBimage=smi_vis.GenerateImages.rgbImage(r,g,b);
 end
