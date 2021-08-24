@@ -10,10 +10,8 @@ classdef Publish < handle
     %       with the directory names following the scheme
     %       Cell*\Label*\Data*.h5
     %
-    % REQUIRES: MIC_H5 class from the matlab-instrument-control repository
-    %           MATLAB 2018a or later (for Publish.genAlignStats())
+    % REQUIRES: MATLAB 2018a or later (for Publish.genAlignStats())
     %           MATLAB Image Processing Toolbox 2014a or later
-    %           DipImage (to use findshift())
     %
     % CITATION:
     
