@@ -84,7 +84,8 @@ if ((NEmittersInitGuess<max(NLoc)) || (NEmittersInitGuess>NClusters))
 end
 LocSumParams = fmincon(CostFunction, ...
     [NEmittersInitGuess, 1/Frames(end)], [], [], [], [], ...
-    [max(NLoc), 1e-5], [NClusters, NLocSum(end)/Frames(end)], [], FitOptions);
+    [max(NLoc), 1e-5], [NClusters, NLocSum(end)/Frames(end)], [], ...
+    FitOptions);
 NEmitters = ceil(LocSumParams(1));
 KOn = LocSumParams(2);
 

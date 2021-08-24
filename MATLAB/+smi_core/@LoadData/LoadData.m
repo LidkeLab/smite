@@ -259,6 +259,7 @@ classdef LoadData < handle
 
         DatasetList = setSMFDatasetList(SMF);
         NDatasets = countNDatasets(SMF);
+        [H5Structure] = readH5File(FilePath, GroupName)
         
         function [Gain, Offset, ReadNoise, CalibrationROI] = ...
                 loadDataCalibration(SMF)

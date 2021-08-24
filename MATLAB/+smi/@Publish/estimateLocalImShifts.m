@@ -25,9 +25,6 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
 %              (NROIsx4 array)([YStart, XStart, YEnd, XEnd])
 %   ImageStats: Structure containing some stats about the ImageROIs.
 %
-% REQUIRES: 
-%   matlab-instrument-control, to use findStackOffset()
-%
 % CITATION:
 
 % Created by:
@@ -56,7 +53,7 @@ NROIs = size(ImageROIs, 1);
 PixelOffsets = zeros(NROIs, 2);
 SubPixelOffsets = PixelOffsets;
 for nn = 1:NROIs
-    [Offset, SubOffset] = MIC_Reg3DTrans.findStackOffset(...
+    [Offset, SubOffset] = smi_stat.findStackOffset(...
         DividedImages1{nn}, DividedImages2{nn}, ...
         [MaxOffset, 1], [], [], 0, UseGPU);
     PixelOffsets(nn, :) = Offset(1:2);
