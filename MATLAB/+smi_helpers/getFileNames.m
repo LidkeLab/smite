@@ -1,6 +1,6 @@
-function [FilePaths] = getFilePaths(FileDir, NameString)
-%getFilePaths creates a list of filepaths to files in FileDir.
-% This function generates a cell array of filepaths matching 'NameString'
+function [FileNames] = getFileNames(FileDir, NameString)
+%getFileNames creates a list of filenames in FileDir.
+% This function generates a cell array of filenames matching 'NameString'
 % (which can contain a wild card '*', but is otherwise not a regexp [see
 % usage of MATLAB built-in dir()]) within a directory 'FileDir'.
 %
@@ -10,8 +10,8 @@ function [FilePaths] = getFilePaths(FileDir, NameString)
 %               (char array)(Default = '*')
 %
 % OUTPUTS:
-%   FilePaths: List of the full paths to files in 'FileDir' matching
-%              'NameString'. (cell array)
+%   Filenames: List of the filenames in 'FileDir' matching 'NameString'. 
+%              (cell array)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -27,7 +27,7 @@ DirContents = dir(fullfile(FileDir, NameString));
 
 % Remove the directories listed in 'DirContents'.
 SubDirBoolean = [DirContents.isdir];
-FilePaths = fullfile(FileDir, {DirContents(~SubDirBoolean).name}).';
+FileNames = {DirContents(~SubDirBoolean).name}.';
 
 
 end
