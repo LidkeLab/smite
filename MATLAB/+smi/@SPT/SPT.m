@@ -8,6 +8,24 @@ classdef SPT < handle
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
         SMF
         
+        % Directory containing channel reg. transforms (char array)
+        % NOTE: This property is only used in obj.batchTrack().
+        TransformDir = '';
+        
+        % Pattern to match for transform files in TransformDir.
+        % (see obj.batchTrack() for usage)
+        % NOTE: This is used in the MATLAB built-in method dir(), which
+        %       allows for a wildcard (*) in the name, but not a full
+        %       regexp.
+        TransformPattern = 'RegistrationTransform*.mat';
+        
+        % Pattern to match for file names in obj.SMF.FileDir.
+        % (see obj.batchTrack() for usage)
+        % NOTE: This is used in the MATLAB built-in method dir(), which
+        %       allows for a wildcard (*) in the name, but not a full
+        %       regexp.
+        FilePattern = '*';
+        
         % Diffusion estimator class for when UseTrackByTrackD is set.
         % NOTE: This is used here so that the user can change properties of
         %       the DiffusionEstimator class as needed when using 
@@ -72,9 +90,17 @@ classdef SPT < handle
         % Copy of the SMF structure.
         % This is used for a few random tests/things like 
         % obj.TryLowPValueLocs which, when enabled, requires us to modify
-        % the SMF.  We will need to revert to the users original SMF if
-        % that's done.
+        % the SMF provided by the user.  We will want to revert to the 
+        % user's original SMF if that's done.
         SMFCopy
+        
+        % Regular expression for filename timestamps.
+        % NOTE: This is used in obj.batchTrack()
+        TimeStampRegExp = '\d{4,}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}-\d{1,2}';
+        
+        % Delimiter in the timestamp regular expression.
+        % NOTE: This is used in obj.batchTrack()
+        TimeStampDelimiter = '-';
     end
     
     methods
@@ -127,6 +153,7 @@ classdef SPT < handle
         end
         
         [TR, SMD] = performFullAnalysis(obj);
+        [TR, SMD, FileList, TransformList] = batchTrack(obj);
         autoTrack(obj)
         generateTrajectories(obj)
         saveResults(obj)
@@ -135,7 +162,6 @@ classdef SPT < handle
     end
     
     methods(Static)
-        [Success] = unitTest();
         [Success] = unitTestFFGC()
         [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
             DiffusionConstants, FrameNumber, NonLinkMarker);
