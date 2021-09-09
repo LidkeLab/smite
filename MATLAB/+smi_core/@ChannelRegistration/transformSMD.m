@@ -32,6 +32,12 @@ if SMDMoving.IsTransformed
         'to false before proceeding.']);
 end
 
+% If the provided transform is empty, we don't need to proceed.
+if isempty(RegistrationTransform)
+    SMDMoving.IsTransformed = false;
+    return
+end
+
 % Call transformCoords on the input SMDs.
 MovingCoordinates = [SMDMoving.X, SMDMoving.Y];
 MovingCoordsTransformed = ...
