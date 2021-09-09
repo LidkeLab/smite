@@ -124,7 +124,13 @@ classdef SPT < handle
             end
             
             % Store the SMF as a class property.
+            % NOTE: There's some strangeness related to property
+            %       instantiation in the SMF which causes our input value
+            %       of ResultsDir to be ovewritten by a default.  Until I
+            %       fix this, I'm adding the (hopefully) temporary fix
+            %       below.
             obj.SMF = SMF;
+            obj.SMF.Data.ResultsDir = SMF.Data.ResultsDir;
             
             % Create an instance of the diffusion estimator class.
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
