@@ -217,7 +217,7 @@ classdef ChannelRegistration < handle
         
         [RegistrationTransform] = findTransform(obj);
         loadFiducials(obj)
-        [FilePath] = exportTransform(obj, TransformIndex, FileDir);
+        [FilePath] = exportTransform(obj, FileDir);
         gui(obj, GUIParent)
         
     end
