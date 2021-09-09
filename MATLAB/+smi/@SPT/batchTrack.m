@@ -72,11 +72,9 @@ else
 end
 
 % Loop through the files and perform tracking.
-ResultsDir = obj.SMF.Data.ResultsDir;
 for ff = 1:NFiles
     obj.SMF.Data.RegistrationFilePath = TransformList{ff};
     obj.SMF.Data.FileName = FileNames(ff);
-    obj.SMF.Data.ResultsDir = ResultsDir;
     [TR{ff}, SMD{ff}] = obj.performFullAnalysis();
 end
 
