@@ -24,7 +24,7 @@ classdef SPT < handle
         % NOTE: This is used in the MATLAB built-in method dir(), which
         %       allows for a wildcard (*) in the name, but not a full
         %       regexp.
-        FilePattern = '*';
+        FilePattern = '*.mat';
         
         % Diffusion estimator class for when UseTrackByTrackD is set.
         % NOTE: This is used here so that the user can change properties of

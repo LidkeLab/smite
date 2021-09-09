@@ -23,7 +23,7 @@ function [TR, SMD, FileList, TransformList] = batchTrack(obj)
 
 % Generate a list of all files in obj.SMF.FileDir which match the pattern
 % given in obj.FilePattern.
-FileNames = smi_helpers.getFileNames(obj.SMF.FileDir, obj.FilePattern);
+FileNames = smi_helpers.getFileNames(obj.SMF.Data.FileDir, obj.FilePattern);
 NFiles = numel(FileNames);
 TR = cell(NFiles, 1);
 SMD = cell(NFiles, 1);
@@ -32,7 +32,7 @@ TransformList = cell(NFiles, 1);
 if isempty(FileNames)
     return
 end
-FileList = fullfile(obj.SMF.FileDir, FileNames);
+FileList = fullfile(obj.SMF.Data.FileDir, FileNames);
 
 % Generate a list of all channel registration files in obj.TransformDir
 % which match the pattern given in obj.TransformPattern.  Also, place their
@@ -44,7 +44,7 @@ TransformTimes = zeros(NTransforms, 1);
 for ff = 1:NTransforms
     TimeStamp = regexp(TransformFiles{ff}, obj.TimeStampRegExp, 'match');
     TransformTimes(ff) = smi_helpers.convertTimeStringToNum(...
-        TimeStamp, obj.TimeStampDelimiter);
+        TimeStamp{1}, obj.TimeStampDelimiter);
 end
 
 % Create the TransformList by matching timestamps in FileNames to the
@@ -57,7 +57,7 @@ else
         % Find the timestamp in the filename.
         TimeStamp = regexp(FileNames{ff}, obj.TimeStampRegExp, 'match');
         TimeNum = smi_helpers.convertTimeStringToNum(...
-            TimeStamp, obj.TimeStampDelimiter);
+            TimeStamp{1}, obj.TimeStampDelimiter);
         
         % Compare the timestamp of the file to those in the transform files
         % and select the closest match.

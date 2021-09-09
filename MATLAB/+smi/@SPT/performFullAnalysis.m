@@ -42,6 +42,10 @@ if isempty(obj.SMD.FrameNum)
         warning(['smi.SPT.performFullAnalysis(): no localizations were ', ...
             'generated from the provided dataset.'])
     end
+    if nargout
+        TR = obj.TR;
+        SMD = obj.SMD;
+    end
     return
 end
 
@@ -52,9 +56,16 @@ obj.autoTrack()
 % tracking results.
 if ~isempty(obj.SMF.Data.RegistrationFilePath)
     if isfile(obj.SMF.Data.RegistrationFilePath)
-        % Load the registration transform and apply it to obj.SMD and
-        % recreate obj.TR based on the transformed SMD.
-        load(obj.SMF.Data.RegistrationFilePath, 'RegistrationTransform')
+        % Load the registration transform and determine which transform
+        % should be used based on the provided ROIs.
+        load(obj.SMF.Data.RegistrationFilePath, ...
+            'RegistrationTransform', 'FiducialROI')
+        MatchedROI = find(all(FiducialROI == ...
+            repmat(obj.SMF.Data.DataROI, [size(FiducialROI, 1), 1]), 2), ...
+            1);
+        RegistrationTransform = RegistrationTransform{MatchedROI};
+        
+        % Apply the transform to the localizations.
         obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
             RegistrationTransform, obj.SMDPreThresh);
         obj.SMD = smi_core.ChannelRegistration.transformSMD(...
