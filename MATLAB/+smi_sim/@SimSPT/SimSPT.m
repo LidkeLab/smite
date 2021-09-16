@@ -5,7 +5,8 @@ classdef SimSPT < handle
     % ground-truth trajectories.
     
     % Created by:
-    %   David J. Schodt (Lidke Lab, 2021)
+    %   David J. Schodt (Lidke Lab, 2021) with class structure modeled on
+    %       smi_sim.SimSMLM
     
     
     properties
@@ -22,10 +23,10 @@ classdef SimSPT < handle
         % NOTE: This structure has fields in units of subframes!
         SMDLabeled
         
-        % obj.SMDLabeled after applying blinking/missed locs./frame avg.ing
+        % obj.SMDLabeled after applying photokinetics model.
         SMDModel
         
-        % obj.SMDModel after noisy measurement.
+        % obj.SMDModel after frame averaging and noisy measurement.
         SMD
     end
     
@@ -37,18 +38,39 @@ classdef SimSPT < handle
             if (~exist('SimParams', 'var') || isempty(SimParams))
                 obj.SimParams = smi_sim.SimSPT.defineDefaultParams();
             else
-                obj.SimParams = smi_helpers.padStruct(SimParams, ...
-                    smi_sim.SimSPT.defineDefaultParams());
+                obj.SimParams = SimParams;
             end
         end
         
+        function set.SimParams(obj, SimParams)
+            % This method ensures obj.SimParams has all parameters.
+            obj.SimParams = smi_helpers.padStruct(SimParams, ...
+                smi_sim.SimSPT.defineDefaultParams());
+        end
+        
         [SMD, SMDModel, SMDLabeled, SMDTrue, OligomerStruct] = ...
-            simulateTrajectories(obj);
+            createSimulation(obj);
         
     end
     
     methods (Static)
         [SimParams] = defineDefaultParams();
+        [Coordinates, MaskedCoordinates] = ...
+            applyCoordMask(Coordinates, Mask, FrameSize);
+        [TrajectoryStruct] = simTrajectories(SimParams);
+        [TrajectoryStruct] = applyLabelingEfficiency(TrajectoryStruct, ...
+            SimParams);
+        [TrajectoryStruct] = simEmitterKinetics(TrajectoryStruct, ...
+            SimParams);
+        [SMD] = applyMeasurementModel(TrajectoryStruct, SimParams);
+    end
+    
+    methods (Static, Hidden)
+        [TrajectoryStruct] = simTrajBrownian(InitialPositions, SimParams);
+        [TrajectoryStruct] = simOligoTrajBrownian(InitialPositions, ...
+            SimParams);
+        [Trajectories] = smi_sim.SimSPT.enforcePeriodicBoundary(...
+            Trajectories, PeriodicityMapT);
     end
     
     
