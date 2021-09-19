@@ -19,10 +19,16 @@ function [TRMoving] = transformTR(RegistrationTransform, TRMoving)
 
 % Make sure none of the trajectories have been transformed.  If any have,
 % throw an error.
-assert(~any([TRMoving.IsTransformed]), ...
-    ['Some trajectories in ''TR'' has already been transformed! ', ...
-    'If you intend to apply another transform to this TR, set ', ...
-    'TR.IsTransformed to false for each trajectory before proceeding.']);
+if isfield(TRMoving, 'IsTransformed')
+    assert(~any([TRMoving.IsTransformed]), ...
+        ['Some trajectories in ''TR'' has already been transformed! ', ...
+        'If you intend to apply another transform to this TR, set ', ...
+        'TR.IsTransformed to false for each trajectory before proceeding.']);
+else
+    % Initialize this field to false for now.  transformSMD() will change
+    % this below if all goes well.
+    [TRMoving.IsTransformed] = deal(false);
+end
 
 % Loop through trajectories in 'TRMoving' and apply the transform.
 for nn = 1:numel(TRMoving)
