@@ -24,7 +24,7 @@ function H = hopkins_ROIcombined(obj, n_ROIs, RoI)
 
 base_name = obj.BaseName;
 
-test = 5;        % The number of test points.
+test = 25;       % The number of test points.
 ntests = 1000;   % The number of Hopkins statistics to use.
 
 % Dimension (2D or 3D)
@@ -47,6 +47,8 @@ for i = 1 : n_ROIs
    x_max = ROI(2);
    y_min = ROI(3);
    y_max = ROI(4);
+   % hopkinstat assumes the region is [0, x_max - x_min] x [0, y_max - y_min],
+   % so shift the coordinates appropriately.
    X(:, 1) = X(:, 1) - x_min;
    X(:, 2) = X(:, 2) - y_min;
    if dim == 2
