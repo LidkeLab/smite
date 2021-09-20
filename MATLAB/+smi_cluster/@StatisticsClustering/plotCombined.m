@@ -26,11 +26,12 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
 %       ResultsDir      directory to store results
 %       Xlim            []       x-axis limits if defined
 %       Ylim            []       y-axis limits if defined
-%       LegendTitle     ''       legend title if specified
+%       LegendTitle     ['']     legend title if specified
+%       CSV             [false]  produce a CSV file of the data if true
 %    y           cell array of data arrays (need not be the same length)
 %    bin_width   bin width for histogram plots
 %    x_label     text for the x-label
-%    legend_labels   {legend_label1, legend_label2}
+%    legend_labels   {legend_label1, legend_label2, ...}
 %    x_abbrev    abbreviated identifier for plots used in constructing the
 %                filename
 %    colors      [OPTIONAL] colors for plots     (CDF alternative)
@@ -49,13 +50,18 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
 
    n = numel(y);
 
-   if ~exist('colors', 'var')
-      colors = ['b', 'r', 'g', 'k', 'c', 'm'];
-   end
    if ~exist('line_type', 'var')
       line_type = cell(1, n);
       for i = 1 : n
          line_type{i} = '-';
+      end
+   end
+   if ~exist('colors', 'var')
+      colors = ['b', 'r', 'g', 'k', 'c', 'm'];
+      if n > 6
+         colors = [colors, colors];
+         line_type = {'-', '-', '-', '-', '-', '-', ...
+                      '--', '--', '--', '--', '--', '--'};
       end
    end
 
@@ -64,6 +70,45 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
    legend_text = {};
    for i = 1 : numel(legend_labels)
       legend_text{i} = regexprep(legend_labels{i}, '_', '\\_');
+   end
+
+   if obj.CSV
+      % Save the data in .csv format as a standard feature.
+      name = fullfile(property.Results, [base_name, x_abbrev, '.csv']);
+      out = fopen(name, 'w');
+      Ny = cellfun(@numel, y);   % number of entries per column
+      maxNy = max(Ny);   % max number of entries per column
+      % Label each column
+      for j = 1 : n
+         fprintf(out, '%s', legend_labels{j});
+         if j < n
+            fprintf(out, ',');
+         else
+            fprintf(out, '\n');
+         end
+      end
+      % Make a header listing the number of data entries per column.
+      for j = 1 : n
+         fprintf(out, '%d', Ny(j));
+         if j < n
+            fprintf(out, ',');
+         else
+            fprintf(out, '\n');
+         end
+      end
+      for i = 1 : maxNy   % i indexes rows
+         for j = 1 : n    % j indexes columns
+            if i <= Ny(j)
+               fprintf(out, '%f', y{j}(i));
+            end
+            if j < n
+               fprintf(out, ',');
+            else
+               fprintf(out, '\n');
+            end
+         end
+      end
+      fclose(out);
    end
 
    % frequency

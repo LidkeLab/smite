@@ -54,6 +54,7 @@ properties
    LegendTitle = '';      % Optional legend title
    showMM = 1;            % Red mean and green median (2 only mean, 3
                           %    only median) for PlotSpread plots
+   CSV = false;           % If true, produce a CSV file of the data
 
    % Properties below are used by various routines.
    Rate          =  20;   % Sampling rate for statistical functions
