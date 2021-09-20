@@ -74,6 +74,13 @@ if (Verbose > 2)
 end
 SMDPreClustered = smi_core.FrameConnection.preClusterCoords(SMD, SMF);
 SMD.ConnectID = SMDPreClustered.ConnectID;
+if (numel(unique(SMDPreClustered.FrameNum)) ...
+        == numel(SMDPreClustered.FrameNum))
+    % This condition checks if pre-clustering actually did anything.  If
+    % not, we don't need to proceed (since each pre-cluster already has
+    % only 1 localization).
+    return
+end
 
 % Recursively perform the frame-connection, using updated density and
 % fluorophore transition rate estimates from the previous iteration.
@@ -130,9 +137,7 @@ for rr = 1:SMF.FrameConnection.NRecursions
         fprintf(['\tFrameConnection.lapFC(): ', ...
             'Looping over clusters and solving the LAP...\n'])
     end
-    UniqueIDs = unique(ConnectID, 'sorted');
-    NIDsInitial = numel(UniqueIDs);
-    MaxConnectID = NIDsInitial;
+    MaxConnectID = numel(unique(ConnectID));
     ClustersToAnalyze = find(cellfun(@(X) size(X, 1) > 1, ClusterData));
     for nn = ClustersToAnalyze.'
         % Construct the cost matrix.

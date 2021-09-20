@@ -10,7 +10,7 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %       explicitly:
 %       KOn: [1e-5, NLocalizations/NFrames]
 %       KOff: [1/NLocalizations, 1]
-%       KBleach: [0, inf]
+%       KBleach: [1e-5, inf)
 %       PMiss: [0, 1-1/NFrames]
 %       NEmitters: [max(NLocOverTime), NClusters]
 %
@@ -54,7 +54,13 @@ end
 
 % Estimate KOff+KBleach and PMiss, assuming each cluster was a single 
 % blinking event of a single emitter.
+% NOTE: I've added the isinf() check to KOffPKBleach just to avoid crashing
+%       this code (in case the user wants to run it in some strange
+%       scenario).  It's important to note that if KOffPKBleach = inf, we
+%       won't be using these parameters for frame-connection, as this can
+%       only happen when each pre-cluster only had a single localization!
 KOffPKBleach = -log(1 - 1/mean(ClusterDurations));
+KOffPKBleach = smi_helpers.arrayMUX({KOffPKBleach, 1}, isinf(KOffPKBleach));
 PMiss = 1 - (mean(NObservations./ClusterDurations));
 
 % Compute some parameters from the sum of localizations present over time.
@@ -69,12 +75,18 @@ K = @(KOn) KOn + KOffPKBleach;
 L1 = @(KOn) KOn * KBleach / K(KOn);
 L2 = @(KOn) (KOn+KOffPKBleach) - L1(KOn);
 CostFunction = @(X) mean((NLocSum ...
-    - X(1)*(1-PMiss)*(X(2)/K(X(2)))*((1/L1(X(2)))*(1-exp(-L1(X(2))*(Frames-1))) ...
+    - ceil(X(1))*(1-PMiss)*(X(2)/K(X(2))) ...
+    * ((1/L1(X(2)))*(1-exp(-L1(X(2))*(Frames-1))) ...
     - (1/L2(X(2)))*(1-exp(-L2(X(2))*(Frames-1))))).^2);
+NEmittersInitGuess = ceil(NClusters * KBleach);
+if ((NEmittersInitGuess<max(NLoc)) || (NEmittersInitGuess>NClusters))
+    NEmittersInitGuess = (NClusters-max(NLoc)) / 2;
+end
 LocSumParams = fmincon(CostFunction, ...
-    [NLocSum(end), 1/Frames(end)], [], [], [], [], ...
-    [max(NLoc), 0], [NClusters, NLocSum(end)/Frames(end)], [], FitOptions);
-NEmitters = LocSumParams(1);
+    [NEmittersInitGuess, 1/Frames(end)], [], [], [], [], ...
+    [max(NLoc), 1e-5], [NClusters, NLocSum(end)/Frames(end)], [], ...
+    FitOptions);
+NEmitters = ceil(LocSumParams(1));
 KOn = LocSumParams(2);
 
 

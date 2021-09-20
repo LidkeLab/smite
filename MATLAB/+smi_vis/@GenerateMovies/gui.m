@@ -68,7 +68,7 @@ uicontrol('Parent', SaveMoviePanel, 'Style', 'pushbutton', ...
     'Callback', @saveMovieButtonClicked);
 
 % Add a panel to contain trajectory information about clicked trajectories.
-CurrentTrajectory = min([obj.TR.ConnectID]);
+CurrentTrajIndex = min([obj.TR.ConnectID]);
 TrajInfoPanelPos = ...
     [SaveMoviePanelPos(1), sum(SaveMoviePanelPos([2, 4])), ...
     SaveMoviePanelPos(3), MoviePanelPos(4)];
@@ -246,17 +246,17 @@ end
 
         % Add indicators to the selected trajectory to emphasize which one
         % was selected.
-        if (CurrentTrajectory == TRIndex)
+        if (CurrentTrajIndex == TRIndex)
             % If the same trajectory was clicked again, we'll assume the
             % user was trying to "unclick" it.
-            CurrentTrajectory = [];
+            CurrentTrajIndex = [];
             return
         end
         [obj.LineHandles(TRIndex).LineWidth] = 3;
 
         % Update 'CurrentlySelectedTrajectory' so that other callbacks can 
         % access this information.
-        CurrentTrajectory = TRIndex;
+        CurrentTrajIndex = TRIndex;
 
         % Grab useful information about the trajectory to be displayed,
         % ensuring the units are consistent with the movie.
@@ -352,10 +352,8 @@ end
         DropdownString = DropdownMenu.String;
         DropdownValue = DropdownMenu.Value;
         DesiredPlotString = DropdownString{DropdownValue};
-        CurrentTrajBool = (cell2mat({obj.TR.ConnectID}) ...
-            == CurrentTrajectory);
-        DesiredField = obj.TR(CurrentTrajBool).(DesiredPlotString);
-        FrameNum = obj.TR(CurrentTrajBool).FrameNum;
+        DesiredField = obj.TR(CurrentTrajIndex).(DesiredPlotString);
+        FrameNum = obj.TR(CurrentTrajIndex).FrameNum;
         assert(numel(FrameNum) == numel(DesiredField), ...
             ['The selected field is not the same length as ', ...
             'TR.FrameNum and cannot be plotted'])

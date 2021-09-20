@@ -29,26 +29,26 @@ SRImageZoom = 4;
 % test with no output
 fprintf('Testing with no output...\n');
 smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
-diptruesize(gcf,200);
+%diptruesize(gcf,200);
 pause(3);
 close gcf
 % test with single output variable
 fprintf('Testing with single output variable...\n');
 [driftIm] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
-h = dipshow(driftIm);
-diptruesize(h,200);
+h = figure; imshow(driftIm);
+%diptruesize(h,200);
 pause(3)
 close(h)
 % test with 2 output variables
 fprintf('Testing with two output variables...\n');
 [driftIm,driftImRGB] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
-h1 = dipshow(driftIm);
-diptruesize(h1,200);
-h2 = dipshow(driftImRGB);
-diptruesize(h2,200);
-pos = h2.Position;
-pos(2) = pos(2)-300;
-h2.Position = pos;
+h1 = figure; imshow(driftIm);
+%diptruesize(h1,200);
+h2 = figure; imshow(driftImRGB);
+%diptruesize(h2,200);
+%pos = h2.Position;
+%pos(2) = pos(2)-300;
+%h2.Position = pos;
 pause(3)
 close(h1,h2)
 

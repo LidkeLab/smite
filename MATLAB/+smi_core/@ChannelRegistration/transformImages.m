@@ -9,11 +9,11 @@ function [TransformedImages] = transformImages(...
 %
 % INPUTS:
 %   RegistrationTransform: A MATLAB tform object containing information
-%                          about the transformation to be used 
+%                          about the transformation to be used
 %                          (tform object)
 %   Images: A stack of images to be transformed (MxNxP numeric array)
 %
-% OUTPUTS: 
+% OUTPUTS:
 %   TransformedImages: Input Images transformed usingRegistrationTransform
 %                      (MxNxP numeric array)
 
@@ -22,9 +22,11 @@ function [TransformedImages] = transformImages(...
 
 
 % Apply the transform to the images.
-ImRef2DObject = imref2d(size(Images(:, :, 1)));
-TransformedImages = imwarp(Images, RegistrationTransform, ...
-    'OutputView', ImRef2DObject);
+if ~isempty(RegistrationTransform)
+    ImRef2DObject = imref2d(size(Images(:, :, 1)));
+    TransformedImages = imwarp(Images, RegistrationTransform, ...
+        'OutputView', ImRef2DObject);
+end
 
 
 end

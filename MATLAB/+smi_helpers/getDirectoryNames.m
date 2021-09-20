@@ -22,7 +22,7 @@ if (~exist('NameString', 'var') || isempty(NameString))
     NameString = '*';
 end
 
-% Create a list of the contentes within BaseDir.
+% Create a list of the contents within BaseDir.
 DirContents = dir(fullfile(BaseDir, NameString));
 
 % Grab the boolean array from DirContents which tells us which of the

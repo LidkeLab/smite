@@ -15,7 +15,6 @@ function [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir)
 %
 % REQUIRES:
 %   MATLAB Image Processing Toolbox 2014a or later.
-%   MIC_H5 class from the matlab-instrument-control repository
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2018)
@@ -25,11 +24,12 @@ function [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir)
 AlignResultsStruct = struct();
 
 % Grab the alignment registration structure from the dataset.
-AlignReg = MIC_H5.readH5File(FilePath, 'AlignReg');
+AlignReg = smi_core.LoadData.readH5File(FilePath, 'AlignReg');
 
 % Load the SMR structure for this dataset.
 FileNameStruct = dir(fullfile(SaveDir, '*Results.mat'));
-if (~isempty(FileNameStruct) && isfile(FileNameStruct.name))
+if (~isempty(FileNameStruct) ...
+        && isfile(fullfile(FileNameStruct.folder, FileNameStruct.name)))
     load(fullfile(SaveDir, FileNameStruct.name), 'SMD');
 else
     SMD = struct([]);

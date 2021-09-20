@@ -67,13 +67,17 @@ obj.SMD = SMD;
 
 % If needed, produce some color overlay plots.
 % NOTE: Extra cases kept in case of later changes.
-switch obj.Verbose
-    case 0
-    case 1
-    case 2
-        obj.colorOverlay();
-    otherwise
-        obj.colorOverlay();
+%switch obj.Verbose
+%    case 0
+%    case 1
+%    case 2
+%    case 3
+%        obj.colorOverlay();
+%    otherwise
+%        obj.colorOverlay();
+%end
+if obj.Verbose >= 3
+    obj.colorOverlay();
 end
 
 

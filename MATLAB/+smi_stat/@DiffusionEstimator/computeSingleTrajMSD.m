@@ -23,9 +23,9 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose)
 %       TrajectoryID: The trajectory ID from TR(1).TrajectoryID.
 %       MSD: The mean squared displacement between localizations in TR(1)
 %            (pixel^2)
-%       NCount: The number of displacements used in computing MSD at each
-%               point (i.e., MSD(ii) was the mean of NCount(ii) squared
-%               displacements).
+%       NPoints: The number of displacements used in computing MSD at each
+%                point (i.e., MSD(ii) was the mean of NPoints(ii) squared
+%                displacements).
 %       FrameLags: Number of frames between displacements used to compute 
 %                  each MSD point (i.e., MSD(ii) is the mean squared
 %                  displacement for localizations separated by FrameLag(ii)
@@ -39,7 +39,8 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose)
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021) 
-%       based on msdAnalysis.m by Hanieh Mazloom-Farsibaf (Lidke lab, 2018)
+%       based on msdAnalysis.m by Hanieh Mazloom-Farsibaf with
+%       modifications to improve speed.
 
 
 % Set defaults if needed.

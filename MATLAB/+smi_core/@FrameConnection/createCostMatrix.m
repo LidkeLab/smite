@@ -63,8 +63,8 @@ for mm = 1:NLocalizations
     % costs leads to the same selection in the auxillary block).  In this
     % case, it's the negative log-likelihood, where the likelihood is given
     % as p(observed separation | localization error) ...
-    %  * [p(blinking off w/o bleaching, staying off, then blinking back on)
-    %   + p(missing last N frames localizations)p(not missing new loc.)]
+    %  * p(missing last N frames localizations)p(not missing new loc.)...
+    %       *p(not turning off or bleaching)
     for nn = (mm+1):NLocalizations
         DeltaFrame = abs(FrameNum(mm) - FrameNum(nn));
         if (DeltaFrame == 0)

@@ -3,10 +3,6 @@ function [] = performFullAnalysis(obj)
 % This method is the main run method for the smi.Publish class, meaning
 % that it can be used to perform the standard analysis expected for use of
 % this class.
-%
-% REQUIRES:
-%   matlab-instrument-control when obj.GenerateOverlayStats is true
-%       (to use MIC_Reg3DTrans.findStackOffset())
 
 
 % Define the results directory, which will be in the top level directory

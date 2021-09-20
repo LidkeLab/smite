@@ -111,8 +111,10 @@ for ii = 1:NDataFiles
                 
                 % Re-shift coordinates in SMD such that the BestRegInd
                 % dataset is considered the reference.
-                obj.SMLM.SMD = smi_core.DriftCorrection.changeInterRef(...
-                    obj.SMLM.SMD, BestRegInd);
+                if ~isempty(BestRegInd)
+                    obj.SMLM.SMD = smi_core.DriftCorrection.changeInterRef(...
+                        obj.SMLM.SMD, BestRegInd);
+                end
             end
             
             % Save the SR results.

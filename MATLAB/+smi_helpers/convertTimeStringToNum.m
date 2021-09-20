@@ -1,7 +1,8 @@
 function [TimeNum] = convertTimeStringToNum(TimeString, Delimiter)
 %convertTimeStringToNum converts a time string to a number.
-% This function will take a timestring (i.e., the type output from
-% genTimeString()) and convert it to a number.
+% This function will take a timestring (e.g., the output from 
+% smi_helpers.genTimeString()) and convert it to a number which can be used
+% for comparison to other times of the same format.
 %
 % INPUTS: 
 %   TimeString: A time string given in the format output by genTimeString()

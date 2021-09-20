@@ -29,6 +29,10 @@ function [SquaredError] = estimateRegistrationError(...
 
 
 % Transform the input Coords2 and compute the error.
+if isempty(RegistrationTransform)
+    SquaredError = NaN(size(MovingCoordinates, 1), 1);
+    return
+end
 MovingCoordinates = ...
     smi_core.ChannelRegistration.transformCoords(...
     RegistrationTransform, MovingCoordinates);

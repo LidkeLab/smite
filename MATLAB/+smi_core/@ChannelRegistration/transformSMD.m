@@ -26,10 +26,16 @@ function [SMDMoving] = transformSMD(RegistrationTransform, SMDMoving)
 
 % Check if the provided SMD has already been transformed.  If it has, don't
 % proceed.
-if SMDMoving.IsTransformed
+if (isfield(SMDMoving, 'IsTransformed') && SMDMoving.IsTransformed)
     error(['The input ''SMD'' has already been transformed! If you intend ', ...
         'to apply another transform to this SMD, set SMD.IsTransformed ', ...
         'to false before proceeding.']);
+end
+
+% If the provided transform is empty, we don't need to proceed.
+if isempty(RegistrationTransform)
+    SMDMoving.IsTransformed = false;
+    return
 end
 
 % Call transformCoords on the input SMDs.

@@ -11,11 +11,10 @@ function [HistIm,RgbHistIm] = histogramImage(SMR, SRImageZoom, ColorMap)
 %      If no output args are given histogram image will be displayed with
 %           hot colormap
 %      HistIm - gray value histogram image
-%      RgbHistIm - RBG histogram image with colormap
+%      RgbHistIm - RGB histogram image with colormap
 %
 %   REQUIRES
 %      Matlab 2014b or higher
-%      Dipimage toolbox (http://www.diplib.org/)
 
 % Created by:
 %    Marjolein Meddens, Lidke Lab 2017
@@ -48,9 +47,8 @@ HistIm = c_HistRecon(Ysize,Xsize,Y,X,0);
 [~,b]=hist(single(HistIm(HistIm>0)));
 imagemax=b(1);
 if nargout==0
-    h = dipshow(HistIm);
+    h = imshow(HistIm,[0 imagemax]);
     colormap(ColorMap);
-    dipmapping(h,[0 imagemax]);
 end
 % create RGB image
 if nargout > 1
@@ -60,4 +58,3 @@ if nargout > 1
 end
 
 end
-

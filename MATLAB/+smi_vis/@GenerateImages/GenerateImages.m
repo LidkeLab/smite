@@ -32,6 +32,8 @@ classdef GenerateImages
     methods(Static)
         [OverlayImage] = blobColorOverlay(Sequence, SMD)
         [RGBimage] = colorImage(Image, ColorMap, MinMax)
+        [RGBimage] = rgbImage(R,G,B)
+        showim(Image)
         dispIm()
         [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
         [GaussIm] = gaussianImage(SMR, SMF,SRImageZoom)

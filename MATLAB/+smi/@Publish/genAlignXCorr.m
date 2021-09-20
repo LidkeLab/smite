@@ -77,10 +77,8 @@ for ii = 1:NSequences
         ReferenceSubStack = ReferenceStack(:, :, ZStackRefInds);
     end
     
-    % Re-compute the scaled cross-correlations between the two stacks,
-    % using the default parameter values set in
-    % MIC_Reg3DTrans.findStackOffset().
-    [~, ~, CorrData] = MIC_Reg3DTrans.findStackOffset(...
+    % Re-compute the scaled cross-correlations between the two stacks.
+    [~, ~, CorrData] = smi_stat.findStackOffset(...
         ReferenceSubStack, CurrentStack, [], [], [], 1, 0);
     
     % Generate the x, y, z cross-correlation fitting plots and save them.
