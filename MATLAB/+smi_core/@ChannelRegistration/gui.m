@@ -697,7 +697,7 @@ method.
         if isequal(FileDir, 0)
             return
         else
-            obj.exportTransform([], FileDir);
+            obj.exportTransform(FileDir);
         end
         
     end
