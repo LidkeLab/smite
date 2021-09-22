@@ -1,4 +1,4 @@
-function [TR, SMD, FileList, TransformList] = batchTrack(obj)
+function [TR, SMD, SMDPreThresh, FileList, TransformList] = batchTrack(obj)
 %batchTrack performs batch tracking on multiple sets of SPT data.
 % This method is a wrapper around obj.performFullAnalysis() which
 % simplifies batch tracking.  That is, this method can be used to simplify
@@ -9,6 +9,7 @@ function [TR, SMD, FileList, TransformList] = batchTrack(obj)
 %       (see smi_core.TrackingResults)
 %   SMD: Cell array of Single Molecule Data structures.
 %        (see smi_core.SingleMoleculeData)
+%   SMDPreThresh: Cell array of pre-thresholded 'SMD's.
 %   FileList: Cell array of the paths to the files which were used.  The
 %             indexing matches that of the cell arrays TR and SMD, e.g.,
 %             SMD{n} contains the SMD results from file FileList{n}.
@@ -27,6 +28,7 @@ FileNames = smi_helpers.getFileNames(obj.SMF.Data.FileDir, obj.FilePattern);
 NFiles = numel(FileNames);
 TR = cell(NFiles, 1);
 SMD = cell(NFiles, 1);
+SMDPreThresh = cell(NFiles, 1);
 FileList = cell(NFiles, 1);
 TransformList = cell(NFiles, 1);
 if isempty(FileNames)
@@ -85,7 +87,7 @@ end
 for ff = 1:NFiles
     obj.SMF.Data.RegistrationFilePath = TransformList{ff};
     obj.SMF.Data.FileName = FileNames(ff);
-    [TR{ff}, SMD{ff}] = obj.performFullAnalysis();
+    [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
 end
 
 

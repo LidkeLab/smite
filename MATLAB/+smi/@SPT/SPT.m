@@ -158,8 +158,8 @@ classdef SPT < handle
             obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMFInput);
         end
         
-        [TR, SMD] = performFullAnalysis(obj);
-        [TR, SMD, FileList, TransformList] = batchTrack(obj);
+        [TR, SMD, SMDPreThresh] = performFullAnalysis(obj);
+        [TR, SMD, SMDPreThresh, FileList, TransformList] = batchTrack(obj);
         autoTrack(obj)
         generateTrajectories(obj)
         saveResults(obj)

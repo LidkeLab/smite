@@ -1,4 +1,4 @@
-function [TR, SMD] = performFullAnalysis(obj)
+function [TR, SMD, SMDPreThresh] = performFullAnalysis(obj)
 %performFullAnalysis fits and tracks data pointed to by obj.SMF
 % This method is the main run method for the smi.SPT class, meaning that it
 % will load raw data, perform gain/offset correction, fit localizations to
@@ -8,6 +8,7 @@ function [TR, SMD] = performFullAnalysis(obj)
 % OUTPUTS:
 %   TR: Tracking Results structure (see smi_core.TrackingResults)
 %   SMD: Single Molecule Data structure (see smi_core.SingleMoleculeData)
+%   SMDPreThresh: Output 'SMD' before thresholds are applied.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -87,6 +88,7 @@ obj.TR = smi_core.TrackingResults.threshTrajLength(obj.TR, ...
 if nargout
     TR = obj.TR;
     SMD = obj.SMD;
+    SMDPreThresh = obj.SMDPreThresh;
 end
 
 % Save the results.
