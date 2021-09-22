@@ -21,6 +21,8 @@ function [ParamStruct] = defineDefaultParams()
 %                InitialDensityMask: Binary mask defining the allowable 
 %                                    region for initial particle placement.
 %                                    (Default = ones(FrameSize))
+%                LabelingEfficiency: Probability of a target being labeled.
+%                                    (Default = 1)
 %                BoundaryCondition: Boundary condition applied when 
 %                                   particles reach a boundary specified by
 %                                   FrameSize. This can be 'Periodic', 
@@ -68,9 +70,10 @@ function [ParamStruct] = defineDefaultParams()
 % Populate the output structure.
 ParamStruct.ParticleDensity = 0.01;
 ParamStruct.NFrames = 100;
+ParamStruct.SubframeDensity = 1;
 ParamStruct.FrameSize = [32, 32];
 ParamStruct.InitialDensityMask = ones(ParamStruct.FrameSize);
-ParamStruct.SubframeDensity = 1;
+ParamStruct.LabelingEfficiency = 1;
 ParamStruct.BoundaryCondition = 'Periodic';
 ParamStruct.Intensity = 1000;
 ParamStruct.D = 0.1;

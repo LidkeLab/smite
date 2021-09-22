@@ -1,9 +1,7 @@
 function [TrajectoryStruct] = simTrajectories(SimParams)
 %simTrajectories simulates trajectories with oligomerization.
 % This method simulates Brownian trajectories which may interact with one
-% another to form dimers/higher order oligomers.  Trajectories are stored
-% in the output 'SMDTrue' structure, with the field SMDTrue.ConnectID
-% associating localizations of the same trajectory.
+% another to form dimers/higher order oligomers.
 %
 % INPUTS:
 %   SimParams: Structure of simulation parameters.
@@ -12,7 +10,6 @@ function [TrajectoryStruct] = simTrajectories(SimParams)
 % OUTPUTS:
 %   TrajectoryStruct: Structure containing information about the simulated
 %                     trajectories.
-
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)

@@ -14,16 +14,15 @@ function [SMD, SMDModel, SMDLabeled, SMDTrue, OligomerStruct] = ...
 
 % Simulate diffusing targets and, if needed, oligomerization between those
 % diffusing targets.
-obj.SMDTrue = obj.simTrajectories(obj.SimParams);
-SMDTrue = obj.SMDTrue;
+obj.TrajectoryStruct = obj.simTrajectories(obj.SimParams);
 
 % Simulate the effect of labeling efficiency.
-obj.SMDLabeled = obj.applyLabelingEfficiency(obj.SMDTrue, obj.SimParams);
-SMDLabeled = obj.SMDLabeled;
+obj.TrajectoryStruct = obj.applyLabelingEfficiency(obj.TrajectoryStruct, ...
+    obj.SimParams.LabelingEfficiency);
 
 % Simulate the emitter kinetics (e.g., blinking and bleaching).
-obj.SMDModel = obj.simEmitterKinetics(obj.SMDLabeled, obj.SimParams);
-SMDModel = obj.SMDModel;
+obj.TrajectoryStruct = obj.simEmitterKinetics(obj.TrajectoryStruct, ...
+    obj.SimParams);
 
 % Simulate measurement effects (e.g., motion blur, camera noise, etc.)
 obj.SMD = obj.applyMeasurementModel(obj.SMDModel, obj.SimParams);

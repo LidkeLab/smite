@@ -43,6 +43,7 @@ NSubframes = SimParams.NFrames * SimParams.SubframeDensity;
 Trajectories = zeros(NTraj, NSubframes, 2, 'double');
 Trajectories(:, 1, :) = InitialPositions;
 PeriodicityMapT = zeros(NTraj, NSubframes);
+ConnectionMapT = zeros(NTraj, NSubframes);
 for ff = 2:NSubframes
     % Update each trajectory by sampling the X, Y displacements from a
     % normal distribution.
@@ -77,9 +78,13 @@ end
 % Break up trajectories that experienced a periodic boundary (that is, each
 % interaction with the periodic boundary creates a new trajectory starting
 % from that interaction).
-Trajectories = smi_sim.SimSPT.enforcePeriodicBoundary(Trajectories, ...
-    PeriodicityMapT);
-TrajectoryStruct.DSub = DSub;
+[Trajectories, ConnectionMapT, IsOn, TrajMap] = ...
+    smi_sim.SimSPT.enforcePeriodicBoundary(...
+    Trajectories, PeriodicityMapT, ConnectionMapT);
+TrajectoryStruct.IsOn = IsOn;
+TrajectoryStruct.DSub = DSub(TrajMap);
+TrajectoryStruct.PhotonsSub = [];
+TrajectoryStruct.ConnectionMapT = ConnectionMapT;
 TrajectoryStruct.Trajectories = Trajectories;
 
 
