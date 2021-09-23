@@ -1,4 +1,4 @@
-function [TrajectoryStruct] = simTrajectories(SimParams)
+function [TrajStruct] = simTrajectories(SimParams)
 %simTrajectories simulates trajectories with oligomerization.
 % This method simulates Brownian trajectories which may interact with one
 % another to form dimers/higher order oligomers.
@@ -8,8 +8,8 @@ function [TrajectoryStruct] = simTrajectories(SimParams)
 %              (see smi_sim.SimSPT.defineDefaultParams())
 %
 % OUTPUTS:
-%   TrajectoryStruct: Structure containing information about the simulated
-%                     trajectories.
+%   TrajStruct: Structure containing information about the simulated
+%               trajectories.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -33,10 +33,10 @@ InitialPositions = smi_sim.SimSPT.applyCoordMask(InitialPositions, ...
 
 % Simulate the trajectories and, if needed, oligomerization between them.
 if (SimParams.InteractionProb && ~isinf(SimParams.InteractionDistance))
-    TrajectoryStruct = smi_sim.SimSPT.simTrajBrownian(...
+    TrajStruct = smi_sim.SimSPT.simTrajBrownian(...
         InitialPositions, SimParams);
 else
-    TrajectoryStruct = smi_sim.SimSPT.simOligoTrajBrownian(...
+    TrajStruct = smi_sim.SimSPT.simOligoTrajBrownian(...
         InitialPositions, SimParams);
 end
 

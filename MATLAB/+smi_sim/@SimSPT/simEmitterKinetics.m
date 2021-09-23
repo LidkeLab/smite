@@ -1,19 +1,18 @@
-function [TrajectoryStruct] = simEmitterKinetics(TrajectoryStruct, ...
-    SimParams)
+function [TrajStruct] = simEmitterKinetics(TrajStruct, SimParams)
 %simEmitterKinetics simulates blinking and photobleaching.
-% This method modifies the trajectories in 'TrajectoryStruct' to simulate
+% This method modifies the trajectories in 'TrajStruct' to simulate
 % blinking (transitions from visible to dark, dark to visible) and
 % photobleaching.
 %
 % INPUTS:
-%   TrajectoryStruct: Structure containing trajectory data (see
-%                     smi_sim.SimSPT.simTrajectories())
+%   TrajStruct: Structure containing trajectory data (see
+%               smi_sim.SimSPT.simTrajectories())
 %   SimParams: Structure of simulation parameters (see
 %              smi_sim.SimSPT.defineDefaultParams())
 %
 % OUTPUTS:
-%   TrajectoryStruct: Input 'TrajectoryStruct' updated based on the
-%                     simulated emitter kinetics.
+%   TrajStruct: Input 'TrajStruct' updated based on the simulated emitter
+%               kinetics.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -26,16 +25,16 @@ KOnToBleachSub = SimParams.KOnToBleach / SimParams.SubframeDensity;
 IntensitySub = SimParams.Intensity / SimParams.SubframeDensity;
 
 % Loop through all of the trajectories and simulate blinking.
-NTraj = size(TrajectoryStruct.Trajectories, 1);
+NTraj = size(TrajStruct.Trajectories, 1);
 NSubframes = SimParams.NFrames * SimParams.SubframeDensity;
 IsOn = logical(KOnToOffSub*zeros(NTraj, NSubframes) ...
     + ~KOnToOffSub*ones(NTraj, NSubframes));
 IsBleached = zeros(NTraj, NSubframes, 'logical');
 if ((KOnToOffSub>0) || (KOnToBleachSub>0))
     % Initialize the (existing) particles to an equilibrium state.
-    PhotonsSub = zeros(NTraj, NSubframes, 'single');
     IsOn(:, 1) = (rand(NTraj, 1) ...
         < (KOffToOnSub/(KOnToOffSub+KOffToOnSub)));
+    PhotonsSub = single(IntensitySub * IsOn);
     
     % Loop through frames and simulate the blinking on and blinking off
     % processes using an SR latch.
@@ -81,18 +80,18 @@ else
 end
 
 % Remove trajectories that were never visible.
-% NOTE: TrajectoryStruct.IsOn must be checked so that we aren't allowing
+% NOTE: TrajectoryStruct.IsOnSub must be checked so that we aren't allowing
 %       trajectories to blink on before their birth from a periodic 
 %       boundary.
-IsOn = (IsOn & TrajectoryStruct.IsOn);
+IsOn = (IsOn & TrajStruct.IsOn);
 NotAlwaysOff = ~all(~IsOn, 2);
-TrajectoryStruct.IsOn = IsOn(NotAlwaysOff, :);
-TrajectoryStruct.DSub = TrajectoryStruct.DSub(NotAlwaysOff);
-TrajectoryStruct.ConnectionMapT = ...
-    TrajectoryStruct.ConnectionMapT(NotAlwaysOff, :);
-TrajectoryStruct.Trajectories = ...
-    TrajectoryStruct.Trajectories(NotAlwaysOff, :, :);
-TrajectoryStruct.PhotonsSub = PhotonsSub(NotAlwaysOff, :);
+TrajStruct.IsOn = IsOn(NotAlwaysOff, :);
+TrajStruct.D = TrajStruct.D(NotAlwaysOff);
+TrajStruct.ConnectionMapT = ...
+    TrajStruct.ConnectionMapT(NotAlwaysOff, :);
+TrajStruct.Trajectories = ...
+    TrajStruct.Trajectories(NotAlwaysOff, :, :);
+TrajStruct.Photons = PhotonsSub(NotAlwaysOff, :);
 
 
 end

@@ -14,23 +14,29 @@ classdef SimSPT < handle
         SimParams = struct();
     end
     
-    properties (SetAccess = 'protected')
-        % obj.SMDModel after frame averaging and noisy measurement.
-        SMD
+    properties (SetAccess = 'protected')       
+        % obj.TrajStructModel after applying a measurement noise model.
+        TrajStruct
         
-        % obj.SMDLabeled after applying photokinetics model.
-        SMDModel
+        % obj.TrajStructSubModel after motion blurring, before noising.
+        TrajStructModel
         
-        % obj.SMDTrue after applying labeling efficiencies.
+        % obj.TrajStructSubLabeled after applying photokinetics model.
         % NOTE: This structure has fields in units of subframes!
-        SMDLabeled
+        TrajStructSubModel
+        
+        % obj.TrajStructSubTrue after applying labeling efficiencies.
+        % NOTE: This structure has fields in units of subframes!
+        TrajStructSubLabeled
         
         % True locations of the underlying diffusing targets.
         % NOTE: This structure has fields in units of subframes!
-        SMDTrue
-        
-        % Structure containing misc. trajectory data.
-        TrajectoryStruct
+        TrajStructSubTrue
+    end
+    
+    properties (Dependent)
+        % obj.TrajStruct converted to the more useable SMD format.
+        SMD
     end
     
     methods
@@ -51,28 +57,31 @@ classdef SimSPT < handle
                 smi_sim.SimSPT.defineDefaultParams());
         end
         
-        [SMD, SMDModel, SMDLabeled, SMDTrue, OligomerStruct] = ...
-            createSimulation(obj);
+        function [SMD] = get.SMD(obj)
+            % This method converts obj.TrajStruct to an SMD.
+            SMD = obj.convertTrajToSMD(obj.TrajStruct);
+        end
+        
+        createSimulation(obj);
         
     end
     
     methods (Static)
-        [TrajectoryStruct] = simTrajectories(SimParams);
-        [TrajectoryStruct, KeepInd] = applyLabelingEfficiency(...
-            TrajectoryStruct, LabelingEfficiency);
-        [TrajectoryStruct] = simEmitterKinetics(TrajectoryStruct, ...
-            SimParams);
-        [SMD] = applyMeasurementModel(TrajectoryStruct, SimParams);
+        [TrajStruct] = simTrajectories(SimParams);
+        [TrajStruct, KeepInd] = applyLabelingEfficiency(...
+            TrajStruct, LabelingEfficiency);
+        [TrajStruct] = simEmitterKinetics(TrajStruct, SimParams);
+        [TrajStruct, TrajStructModel] = applyMeasurementModel(...
+            TrajStruct, SimParams);
         [SimParams] = defineDefaultParams();
         [Coordinates, MaskedCoordinates] = ...
             applyCoordMask(Coordinates, Mask, FrameSize);
-        [SMD] = convertTrajToSMD(TrajectoryStruct, SMD);
+        [SMD] = convertTrajToSMD(TrajStruct);
     end
     
     methods (Static, Hidden)
-        [TrajectoryStruct] = simTrajBrownian(InitialPositions, SimParams);
-        [TrajectoryStruct] = simOligoTrajBrownian(InitialPositions, ...
-            SimParams);
+        [TrajStruct] = simTrajBrownian(InitialPositions, SimParams);
+        [TrajStruct] = simOligoTrajBrownian(InitialPositions, SimParams);
         [Trajectories, ConnectionMapT, IsOn, TrajMap] = ...
             enforcePeriodicBoundary(...
             Trajectories, PeriodicityMapT, ConnectionMapT);

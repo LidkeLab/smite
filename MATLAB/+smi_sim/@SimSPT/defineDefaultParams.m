@@ -8,8 +8,9 @@ function [ParamStruct] = defineDefaultParams()
 %                ParticleDensity: Density of particles within the 
 %                                 simulation. (particles / pixel^2)
 %                                 (Default = 0.1)
-%                NFrames: Number of frames in the simulation.
-%                         (Default = 100)
+%                NFrames: Number of (full) frames in the simulation (i.e.,
+%                         if NFrames = 100 and SubframeDensity = 2, we will
+%                         simulate 200 subframes). (Default = 100)
 %                SubframeDensity: Number of subframes per frame (i.e., each 
 %                                 frame of the simulation represents the
 %                                 motion blur of the subframes). If 
@@ -18,6 +19,8 @@ function [ParamStruct] = defineDefaultParams()
 %                                 (1/frame)(Default = 1)
 %                FrameSize: Size of the frame within which the trajectories 
 %                           are simulated. (pixels)(Default = [32, 32])
+%                PSFSigma: Standard deviation of the best Gaussian fit to
+%                          simulated emitters. (pixels)(Default = 1.3)
 %                InitialDensityMask: Binary mask defining the allowable 
 %                                    region for initial particle placement.
 %                                    (Default = ones(FrameSize))
@@ -29,7 +32,10 @@ function [ParamStruct] = defineDefaultParams()
 %                                   'Reflecting', or 'Free'. 
 %                                   (Default = 'Periodic')
 %                Intensity: Photons present in the simulated trajectory in
-%                           each frame. (photons / frame)(Default = 1000)
+%                           each full frame. 
+%                           (photons / frame)(Default = 1000)
+%                Bg: Uniform background signal per full frame stored for
+%                    trajectories. (photons / frame)(Default = 5)
 %                D: Diffusion coefficients(s) for the Brownian motion 
 %                   trajectories. If the size of this array is greater than
 %                   or equal to the number of trajectories, the 1:NTraj 
@@ -72,10 +78,12 @@ ParamStruct.ParticleDensity = 0.01;
 ParamStruct.NFrames = 100;
 ParamStruct.SubframeDensity = 1;
 ParamStruct.FrameSize = [32, 32];
+ParamStruct.PSFSigma = 1.3;
 ParamStruct.InitialDensityMask = ones(ParamStruct.FrameSize);
 ParamStruct.LabelingEfficiency = 1;
 ParamStruct.BoundaryCondition = 'Periodic';
 ParamStruct.Intensity = 1000;
+ParamStruct.Bg = 5;
 ParamStruct.D = 0.1;
 ParamStruct.InteractionDistance = 0.5;
 ParamStruct.InteractionProb = 0.5;

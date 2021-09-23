@@ -1,5 +1,4 @@
-function [SMD, SMDModel, SMDLabeled, SMDTrue, OligomerStruct] = ...
-    createSimulation(obj)
+function [] = createSimulation(obj)
 %createSimulation creates simulated trajectories.
 % This method is the primary user-focused method in the smi_sim.SimSPT
 % class, meaning that most users will only need to use this method.  The
@@ -14,26 +13,19 @@ function [SMD, SMDModel, SMDLabeled, SMDTrue, OligomerStruct] = ...
 
 % Simulate diffusing targets and, if needed, oligomerization between those
 % diffusing targets.
-obj.TrajectoryStruct = obj.simTrajectories(obj.SimParams);
+obj.TrajStructSubTrue = obj.simTrajectories(obj.SimParams);
 
 % Simulate the effect of labeling efficiency.
-obj.TrajectoryStruct = obj.applyLabelingEfficiency(obj.TrajectoryStruct, ...
-    obj.SimParams.LabelingEfficiency);
+obj.TrajStructSubLabeled = obj.applyLabelingEfficiency(...
+    obj.TrajStructSubTrue, obj.SimParams.LabelingEfficiency);
 
 % Simulate the emitter kinetics (e.g., blinking and bleaching).
-obj.TrajectoryStruct = obj.simEmitterKinetics(obj.TrajectoryStruct, ...
-    obj.SimParams);
+obj.TrajStructSubModel = obj.simEmitterKinetics(...
+    obj.TrajStructSubLabeled, obj.SimParams);
 
 % Simulate measurement effects (e.g., motion blur, camera noise, etc.)
-obj.SMD = obj.applyMeasurementModel(obj.SMDModel, obj.SimParams);
-SMD = obj.SMD;
-
-% If no outputs were requested, clear them from the workspace (this is nice
-% to do so the user doesn't clutter their Command Window with unrequested
-% outputs).
-if ~nargout
-    clearvars()
-end
+[obj.TrajStruct, obj.TrajStructModel] = obj.applyMeasurementModel(...
+    obj.TrajStructSubModel, obj.SimParams);
 
 
 end

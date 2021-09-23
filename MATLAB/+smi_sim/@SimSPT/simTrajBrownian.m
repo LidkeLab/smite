@@ -1,4 +1,4 @@
-function [TrajectoryStruct] = simTrajBrownian(InitialPositions, SimParams)
+function [TrajStruct] = simTrajBrownian(InitialPositions, SimParams)
 %simTrajBrownian simulates Brownian trajectories.
 % This method simulates Brownian random motion of the targets at the
 % specified initial conditions.
@@ -10,8 +10,8 @@ function [TrajectoryStruct] = simTrajBrownian(InitialPositions, SimParams)
 %              smi_sim.SimSPT.defineDefaultParams())
 %
 % OUTPUTS:
-%   TrajectoryStruct: Structure containing information about the simulated
-%                     trajectories.
+%   TrajStruct: Structure containing information about the simulated
+%               trajectories.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021) with boundary condition usage
@@ -81,11 +81,16 @@ end
 [Trajectories, ConnectionMapT, IsOn, TrajMap] = ...
     smi_sim.SimSPT.enforcePeriodicBoundary(...
     Trajectories, PeriodicityMapT, ConnectionMapT);
-TrajectoryStruct.IsOn = IsOn;
-TrajectoryStruct.DSub = DSub(TrajMap);
-TrajectoryStruct.PhotonsSub = [];
-TrajectoryStruct.ConnectionMapT = ConnectionMapT;
-TrajectoryStruct.Trajectories = Trajectories;
+TrajStruct.IsOn = IsOn;
+TrajStruct.D = DSub(TrajMap);
+DataSize = size(IsOn);
+TrajStruct.Photons = zeros(DataSize);
+TrajStruct.Photons_SE = inf(DataSize);
+TrajStruct.Bg = zeros(DataSize);
+TrajStruct.Bg_SE = inf(DataSize);
+TrajStruct.ConnectionMapT = ConnectionMapT;
+TrajStruct.Trajectories = Trajectories;
+TrajStruct.Trajectories_SE = zeros(NTraj, NSubframes, 2);
 
 
 end
