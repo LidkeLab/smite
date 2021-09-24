@@ -14,7 +14,7 @@ classdef SimSPT < handle
         SimParams = struct();
     end
     
-    properties (SetAccess = 'protected')       
+    properties (SetAccess = 'protected')
         % obj.TrajStructModel after applying a measurement noise model.
         TrajStruct
         
@@ -81,10 +81,16 @@ classdef SimSPT < handle
     
     methods (Static, Hidden)
         [TrajStruct] = simTrajBrownian(InitialPositions, SimParams);
-        [TrajStruct] = simOligoTrajBrownian(InitialPositions, SimParams);
+        [Trajectories, PeriodicityMap, ConnectionMap] = ...
+            applyBoundaryCondition(...
+            Trajectories, BoundaryCondition, FrameSize, ConnectionMap);
         [Trajectories, ConnectionMapT, IsOn, TrajMap] = ...
             enforcePeriodicBoundary(...
             Trajectories, PeriodicityMapT, ConnectionMapT);
+        [Trajectories, ConnectionMap] = simOligomers(...
+            Trajectories, TrajectoryUpdates, NTraj, ...
+            ConnectionMap, InteractionDistance, InteractionProb, ...
+            KDisconnect, RestrictToDimers);
     end
     
     

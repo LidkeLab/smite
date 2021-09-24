@@ -4,7 +4,7 @@ function [TrajStruct] = simTrajBrownian(InitialPositions, SimParams)
 % specified initial conditions.
 %
 % INPUTS:
-%   InitialPositions: Initial positions of the random walkers 
+%   InitialPositions: Initial positions of the random walkers
 %                     (NTrajx2 array)
 %   SimParams: Structure of simulation parameters (see
 %              smi_sim.SimSPT.defineDefaultParams())
@@ -14,9 +14,7 @@ function [TrajStruct] = simTrajBrownian(InitialPositions, SimParams)
 %               trajectories.
 
 % Created by:
-%   David J. Schodt (Lidke Lab, 2021) with boundary condition usage
-%       modified from the script InteractingParticles.m (unknown author(s)
-%       in the Lidke Lab)
+%   David J. Schodt (Lidke Lab, 2021)
 
 
 % Make local copies of some parameters (can improve speed for large
@@ -24,6 +22,9 @@ function [TrajStruct] = simTrajBrownian(InitialPositions, SimParams)
 FrameSize = SimParams.FrameSize;
 D = SimParams.D;
 BoundaryCondition = SimParams.BoundaryCondition;
+InteractionDistance = SimParams.InteractionDistance;
+InteractionProb = SimParams.InteractionProb;
+RestrictToDimers = SimParams.RestrictToDimers;
 
 % Prepare the diffusion coefficients.
 NTraj = size(InitialPositions, 1);
@@ -39,40 +40,35 @@ end
 
 % Simulate the Brownian trajectories.
 DSub = D / SimParams.SubframeDensity;
+KDisconnectSub = SimParams.KDisconnect / SimParams.SubframeDensity;
 NSubframes = SimParams.NFrames * SimParams.SubframeDensity;
 Trajectories = zeros(NTraj, NSubframes, 2, 'double');
 Trajectories(:, 1, :) = InitialPositions;
 PeriodicityMapT = zeros(NTraj, NSubframes);
+ConnectionMap = zeros(NTraj, 1);
 ConnectionMapT = zeros(NTraj, NSubframes);
+IsOligoSim = (SimParams.InteractionProb ...
+    && ~isinf(SimParams.InteractionDistance));
 for ff = 2:NSubframes
-    % Update each trajectory by sampling the X, Y displacements from a
-    % normal distribution.
+    % Sample the proposed trajectory updates from the Normal
+    % distribution (Brownian motion).
     TrajectoryUpdates = sqrt(2*DSub) .* randn(NTraj, 1, 2);
     
-    % Update the particle positions.
-    Trajectories(:, ff, :) = Trajectories(:, ff-1, :) ...
-        + TrajectoryUpdates;
+    % Simulate oligomerization.
+    if IsOligoSim
+        [Trajectories(:, ff, :), ConnectionMap] = ...
+            smi_sim.SimSPT.simOligomers(...
+            Trajectories(:, ff-1, :), TrajectoryUpdates, NTraj, ...
+            ConnectionMap, InteractionDistance, InteractionProb, ...
+            KDisconnectSub, RestrictToDimers);
+    end
     
     % Apply the boundary conditions.
-    switch BoundaryCondition
-        case 'Periodic'
-            TrajModFrameSize = ...
-                [mod(Trajectories(:, ff, 1), FrameSize(1)), ...
-                mod(Trajectories(:, ff, 2), FrameSize(2))];
-            PeriodicityMapT(:, ff) = any(TrajModFrameSize ...
-                ~= squeeze(Trajectories(:, ff, :)), 2);
-            Trajectories(:, ff, 1) = TrajModFrameSize(:, 1);
-            Trajectories(:, ff, 2) = TrajModFrameSize(:, 2);
-        case 'Reflecting'
-            Trajectories(:, ff, 1) = Trajectories(:, ff, 1) ...
-                + 2*((FrameSize(1)-Trajectories(:, ff, 1)) ...
-                .*(Trajectories(:, ff, 1)>FrameSize(1)));
-            Trajectories(:, ff, 2) = Trajectories(:, ff, 2) ...
-                + 2*((FrameSize(2)-Trajectories(:, ff, 2)) ...
-                .*(Trajectories(:, ff, 2)>FrameSize(2)));
-            Trajectories(:, ff, :) = Trajectories(:, ff, :) ...
-                - 2*Trajectories(:, ff, :).*(Trajectories(:, ff, :)<0);
-    end
+    [Trajectories(:, ff, :), ...
+        PeriodicityMapT(:, ff), ConnectionMap] = ...
+        smi_sim.SimSPT.applyBoundaryCondition(Trajectories(:, ff, :), ...
+        BoundaryCondition, FrameSize, ConnectionMap);
+    ConnectionMapT(:, ff) = ConnectionMap;
 end
 
 % Break up trajectories that experienced a periodic boundary (that is, each
@@ -90,7 +86,7 @@ TrajStruct.Bg = zeros(DataSize);
 TrajStruct.Bg_SE = inf(DataSize);
 TrajStruct.ConnectionMapT = ConnectionMapT;
 TrajStruct.Trajectories = Trajectories;
-TrajStruct.Trajectories_SE = zeros(NTraj, NSubframes, 2);
+TrajStruct.Trajectories_SE = zeros([DataSize, 2]);
 
 
 end

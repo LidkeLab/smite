@@ -32,13 +32,7 @@ InitialPositions = smi_sim.SimSPT.applyCoordMask(InitialPositions, ...
     SimParams.InitialDensityMask, SimParams.FrameSize);
 
 % Simulate the trajectories and, if needed, oligomerization between them.
-if (SimParams.InteractionProb && ~isinf(SimParams.InteractionDistance))
-    TrajStruct = smi_sim.SimSPT.simTrajBrownian(...
-        InitialPositions, SimParams);
-else
-    TrajStruct = smi_sim.SimSPT.simOligoTrajBrownian(...
-        InitialPositions, SimParams);
-end
+TrajStruct = smi_sim.SimSPT.simTrajBrownian(InitialPositions, SimParams);
 
 
 end

@@ -87,11 +87,16 @@ IsOn = (IsOn & TrajStruct.IsOn);
 NotAlwaysOff = ~all(~IsOn, 2);
 TrajStruct.IsOn = IsOn(NotAlwaysOff, :);
 TrajStruct.D = TrajStruct.D(NotAlwaysOff);
+TrajStruct.Photons = PhotonsSub(NotAlwaysOff, :);
+TrajStruct.Photons_SE = TrajStruct.Photons_SE(NotAlwaysOff, :);
+TrajStruct.Bg = TrajStruct.Bg(NotAlwaysOff, :);
+TrajStruct.Bg_SE = TrajStruct.Bg_SE(NotAlwaysOff, :);
 TrajStruct.ConnectionMapT = ...
     TrajStruct.ConnectionMapT(NotAlwaysOff, :);
 TrajStruct.Trajectories = ...
     TrajStruct.Trajectories(NotAlwaysOff, :, :);
-TrajStruct.Photons = PhotonsSub(NotAlwaysOff, :);
+TrajStruct.Trajectories_SE = ...
+    TrajStruct.Trajectories_SE(NotAlwaysOff, :, :);
 
 
 end

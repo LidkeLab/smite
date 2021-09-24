@@ -54,8 +54,8 @@ function [ParamStruct] = defineDefaultParams()
 %                                 this probability is "tested" at each 
 %                                 sub-frame of the simulation.
 %                                 (Default = 0.5)
-%                AllowOligomers: Allow oligomers of order greater than 2.
-%                                (Default = false)
+%                RestrictToDimers: Restrict oligomerization to only order 2
+%                                  (dimers). (Default = true)
 %                KDisconnect: Rate parameter for the disconnection of 
 %                             oligomers. (1 / frame)(Default = 0.1)
 %                KOnToBleach: Rate parameter defining photobleaching.
@@ -87,7 +87,7 @@ ParamStruct.Bg = 5;
 ParamStruct.D = 0.1;
 ParamStruct.InteractionDistance = 0.5;
 ParamStruct.InteractionProb = 0.5;
-ParamStruct.AllowOligomers = false;
+ParamStruct.RestrictToDimers = true;
 ParamStruct.KDisconnect = 0.1;
 ParamStruct.KOnToBleach = 0.1;
 ParamStruct.KOnToOff = 0.5;

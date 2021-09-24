@@ -13,11 +13,11 @@ function [Trajectories, ConnectionMapT, IsOn, TrajMap] = ...
 %   PeriodicityMapT: Binary map indicating when 'Trajectories' experienced
 %                    a periodic boundary (1 indicates a periodic boundary
 %                    was encountered for that trajectory in that frame).
-%                    (see, e.g., smi_sim.SimSPT.simOligoTrajBrownian() for
-%                    usage)(NTrajxNFrames)
+%                    (see, e.g., smi_sim.SimSPT.simOligomers() for usage)
+%                    (NTrajxNFrames)
 %   ConnectionMapT: Index mapping indicating oligomerization between
 %                   trajectories. (see, e.g.,
-%                   smi_sim.SimSPT.simOligoTrajBrownian() for usage)
+%                   smi_sim.SimSPT.simOligomers() for usage)
 %                   (NTrajxNFrames)
 % OUTPUTS:
 %   Trajectories: Input 'Trajectories' after breaking up the trajectories

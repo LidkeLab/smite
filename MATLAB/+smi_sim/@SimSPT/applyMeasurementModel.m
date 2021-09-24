@@ -81,7 +81,7 @@ else
     TrajStructModel = TrajStruct;
 end
 TrajStruct = TrajStructModel;
-TrajStruct.Trajectories = TrajStruct.Trajectories...
+TrajStruct.Trajectories = TrajStruct.Trajectories ...
     + TrajStructModel.Trajectories_SE.*randn(NTraj, SimParams.NFrames, 2);
 
 
