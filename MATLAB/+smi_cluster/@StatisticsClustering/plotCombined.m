@@ -73,42 +73,8 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
    end
 
    if obj.CSV
-      % Save the data in .csv format as a standard feature.
-      name = fullfile(property.Results, [base_name, x_abbrev, '.csv']);
-      out = fopen(name, 'w');
-      Ny = cellfun(@numel, y);   % number of entries per column
-      maxNy = max(Ny);   % max number of entries per column
-      % Label each column
-      for j = 1 : n
-         fprintf(out, '%s', legend_labels{j});
-         if j < n
-            fprintf(out, ',');
-         else
-            fprintf(out, '\n');
-         end
-      end
-      % Make a header listing the number of data entries per column.
-      for j = 1 : n
-         fprintf(out, '%d', Ny(j));
-         if j < n
-            fprintf(out, ',');
-         else
-            fprintf(out, '\n');
-         end
-      end
-      for i = 1 : maxNy   % i indexes rows
-         for j = 1 : n    % j indexes columns
-            if i <= Ny(j)
-               fprintf(out, '%f', y{j}(i));
-            end
-            if j < n
-               fprintf(out, ',');
-            else
-               fprintf(out, '\n');
-            end
-         end
-      end
-      fclose(out);
+      produceCSVfile(y, obj.ResultsDir, base_name, x_label, legend_labels, ...
+                        x_abbrev);
    end
 
    % frequency
@@ -352,6 +318,20 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       end
       saveas(gcf, name, 'fig');
       close
+
+      if obj.CSV
+         y_CDF      = cell(2*n, 1);
+         labels_CDF = cell(2*n, 1);
+         for i = 1 : n
+            j = 2*i - 1;
+            y_CDF{j}     = X{i};
+            y_CDF{j + 1} = Y{i};
+            labels_CDF{j}     = [legend_labels{i}, ':x'];
+            labels_CDF{j + 1} = [legend_labels{i}, ':y'];
+         end
+         produceCSVfile(y_CDF, obj.ResultsDir, base_name, x_label, ...
+                        labels_CDF, [x_abbrev, '_CDF2']);
+      end
    end
 
    % PlotSpread
@@ -378,6 +358,9 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       end
       title(base_text);
       ylabel(x_text);
+      if n > 1
+         set(gca, 'XTickLabelRotation', 45);
+      end
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_PS']);
       if ~isempty(obj.Fig_ext)
@@ -416,6 +399,9 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
          title(base_text);
       end
       ylabel(x_text);
+      if n > 1
+         set(gca, 'XTickLabelRotation', 45);
+      end
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_PSMM']);
       if ~isempty(obj.Fig_ext)
@@ -445,6 +431,9 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold on
       title(base_text);
       ylabel(x_text);
+      if n > 1
+         set(gca, 'XTickLabelRotation', 45);
+      end
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_box']);
       if ~isempty(obj.Fig_ext)
@@ -467,6 +456,9 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       errorbar(1:n, m, s, '.', 'CapSize', 25);
       title(base_text);
       ylabel(['mean ', x_text]);
+      if n > 1
+         set(gca, 'XTickLabelRotation', 45);
+      end
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_bar']);
       if ~isempty(obj.Fig_ext)
@@ -490,5 +482,49 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
          P(j, i) = P(i, j);
       end
    end
+
+end
+
+function produceCSVfile(y, ResultsDir, base_name, x_label, legend_labels, ...
+                           x_abbrev)
+% Save the data in .csv format as a standard feature.
+
+   n = numel(y);
+
+   name = fullfile(ResultsDir, [base_name, x_abbrev, '.csv']);
+   out = fopen(name, 'w');
+   Ny = cellfun(@numel, y);   % number of entries per column
+   maxNy = max(Ny);   % max number of entries per column
+   % Label each column
+   for j = 1 : n
+      fprintf(out, '%s', legend_labels{j});
+      if j < n
+         fprintf(out, ',');
+      else
+         fprintf(out, '\n');
+      end
+   end
+   % Make a header listing the number of data entries per column.
+   for j = 1 : n
+      fprintf(out, '%d', Ny(j));
+      if j < n
+         fprintf(out, ',');
+      else
+         fprintf(out, '\n');
+      end
+   end
+   for i = 1 : maxNy   % i indexes rows
+      for j = 1 : n    % j indexes columns
+         if i <= Ny(j)
+            fprintf(out, '%f', y{j}(i));
+         end
+         if j < n
+            fprintf(out, ',');
+         else
+            fprintf(out, '\n');
+         end
+      end
+   end
+   fclose(out);
 
 end
