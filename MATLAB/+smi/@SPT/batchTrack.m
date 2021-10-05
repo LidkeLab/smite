@@ -49,7 +49,8 @@ else
         FileTimeStrings = regexp(FileNames, obj.TimeStampRegExp, 'match');
         PairIndices = smi_helpers.pairTimeStrings(...
             FileTimeStrings, TransformTimeStrings, 'before');
-        TransformList = TransformFiles(PairIndices);
+        TransformList = ...
+            fullfile(obj.TransformDir, TransformFiles(PairIndices));
     else
         % If there's only one transform, we don't need to check timestamps.
         TransformList = repmat(...
