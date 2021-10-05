@@ -9,7 +9,7 @@ function [TimeNum] = convertTimeStringToNum(TimeString, Delimiter)
 %               NOTE: Changing the input 'MinFieldWidth' of genTimeString()
 %                     might cause issues in this function!
 %   Delimiter: A delimiter between the year, month, day, etc. in TimeString
-%              (Default = '_')
+%              (Default = {'_'; '-'; ','; '.'})
 %
 % OUTPUTS:
 %   TimeNum: A number corresponding to TimeString.
@@ -24,7 +24,7 @@ function [TimeNum] = convertTimeStringToNum(TimeString, Delimiter)
 
 % Set defaults if needed.
 if (~exist('Delimiter', 'var') || isempty(Delimiter))
-    Delimiter = '_';
+    Delimiter = {'_'; '-'; ','; '.'; ';'; ':'};
 end
 
 % Break up the time string and convert to a number.
