@@ -1,11 +1,12 @@
 function [TimeNum] = convertTimeStringToNum(TimeString, Delimiter)
 %convertTimeStringToNum converts a time string to a number.
-% This function will take a timestring (e.g., the output from 
+% This function will take a timestring (e.g., the output from
 % smi_helpers.genTimeString()) and convert it to a number which can be used
 % for comparison to other times of the same format.
 %
-% INPUTS: 
+% INPUTS:
 %   TimeString: A time string given in the format output by genTimeString()
+%               (char/string, or cell arraay of char/string)
 %               NOTE: Changing the input 'MinFieldWidth' of genTimeString()
 %                     might cause issues in this function!
 %   Delimiter: A delimiter between the year, month, day, etc. in TimeString
@@ -22,23 +23,31 @@ function [TimeNum] = convertTimeStringToNum(TimeString, Delimiter)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Set defaults if needed.
+% Set defaults and revise inputs if needed.
 if (~exist('Delimiter', 'var') || isempty(Delimiter))
     Delimiter = {'_'; '-'; ','; '.'; ';'; ':'};
 end
-
-% Break up the time string and convert to a number.
-SplitTimeStamp = strsplit(TimeString, Delimiter);
-for jj = 1:numel(SplitTimeStamp)
-    % Ensure we pad with zeros wherever needed, e.g., 2018-2-9-17-41
-    % should be 2018-02-09-17-41
-    if mod(numel(SplitTimeStamp{jj}), 2)
-        SplitTimeStamp{jj} = ['0', SplitTimeStamp{jj}];
-    end
+if ~iscell(TimeString)
+    TimeString = {TimeString};
 end
 
-% Convert the cell array to a double.
-TimeNum = str2double(cell2mat(SplitTimeStamp));
+% Loop through the input timestrings and convert.
+NStrings = numel(TimeString);
+TimeNum = NaN(size(TimeString));
+for ii = 1:NStrings
+    % Break up the time string and convert to a number.
+    SplitTimeStamp = strsplit(TimeString{ii}, Delimiter);
+    for jj = 1:numel(SplitTimeStamp)
+        % Ensure we pad with zeros wherever needed, e.g., 2018-2-9-17-41
+        % should be 2018-02-09-17-41
+        if mod(numel(SplitTimeStamp{jj}), 2)
+            SplitTimeStamp{jj} = ['0', SplitTimeStamp{jj}];
+        end
+    end
+    
+    % Convert the cell array to a double.
+    TimeNum(ii) = str2double(cell2mat(SplitTimeStamp));
+end
 
 
 end
