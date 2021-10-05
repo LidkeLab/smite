@@ -36,7 +36,13 @@ NStrings = numel(TimeString);
 TimeNum = NaN(size(TimeString));
 for ii = 1:NStrings
     % Break up the time string and convert to a number.
-    SplitTimeStamp = strsplit(TimeString{ii}, Delimiter);
+    if iscell(TimeString{ii})
+        % Some methods output a cell array of cells (e.g., strsplit()) so
+        % we need to access the character array with {1}.
+        SplitTimeStamp = strsplit(TimeString{ii}{1}, Delimiter);
+    else
+        SplitTimeStamp = strsplit(TimeString{ii}, Delimiter);
+    end
     for jj = 1:numel(SplitTimeStamp)
         % Ensure we pad with zeros wherever needed, e.g., 2018-2-9-17-41
         % should be 2018-02-09-17-41

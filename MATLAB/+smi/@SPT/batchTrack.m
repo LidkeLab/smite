@@ -36,51 +36,26 @@ if isempty(FileNames)
 end
 FileList = fullfile(obj.SMF.Data.FileDir, FileNames);
 
-% Generate a list of all channel registration files in obj.TransformDir
-% which match the pattern given in obj.TransformPattern.  Also, place their
-% timestamps in an array for later use.
+% Match the files to a channel registration file based on their timestamps.
 TransformFiles = ...
     smi_helpers.getFileNames(obj.TransformDir, obj.TransformPattern);
 NTransforms = numel(TransformFiles);
-TransformTimes = NaN(NTransforms, 1);
-if (NTransforms > 1)
-    for ff = 1:NTransforms
-        TimeStamp = regexp(TransformFiles{ff}, ...
-            obj.TimeStampRegExp, 'match');
-        TransformTimes(ff) = smi_helpers.convertTimeStringToNum(...
-            TimeStamp{1}, obj.TimeStampDelimiter);
-    end
-end
-
-% Create the TransformList by matching timestamps in FileNames to the
-% nearest timestamps in TransformFiles.
-TransformList = cell(NFiles, 1);
 if isempty(TransformFiles)
     TransformList = repmat({''}, NFiles, 1);
 else
     if (NTransforms > 1)
-        for ff = 1:NFiles
-            % Find the timestamp in the filename.
-            TimeStamp = regexp(FileNames{ff}, obj.TimeStampRegExp, 'match');
-            TimeNum = smi_helpers.convertTimeStringToNum(...
-                TimeStamp{1}, obj.TimeStampDelimiter);
-            
-            % Compare the timestamp of the file to those in the transform
-            % files and select the closest match.
-            % NOTE: As written, this will find the transform timestamped
-            %       closest in time BEFORE the data was taken.
-            TimeDiff = TimeNum - TransformTimes;
-            ValidInd = find(TimeDiff >= 0);
-            [~, MinDiffInd] = min(TimeDiff(ValidInd));
-            TransformList{ff} = fullfile(obj.TransformDir, ...
-                TransformFiles{ValidInd(MinDiffInd)});
-        end
+        TransformTimeStrings = ...
+            regexp(TransformFiles, obj.TimeStampRegExp, 'match');
+        FileTimeStrings = regexp(FileNames, obj.TimeStampRegExp, 'match');
+        PairIndices = smi_helpers.pairTimeStrings(...
+            FileTimeStrings, TransformTimeStrings, 'before');
+        TransformList = TransformFiles(PairIndices);
     else
         % If there's only one transform, we don't need to check timestamps.
         TransformList = repmat(...
             {fullfile(obj.TransformDir, TransformFiles{1})}, ...
             NFiles, 1);
-    end
+    end    
 end
 
 % Loop through the files and perform tracking.
