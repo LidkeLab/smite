@@ -207,7 +207,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             
             %FrameConnection
             obj.FrameConnection.On=true;
-            obj.FrameConnection.Method='Hypothesis test';
+            obj.FrameConnection.Method='LAP-FC';
             obj.FrameConnection.MaxSeparation=1; % pixels
             obj.FrameConnection.LoS=.01;
             obj.FrameConnection.MaxFrameGap=5; % frames
