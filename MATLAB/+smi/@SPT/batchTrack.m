@@ -38,7 +38,7 @@ FileList = fullfile(obj.SMF.Data.FileDir, FileNames);
 if (obj.Verbose > 1)
     fprintf('smi.SPT.batchTrack(): Found %i files to be tracked.\n', NFiles)
     for ii = 1:NFiles
-        fprintf('\t%c\n', FileNames{ii})
+        fprintf('\t%s\n', FileNames{ii})
     end
 end
 
@@ -59,14 +59,14 @@ else
         TransformList = fullfile(obj.TransformDir, PairedTransforms);
     else
         % If there's only one transform, we don't need to check timestamps.
-        PairedTransforms = repmat(TransformFiles{1}, NFiles, 1);
+        PairedTransforms = repmat(TransformFiles(1), NFiles, 1);
         TransformList = fullfile(obj.TransformDir, PairedTransforms);
     end
     if (obj.Verbose > 1)
-        fprintf('smi.SPT.batchTrack(): %i transforms matched to files.\n', ...
+        fprintf('smi.SPT.batchTrack(): %i transforms matched to data.\n', ...
             NTransforms)
         for ii = 1:NFiles
-            fprintf('\t%c <-> %c\n',  FileNames{ii}, PairedTransforms{ii})
+            fprintf('\t%s <-> %s\n',  FileNames{ii}, PairedTransforms{ii})
         end
     end
 end
@@ -74,7 +74,7 @@ end
 % Loop through the files and perform tracking.
 for ff = 1:NFiles
     if (obj.Verbose > 0)
-        fprintf('smi.SPT.batchTrack(): tracking file %i of %i.\n', ...
+        fprintf('smi.SPT.batchTrack(): Tracking file %i of %i...\n', ...
             ff, NFiles)
     end
     obj.SMF.Data.RegistrationFilePath = TransformList{ff};
@@ -82,7 +82,7 @@ for ff = 1:NFiles
     [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
 end
 if (obj.Verbose > 0)
-    fprintf('smi.SPT.batchTrack(): batch-tracking complete.\n')
+    fprintf('smi.SPT.batchTrack(): Batch-tracking complete.\n')
 end
 
 
