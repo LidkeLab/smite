@@ -23,9 +23,9 @@ G = (Model-MinRange)/(MaxRange-MinRange);
 RGBImage=cat(4,R,G,G*0);
 
 if nargout <1
-    F=figure
-    F.Name='Data(red) Model(green)'
-    sliceViewer(RGBImage)
+    F=figure;
+    F.Name='Data(red) Model(green)';
+    sliceViewer(RGBImage);
 end
 
 end

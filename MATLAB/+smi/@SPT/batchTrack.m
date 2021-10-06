@@ -63,7 +63,7 @@ else
         TransformList = fullfile(obj.TransformDir, PairedTransforms);
     end
     if (obj.Verbose > 1)
-        fprintf('smi.SPT.batchTrack(): %i transforms matched to data.\n', ...
+        fprintf('smi.SPT.batchTrack(): %i transform(s) matched to data.\n', ...
             NTransforms)
         for ii = 1:NFiles
             fprintf('\t%s <-> %s\n',  FileNames{ii}, PairedTransforms{ii})

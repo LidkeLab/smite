@@ -31,7 +31,7 @@ for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
     % Send an update to the command window.
     if (obj.Verbose > 1)
         fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
-            'tracking recursion iteration %i...\n'], rr)
+            'Tracking recursion %i...\n'], rr)
     end
     
     % Estimate the diffusion constants from the previous tracking results.

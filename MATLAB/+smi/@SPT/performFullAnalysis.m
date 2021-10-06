@@ -40,7 +40,7 @@ obj.SMDPreThresh.FrameRate = obj.SMF.Data.FrameRate;
 % warning and do not proceed.
 if isempty(obj.SMD.FrameNum)
     if (obj.Verbose > 0)
-        warning(['smi.SPT.performFullAnalysis(): no localizations were ', ...
+        warning(['smi.SPT.performFullAnalysis(): No localizations were ', ...
             'generated from the provided dataset.'])
     end
     if nargout
@@ -64,17 +64,22 @@ if ~isempty(obj.SMF.Data.RegistrationFilePath)
         MatchedROI = find(all(FiducialROI == ...
             repmat(obj.SMF.Data.DataROI, [size(FiducialROI, 1), 1]), 2), ...
             1);
-        RegistrationTransform = RegistrationTransform{MatchedROI};
         
-        % Apply the transform to the localizations.
-        obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
-            RegistrationTransform, obj.SMDPreThresh);
-        obj.SMD = smi_core.ChannelRegistration.transformSMD(...
-            RegistrationTransform, obj.SMD);
+        % Apply the transform to the localizations. If no transform was
+        % matched, issue a warning and proceed.
+        if isempty(MatchedROI)
+            warning(['smi.SPT.generateTrajectories(): None of the ', ...
+                'available transforms match SMF.Data.DataROI!'])
+        else
+            obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
+                RegistrationTransform, obj.SMDPreThresh);
+            obj.SMD = smi_core.ChannelRegistration.transformSMD(...
+                RegistrationTransform, obj.SMD);
+        end
         obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
     elseif (obj.Verbose > 0)
-        warning(['smi.SPT.generateTrajectories(): the specified ', ...
-            'SMF.Data.RegistrationFilePath cannot be found.'])
+        warning(['smi.SPT.generateTrajectories(): The specified ', ...
+            'SMF.Data.RegistrationFilePath cannot be found!'])
     end
 end
 
