@@ -178,6 +178,7 @@ if obj.GeneratePlots
         'Position', [0, 0, 8.5, 11], ...
         'PaperSize', [8.5, 11], ...
         'Visible', FiguresVisible);
+    obj.PlotParams.MaxYDisplaySep = obj.MaxSeparation;
     for ii = 1:size(TRArrayDimer, 1)
         % Generate the plot.
         obj.PlotParams.PairNumber = ii;
