@@ -28,6 +28,19 @@ classdef ChannelRegistration < handle
         % two-column arrays [X, Y].
         Coordinates cell
         
+        % Indicates fiducial images set manually by user. (Default = false)
+        % This can be useful if the user already has the set of fiducial
+        % images loaded into their workspace (e.g., if they were simulated
+        % and not saved to a file).
+        % NOTE: If using this setting, the fiducials must be
+        %       "pre-processed" before setting to obj.FiducialImages (e.g.,
+        %       truncated to proper ROI, averaged over time, ...).
+        %       Furthermore, obj.FiducialROI should be set to the
+        %       appropriate value so that the correct ROI is saved along
+        %       with the transform. obj.SplitFormat cannot be used with
+        %       this setting.
+        ManualSetFiducials(1, 1) logical = false;
+        
         % Fiducial images (numeric array, MxP(xNFiducials))
         FiducialImages {mustBeNumeric(FiducialImages)}
         
@@ -142,7 +155,7 @@ classdef ChannelRegistration < handle
     
     properties (Hidden, SetAccess = protected)
         % These properties are used for convenience internally (e.g., for
-        % use in the GUI) and shouldn't be modified.
+        % use in the GUI) and shouldn't be modified by the user.
         
         TransformationBasisOptions cell = {'coordinates', 'images'};
         CoordTransformOptions cell = {'nonreflectivesimilarity', ...

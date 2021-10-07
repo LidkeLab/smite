@@ -117,6 +117,9 @@ ChannelReg.NNeighborPoints = 12;
 ChannelReg.TransformationType = 'lwm';
 ChannelReg.ManualCull = false;
 ChannelReg.SeparationThreshold = GridSpacing / 2;
+ChannelReg.ManualSetFiducials = true;
+ChannelReg.FiducialROI = [1, 1, FrameSize, FrameSize, 1, 1; ...
+    1, 129, FrameSize, 2*FrameSize, 1, 1];
 ChannelReg.FiducialImages = cat(3, RawDataFixed, RawDataMoving);
 try
     ChannelReg.findTransform();

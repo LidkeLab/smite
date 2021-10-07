@@ -17,7 +17,8 @@ function [RegistrationTransform] = findTransform(obj)
 %   David J. Schodt (Lidke Lab, 2020)
 
 
-% Load the fiducial images.
+% Load the fiducial images/ensure the manually set fiducials are consistent
+% with some other class properties.
 if (obj.Verbose > 0)
     fprintf(['\tChannelRegistration.findTransform(): ', ...
         'Computing channel registration transform...\n'])
@@ -26,7 +27,22 @@ if (obj.Verbose > 1)
     fprintf(['\tChannelRegistration.findTransform(): ', ...
         'Loading fiducials...\n'])
 end
-obj.loadFiducials()
+if obj.ManualSetFiducials
+    obj.SplitFormat = 1;
+    assert(~isempty(obj.FiducialImages), ...
+        'You must set obj.FiducialImages if obj.ManualSetFiducials is true')
+    ImageSize = size(obj.FiducialImages);
+    if (size(obj.FiducialROI, 1) ~= ImageSize(3))
+        obj.FiducialROI = ...
+            repmat([1, 1, ImageSize(1:2), 1, 1], ImageSize(3), 1);
+        if (obj.Verbose > 0)
+            warning(['ChannelRegistration.findTransform(): FiducialROI ', ...
+                'reset to a default based on the size of FiducialImages.'])
+        end
+    end
+else
+    obj.loadFiducials()
+end
 NFiducials = size(obj.FiducialImages, 3);
 
 % Perform the gain and offset correction on each of the fiducial images
@@ -41,8 +57,8 @@ end
 ScaledData = obj.rescaleFiducials(obj.FiducialImages, ...
     obj.SMF, obj.AutoscaleFiducials);
 
-% If autoscaling, multiply by an extra factor so that the counts are 
-% somewhat realistic for a camera (having the range [0, 1] messes up the 
+% If autoscaling, multiply by an extra factor so that the counts are
+% somewhat realistic for a camera (having the range [0, 1] messes up the
 % fitting, presumably because it seems like 0 photons but I'm not sure).
 if obj.AutoscaleFiducials
     ScaledData = 100 * ScaledData;
