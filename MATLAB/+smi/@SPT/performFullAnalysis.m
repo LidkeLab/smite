@@ -72,9 +72,9 @@ if ~isempty(obj.SMF.Data.RegistrationFilePath)
                 'available transforms match SMF.Data.DataROI!'])
         else
             obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
-                RegistrationTransform, obj.SMDPreThresh);
+                RegistrationTransform{MatchedROI}, obj.SMDPreThresh);
             obj.SMD = smi_core.ChannelRegistration.transformSMD(...
-                RegistrationTransform, obj.SMD);
+                RegistrationTransform{MatchedROI}, obj.SMD);
         end
         obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
     elseif (obj.Verbose > 0)
