@@ -62,7 +62,7 @@ for dd = 1:NTrajInitial
         NewConnections = repmat(ConnectionMapT(dd, :), [NNewTraj, 1]);
         IsOn(dd, (EventIndices(1):NFrames)) = false;
         Trajectories(dd, (EventIndices(1):NFrames), :) = NaN;
-        ConnectionMapT(dd, (EventIndices(1):NFrames)) = NaN;
+        ConnectionMapT(dd, (EventIndices(1):NFrames)) = 0;
         for nn = 1:(NNewTraj-1)
             % Update the trajectory ID counter.
             CurrentTrajID = CurrentTrajID + 1;
