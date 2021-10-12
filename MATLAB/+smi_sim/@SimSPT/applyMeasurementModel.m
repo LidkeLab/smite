@@ -55,12 +55,12 @@ if (SimParams.SubframeDensity > 1)
             SimParams.SubframeDensity, SimParams.NFrames).';
         
         % Perform the conversion from subframes to frames (approximate
-        % motion blurring). For photons, we can just take the sum. The 
+        % motion blurring). For photons, we can just take the sum. The
         % positions and standard errors will be estimated as though each
         % subframe is another observation of the same Gaussian (like we do
         % in frame connection). Note that this probably isn't the best way
         % to simulate motion blur, as the smearing over subframes will
-        % likely give us a higher standard error than we're estimating 
+        % likely give us a higher standard error than we're estimating
         % here.
         IsOn(nn, :) = any(IsOnCurrent, 2);
         Photons(nn, :) = sum(PhotonsCurrent, 2);
@@ -79,10 +79,16 @@ if (SimParams.SubframeDensity > 1)
     TrajStructModel.Trajectories_SE = repmat(XY_SE, 1, 1, 2);
 else
     TrajStructModel = TrajStruct;
+    TrajStructModel.Photons_SE = 1 ./ sqrt(TrajStructModel.Photons);
+    TrajStructModel.Bg_SE = 1 ./ sqrt(TrajStructModel.Bg);
+    TrajStructModel.Trajectories_SE = ...
+        repmat(SimParams.PSFSigma .* TrajStructModel.Photons_SE, 1, 1, 2);
 end
 TrajStruct = TrajStructModel;
 TrajStruct.Trajectories = TrajStruct.Trajectories ...
     + TrajStructModel.Trajectories_SE.*randn(NTraj, SimParams.NFrames, 2);
+TrajStruct.Photons = poissrnd(TrajStruct.Photons);
+TrajStruct.Bg = poissrnd(TrajStruct.Bg);
 
 
 end
