@@ -72,15 +72,15 @@ if (SimParams.SubframeDensity > 1)
     end
     TrajStructModel.IsOn = IsOn;
     TrajStructModel.Photons = Photons;
-    TrajStructModel.Photons_SE = 1 ./ sqrt(Photons);
+    TrajStructModel.Photons_SE = sqrt(Photons);
     TrajStructModel.Bg = SimParams.Bg * ones(size(Photons));
-    TrajStructModel.Bg_SE = 1 ./ sqrt(TrajStructModel.Bg);
+    TrajStructModel.Bg_SE = sqrt(TrajStructModel.Bg);
     TrajStructModel.Trajectories = cat(3, X, Y);
     TrajStructModel.Trajectories_SE = repmat(XY_SE, 1, 1, 2);
 else
     TrajStructModel = TrajStruct;
-    TrajStructModel.Photons_SE = 1 ./ sqrt(TrajStructModel.Photons);
-    TrajStructModel.Bg_SE = 1 ./ sqrt(TrajStructModel.Bg);
+    TrajStructModel.Photons_SE = sqrt(TrajStructModel.Photons);
+    TrajStructModel.Bg_SE = sqrt(TrajStructModel.Bg);
     TrajStructModel.Trajectories_SE = ...
         repmat(SimParams.PSFSigma .* TrajStructModel.Photons_SE, 1, 1, 2);
 end
