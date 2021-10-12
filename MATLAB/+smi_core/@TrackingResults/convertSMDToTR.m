@@ -34,19 +34,20 @@ end
 %       outside of the loop.
 UniqueTrajIDs = unique(SMD.ConnectID);
 NLocalizations = numel(SMD.FrameNum);
-TRFields = fieldnames(TR);
-TRFields = TRFields(ismember(TRFields, SMDFields));
-NTRFields = numel(TRFields);
+SMDFields = fieldnames(SMD);
+SMDFields = SMDFields(ismember(SMDFields, SMDFields));
+NSMDFields = numel(SMDFields);
 for ii = numel(UniqueTrajIDs):-1:1
     % Create an index array corresponding only to the current trajectory.
     CurrentTrajIndices = find(SMD.ConnectID == UniqueTrajIDs(ii));
     
     % Loop through each relevant SMD field and place it in the TR.
-    for ff = 1:NTRFields
-        if (numel(SMD.(TRFields{ff})) == NLocalizations)
-            TR(ii, 1).(TRFields{ff}) = SMD.(TRFields{ff})(CurrentTrajIndices);
+    for ff = 1:NSMDFields
+        if (numel(SMD.(SMDFields{ff})) == NLocalizations)
+            TR(ii, 1).(SMDFields{ff}) = ...
+                SMD.(SMDFields{ff})(CurrentTrajIndices);
         else
-            TR(ii, 1).(TRFields{ff}) = SMD.(TRFields{ff});
+            TR(ii, 1).(SMDFields{ff}) = SMD.(SMDFields{ff});
         end
     end
     
