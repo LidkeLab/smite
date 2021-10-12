@@ -59,7 +59,7 @@ classdef SimSPT < handle
         
         function [SMD] = get.SMD(obj)
             % This method converts obj.TrajStruct to an SMD.
-            SMD = obj.convertTrajToSMD(obj.TrajStruct);
+            SMD = obj.convertTrajToSMD(obj.TrajStruct, obj.SimParams);
         end
         
         createSimulation(obj);
@@ -76,7 +76,7 @@ classdef SimSPT < handle
         [SimParams] = defineDefaultParams();
         [Coordinates, MaskedCoordinates] = ...
             applyCoordMask(Coordinates, Mask, FrameSize);
-        [SMD] = convertTrajToSMD(TrajStruct);
+        [SMD] = convertTrajToSMD(TrajStruct, SimParams);
     end
     
     methods (Static, Hidden)
