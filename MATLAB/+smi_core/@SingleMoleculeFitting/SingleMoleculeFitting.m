@@ -79,7 +79,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   On              Perform thresholding? (Default=true)
     %   MaxXY_SE:       Maximum allowed precision in x,y (Pixels)(Default=.2)
     %   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
-    %   LoS:            Minimum accepted p-value from fit (Default=.01)
+    %   MinPValue:      Minimum accepted p-value from fit (Default=.01)
     %   MinPSFSigma:    Minimum PSF Sigma from fit (Pixels)(Default=.5);
     %   MaxPSFSigma:    Maximum PSF Sigma from fit (Pixels)(Default=2);
     %   MinPhotons:     Minimum accepted photons from fit (Default=100)
