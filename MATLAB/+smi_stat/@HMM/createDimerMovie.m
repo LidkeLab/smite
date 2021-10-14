@@ -97,7 +97,8 @@ end
 
 % Prepare the movie generator.
 MovieGenerator = smi_vis.GenerateMovies;
-MovieGenerator.TR = TRArray;
+TRDimerCand = smi_stat.HMM.isolateCandidateTRArray(TRArray);
+MovieGenerator.TR = TRDimerCand;
 MovieGenerator.Params = MovieParams;
 MovieGenerator.RawData = ScaledData;
 MovieGenerator.prepRawData()
@@ -124,11 +125,6 @@ TRDimerCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
 TRDimer = smi_core.TrackingResults.catTR(TRDimerCh1, TRDimerCh2);
 DimerCandParams = MovieParams;
 DimerCandParams.LineStyle = '-';
-TRDimerCandCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
-    TRArray(1).DimerCandidateBool);
-TRDimerCandCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
-    TRArray(2).DimerCandidateBool);
-TRDimerCand = smi_core.TrackingResults.catTR(TRDimerCandCh1, TRDimerCandCh2);
 RemainderParams = MovieParams;
 RemainderParams.LineStyle = ':';
 TRRemainderCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
