@@ -10,12 +10,12 @@ classdef HMM < handle
     %       converted to physical units (micrometers, seconds) until the
     %       very end when outputs/plots are being produced.
     %
-    % See reference 
+    % See reference
     % Nitta, C. F., Green, E. W., Jhamba, E. D., Keth, J. M.,
-    % Ortiz-Caraveo, I., Grattan, R. M., Schodt, D. J., Gibson, A. C., 
-    % Rajput, A., Lidke, K. A., Steinkamp, M. P., Wilson, B. S., 
-    % & Lidke, D. S. (2020). EGFR transactivates RON to drive oncogenic 
-    % crosstalk. BioRxiv, 2020.08.11.246785. 
+    % Ortiz-Caraveo, I., Grattan, R. M., Schodt, D. J., Gibson, A. C.,
+    % Rajput, A., Lidke, K. A., Steinkamp, M. P., Wilson, B. S.,
+    % & Lidke, D. S. (2020). EGFR transactivates RON to drive oncogenic
+    % crosstalk. BioRxiv, 2020.08.11.246785.
     % https://doi.org/10.1101/2020.08.11.246785
     %
     % REQUIRES: Optimization Toolbox
@@ -24,7 +24,7 @@ classdef HMM < handle
     %   David J. Schodt (Lidke Lab, 2021)
     
     
-    properties        
+    properties
         % Separation between fluorophores on a dimer (pixels)
         DimerSeparation(1, 1) {mustBeFloat(DimerSeparation)} = 0.5;
         
@@ -36,8 +36,8 @@ classdef HMM < handle
         
         % Diffusion coefficient(s) for the trajectories (pixel^2 / frame)
         % This can be either a single diffusion constant, two diffusion
-        % coefficients (one for each channel), or 
-        % size(TRArray, 1)x2 diffusion coefficients corresponding to the 
+        % coefficients (one for each channel), or
+        % size(TRArray, 1)x2 diffusion coefficients corresponding to the
         % candidates in TRArray.
         DiffusionCoefficient {mustBeFloat(DiffusionCoefficient)}
         
@@ -53,7 +53,7 @@ classdef HMM < handle
         %   'DF': dimer or free
         %   'DDF': dimer, domain, or free
         ModelSpecifier {mustBeText(ModelSpecifier)} = 'DF';
-                
+        
         % Handles to the state PDFs used in the HMM (cell array)
         PDFHandles(:, 1) cell
         
@@ -86,7 +86,7 @@ classdef HMM < handle
         % NOTE: This is used when running obj.performFullAnalysis().
         GenerateMovies logical = false;
         
-        % Set of movie parameters (see createDimerMovie())        
+        % Set of movie parameters (see createDimerMovie())
         MovieParams struct = struct();
         
         % Set of plot parameters (see plotDimerPairInfo())
@@ -157,7 +157,7 @@ classdef HMM < handle
         [RateParameters, RateParametersSE, LogLikelihood] = ...
             performFullAnalysis(obj);
         saveResults(obj);
-                
+        
     end
     
     methods (Static)
@@ -189,11 +189,11 @@ classdef HMM < handle
             XBarLocations, ConditionColorMap, ConditionNames, UnitFlag, ...
             PlotAxes);
         [PlotAxes] = plotDimerDurationCDF(DimerDurations, PlotAxes);
-        [DisplayParams] = createDimerMovie(PlotAxes, TRArray, ...
-            RawDataChannel1, RawDataChannel2, ...
-            FilePath, DisplayParams);
-        [DisplayParams] = createAllMovies(TRArray, ...
-            SaveDir, RawDataBaseDir, DisplayParams);
+        [MovieParams] = createDimerMovie(MovieAxes, ...
+            TRArray, RawDataChannel1, RawDataChannel2, ...
+            FilePath, MovieParams, VideoObject)
+        [MovieParams] = createAllMovies(TRArray, ...
+            SaveDir, RawDataBaseDir, MovieParams);
         [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
             TRArray, SMF, DisplayParams, UnitFlag);
     end
@@ -205,12 +205,12 @@ classdef HMM < handle
         
         [PlotAxes, DisplayParams] = plotDimerPairInfo(PlotAxes, ...
             PlotType, TRArray, SMF, DisplayParams, UnitFlag);
-%         plotViterbiPath
-%         plotEmissionProbabilities
-%         plotDimerTraj2D
-%         plotDimerTraj3D
-%         plotRegistration
-%         plotXYSeparation
+        %         plotViterbiPath
+        %         plotEmissionProbabilities
+        %         plotDimerTraj2D
+        %         plotDimerTraj3D
+        %         plotRegistration
+        %         plotXYSeparation
     end
     
     
