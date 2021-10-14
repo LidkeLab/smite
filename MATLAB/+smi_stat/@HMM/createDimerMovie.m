@@ -5,16 +5,16 @@ function [MovieParams] = createDimerMovie(MovieAxes, ...
 % superimposed on the images present in RawData.
 %
 % INPUTS:
-%   MovieAxes: Axes object in which we've plotted stuff. 
+%   MovieAxes: Axes object in which we've plotted stuff.
 %              (Default = axes(figure()))
 %   TRArray: A structure array of two TR structures, with each TR structure
 %            consisting of one trajectory.
-%   RawDataChannel1: 3D matrix containing the raw data of the first 
+%   RawDataChannel1: 3D matrix containing the raw data of the first
 %                    channel corresponding to the trajectory TRArray(1).
-%   RawDataChannel2: 3D matrix containing the raw data of the second 
+%   RawDataChannel2: 3D matrix containing the raw data of the second
 %                    channel corresponding to the trajectory TRArray(2).
 %   MovieParams: A structure of display parameters for the movie. See
-%                smi_vis.GenerateMovies.prepDefaults() for options. Note 
+%                smi_vis.GenerateMovies.prepDefaults() for options. Note
 %                that some of the defaults are changed to be better suited
 %                for dimer movies. Some additional fields relevant to dimer
 %                data are also added to this structure:
@@ -22,15 +22,15 @@ function [MovieParams] = createDimerMovie(MovieAxes, ...
 %                                      1 to create side-by-side movie
 %                                      (Default = 0)
 %                ColorMap: ColorMap used to display trajectories.
-%                          (Default = [0, 1, 0; 1, 0, 1], i.e., green 
+%                          (Default = [0, 1, 0; 1, 0, 1], i.e., green
 %                          channel 1 and magenta channel 2)
-%                ChannelNames: name labels for each channel. 
+%                ChannelNames: name labels for each channel.
 %                              (Default = {'Channel 1', 'Channel 2'})
 %                IndicateDimer: When true, indicate dimer events with a
 %                               special marking. (Default = true)
 %                IndicateDimerCandidate: When true, indicate which the data
 %                                        which was considered to be a dimer
-%                                        candidate in pre-processsing. 
+%                                        candidate in pre-processsing.
 %                                        (Default = true)
 %   VideoObject: Video writer object defining the movie that will be saved
 %                while preparing this movie (see MATLAB VideoWriter
@@ -115,20 +115,43 @@ if ~isempty(VideoObject)
 end
 
 % Define some parameters used in the display of dimer data.
-DimerParams = smi_vis.GenerateMovies.prepDefaults();
+DimerParams = MovieParams;
 DimerParams.TrajColor = [0, 0, 1; 0, 0, 1];
 TRDimerCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
     TRArray(1).StateSequence == 1);
 TRDimerCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
     TRArray(2).StateSequence == 1);
 TRDimer = smi_core.TrackingResults.catTR(TRDimerCh1, TRDimerCh2);
+DimerCandParams = MovieParams;
+DimerCandParams.LineStyle = '-';
+TRDimerCandCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
+    TRArray(1).DimerCandidateBool);
+TRDimerCandCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
+    TRArray(2).DimerCandidateBool);
+TRDimerCand = smi_core.TrackingResults.catTR(TRDimerCandCh1, TRDimerCandCh2);
+RemainderParams = MovieParams;
+RemainderParams.LineStyle = ':';
+TRRemainderCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
+    ~(TRArray(1).DimerCandidateBool | (TRArray(1).StateSequence==1)));
+TRRemainderCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
+    ~(TRArray(2).DimerCandidateBool | (TRArray(2).StateSequence==1)));
+TRRemainder = smi_core.TrackingResults.catTR(TRRemainderCh1, TRRemainderCh2);
 
 % Loop through the frames of raw data and prepare the movie.
 ScaledData = MovieGenerator.ScaledData;
-for ff = MovieGenerator.Params.ZFrames(1):MovieGenerator.Params.ZFrames(2)           
+MovieFigure = MovieAxes.Parent;
+for ff = MovieGenerator.Params.ZFrames(1):MovieGenerator.Params.ZFrames(2)
     % Make the current frame of the movie.
     smi_vis.GenerateMovies.makeFrame(MovieAxes, ...
-        TRArray, ScaledData(:, :, :, ff), MovieGenerator.Params, SMD, ff);
+        [], ScaledData(:, :, :, ff), MovieGenerator.Params, SMD, ff);
+    smi_vis.GenerateMovies.plotTrajectories(MovieAxes, ...
+        TRRemainder, [ff-RemainderParams.MaxTrajLength, ff], ...
+        RemainderParams.MaxTrajLength, ...
+        RemainderParams.TrajColor, 'LineStyle', RemainderParams.LineStyle);
+    smi_vis.GenerateMovies.plotTrajectories(MovieAxes, ...
+        TRDimerCand, [ff-DimerCandParams.MaxTrajLength, ff], ...
+        DimerCandParams.MaxTrajLength, ...
+        DimerCandParams.TrajColor, 'LineStyle', DimerCandParams.LineStyle);
     smi_vis.GenerateMovies.plotTrajectories(MovieAxes, ...
         TRDimer, [ff-DimerParams.MaxTrajLength, ff], ...
         DimerParams.MaxTrajLength, ...
@@ -148,7 +171,7 @@ for ff = MovieGenerator.Params.ZFrames(1):MovieGenerator.Params.ZFrames(2)
         % too fast.
         pause(1 / MovieGenerator.Params.FrameRate);
     else
-        FrameData = print(PlotFigure, ...
+        FrameData = print(MovieFigure, ...
             '-RGBImage', '-opengl', ResolutionString);
         VideoObject.writeVideo(FrameData);
     end
