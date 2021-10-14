@@ -10,7 +10,7 @@ function [] = setVitalParams(obj)
 
 % Set default values for the vital parameters.
 DataProvided = ~isempty(obj.RawData);
-TrajProvided = ~isempty(obj.TR.FrameNum);
+TrajProvided = ~isempty(cell2mat({obj.TR.FrameNum}.'));
 assert(DataProvided || TrajProvided, ...
     ['You must set GenerateMovies.RawData or ', ...
     'GenerateMovies.TR before calling this method.'])
@@ -30,21 +30,21 @@ end
 if isempty(obj.Params.XPixels)
     if (TrajProvided && DataProvided)
         obj.Params.XPixels = ...
-            [1, max(obj.TR(1).XSize, size(obj.RawData, 2))];
+            [1, max(obj.TR(1).XSize, DataSize(2))];
     elseif TrajProvided
         obj.Params.XPixels = [1, obj.TR(1).XSize];
     elseif DataProvided
-        obj.Params.XPixels = [1, size(obj.RawData, 2)];
+        obj.Params.XPixels = [1, DataSize(2)];
     end
 end
 if isempty(obj.Params.YPixels)
     if (TrajProvided && DataProvided)
         obj.Params.YPixels = ...
-            [1, max(obj.TR(1).YSize, size(obj.RawData, 1))];
+            [1, max(obj.TR(1).YSize, DataSize(1))];
     elseif TrajProvided
         obj.Params.YPixels = [1, obj.TR(1).YSize];
     elseif DataProvided
-        obj.Params.YPixels = [1, size(obj.RawData, 1)];
+        obj.Params.YPixels = [1, DataSize(1)];
     end
 end
 if isempty(obj.Params.TrajColor)

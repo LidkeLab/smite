@@ -49,7 +49,7 @@ if obj.Params.AutoClip
     XPixels = [max(1, MinX-obj.Params.NPadPixels), ...
         min(XSize, MaxX+obj.Params.NPadPixels)];
     XWidth = max(diff(XPixels), obj.Params.MinXYRange);
-    XCenterIdeal = mean(XWidth);
+    XCenterIdeal = mean(XPixels);
     XStart = max(1, floor(min(XCenterIdeal-XWidth/2, XSize-XWidth)));
     XEnd = min(XSize, ceil(XStart+XWidth));
     obj.Params.XPixels = [XStart, XEnd];
@@ -59,7 +59,7 @@ if obj.Params.AutoClip
     YPixels = [max(1, MinY-obj.Params.NPadPixels), ...
         min(YSize, MaxY+obj.Params.NPadPixels)];
     YWidth = max(diff(YPixels), obj.Params.MinXYRange);
-    YCenterIdeal = mean(YWidth);
+    YCenterIdeal = mean(YPixels);
     YStart = max(1, floor(min(YCenterIdeal-YWidth/2, YSize-YWidth)));
     YEnd = min(YSize, ceil(YStart+YWidth));
     obj.Params.YPixels = [YStart, YEnd];
