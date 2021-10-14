@@ -10,18 +10,18 @@ function [] = setVitalParams(obj)
 
 % Set default values for the vital parameters.
 DataProvided = ~isempty(obj.RawData);
-TrajProvided = ~isempty(obj.TR);
+TrajProvided = ~isempty(obj.TR.FrameNum);
 assert(DataProvided || TrajProvided, ...
     ['You must set GenerateMovies.RawData or ', ...
     'GenerateMovies.TR before calling this method.'])
 if isempty(obj.Params.ZFrames)
     if (TrajProvided && DataProvided)
         obj.Params.ZFrames = ...
-            [1, max(obj.TR(1).NFrames, size(obj.RawData, 3))];
+            [1, max(obj.TR(1).NFrames, size(obj.RawData, 4))];
     elseif TrajProvided
         obj.Params.ZFrames = [1, obj.TR(1).NFrames];
     elseif DataProvided
-        obj.Params.ZFrames = [1, size(obj.RawData, 3)];
+        obj.Params.ZFrames = [1, size(obj.RawData, 4)];
     end
 end
 if isempty(obj.Params.XPixels)

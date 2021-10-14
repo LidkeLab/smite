@@ -7,9 +7,9 @@ function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMD, VideoObject)
 %   PlotAxes: Axes in which the trajectories will be plotted.
 %             (Default = gca())
 %   TR: Tracking Results structure (see smi_core.TrackingResults).
-%   ScaledData: Data corresponding to the trajectories in 'TR'.  The third
-%               dimension index is assumed to correspond directly with the
-%               frame number.
+%   ScaledData: Data corresponding to the trajectories in 'TR'.  The fourth
+%               dimension is assumed to correspond directly with the frame
+%               number.
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
 %   SMD: Single Molecule Data structure containing additional localizations
@@ -18,8 +18,7 @@ function [] = playMovie(PlotAxes, TR, ScaledData, Params, SMD, VideoObject)
 %        associated as trajectories yet). (Default is an empty SMD)
 %   VideoObject: Video writer object defining the movie that will be saved
 %                while preparing this movie (see MATLAB VideoWriter
-%                object).  This object should be opened and closed outside
-%                of this method for proper usage.
+%                object).
 %                (Default = [] and the movie isn't saved)
 
 % Created by:

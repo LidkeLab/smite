@@ -32,7 +32,7 @@ classdef GenerateMovies < handle
         %       corresponds to obj.LineHandles(n).
         LineHandles
         
-        % Axes in which the movie is prepared if using generateMovie().
+        % Axes in which the movie is prepared if using obj.gui().
         MovieAxes
                 
         % Rescaled/cropped version of property RawData (see rescaleData())
