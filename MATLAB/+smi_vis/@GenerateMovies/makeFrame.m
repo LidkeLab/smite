@@ -1,5 +1,5 @@
 function [LineHandles] = makeFrame(PlotAxes, ...
-    TR, ScaledData, Params, SMD, Frame)
+    TR, ScaledData, Params, SMF, SMD, Frame)
 %makeFrame plots a single frame for the trajectory movie.
 % This method plots a single frame of the movie being prepared.
 %
@@ -10,6 +10,8 @@ function [LineHandles] = makeFrame(PlotAxes, ...
 %               'TR' for frame 'Frame'.
 %   Params: Structure of display parameters that will be applied to
 %           the movie (see smi_vis.GenerateMovies.prepDefaults()).
+%   SMF: Single Molecule Fitting structure (used for Data.PixelSize and
+%        Data.FrameRate).
 %   SMD: Single Molecule Data structure containing additional localizations
 %        that we want to show in the movie (e.g., this might be the results
 %        from a box finding algorithm, where the localizations aren't
@@ -43,6 +45,12 @@ surface(PlotAxes, Params.XPixels + [0, 1], Params.YPixels + [0, 1], ...
 smi_vis.GenerateMovies.plotTrajectories(PlotAxes, ...
     SMD, [Frame-Params.MaxTrajLength, Frame], Params.MaxTrajLength, ...
     Params.SMDColor, 'Marker', Params.SMDMarker, 'LineStyle', 'none');
+
+% Add a timestamp.
+if Params.AddTimeStamp
+    smi_vis.GenerateMovies.addTimeStamp(PlotAxes, Frame, ...
+        SMF.Data.FrameRate, Params);
+end
 
 
 end

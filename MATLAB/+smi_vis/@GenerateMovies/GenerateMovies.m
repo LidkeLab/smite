@@ -108,7 +108,7 @@ classdef GenerateMovies < handle
     end
     
     methods (Static)
-        playMovie(PlotAxes, TR, ScaledData, Params, SMD, VideoObject)
+        playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, VideoObject)
         [Params] = prepDefaults();
     end
     
@@ -119,7 +119,8 @@ classdef GenerateMovies < handle
         [LineHandles] = plotTrajectories(PlotAxes, ...
             TR, FrameRange, MaxTrajLength, Color, varargin);
         [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, ...
-            Params, SMD, Frame);
+            Params, SMF, SMD, Frame);
+        addTimeStamp(PlotAxes, Frame, FrameRate, Params)
     end
     
     

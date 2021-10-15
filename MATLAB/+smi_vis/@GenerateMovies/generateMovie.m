@@ -15,7 +15,7 @@ obj.prepAxes()
 
 % Play the movie.
 obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...
-    obj.Params, obj.SMD, obj.VideoObject)
+    obj.Params, obj.SMF, obj.SMD, obj.VideoObject)
 
 
 end

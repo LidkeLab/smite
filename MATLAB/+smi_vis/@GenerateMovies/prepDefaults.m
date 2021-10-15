@@ -67,6 +67,8 @@ function [Params] = prepDefaults()
 %           NPadFrames: Number of padding frames added around frames of
 %                       trajectories in TR when AutoClip = true, otherwise
 %                       this is not used. (pixels)(Default = 10)
+%           AddTimeStamp: Add a frame/time stamp in a corner of the movie.
+%                         (Default = false)
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -91,6 +93,7 @@ Params.AutoClip = false;
 Params.MinXYRange = 20;
 Params.NPadPixels = 5;
 Params.NPadFrames = 10;
+Params.AddTimeStamp = false;
 
 
 end
