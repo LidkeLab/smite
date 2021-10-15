@@ -202,11 +202,11 @@ end
             TempParams.MaxTrajLength = inf;
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, obj.TRInternal, ...
                 obj.ScaledData(:, :, :, SliderValue), ...
-                TempParams, obj.SMD, SliderValue);
+                TempParams, obj.SMF, obj.SMD, SliderValue);
         else
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, obj.TRInternal, ...
                 obj.ScaledData(:, :, :, SliderValue), ...
-                obj.Params, obj.SMD, SliderValue);
+                obj.Params, obj.SMF, obj.SMD, SliderValue);
         end
         
         % Set the callback function for the line handles.
