@@ -14,7 +14,7 @@ obj.prepRawData()
 obj.prepAxes()
 
 % Play the movie.
-obj.playMovie(obj.MovieAxes, obj.TR, obj.ScaledData, ...
+obj.playMovie(obj.MovieAxes, obj.TRInternal, obj.ScaledData, ...
     obj.Params, obj.SMF, obj.SMD, obj.VideoObject)
 
 

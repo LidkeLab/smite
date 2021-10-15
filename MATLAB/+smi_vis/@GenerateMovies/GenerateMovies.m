@@ -15,7 +15,7 @@ classdef GenerateMovies < handle
         
         % Raw data displayed under trajectories. (YSizexXSizex3xNFrames)
         RawData
-
+        
         % Single Molecule Fitting structure with pixel size and framerate.
         SMF = smi_core.SingleMoleculeFitting;
         
@@ -34,7 +34,7 @@ classdef GenerateMovies < handle
         
         % Axes in which the movie is prepared if using obj.gui().
         MovieAxes
-                
+        
         % Rescaled/cropped version of property RawData (see rescaleData())
         % NOTE: I've made this a protected property so that we can ensure
         %       some of obj.Params are updated when this is written to
@@ -63,6 +63,11 @@ classdef GenerateMovies < handle
         TimeUnitString
     end
     
+    properties (Hidden, GetAccess = 'protected')
+        % Internally modified version of the user set field 'TR'.
+        TRInternal
+    end
+    
     methods
         function obj = GenerateMovies()
             %GenerateMovies is the class constructor.
@@ -70,11 +75,17 @@ classdef GenerateMovies < handle
         end
         
         function set.Params(obj, ParamsInput)
-            % Ensure that the class property 'Params' is complete (i.e., 
+            % Ensure that the class property 'Params' is complete (i.e.,
             % that it has all necessary fields set) and that they are typed
             % correctly (e.g., logical, char, ...).
             DefaultParams = obj.prepDefaults();
             obj.Params = smi_helpers.padStruct(ParamsInput, DefaultParams);
+        end
+        
+        function set.TR(obj, TRInput)
+            % Update TRMod whenever the user resets the TR.
+            obj.TR = TRInput;
+            obj.TRInternal = TRInput;
         end
         
         function [LengthUnitString] = get.LengthUnitString(obj)
@@ -120,6 +131,8 @@ classdef GenerateMovies < handle
             TR, FrameRange, MaxTrajLength, Color, varargin);
         [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, ...
             Params, SMF, SMD, Frame);
+        [Params] = defineCropROI(TR, Params);
+        [RawData] = cropRawData(RawData, Params);
         addTimeStamp(PlotAxes, Frame, FrameRate, Params)
     end
     

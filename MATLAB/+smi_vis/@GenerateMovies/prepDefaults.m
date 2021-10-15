@@ -12,8 +12,11 @@ function [Params] = prepDefaults()
 %                          trajectory that will be plotted.
 %                          (frames)(Default = inf)
 %           XPixels: Range of X values shown in movie.
-%                    ([MinPixel, MaxPixel])(pixels)
-%                    (Default = [])
+%                    ([MinPixel, MaxPixel])(pixels)(Default = [])
+%                    NOTE: XPixels, YPixels, and ZFrames are kept as
+%                          separate parameters (i.e., instead of lumping
+%                          into one ROI parameter) to allow one to be set
+%                          without having to set the others.
 %           YPixels: Range of Y values shown in movie.
 %                    ([MinPixel, MaxPixel])(pixels)
 %                    (Default = [])
@@ -56,7 +59,7 @@ function [Params] = prepDefaults()
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
 %                      (Default = [])
-%           AutoClip: Flag to request clipping to data present in TR.  This
+%           AutoCrop: Flag to request cropping to data present in TR.  This
 %                     is enforced in GenerateMovies.prepRawData() and 
 %                     nowhere else as of this writing. (Default = false)
 %           MinXYRange: Minimum XY range allowed when AutoClip = true,
@@ -89,7 +92,7 @@ Params.LineOfSite = [0, 90];
 Params.Resolution = 0;
 Params.FrameRate = 10;
 Params.TrajColor = [];
-Params.AutoClip = false;
+Params.AutoCrop = false;
 Params.MinXYRange = 20;
 Params.NPadPixels = 5;
 Params.NPadFrames = 10;
