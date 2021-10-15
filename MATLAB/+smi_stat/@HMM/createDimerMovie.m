@@ -1,5 +1,5 @@
 function [MovieParams] = createDimerMovie(MovieAxes, ...
-    TRArray, RawDataChannel1, RawDataChannel2, MovieParams, VideoObject)
+    TRArray, RawDataChannel1, RawDataChannel2, MovieParams, SMF, VideoObject)
 %createDimerMovie creates a movie of trajectories superimposed on raw data.
 % This method will create a movie of a dimer event contained in TRArray
 % superimposed on the images present in RawData.
@@ -32,6 +32,8 @@ function [MovieParams] = createDimerMovie(MovieAxes, ...
 %                                        which was considered to be a dimer
 %                                        candidate in pre-processsing.
 %                                        (Default = true)
+%   SMF: Single Molecule Fitting structure (used for Data.PixelSize and
+%        Data.FrameRate).
 %   VideoObject: Video writer object defining the movie that will be saved
 %                while preparing this movie (see MATLAB VideoWriter
 %                object).  This object should be opened and closed outside
@@ -116,16 +118,16 @@ if ~isempty(VideoObject)
 end
 
 % Define some parameters used in the display of dimer data.
-DimerParams = MovieParams;
+DimerParams = MovieGenerator.Params;
 DimerParams.TrajColor = [0, 0, 1; 0, 0, 1];
 TRDimerCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
     TRArray(1).StateSequence == 1);
 TRDimerCh2 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(2), ...
     TRArray(2).StateSequence == 1);
 TRDimer = smi_core.TrackingResults.catTR(TRDimerCh1, TRDimerCh2);
-DimerCandParams = MovieParams;
+DimerCandParams = MovieGenerator.Params;
 DimerCandParams.LineStyle = '-';
-RemainderParams = MovieParams;
+RemainderParams = MovieGenerator.Params;
 RemainderParams.LineStyle = ':';
 TRRemainderCh1 = smi_core.SingleMoleculeData.isolateSubSMD(TRArray(1), ...
     ~(TRArray(1).DimerCandidateBool | (TRArray(1).StateSequence==1)));
@@ -135,11 +137,11 @@ TRRemainder = smi_core.TrackingResults.catTR(TRRemainderCh1, TRRemainderCh2);
 
 % Loop through the frames of raw data and prepare the movie.
 ScaledData = MovieGenerator.ScaledData;
-MovieFigure = MovieAxes.Parent;
+MovieFigure = ancestor(MovieAxes, 'figure');
 for ff = MovieGenerator.Params.ZFrames(1):MovieGenerator.Params.ZFrames(2)
     % Make the current frame of the movie.
     smi_vis.GenerateMovies.makeFrame(MovieAxes, ...
-        [], ScaledData(:, :, :, ff), MovieGenerator.Params, SMD, ff);
+        [], ScaledData(:, :, :, ff), MovieGenerator.Params, SMF, SMD, ff);
     smi_vis.GenerateMovies.plotTrajectories(MovieAxes, ...
         TRRemainder, [ff-RemainderParams.MaxTrajLength, ff], ...
         RemainderParams.MaxTrajLength, ...
