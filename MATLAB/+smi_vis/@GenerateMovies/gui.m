@@ -116,7 +116,7 @@ if ~isempty(obj.RawData)
     obj.prepAxes()
     obj.makeFrame(obj.MovieAxes, ...
         obj.TRInternal, obj.ScaledData(:, :, :, end), ...
-        obj.Params, obj.SMD, obj.Params.ZFrames(1));
+        obj.Params, obj.SMF, obj.SMD, obj.Params.ZFrames(1));
 end
 
 
@@ -161,8 +161,8 @@ end
             TempParams = obj.Params;
             TempParams.MaxTrajLength = inf;
             obj.LineHandles = obj.makeFrame(obj.MovieAxes, ...
-                obj.TRInternal, obj.ScaledData(:, :, :, end), TempParams, obj.SMD, ...
-                TempParams.ZFrames(2));
+                obj.TRInternal, obj.ScaledData(:, :, :, end), TempParams, ...
+                obj.SMF, obj.SMD, TempParams.ZFrames(2));
             
             % Set the callback function for the line handles.
             setLineCallbacks()
