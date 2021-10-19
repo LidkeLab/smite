@@ -21,7 +21,7 @@ if (~exist('SimParams', 'var') || isempty(SimParams))
     SimParams = smi_sim.SimSPT.defineDefaultParams();
 else
     DefaultParams = smi_sim.SimSPT.defineDefaultParams();
-    SimParams = smi_helpers.padParams(SimParams, DefaultParams);
+    SimParams = smi_helpers.padStruct(SimParams, DefaultParams);
 end
 
 % Prepare the SMD.
