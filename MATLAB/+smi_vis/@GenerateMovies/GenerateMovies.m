@@ -89,6 +89,11 @@ classdef GenerateMovies < handle
             obj.DataIsPrepped = false;
         end
         
+        function set.RawData(obj, RawDataInput)
+            obj.RawData = RawDataInput;
+            obj.DataIsPrepped = false;
+        end
+        
         function set.TR(obj, TRInput)
             % Update TRMod whenever the user resets the TR.
             obj.TR = TRInput;
