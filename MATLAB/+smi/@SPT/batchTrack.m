@@ -72,11 +72,13 @@ else
 end
 
 % Loop through the files and perform tracking.
+SMFInit = copy(obj.SMF);
 for ff = 1:NFiles
     if (obj.Verbose > 0)
         fprintf('smi.SPT.batchTrack(): Tracking file %i of %i...\n', ...
             ff, NFiles)
     end
+    obj.SMF = SMFInit;
     obj.SMF.Data.RegistrationFilePath = TransformList{ff};
     obj.SMF.Data.FileName = FileNames(ff);
     [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();

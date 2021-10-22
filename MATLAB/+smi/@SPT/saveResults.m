@@ -60,8 +60,7 @@ if obj.GeneratePlots
     MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
         EmptySMD, obj.TR(1).NFrames);
     Traj2DFileName = [BaseName, '_plot2D'];
-    saveas(PlotFigure, ...
-        fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
     saveas(PlotFigure, ...
         fullfile(obj.SMF.Data.ResultsDir, [Traj2DFileName, '.png']))
     
@@ -72,8 +71,7 @@ if obj.GeneratePlots
     MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
         EmptySMD, obj.TR(1).NFrames);
     Traj3DFileName = [BaseName, '_plot3D'];
-    saveas(PlotFigure, ...
-        fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
     saveas(PlotFigure, ...
         fullfile(obj.SMF.Data.ResultsDir, [Traj3DFileName, '.png']))
     close(PlotFigure);

@@ -239,6 +239,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Tracking.MaxZScorePhotons=inf;
             obj.Tracking.MaxZScoreD=inf;
             obj.Tracking.NRecursionsMax=10;
+            obj.Tracking.ParamsHistory={};
             obj.Tracking.MaxRelativeChange=1e-5;
             obj.Tracking.TryLowPValueLocs=false;
             
@@ -322,6 +323,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
             obj.SMFFieldNotes.Tracking.NRecursionsMax.Units = '';
+            obj.SMFFieldNotes.Tracking.ParamsHistory.Units = '';
             obj.SMFFieldNotes.Tracking.MaxRelativeChange.Units = '';
             obj.SMFFieldNotes.Tracking.TryLowPValueLocs.Units = 'logical';
             
@@ -524,6 +526,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 'culled after tracking']);
             obj.SMFFieldNotes.Tracking.NRecursionsMax.Tip = ...
                 'Max. # of recursions permitted if recursively tracking.';
+            obj.SMFFieldNotes.Tracking.ParamsHistory.Tip = ...
+                sprintf(['History of parameters used if recursively ', ...
+                'tracking. Not to be edited by the user.']);
             obj.SMFFieldNotes.Tracking.MaxRelativeChange.Tip = ...
                 sprintf(['Max. relative change in parameters allowed\n', ...
                 'before ending recursive tracking']);
@@ -1087,6 +1092,12 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 if mod(TrackingInput.NRecursionsMax, 1)
                     error(['''SMF.Tracking.NRecursionsMax'' ', ...
                         'must be an integer.'])
+                end
+            end
+            if isfield(TrackingInput, 'ParamsHistory')
+                if ~iscell(TrackingInput.ParamsHistory)
+                    error(['''SMF.Tracking.ParamsHistory'' ', ...
+                        'must be a cell array.'])
                 end
             end
             if isfield(TrackingInput, 'MaxRelativeChange')

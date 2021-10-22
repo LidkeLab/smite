@@ -20,7 +20,7 @@ end
 % NOTE: On the first pass, the diffusion constant in obj.SMF.Tracking.D
 %       will be used for all cost matrices.
 obj.DiffusionConstant = [];
-obj.ParamsHistory = {obj.SMF.Tracking};
+obj.SMF.Tracking.ParamsHistory = {obj.SMF.Tracking};
 obj.generateTrajectories()
 
 % If needed, perform the recursive tracking.
@@ -88,7 +88,7 @@ for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
     
     % Check if the parameters have changed below the requested relative
     % change.  If so, we can stop early.
-    PreviousParams = obj.ParamsHistory{rr};
+    PreviousParams = obj.SMF.Tracking.ParamsHistory{rr};
     DChange = abs((PreviousParams.D-obj.SMF.Tracking.D) ...
         / PreviousParams.D);
     KOnChange = abs((PreviousParams.K_on-obj.SMF.Tracking.K_on) ...
@@ -102,7 +102,7 @@ for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
         return
     end
     % Store the current set of tracking parameters.
-    obj.ParamsHistory{rr+1} = obj.SMF.Tracking;
+    obj.SMF.Tracking.ParamsHistory{rr+1, 1} = obj.SMF.Tracking;
     
     % Re-track the data.
     obj.SMD.ConnectID = [];

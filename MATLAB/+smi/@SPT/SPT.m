@@ -70,10 +70,6 @@ classdef SPT < handle
        
         % Tracking Results structure (see smi_core.TrackingResults)
         TR
-        
-        % History of parameters used with iterative tracking.
-        % (see obj.autoTrack() for usage and organization)
-        ParamsHistory = cell(0);
     end
     
     properties (Hidden)
