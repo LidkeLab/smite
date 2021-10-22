@@ -41,6 +41,9 @@ classdef GenerateMovies < handle
         %       (which I only do in obj.rescaleData())
         ScaledData
         
+        % Flag indicating 'ScaledData' is ready to use.
+        DataIsPrepped = false
+        
         % MATLAB VideoWriter object used to write a movie to a file.
         VideoObject
     end
@@ -80,6 +83,10 @@ classdef GenerateMovies < handle
             % correctly (e.g., logical, char, ...).
             DefaultParams = obj.prepDefaults();
             obj.Params = smi_helpers.padStruct(ParamsInput, DefaultParams);
+            
+            % Anytime obj.Params is set, we should re-prep. the data (since
+            % its scaling might change based on the parameters).
+            obj.DataIsPrepped = false;
         end
         
         function set.TR(obj, TRInput)

@@ -11,6 +11,11 @@ function [] = prepRawData(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
+% Check if the flag obj.DataIsScaled is set.  If it is, we can exit early.
+if obj.DataIsPrepped
+    return
+end
+
 % If needed, reshape the raw data.
 DataSize = size(obj.RawData, 1:4);
 if ((DataSize(4)==1) && (DataSize(3)~=3))
@@ -67,6 +72,7 @@ for cc = 1:NColorChannels
         smi_vis.contrastStretch(obj.RawData(:, :, cc, :), [0; 1], ...
         obj.Params.PercentileCeiling, obj.Params.MinScaleIntensity);
 end
+obj.DataIsPrepped = true;
 
 
 end
