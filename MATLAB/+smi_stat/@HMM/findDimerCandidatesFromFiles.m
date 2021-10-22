@@ -1,5 +1,5 @@
 function [TRArray, FileList] = findDimerCandidatesFromFiles(...
-    FileList1, FileList2, ...
+    FileDir, FilePatterns, ...
     MaxDimerSeparation, MaxSeparation, MinValidPoints, MinMedianPhotons, ...
     BorderPadding, Verbose)
 %findDimerCandidatesFromFiles creates a TRArray from the provided files.
@@ -8,13 +8,12 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 % the TRArray.
 %
 % INPUTS:
-%   FileList1: Cell array containing the channel 1 file list, with the
-%              entries each being a full path to a "*Results.mat" file
-%              corresponding to channel 1 data saved in a 'TR' structure.
-%   FileList2: Cell array containing the channel 2 file list, with the
-%              ordering matching that of FileList1 (i.e., FileList2{ii} 
-%              contains the channel 2 file corresponding to the channel 1
-%              file FileList1{ii}).
+%   FileDir: Directory containing the tracking results files.
+%   FilePatterns: Patterns to match to find and pair tracking results in
+%                 FileDir. The pattern can contain a wildcard '*' but
+%                 is otherwise a normal string. 
+%                 (Default = {'*Channel1_Results.mat; 
+%                             '*Channel2_Results.mat'})
 %   MaxDimerSeparation: Maximum value of the minimum trajectory separation
 %                       for a pair to be considered a dimer candidate.
 %                       (pixels)(Default = 1)
@@ -65,6 +64,9 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 
 
 % Set default parameters if needed.
+if (~exist('FilePatterns', 'var') || isempty(FilePatterns))
+    FilePatterns = {'*Channel1_Results.mat'; '*Channel2_Results.mat'};
+end
 if (~exist('MaxDimerSeparation', 'var') || isempty(MaxDimerSeparation))
     MaxDimerSeparation = 1;
 end
@@ -83,6 +85,14 @@ end
 if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 0;
 end
+
+% Search for files in the 'FileDir' and pair them together.
+FilesCh1 = dir(fullfile(FileDir, FilePatterns{1}));
+FilesCh1 = {FilesCh1.name}.';
+FilesCh2 = dir(fullfile(FileDir, FilePatterns{2}));
+FilesCh2 = {FilesCh2.name}.';
+[FileList1, FileList2] = smi_helpers.pairText(FilesCh1, FilesCh2, ...
+    erase(FilePatterns, '*'));
 
 % Loop through the provided files, load them, and construct the TRArray.
 FileList = {};
