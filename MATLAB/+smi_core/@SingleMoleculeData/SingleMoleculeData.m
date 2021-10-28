@@ -48,8 +48,8 @@ classdef SingleMoleculeData
     %   DriftX:         X drift relative to first frame (Pixels) (NFrames x NDatasets)
     %   DriftY:         Y drift relative to first frame (Pixels) (NFrames x NDatasets)
     %   DriftZ:         Z drift relative to first frame (Pixels) (NFrames x NDatasets)
-    %   IsTransformed:   Flag indicating channel reg. was performed on this SMD
-    %
+    %   IsTransformed:  Flag indicating channel reg. was performed on this SMD
+    %   RegError:       Error in channel registration. (Pixels)
     % SEE ALSO:
     %   smi_core.SMF, smi_core.TR
     %
@@ -98,6 +98,7 @@ classdef SingleMoleculeData
             SMD.XSize=[];
             SMD.YSize=[];
             SMD.IsTransformed=[];
+            SMD.RegError=[];
         end
         
         [SMD] = catSMD(SMD1, SMD2)

@@ -70,6 +70,15 @@ classdef SPT < handle
        
         % Tracking Results structure (see smi_core.TrackingResults)
         TR
+        
+        % 'SMD' before channel registration is applied.
+        SMDPreCR = struct([]);
+        
+        % Pre-threshold pre-channel registration 'SMD'.
+        SMDPreThreshPreCR = struct([]);
+       
+        % Tracking Results structure before channel registration.
+        TRPreCR = struct([]);
     end
     
     properties (Hidden)

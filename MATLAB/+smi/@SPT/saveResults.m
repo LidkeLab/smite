@@ -23,13 +23,25 @@ ResultsFileName = [BaseName, '_Results.mat'];
 
 % Move the data structures of interest into the workspace with appropriate
 % names for saving.
-SMD = obj.SMDPreThresh;
+SMD = obj.SMD;
+SMDPreThresh = obj.SMDPreThresh;
 TR = obj.TR;
 SMF = obj.SMF;
 
 % Save the data in a .mat file.
 save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileName), ...
-    'SMD', 'TR', 'SMF');
+    'SMD', 'SMDPreThresh', 'TR', 'SMF');
+
+% If pre-channel registration results were stored, we'll save those too.
+if ~(isempty(obj.SMDPreCR) || isempty(obj.SMDPreThreshPreCR) ...
+        || isempty(obj.TRPreCR))
+    ResultsFileNamePreCR = [BaseName, '_Results_PreCR.mat'];
+    SMD = obj.SMDPreCR;
+    SMDPreThresh = obj.SMDPreThreshPreCR;
+    TR = obj.TRPreCR;
+    save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileNamePreCR), ...
+        'SMD', 'SMDPreThresh', 'TR', 'SMF');
+end
 
 % Create a movie of the tracks and save the resulting movie.
 if obj.GenerateMovies
