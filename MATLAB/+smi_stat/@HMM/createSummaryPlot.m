@@ -100,7 +100,7 @@ LengthUnitString = ...
 TimeDimensionString = ...
     smi_helpers.arrayMUX({'Frame number', 'Time'}, UnitFlag);
 TimeUnitString = ...
-    smi_helpers.arrayMUX({'frame', 'second'}, UnitFlag);
+    smi_helpers.arrayMUX({'frames', 'seconds'}, UnitFlag);
 
 % Add a title to the summary plot.
 TrajectoryID1 = TRArray(1).ConnectID;
@@ -124,8 +124,19 @@ if (((~isempty(TRArray(2).IsTransformed)&&TRArray(2).IsTransformed) ...
 end
 sgtitle(FigureHandle, TitleString, 'FontSize', 8, 'Interpreter', 'none');
 
+% Determine how many rows of subplots we want (this should be updated as
+% new plots are added!).
+if (isfield(TRArray, 'XRegCorrection') ...
+        && isfield(TRArray, 'YRegCorrection'))
+    % If thesse fields are present, we'll make an additional plot and thus
+    % need another row!
+    NPlotRows = 5;
+else
+    NPlotRows = 4;
+end
+
 % Generate the state sequence + separation plot.
-PlotAxes = subplot(4, 2, 1:2, 'Parent', FigureHandle);
+PlotAxes = subplot(NPlotRows, 2, 1:2, 'Parent', FigureHandle);
 hold(PlotAxes, 'on')
 smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
     'ViterbiSequence', TRArray, SMF, DisplayParams, UnitFlag);
@@ -139,7 +150,7 @@ yyaxis(PlotAxes, 'right')
 ylabel(PlotAxes, 'State', 'Interpreter', 'Latex')
 
 % Plot the emission probabilities and the state sequence.
-PlotAxes = subplot(4, 2, 3:4, 'Parent', FigureHandle);
+PlotAxes = subplot(NPlotRows, 2, 3:4, 'Parent', FigureHandle);
 hold(PlotAxes, 'on');
 smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
     'EmissionProbability', TRArray, SMF, DisplayParams, UnitFlag);
@@ -156,7 +167,7 @@ legend(PlotAxes, ...
     'State Sequence'}, 'Location', 'best')
 
 % Plot the entire track, color coding the dimer state.
-PlotAxes = subplot(4, 2, 5, 'Parent', FigureHandle);
+PlotAxes = subplot(NPlotRows, 2, 5, 'Parent', FigureHandle);
 hold(PlotAxes, 'on');
 smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
     'TrajectoryPlot3D', TRArray, SMF, DisplayParams, UnitFlag);
@@ -172,7 +183,7 @@ legend(PlotAxes, ...
     'Dimer State'}, 'Location', 'best');
 
 % Plot the entire track in 2D to help identify edge effects.
-PlotAxes = subplot(4, 2, 6, 'Parent', FigureHandle);
+PlotAxes = subplot(NPlotRows, 2, 6, 'Parent', FigureHandle);
 hold(PlotAxes, 'on');
 smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
     'TrajectoryPlot2D', TRArray, SMF, DisplayParams, UnitFlag);
@@ -185,7 +196,7 @@ legend(PlotAxes, ...
     'Dimer State'}, 'Location', 'best');
 
 % Plot the x and y separations in a scatterplot.
-PlotAxes = subplot(4, 2, 7, 'Parent', FigureHandle);
+PlotAxes = subplot(NPlotRows, 2, 7, 'Parent', FigureHandle);
 hold(PlotAxes, 'on');
 smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
     'XYSeparationPlot', TRArray, SMF, DisplayParams, UnitFlag);
@@ -194,10 +205,23 @@ xlabel(PlotAxes, sprintf('X Separation (%s)', LengthUnitString), ...
 ylabel(PlotAxes, sprintf('Y Separation (%s)', LengthUnitString), ...
     'Interpreter', 'Latex')
 
+% Plot the photons over time.
+PlotAxes = subplot(NPlotRows, 2, 8, 'Parent', FigureHandle);
+hold(PlotAxes, 'on');
+plot(PlotAxes, TRArray(1).FrameNum(TRArray(1).DimerCandidateBool), ...
+    TRArray(1).Photons(TRArray(1).DimerCandidateBool), 'gx')
+plot(PlotAxes, TRArray(2).FrameNum(TRArray(2).DimerCandidateBool), ...
+    TRArray(2).Photons(TRArray(2).DimerCandidateBool), 'mo')
+xlabel(PlotAxes, ...
+    sprintf('%s (%s)', TimeDimensionString, TimeUnitString), ...
+    'Interpreter', 'Latex')
+ylabel(PlotAxes, 'Photons', 'Interpreter', 'Latex')
+legend(PlotAxes, {'Channel 1', 'Channel 2'}, 'Location', 'best')
+
 % Plot the registration corrections over time.
 if (isfield(TRArray, 'XRegCorrection') ...
         && isfield(TRArray, 'YRegCorrection'))
-    PlotAxes = subplot(4, 2, 8, 'Parent', FigureHandle);
+    PlotAxes = subplot(NPlotRows, 2, 9, 'Parent', FigureHandle);
     hold(PlotAxes, 'on');
     smi_stat.HMM.plotDimerPairInfo(PlotAxes, ...
         'RegistrationPlot', TRArray, SMF, DisplayParams, UnitFlag);
