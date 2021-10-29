@@ -33,7 +33,7 @@ classdef TrackingResults
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);
         [TR] = threshTrajLength(TR, MinTrackLength);
         [TR] = padTR(TR, TRPadding);
-        [TR] = catTR(TR1, TR2);
+        [TR] = catTR(TR1, TR2, CheckDims);
         
     end
 end
