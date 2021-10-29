@@ -66,7 +66,7 @@ end
 if (~exist('MinValidPoints', 'var') || isempty(MinValidPoints))
     MinValidPoints = 0;
 end
-if (~exist('MinPhotons', 'var') || isempty(MinMedianPhotons))
+if (~exist('MinMedianPhotons', 'var') || isempty(MinMedianPhotons))
     MinMedianPhotons = 0;
 end
 if (~exist('BorderPadding', 'var') || isempty(BorderPadding))
@@ -239,8 +239,8 @@ for ii = 1:numel(TR1)
                 median(TR1(ii).Photons(DimerCandidateBoolChannel1));
             MedianPhotonsCh2 = ...
                 median(TR2(jj).Photons(DimerCandidateBoolChannel2));
-            if ~(any(MedianPhotonsCh1>=MinMedianPhotons) ...
-                    && any(MedianPhotonsCh2>=MinMedianPhotons))
+            if ~((MedianPhotonsCh1>=MinMedianPhotons) ...
+                    && (MedianPhotonsCh2>=MinMedianPhotons))
                 continue
             end
             

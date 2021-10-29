@@ -76,7 +76,7 @@ end
 if (~exist('MinValidPoints', 'var') || isempty(MinValidPoints))
     MinValidPoints = 0;
 end
-if (~exist('MinPhotons', 'var') || isempty(MinMedianPhotons))
+if (~exist('MinMedianPhotons', 'var') || isempty(MinMedianPhotons))
     MinMedianPhotons = 0;
 end
 if (~exist('BorderPadding', 'var') || isempty(BorderPadding))
