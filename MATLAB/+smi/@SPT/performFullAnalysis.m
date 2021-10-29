@@ -75,12 +75,10 @@ if ~isempty(obj.SMF.Data.RegistrationFilePath)
             obj.SMDPreThreshPreCR = obj.SMDPreThresh;
             obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
                 RegistrationTransform{MatchedROI}, obj.SMDPreThresh);
-            obj.SMDPreThresh.RegError = RegistrationErrorLOO(MatchedROI) ...
-                * ones(size(obj.SMDPreThresh.FrameNum));
+            obj.SMDPreThresh.RegError = RegistrationErrorLOO(MatchedROI);
             obj.SMD = smi_core.ChannelRegistration.transformSMD(...
                 RegistrationTransform{MatchedROI}, obj.SMD);
-            obj.SMD.RegError = RegistrationErrorLOO(MatchedROI) ...
-                * ones(size(obj.SMD.FrameNum));
+            obj.SMD.RegError = RegistrationErrorLOO(MatchedROI);
         end
         obj.TRPreCR = smi_core.TrackingResults.convertSMDToTR(obj.SMDPreCR);
         obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);

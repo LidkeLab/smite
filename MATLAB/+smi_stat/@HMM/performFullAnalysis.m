@@ -41,6 +41,9 @@ NCandidates = size(TRArrayTrunc, 1);
 
 % Ensure that the arrays obj.DiffusionCoefficient and obj.RegistrationError
 % make sense based on the size of TRArray.
+if isfield(TRArray, 'RegError')
+    obj.RegistrationError = [TRArray(:, 1).RegError].';
+end
 NRegError = numel(obj.RegistrationError);
 if (NRegError ~= NCandidates)
     % In this case, we'll take the first entry of obj.RegistrationError and

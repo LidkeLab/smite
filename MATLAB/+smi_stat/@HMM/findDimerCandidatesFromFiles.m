@@ -93,6 +93,8 @@ FilesCh2 = dir(fullfile(FileDir, FilePatterns{2}));
 FilesCh2 = {FilesCh2.name}.';
 [FileList1, FileList2] = smi_helpers.pairText(FilesCh1, FilesCh2, ...
     erase(FilePatterns, '*'));
+FileList1 = fullfile(FileDir, FileList1);
+FileList2 = fullfile(FileDir, FileList2);
 
 % Loop through the provided files, load them, and construct the TRArray.
 FileList = {};
@@ -124,7 +126,7 @@ for ff = 1:numel(FileList1)
     TRArrayCurrent = smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
         MaxDimerSeparation, MaxSeparation, ...
         MinValidPoints, MinMedianPhotons, BorderPadding);
-    TRArray = smi_core.TrackingResults.catTR(TRArray, TRArrayCurrent);
+    TRArray = smi_core.TrackingResults.catTR(TRArray, TRArrayCurrent, false);
     FileList = [FileList; ...
         repmat([FileList1(ff), FileList2(ff)], size(TRArrayCurrent, 1), 1)];
 end
