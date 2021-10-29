@@ -34,8 +34,6 @@ end
 %       outside of the loop.
 UniqueTrajIDs = unique(SMD.ConnectID);
 NLocalizations = numel(SMD.FrameNum);
-SMDFields = fieldnames(SMD);
-SMDFields = SMDFields(ismember(SMDFields, SMDFields));
 NSMDFields = numel(SMDFields);
 for ii = numel(UniqueTrajIDs):-1:1
     % Create an index array corresponding only to the current trajectory.
