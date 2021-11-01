@@ -179,6 +179,10 @@ if obj.GeneratePlots
         'PaperSize', [8.5, 11], ...
         'Visible', FiguresVisible);
     obj.PlotParams.MaxYDisplaySep = obj.MaxSeparation;
+    StateSequenceAll = cell2mat({TRArrayDimer.StateSequence}.');
+    DimerCandAll = cell2mat({TRArrayDimer.DimerCandidateBool}.');
+    obj.PlotParams.MaxYDisplayState = ...
+        1.1 * max(StateSequenceAll(DimerCandAll));
     for ii = 1:size(TRArrayDimer, 1)
         % Generate the plot.
         obj.PlotParams.PairNumber = ii;
