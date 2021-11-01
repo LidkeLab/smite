@@ -32,6 +32,9 @@ classdef GenerateMovies < handle
         %       corresponds to obj.LineHandles(n).
         LineHandles
         
+        % Figure containing the GUI.
+        GUIFigure
+        
         % Axes in which the movie is prepared if using obj.gui().
         MovieAxes
         
