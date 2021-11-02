@@ -1,4 +1,5 @@
-function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
+function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, AnalysisID, ...
+                            ShowPlots, PlotDo)
 %generatePlots creates all histograms and plots for an SMD structure.
 %
 % INPUT:
@@ -11,6 +12,7 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
 %                 plots, like GaussIm
 %    PlotSaveDir2 Directory in which to save all the other (priority 2) plots
 %                 (typically, a subdirectory of PlotSaveDir1)
+%    AnalysisID   Analysis ID, if non-empty, to add to the filenames generated
 %    ShowPlots:   Flag for showing plots on the screen (Default = false)
 %    PlotDo:      Plots to make chosen from the following list:
 %                 "Photons"    intensity (estimated photons) histogram
@@ -39,9 +41,6 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
 %
 % OUTPUT:
 %    The figures are saved in .png format in PlotSaveDir1/2.
-%
-% REQUIRES:
-%    Dipimage toolbox (http://www.diplib.org/)
 
 % Created by:
 %    Hanieh Mazloom-Farsibaf, Marjolein Meddens Apr 2017 (Keith A. Lidke's lab)
@@ -68,6 +67,15 @@ if isempty(SMD.X)
    fprintf('No localization data to plot!\n');
    return;
 end
+
+if ~isempty(AnalysisID)
+   ID = ['_', AnalysisID];
+else
+   ID = '';
+end
+% BaseName is used to label plot files.
+[~, BaseName, ~] = fileparts(obj.SMF.Data.FileName{1});
+BaseName = [BaseName, ID];
 
 if ismember("Photons", PlotDo)
    %create Photons histogram
@@ -146,9 +154,6 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
       if ~ShowPlots; close(gcf); end
    end
 end
-
-% BaseName is used to label plot files.
-[~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
 
 if ismember("FitFrame", PlotDo)
    Nloc_frame = [];
@@ -263,6 +268,7 @@ end
           Vector_in=SMD.(FieldName);
           FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
           [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+          BaseName = [BaseName, ID];
           if ~isempty(PlotSaveDir2)
              FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
              saveas(FigH,(fullfile(PlotSaveDir2,FileName)),'png');
@@ -285,6 +291,7 @@ end
           xlim([0, 1]);
 
           [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+          BaseName = [BaseName, ID];
           if ~isempty(PlotSaveDir2)
              FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
              saveas(FigH,(fullfile(PlotSaveDir2,FileName)),'png');
@@ -298,6 +305,7 @@ end
        if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
           FigH = smi_core.DriftCorrection.plotCumDrift(SMD,FieldName);
           [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+          BaseName = [BaseName, ID];
           if ~isempty(PlotSaveDir2)
              FileName = [BaseName '_' CumName '_Cum.png'];
              saveas(FigH,(fullfile(PlotSaveDir2,FileName)),'png');

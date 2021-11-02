@@ -264,7 +264,7 @@ methods
         else
             fnextend = strcat('_Results_', obj.SMF.Data.AnalysisID, '.mat');
             fn = [f, fnextend];
-            SubDir = [f, obj.SMF.Data.AnalysisID];
+            SubDir = [f, '_', obj.SMF.Data.AnalysisID];
         end
 
         if obj.FullvsTest
@@ -294,7 +294,8 @@ methods
            save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
         end
         % Generate (and optionally) save various data plots/histograms.
-        obj.generatePlots(ResultsDir, ResultsSubDir, ShowPlots, obj.PlotDo);
+        obj.generatePlots(ResultsDir, ResultsSubDir, obj.SMF.Data.AnalysisID,...
+                          ShowPlots, obj.PlotDo);
     end
 
     % ---------------------------------------------------------------------
