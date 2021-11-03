@@ -3,7 +3,8 @@ SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.FileDir           = ...
    '\\rayleigh.phys.unm.edu\cell-path\Genmab\Data\10082020\Wien133_LQT_CD52_HexElect1\Cell_01\Label_01';
 SMF.Data.FileName         = {'Data_2020-10-8-17-58-54.h5'};
-SMF.Data.ResultsDir       = 'Y:\MJW\SR\Results';
+SMF.Data.ResultsDir       = 'Y:\Personal Folders\MJW\SR\Results';
+SMF.Data.AnalysisID       = 'ID';
 SMF.Data.CameraType       = 'EMCCD';
 SMF.Data.CameraGain       = 1;
 SMF.Data.CameraOffset     = 0;
