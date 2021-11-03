@@ -262,7 +262,7 @@ methods
             fn = [f, '_Results.mat'];
             SubDir = f;
         else
-            fnextend = strcat('_Results_', obj.SMF.Data.AnalysisID, '.mat');
+            fnextend = strcat('_', obj.SMF.Data.AnalysisID, '_Results.mat');
             fn = [f, fnextend];
             SubDir = [f, '_', obj.SMF.Data.AnalysisID];
         end
