@@ -560,6 +560,9 @@ propertiesToGUI()
                                 UIControls{nn}{mm}{1}.Value}) = ...
                                 processUserInput(UIControls{nn}{mm}{2}, ...
                                 CurrentPropertyValue);
+                        case 'Tracking.ParamsHistory'
+                            % We don't want to update ParamsHistory based
+                            % on the GUI.
                         otherwise
                             NotUpdated = true;
                     end
