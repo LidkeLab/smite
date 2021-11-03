@@ -300,7 +300,8 @@ methods
 
     % ---------------------------------------------------------------------
 
-    generatePlots(obj, PlotSaveDir1, PlotSaveDir2, ShowPlots, PlotDo)
+    generatePlots(obj, PlotSaveDir1, PlotSaveDir2, AnalysisID, ...
+                       ShowPlots, PlotDo)
     gui(obj)
 end % methods
 % =========================================================================
