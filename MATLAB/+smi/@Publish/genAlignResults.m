@@ -52,6 +52,63 @@ AlignRegData = {AlignReg.Data};
 % Grab the error signal history from the last dataset.
 ErrorSignalHistory = AlignRegData{end}.ErrorSignalHistory;
 
+
+% Plot the cumulative error signal during the acquisition, skipping the
+% first correction since it is expected to be quite large.
+FigureHandle = figure();
+PlotAxes = axes(FigureHandle);
+NCorrections = size(ErrorSignalHistory, 1);
+XPlotArray = (2:NCorrections).';
+ErrorSignalSum = cumsum(ErrorSignalHistory(2:end, :), 1);
+stairs(PlotAxes, XPlotArray, ErrorSignalSum(:, 1)*1e3)
+hold(PlotAxes, 'on');
+axis(PlotAxes, 'tight');
+stairs(PlotAxes, XPlotArray, ErrorSignalSum(:, 2)*1e3)
+stairs(PlotAxes, XPlotArray, ErrorSignalSum(:, 3)*1e3)
+plot(PlotAxes, PlotAxes.XLim, [0, 0], 'k:')
+title(PlotAxes, 'Cumulative correction')
+xlabel(PlotAxes, 'Correction Number')
+ylabel(PlotAxes, 'Cumulative error Signal (nm)')
+legend(PlotAxes, {'X', 'Y', 'Z', '0 nm reference'}, 'Location', 'best')
+saveas(FigureHandle, fullfile(SaveDir, 'AlignRegHistorySum.png'), 'png');
+close(FigureHandle);
+
+% Plot the cumulative correction for each dataset.
+FigureHandle = figure();
+PlotAxes = axes(FigureHandle);
+NDatasets = numel(AlignRegData);
+Correction = NaN(NDatasets, 3);
+Correction(1, :) = sum(AlignRegData{1}.ErrorSignalHistory, 1);
+line(PlotAxes, 1, Correction(1, 1)*1e3, ...
+    'Marker', 'x', 'Color', [0 0.4470 0.7410], 'LineWidth', 2)
+line(PlotAxes, 1, Correction(1, 2)*1e3, ...
+    'Marker', 'o', 'Color', [0.8500 0.3250 0.0980], 'LineWidth', 2)
+line(PlotAxes, 1, Correction(1, 3)*1e3, ...
+    'Marker', '*', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 2)
+for ii = 2:NDatasets
+    Correction(ii, :) = sum(AlignRegData{ii}.ErrorSignalHistory, 1) ...
+        - sum(Correction(1:(ii-1), :), 1);
+    line(PlotAxes, ii, Correction(ii, 1)*1e3, ...
+        'Marker', 'x', 'Color', [0 0.4470 0.7410], 'LineWidth', 2)
+    line(PlotAxes, ii, Correction(ii, 2)*1e3, ...
+        'Marker', '*', 'Color', [0.8500 0.3250 0.0980], 'LineWidth', 2)
+    line(PlotAxes, ii, Correction(ii, 3)*1e3, ...
+        'Marker', 'o', 'Color', [0.9290 0.6940 0.1250], 'LineWidth', 2)
+end
+DummyLines(1) = line(PlotAxes, NaN, NaN, ...
+    'LineStyle', 'none', 'Marker', 'x', 'Color', [0 0.4470 0.7410]);
+DummyLines(2) = line(PlotAxes, NaN, NaN, ...
+    'LineStyle', 'none', 'Marker', '*', 'Color', [0.8500 0.3250 0.0980]);
+DummyLines(3) = line(PlotAxes, NaN, NaN, ...
+    'LineStyle', 'none', 'Marker', 'o', 'Color', [0.9290 0.6940 0.1250]);
+title(PlotAxes, 'Total correction per dataset')
+xlabel(PlotAxes, 'Dataset number')
+ylabel(PlotAxes, 'Error Signal (nm)')
+legend(PlotAxes, DummyLines, {'X', 'Y', 'Z'}, ...
+    'Location', 'best')
+saveas(FigureHandle, fullfile(SaveDir, 'AlignRegErrorPerDataset.png'), 'png');
+close(FigureHandle);
+
 % Plot the error signal during the acquisition, skipping the first
 % correction since it is expected to be quite large.
 FigureHandle = figure();
@@ -65,7 +122,7 @@ axis(PlotAxes, 'tight');
 plot(PlotAxes, XPlotArray, ErrorSignalPlotArray(:, 2)*1e3)
 plot(PlotAxes, XPlotArray, ErrorSignalPlotArray(:, 3)*1e3)
 plot(PlotAxes, PlotAxes.XLim, [0, 0], 'k:')
-title(PlotAxes, 'History of the error signal')
+title(PlotAxes, 'Correction history')
 xlabel(PlotAxes, 'Correction Number')
 ylabel(PlotAxes, 'Error Signal (nm)')
 legend(PlotAxes, {'X', 'Y', 'Z', '0 nm reference'}, 'Location', 'best')
