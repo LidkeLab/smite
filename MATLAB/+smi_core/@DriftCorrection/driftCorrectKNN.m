@@ -75,9 +75,11 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 %      NFrames            internal number of frames per dataset
 %      NDatasets_C        original (collected) number of datasets
 %      NFrames_C          original (collected) number of frames per dataset
+%      Intra_cost         intra-dataset cost function values per dataset
 %      Intra_iterations   intra-dataset number of fminsearch iterations
 %      Intra_funcCount    intra-dataset number of fminsearch function evals
 %      Intra_elapsedTime  intra-dataset elapsed time for drift correction
+%      Inter_cost         inter-dataset cost function values per dataset
 %      Inter_iterations   inter-dataset number of fminsearch iterations
 %      Inter_funcCount    inter-dataset number of fminsearch function evals
 %      Inter_elapsedTime  inter-dataset elapsed time for drift correction
@@ -210,6 +212,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    base = 0;
 
    SMRS = cell(1, SMD.NDatasets);
+   cost_intra = zeros(1, SMD.NDatasets);
    % Count the number of iterations and function calls.
    it = 0;   fc = 0;
    % Note that variables like X, Y, Z are vectors, while variables like XY are
@@ -252,7 +255,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
          it = it + output.iterations;
          fc = fc + output.funcCount;
 
-         [~, XYC] = minD_intra(P, XY, FrameNum, Ndims, L_intra);
+         [cost_intra(i), XYC] = minD_intra(P, XY, FrameNum, Ndims, L_intra);
       end
 
       PX = P(1           : PDegree);
@@ -271,6 +274,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
          SMD.DriftZ(:, i) = polyval([PZ', 0], range);
       end
    end
+   Statistics.Intra_cost        = cost_intra;
    Statistics.Intra_iterations  = it;
    Statistics.Intra_funcCount   = fc;
    Statistics.Intra_elapsedTime = toc;
@@ -291,6 +295,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
              'Cannot perform inter-dataset drift correction.']);
    end
    NS = createns(SMRS{1}.XY);
+   cost_inter = zeros(1, SMD.NDatasets);
    % Count the number of iterations and function calls.
    it = 0;   fc = 0;
    for i = 2:SMD.NDatasets
@@ -327,7 +332,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
          it = it + output.iterations;
          fc = fc + output.funcCount;
 
-         [~, XY2C] = minD_inter(P, NS, XY2, Ndims, L_inter);
+         [cost_inter(i), XY2C] = minD_inter(P, NS, XY2, Ndims, L_inter);
       end
 
       % Values corrected for drift.
@@ -341,6 +346,7 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
          SMD.DriftZ(:, i) = SMD.DriftZ(:, i) + P(3);
       end
    end
+   Statistics.Inter_cost        = cost_inter;
    Statistics.Inter_iterations  = it;
    Statistics.Inter_funcCount   = fc;
    Statistics.Inter_elapsedTime = toc;
