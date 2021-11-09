@@ -125,6 +125,7 @@ classdef Publish < handle
             SubROISize, MaxOffset, UseGPU);
         [SubPixelOffsets, SMDROIs, SMDStats] = ...
             estimateLocalCoordShifts(SMD1, SMD2, SubROISize);
+        [RegCorrection] = computeRegCorrection(SMF);
     end
     
     
