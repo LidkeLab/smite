@@ -82,7 +82,7 @@ else
     TrajStructModel.Photons_SE = sqrt(TrajStructModel.Photons);
     TrajStructModel.Bg_SE = sqrt(TrajStructModel.Bg);
     TrajStructModel.Trajectories_SE = ...
-        repmat(SimParams.PSFSigma .* TrajStructModel.Photons_SE, 1, 1, 2);
+        repmat(SimParams.PSFSigma ./ sqrt(TrajStructModel.Photons), 1, 1, 2);
 end
 TrajStruct = TrajStructModel;
 TrajStruct.Trajectories = TrajStruct.Trajectories ...
