@@ -77,8 +77,6 @@ SMDCombined.NCombined = NLocPerID;
 % (I'm doing this in a separate loop down here for speed purposes, since we
 % usually won't need to do this).
 switch SMF.Fitting.FitType
-    case 'XYNB'
-        return
     case 'XYNBS'
         for ii = 1:NUnique
             IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
@@ -111,6 +109,25 @@ switch SMF.Fitting.FitType
             SMDCombined.Z_SE(ii, 1) = ...
                 sqrt(1 / sum(1./Z_SE(IndexArray).^2));
         end
+end
+
+% Combine some fields that may or may not be in the SMD.
+% NOTE: For Photons_SE and Bg_SE, I'm not sure if this is the correct
+%       result.  However, it's probably decent: these are the correct
+%       results assuming only Poisson (shot) noise.
+if ~isempty(SMD.Photons_SE)
+    Photons_SE = SMD.Photons_SE(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.Photons_SE(ii, 1) = sqrt(sum(Photons_SE(IndexArray).^2));
+    end
+end
+if ~isempty(SMD.Bg_SE)
+    Bg_SE = SMD.Bg_SE(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.Bg_SE(ii, 1) = sqrt(sum(Bg_SE(IndexArray).^2));
+    end
 end
 
 
