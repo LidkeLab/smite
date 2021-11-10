@@ -1,4 +1,4 @@
-function [SMD] = extractDatasets(SMD, Datasets, Compress)
+function [SMD, KeepBool] = extractDatasets(SMD, Datasets, Compress)
 %extractDatasets extracts the 'Datasets' from 'SMD'.
 % This method will return the localizations in 'SMD' that arose from the
 % datasets defined by integers 'Datasets'.
@@ -17,6 +17,8 @@ function [SMD] = extractDatasets(SMD, Datasets, Compress)
 % OUTPUTS:
 %   SMD: A Single Molecule Data structure containing only the data from the
 %        datasets defined by 'Datasets'.
+%   KeepBool: Boolean array indicating which localizations in the input SMD
+%             are kept.
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
@@ -28,8 +30,8 @@ if (~exist('Compress', 'var') || isempty(Compress))
 end
 
 % Extract the desired datasets.
-SMD = smi_core.SingleMoleculeData.isolateSubSMD(SMD, ...
-    ismember(SMD.DatasetNum, Datasets));
+KeepBool = ismember(SMD.DatasetNum, Datasets);
+SMD = smi_core.SingleMoleculeData.isolateSubSMD(SMD, KeepBool);
 
 % Rename datasets if needed.
 if Compress

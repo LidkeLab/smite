@@ -104,7 +104,7 @@ classdef SingleMoleculeData
         [SMD] = catSMD(SMD1, SMD2)
         [Density] = computeDensity(SMD);
         [SMD] = isolateSubSMD(SMD, SubIndices);
-        [SMD] = extractDatasets(SMD, Datasets, Compress);
+        [SMD, KeepBool] = extractDatasets(SMD, Datasets, Compress);
         
     end
 end
