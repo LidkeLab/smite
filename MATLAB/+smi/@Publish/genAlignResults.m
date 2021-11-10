@@ -52,7 +52,6 @@ AlignRegData = {AlignReg.Data};
 % Grab the error signal history from the last dataset.
 ErrorSignalHistory = AlignRegData{end}.ErrorSignalHistory;
 
-
 % Plot the cumulative error signal during the acquisition, skipping the
 % first correction since it is expected to be quite large.
 FigureHandle = figure();

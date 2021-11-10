@@ -53,6 +53,7 @@ properties
    NFrames        = [];
    % Verbosity level
    Verbose        = 1;
+   SMF            = [];
 
 end % properties
 % =============================================================================
@@ -83,6 +84,7 @@ methods
    % false.
 
       if exist('SMF', 'var')
+         obj.SMF            = SMF;
          obj.L_intra        = SMF.DriftCorrection.L_intra;
          obj.L_inter        = SMF.DriftCorrection.L_inter;
          obj.PixelSizeZUnit = SMF.DriftCorrection.PixelSizeZUnit;
