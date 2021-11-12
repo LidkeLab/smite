@@ -30,14 +30,17 @@ NSubframes = SimParams.NFrames * SimParams.SubframeDensity;
 IsOn = logical(KOnToOffSub*zeros(NTraj, NSubframes) ...
     + ~KOnToOffSub*ones(NTraj, NSubframes));
 IsBleached = zeros(NTraj, NSubframes, 'logical');
+BlinkOn = zeros(NTraj, NSubframes, 'logical');
+BlinkOff = zeros(NTraj, NSubframes, 'logical');
 if ((KOnToOffSub>0) || (KOnToBleachSub>0))
     % Initialize the (existing) particles to an equilibrium state.
     IsOn(:, 1) = (rand(NTraj, 1) ...
         < (KOffToOnSub/(KOnToOffSub+KOffToOnSub)));
     PhotonsSub = single(IntensitySub * IsOn);
     
-    % Loop through frames and simulate the blinking on and blinking off
-    % processes using an SR latch.
+    % Loop through frames and simulate the emitter kinetics using SR
+    % latches.
+    KBRatio = KOnToBleachSub / (KOnToOffSub+KOnToBleachSub);
     for ff = 2:NSubframes
         % Define the set and reset signals.  The set signal is based on the
         % the probability of turning on sometime in frame ff (given that
@@ -45,22 +48,28 @@ if ((KOnToOffSub>0) || (KOnToBleachSub>0))
         % the probability of blinking off or bleaching in frame ff (given
         % that it's not already off or bleached).
         RandomArray = rand(NTraj, 1);
-        SetSignal = (~(IsOn(:, ff-1)|IsBleached(:, ff-1)) ...
+        SetOn = (~(IsOn(:, ff-1)|IsBleached(:, ff-1)) ...
             & (RandomArray<(1-exp(-KOffToOnSub))));
-        ResetSignal = ((IsOn(:, ff-1)|IsBleached(:, ff-1)) ...
+        ResetOff = (IsOn(:, ff-1) ...
             & (RandomArray<(1-exp(-(KOnToOffSub+KOnToBleachSub)))));
+        BlinkOn(:, ff) = SetOn;
+        BlinkOff(:, ff) = ResetOff;
+        
+        % Define the set signal for the bleaching latch. The reset signal
+        % is always false since bleaching isn't reversible.
+        % NOTE: We can't use the previously sampled RandomArray here since
+        %       this is a separate set of "coin flips" from those above.
+        SetBleach = (IsOn(:, ff-1) ...
+            & ResetOff ...
+            & (rand(NTraj, 1)<KBRatio));
         
         % Update the IsOn and IsBleached arrays for the ff-th frame. IsOn
         % is given by the standard SR latch equation in terms of the set
         % and reset signals.  IsBleached is either propagating a previous
         % bleaching signal, or is determining if the "Reset" above was a
-        % blinking off or a bleaching event.  Note that we can't use the
-        % same random array as above for the bleaching calculation,
-        % because we're now performing a new "coin flip".
-        IsOn(:, ff) = (SetSignal | (IsOn(:, ff-1)&(~ResetSignal)));
-        IsBleached(:, ff) = ((IsOn(:, ff-1) ...
-            & (rand(NTraj, 1)<(KOnToBleachSub/(KOnToOffSub+KOnToBleachSub)))) ...
-            | IsBleached(:, ff-1));
+        % blinking off or a bleaching event.
+        IsOn(:, ff) = (SetOn | (IsOn(:, ff-1)&(~ResetOff)));
+        IsBleached(:, ff) = (SetBleach | IsBleached(:, ff-1));
         
         % For emitters that turned on or off, determine how many photons
         % were emitted during the frame they came on/turned off. 
@@ -68,11 +77,11 @@ if ((KOnToOffSub>0) || (KOnToBleachSub>0))
         %       arrival event, and as such the event time within the
         %       subframe is just a uniform random number between 0 and 1 (0
         %       is the start of the frame and 1 is the end of the frame).
-        TOn = rand(sum(SetSignal), 1);
-        TurnedOff = (ResetSignal & IsOn(:, ff));
+        TOn = rand(sum(SetOn), 1);
+        TurnedOff = (ResetOff & IsOn(:, ff));
         TOff = rand(sum(TurnedOff), 1);
         PhotonsSub(:, ff) = IntensitySub * IsOn(:, ff);
-        PhotonsSub(SetSignal, ff) = IntensitySub * (1-TOn);
+        PhotonsSub(SetOn, ff) = IntensitySub * (1-TOn);
         PhotonsSub(TurnedOff, ff) = IntensitySub * (1-TOff);
     end
 else
@@ -86,6 +95,9 @@ end
 IsOn = (IsOn & TrajStruct.IsOn);
 NotAlwaysOff = ~all(~IsOn, 2);
 TrajStruct.IsOn = IsOn(NotAlwaysOff, :);
+TrajStruct.IsBleached = IsBleached(NotAlwaysOff, :);
+TrajStruct.BlinkOn = BlinkOn(NotAlwaysOff, :);
+TrajStruct.BlinkOff = BlinkOff(NotAlwaysOff, :);
 TrajStruct.D = TrajStruct.D(NotAlwaysOff);
 TrajStruct.Photons = PhotonsSub(NotAlwaysOff, :);
 TrajStruct.Photons_SE = TrajStruct.Photons_SE(NotAlwaysOff, :);
