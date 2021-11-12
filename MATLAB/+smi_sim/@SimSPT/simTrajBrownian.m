@@ -49,26 +49,33 @@ ConnectionMap = zeros(NTraj, 1);
 ConnectionMapT = zeros(NTraj, NSubframes);
 IsOligoSim = (SimParams.InteractionProb ...
     && ~isinf(SimParams.InteractionDistance));
-for ff = 2:NSubframes
-    % Sample the proposed trajectory updates from the Normal
-    % distribution (Brownian motion).
-    TrajectoryUpdates = sqrt(2*DSub) .* randn(NTraj, 1, 2);
-    
-    % Simulate oligomerization.
-    if IsOligoSim
-        [Trajectories(:, ff, :), ConnectionMap] = ...
-            smi_sim.SimSPT.simOligomers(...
-            Trajectories(:, ff-1, :), TrajectoryUpdates, NTraj, ...
-            ConnectionMap, InteractionDistance, InteractionProb, ...
-            KDisconnectSub, RestrictToDimers);
+if (any(DSub) > 0)
+    for ff = 2:NSubframes
+        % Sample the proposed trajectory updates from the Normal
+        % distribution (Brownian motion).
+        TrajectoryUpdates = sqrt(2*DSub) .* randn(NTraj, 1, 2);
+        
+        % Simulate oligomerization.
+        if IsOligoSim
+            [Trajectories(:, ff, :), ConnectionMap] = ...
+                smi_sim.SimSPT.simOligomers(...
+                Trajectories(:, ff-1, :), TrajectoryUpdates, NTraj, ...
+                ConnectionMap, InteractionDistance, InteractionProb, ...
+                KDisconnectSub, RestrictToDimers);
+        end
+        
+        % Apply the boundary conditions.
+        [Trajectories(:, ff, :), ...
+            PeriodicityMapT(:, ff), ConnectionMap] = ...
+            smi_sim.SimSPT.applyBoundaryCondition(Trajectories(:, ff, :), ...
+            BoundaryCondition, FrameSize, ConnectionMap);
+        ConnectionMapT(:, ff) = ConnectionMap;
     end
-    
-    % Apply the boundary conditions.
-    [Trajectories(:, ff, :), ...
-        PeriodicityMapT(:, ff), ConnectionMap] = ...
-        smi_sim.SimSPT.applyBoundaryCondition(Trajectories(:, ff, :), ...
-        BoundaryCondition, FrameSize, ConnectionMap);
-    ConnectionMapT(:, ff) = ConnectionMap;
+else
+    % Some simulations might have D set to 0, in which case there's no
+    % reason to run the above section of code.
+    Trajectories(:, :, 1) = repmat(InitialPositions(:, 1), [1, NSubframes]);
+    Trajectories(:, :, 2) = repmat(InitialPositions(:, 2), [1, NSubframes]);
 end
 
 % Break up trajectories that experienced a periodic boundary (that is, each
