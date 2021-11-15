@@ -65,12 +65,13 @@ if obj.GeneratePlots
     PlotFigure = figure();
     PlotAxes = axes(PlotFigure);
     MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
+    MovieMaker.SMF = obj.SMF;
     MovieMaker.TR = obj.TR;
     MovieMaker.setVitalParams()
     MovieMaker.prepAxes(PlotAxes);
     EmptySMD = smi_core.SingleMoleculeData.createSMD();
     MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
-        EmptySMD, obj.TR(1).NFrames);
+        obj.SMF, EmptySMD, obj.TR(1).NFrames);
     Traj2DFileName = [BaseName, '_plot2D'];
     saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
     saveas(PlotFigure, ...
@@ -81,7 +82,7 @@ if obj.GeneratePlots
     MovieMaker.prepAxes(PlotAxes);
     EmptySMD = smi_core.SingleMoleculeData.createSMD();
     MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
-        EmptySMD, obj.TR(1).NFrames);
+        obj.SMF, EmptySMD, obj.TR(1).NFrames);
     Traj3DFileName = [BaseName, '_plot3D'];
     saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
     saveas(PlotFigure, ...
