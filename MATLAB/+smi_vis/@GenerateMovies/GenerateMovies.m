@@ -75,9 +75,13 @@ classdef GenerateMovies < handle
     end
     
     methods
-        function obj = GenerateMovies()
+        function obj = GenerateMovies(MovieParams)
             %GenerateMovies is the class constructor.
-            obj.Params = obj.prepDefaults();
+            if exist('MovieParams', 'var')
+                obj.Params = MovieParams;
+            else
+                obj.Params = obj.prepDefaults();
+            end
         end
         
         function set.Params(obj, ParamsInput)
