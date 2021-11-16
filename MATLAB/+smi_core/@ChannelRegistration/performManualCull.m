@@ -23,6 +23,7 @@ function [CulledCoordinates] = performManualCull(RawData, Coordinates)
 PlotFigure = figure();
 PlotAxes = axes(PlotFigure);
 axis(PlotAxes, 'tight')
+axis(PlotAxes, 'equal')
 PlotAxes.YDir = 'reverse';
 title(PlotAxes, {'Click localizations to cull points', ...
     ['Right click in figure window (outside of axes) to undo ', ...
