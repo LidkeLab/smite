@@ -291,6 +291,7 @@ end
 KeepBool = (CMElements ~= NonLinkMarker);
 CMElements = CMElements(KeepBool);
 CMIndices = CMIndices(KeepBool, :);
+clear('KeepBool')
 
 % Create the cost matrix.
 if CreateSparseMatrix
