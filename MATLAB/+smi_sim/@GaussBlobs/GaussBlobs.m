@@ -43,7 +43,7 @@ methods (Static)
         %dipshow(Model)
         %dipshow(Data)
         fprintf('Testing gaussBlobImage...\n')
-        SMF = smi_core.SingleModuculeFitting();
+        SMF = smi_core.SingleMoleculeFitting();
         SMD = smi_core.SingleMoleculaData.createSMD();
         [Model,Data]=smi_sim.GaussBlobs.gaussBlobImage(SMD, SMF);
         figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
