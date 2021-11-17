@@ -27,8 +27,8 @@ IntensitySub = SimParams.Intensity / SimParams.SubframeDensity;
 % Loop through all of the trajectories and simulate blinking.
 NTraj = size(TrajStruct.Trajectories, 1);
 NSubframes = SimParams.NFrames * SimParams.SubframeDensity;
-IsOn = logical(KOnToOffSub*zeros(NTraj, NSubframes) ...
-    + ~KOnToOffSub*ones(NTraj, NSubframes));
+IsOn = KOnToOffSub*zeros(NTraj, NSubframes, 'logical') ...
+    | ~KOnToOffSub*ones(NTraj, NSubframes, 'logical');
 IsBleached = zeros(NTraj, NSubframes, 'logical');
 BlinkOn = zeros(NTraj, NSubframes, 'logical');
 BlinkOff = zeros(NTraj, NSubframes, 'logical');
