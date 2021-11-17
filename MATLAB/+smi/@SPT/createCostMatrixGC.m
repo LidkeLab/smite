@@ -113,6 +113,11 @@ PhotonStDev(PhotonStDev == 0) = inf;
 % Initialize the cost matrix index array and element array (this is the
 % best way to create a sparse matrix, but we can also use this for the
 % non-sparse, "regular" matrix type).
+% NOTE: Since the birth and death blocks are fully-populated (i.e., at
+%       half of the matrix is non-zero), we can allocate the entire set of
+%       CMElements (since appending new values to the end might temporarily
+%       lead to even more memory usage than just doing this from the
+%       start).
 CMIndices = [repelem((1:CMSize(1)).', CMSize(1)), ...
     repmat((1:CMSize(1)).', [CMSize(1), 1])];
 CMElements = NonLinkMarker * ones(CMSize(1)^2, 1);
