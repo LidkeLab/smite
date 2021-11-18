@@ -28,7 +28,7 @@ classdef SPT < handle
         
         % Diffusion estimator class for when UseTrackByTrackD is set.
         % NOTE: This is used here so that the user can change properties of
-        %       the DiffusionEstimator class as needed when using 
+        %       the DiffusionEstimator class as needed when using
         %       obj.SMF.Tracking.TrajwiseD
         DiffusionEstimator
         
@@ -38,7 +38,7 @@ classdef SPT < handle
         MovieParams
         
         % Marker to ignore entries in cost matrices (Default = -1)
-        % NonlinkMarker can't be inf or NaN. 
+        % NonlinkMarker can't be inf or NaN.
         NonlinkMarker = -1;
         
         % Flag to indicate movies should be made (Default = true)
@@ -46,6 +46,9 @@ classdef SPT < handle
         
         % Flag to indicate plots should be made (Default = true)
         GeneratePlots = true;
+        
+        % Flag to indicate test run (Default = false)
+        IsTestRun = false;
         
         % Flag to make some outputs in physical units (Default = false)
         UnitFlag = false;
@@ -67,18 +70,21 @@ classdef SPT < handle
         
         % Pre-threshold SMD structure (see smi_core.SingleMoleculeData)
         SMDPreThresh
-       
+        
         % Tracking Results structure (see smi_core.TrackingResults)
         TR
+        
+        % Tracking Results structure before channel registration.
+        TRPreCR = struct([]);
         
         % 'SMD' before channel registration is applied.
         SMDPreCR = struct([]);
         
         % Pre-threshold pre-channel registration 'SMD'.
         SMDPreThreshPreCR = struct([]);
-       
-        % Tracking Results structure before channel registration.
-        TRPreCR = struct([]);
+        
+        % Scaled raw data.
+        ScaledData;
     end
     
     properties (Hidden)
@@ -93,9 +99,9 @@ classdef SPT < handle
         DiffusionConstant = [];
         
         % Copy of the SMF structure.
-        % This is used for a few random tests/things like 
+        % This is used for a few random tests/things like
         % obj.TryLowPValueLocs which, when enabled, requires us to modify
-        % the SMF provided by the user.  We will want to revert to the 
+        % the SMF provided by the user.  We will want to revert to the
         % user's original SMF if that's done.
         SMFCopy
         

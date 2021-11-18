@@ -7,8 +7,8 @@ function gui(obj)
 
 % Create a figure handle for the GUI.
 DefaultFigurePosition = get(0, 'defaultFigurePosition');
-obj.GUIFigure = figure('MenuBar', 'none', ...
-    'Name', 'Movie maker', 'NumberTitle', 'off', ...
+obj.GUIFigure = figure('MenuBar', 'none', 'NumberTitle', 'off', ...
+    'Name', 'Movie maker', 'Tag', 'MovieGUI', ...
     'Units', 'pixels', ...
     'Position', [DefaultFigurePosition(1:2), 1000, 500]);
 
@@ -179,7 +179,7 @@ end
         % location of the slidebar, convert this to a frame within the
         % movie, and then plot the trajectories of the movie as they exists
         % up through that frame.
-
+        
         % Get the location of the slide bar, as well as the min and max
         % values possible for the slider.
         SliderValue = round(get(Source, 'Value'));
@@ -211,7 +211,7 @@ end
         
         % Set the callback function for the line handles.
         setLineCallbacks()
-
+        
         % Update the frame number display within the GUI to show the
         % currently selected frame of the movie.
         FrameNumDisplay.String = sprintf(...
@@ -243,7 +243,7 @@ end
         % attempting to modify it.
         [obj.LineHandles(obj.LineHandles.isvalid ...
             & isgraphics(obj.LineHandles)).LineWidth] = deal(0.5);
-
+        
         % Add indicators to the selected trajectory to emphasize which one
         % was selected.
         if (CurrentTrajIndex == TRIndex)
@@ -253,17 +253,17 @@ end
             return
         end
         [obj.LineHandles(TRIndex).LineWidth] = 3;
-
-        % Update 'CurrentlySelectedTrajectory' so that other callbacks can 
+        
+        % Update 'CurrentlySelectedTrajectory' so that other callbacks can
         % access this information.
         CurrentTrajIndex = TRIndex;
-
+        
         % Grab useful information about the trajectory to be displayed,
         % ensuring the units are consistent with the movie.
         FrameNum = obj.TRInternal(TRIndex).FrameNum;
         Time = (FrameNum-1)*obj.Params.UnitFlag/obj.SMF.Data.FrameRate ...
             + FrameNum*(~obj.Params.UnitFlag);
-
+        
         % Modify text panels within the display panel to provide
         % information about the selected trajectory.
         TrajIDDisplay.String = num2str(obj.TRInternal(TRIndex).ConnectID);
@@ -279,12 +279,12 @@ end
         % This is a callback function for the event that a user has
         % manually entered a trajectory ID that they wish to highlight/get
         % information for.
-
+        
         % Ensure that the entered value isn't empty.
         if isempty(Source.String)
             return
         end
-
+        
         % Determine the trajectory ID and check if a line handle exists for
         % it.
         ConnectID = str2double(Source.String);
@@ -293,7 +293,7 @@ end
                 ConnectID);
             return
         end
-
+        
         % Call the trajectorySelected function, passing along the user
         % input trajectory ID.
         trajectoryClicked([], [], find([obj.TRInternal.ConnectID] == ConnectID))
@@ -337,7 +337,7 @@ end
         % This is a callback for the Display Plot button within the display
         % plot GUI, which will plot the information about a clicked
         % trajectory from the drop down menu.
-
+        
         % Create a new figure and plot the trajectory information as
         % selected by the drop down menu in the display plot GUI.
         DisplayPlotsFigure = findobj('Tag', 'DisplayPlotsFigure');

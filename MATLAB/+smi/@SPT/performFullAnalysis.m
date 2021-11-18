@@ -23,8 +23,8 @@ end
 LD = smi_core.LoadData;
 [~, RawData] = LD.loadRawData(obj.SMF, 1);
 DTP = smi_core.DataToPhotons(obj.SMF, RawData, [], [], obj.Verbose);
-ScaledData = DTP.convertData();
-LD = smi_core.LocalizeData(ScaledData, obj.SMF, obj.Verbose);
+obj.ScaledData = DTP.convertData();
+LD = smi_core.LocalizeData(obj.ScaledData, obj.SMF, obj.Verbose);
 [obj.SMD, obj.SMDPreThresh] = LD.genLocalizations();
 obj.SMD.NDatasets = 1;
 obj.SMD.DatasetNum = ones(size(obj.SMD.FrameNum));
@@ -102,7 +102,15 @@ if nargout
 end
 
 % Save the results.
-obj.saveResults()
+if ~obj.IsTestRun
+    obj.saveResults()
+end
+
+% Share an update in Command Window.
+if (obj.Verbose > 0)
+    fprintf('smi.SPT.performFullAnalysis(): Finished tracking file %s\n', ...
+        obj.SMF.Data.FileName{1})
+end
 
 
 end
