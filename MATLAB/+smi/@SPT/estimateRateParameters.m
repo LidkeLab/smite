@@ -19,7 +19,6 @@ function [KOn, KOff] = estimateRateParameters(SMD)
 
 % Grab some arrays from the SMD (sometimes can help with speed).
 FrameNum = SMD.FrameNum;
-NFrames = SMD.NFrames;
 ConnectID = SMD.ConnectID;
 
 % Determine the bright and dark durations for each trajectory.

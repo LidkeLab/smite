@@ -9,61 +9,44 @@ function [Success] = unitTestFFGC()
 % use of this unit test.
 
 
-% Simulate Tracking Data (create a simulated TD structure).
-SimParams.ParticleDensity = 0.001; % particles / pixel^2
-SimParams.NFrames = 500;
-SimParams.NSubFrames = 1;
-SimParams.BoundaryCondition = 'Free';
-SimParams.Intensity = 1000; % photons / trajectory / frame
-SimParams.D = 0.01; % pixel^2 / frame
-SimParams.InteractionProb = 0;
-SimParams.KBlinkOff = 0.2;
-SimParams.KBlinkOn = 0.7;
-SimParams.KBleach = 0;
-SimParams.FrameSize = 64; % pixels
-SimParams.FrameRate = 1; % frames / second
-SimParams.PixelSize = 0.1; % micrometers
-SimParams.PSFSigma = 1.3; % pixels
-SimParams.Bg = 5; % photons
-[TD] = SMA_Sim.simulateTrajectories(SimParams);
-TD.ConnectID = TD.TrajectoryID;
-TD.NFrames = SimParams.NFrames;
-[TRTruth] = smi_core.TrackingResults.convertSMDToTR(TD);
-[TRTruth.PixelSize] = deal(SimParams.PixelSize);
-[TRTruth.FrameRate] = deal(SimParams.FrameRate);
-[RawData] = SMA_SPT.simRawDataFromTR(TRTruth, SimParams);
+% Simulate Tracking Data (create a simulated SMD structure).
+SPTSim = smi_sim.SimSPT;
+SPTSim.createSimulation()
+SMD = SPTSim.SMD;
+SMF = smi_core.SingleMoleculeFitting;
+SMF.Data.DataROI = [1, 1, SMD.YSize, SMD.XSize];
+SMF.Fitting.PSFSigma = 1.3;
+[~, RawData] = smi_sim.GaussBlobs.gaussBlobImage(SMD, SMF);
 
 % Perform the frame-to-frame connection process.
 SMF = smi_core.SingleMoleculeFitting();
 SMF.Tracking.D = SimParams.D;
-SMF.Tracking.K_off = SimParams.KBlinkOff;
-SMF.Tracking.K_on = SimParams.KBlinkOn;
+SMF.Tracking.K_off = SimParams.KOnToOff;
+SMF.Tracking.K_on = SimParams.KOffToOn;
 SMF.Tracking.MaxFrameGap = 20;
 SMF.Tracking.MaxDistGC = 10;
 SMF.Tracking.MaxDistFF = 2 * SMF.Tracking.MaxDistGC ...
     / sqrt(SMF.Tracking.MaxFrameGap);
-TD.ConnectID = zeros(numel(TD.X), 1); 
-RhoOnMean = mean(SMA_SPT.calcDensity(TD));
-RhoOffMean = (SimParams.KBlinkOff/SimParams.KBlinkOn) * RhoOnMean;
+SMD.ConnectID = zeros(numel(SMD.X), 1); 
+RhoOnMean = mean(smi_core.SingleMoleculeData.computeDensity(SMD));
+RhoOffMean = (SimParams.KOnToOff/SimParams.KOffToOn) * RhoOnMean;
 SMF.Tracking.Rho_off = RhoOffMean;
-for ff = min(TD.FrameNum):(max(TD.FrameNum)-1)
-    [CM] = smi.SPT.createCostMatrixFF(TD, SMF, [], ff, -1);
+for ff = min(SMD.FrameNum):(max(SMD.FrameNum)-1)
+    [CM] = smi.SPT.createCostMatrixFF(SMD, SMF, [], ff, -1);
     [Link12] = smi.SPT.solveLAP(CM);
-    [TD] = smi.SPT.connectTrajFF(TD, Link12, ff);
+    [SMD] = smi.SPT.connectTrajFF(SMD, Link12, ff);
 end
 
 % Perform the gap-closing process.
-[CM] =smi.SPT.createCostMatrixGC(TD, SMF, [], -1, 1); 
+[CM] =smi.SPT.createCostMatrixGC(SMD, SMF, [], -1, 1); 
 [Link12] = smi.SPT.solveLAP(CM);
-[TD] = smi.SPT.connectTrajGC(TD, Link12);
-TR = smi_core.TrackingResults.convertSMDToTR(TD);
+[SMD] = smi.SPT.connectTrajGC(SMD, Link12);
+TR = smi_core.TrackingResults.convertSMDToTR(SMD);
 
 % Make a movie.
 MovieMaker = smi_vis.GenerateMovies;
 MovieMaker.TR = TR;
 MovieMaker.RawData = RawData;
-MovieMaker.SMF.Data.PixelSize = SimParams.PixelSize;
-MovieMaker.SMF.Data.FrameRate = SimParams.FrameRate;
 MovieMaker.gui()
 
 % Indicate success (this should be done in a better way, just setting it to
