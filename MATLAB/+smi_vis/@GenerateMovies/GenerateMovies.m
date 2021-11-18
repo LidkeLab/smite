@@ -47,6 +47,9 @@ classdef GenerateMovies < handle
         % Flag indicating 'ScaledData' is ready to use.
         DataIsPrepped = false
         
+        % Flag indicating 'MovieAxes' is ready to use (e.g., labeled).
+        AxesPrepped = false;
+        
         % MATLAB VideoWriter object used to write a movie to a file.
         VideoObject
     end
@@ -91,9 +94,11 @@ classdef GenerateMovies < handle
             DefaultParams = obj.prepDefaults();
             obj.Params = smi_helpers.padStruct(ParamsInput, DefaultParams);
             
-            % Anytime obj.Params is set, we should re-prep. the data (since
-            % its scaling might change based on the parameters).
+            % Anytime obj.Params is set, we should re-prep. the data and
+            % axes (since scaling and axes labels might change based on the
+            % parameters).
             obj.DataIsPrepped = false;
+            obj.AxesPrepped = false;
         end
         
         function set.RawData(obj, RawDataInput)

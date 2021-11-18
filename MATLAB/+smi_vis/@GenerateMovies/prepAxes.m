@@ -10,6 +10,11 @@ function [] = prepAxes(obj, PlotAxes)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
+% Before proceeding, check if the axes are in need of an update.
+if obj.AxesPrepped
+    return
+end
+
 % Set defaults if needed.
 if (~exist('PlotAxes', 'var') || isempty(PlotAxes) || ~isvalid(PlotAxes))
     PlotAxes = obj.MovieAxes;
@@ -64,6 +69,9 @@ ylabel(PlotAxes, sprintf('Y (%s)', obj.LengthUnitString), ...
 zlabel(PlotAxes, ...
     sprintf('%s (%s)', obj.TimeDimensionString, obj.TimeUnitString), ...
     'Interpreter', 'Latex')
+
+% Update the flag indicating the axes have been prepped.
+obj.AxesPrepped = true;
 
 
 end
