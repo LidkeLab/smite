@@ -48,28 +48,42 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
     'Position', ButtonSize + [ControlPanel.Position(3)-ButtonSize(3), 0, 0, 0], ...
     'callback', @makeMovieGUI);
 
-    function track(~, ~)
+    function track(Source, ~)
         % Track the data based on the SMF GUI parameters.
         if isfile(fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
-            obj.performFullAnalysis()
+            try
+                Source.Enable = 'off';
+                obj.performFullAnalysis()
+                Source.Enable = 'on';
+            catch MException
+                Source.Enable = 'on';
+                rethrow(MException)
+            end
         else
             error('%s cannot be found', ...
                 fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
         end
     end
 
-    function testTrack(~, ~)
+    function testTrack(Source, ~)
         % Track the data based on the SMF GUI parameters.
         if isfile(fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
             TestFlagInit = obj.IsTestRun;
+            VerboseInit = obj.Verbose;
             obj.IsTestRun = true;
+            obj.Verbose = 3;
             try
+                Source.Enable = 'off';
                 obj.performFullAnalysis()
+                Source.Enable = 'on';
             catch MException
+                Source.Enable = 'on';
                 obj.IsTestRun = TestFlagInit;
+                obj.Verbose = VerboseInit;
                 rethrow(MException)
             end
             obj.IsTestRun = TestFlagInit;
+            obj.Verbose = VerboseInit;
         else
             error('%s cannot be found', ...
                 fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
@@ -80,7 +94,7 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
         % Prepare the movie maker.
         MovieMaker = smi_vis.GenerateMovies;
         MovieMaker.TR = obj.TR;
-        MovieMaker.SMD = obj.SMD;
+        MovieMaker.SMD = obj.SMDPreThresh;
         MovieMaker.RawData = obj.ScaledData;
         MovieMaker.SMF = copy(obj.SMF);
         MovieMaker.gui()

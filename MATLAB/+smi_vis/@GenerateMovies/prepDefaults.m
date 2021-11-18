@@ -39,7 +39,7 @@ function [Params] = prepDefaults()
 %                       Properties in MATLAB documentation) or 'none'.
 %                        (char. array)(Default = 'none')
 %           SMDMarker: Marker to be placed on top of each
-%                      localization in SMD. (Default = 'o')
+%                      localization in SMD. (Default = 'none')
 %           SMDColor: Color of the SMD markers. (Default = [1, 0, 0])
 %           LineOfSite: Line of site vector for view() (rotates
 %                       "camera" orientation for 3D movie.  When
@@ -86,7 +86,7 @@ Params.YPixels = [];
 Params.MinScaleIntensity = 1;
 Params.PercentileCeiling = 100;
 Params.PlotMarker = 'none';
-Params.SMDMarker = 'o';
+Params.SMDMarker = 'none';
 Params.SMDColor = [1, 0, 0];
 Params.LineOfSite = [0, 90];
 Params.Resolution = 0;
