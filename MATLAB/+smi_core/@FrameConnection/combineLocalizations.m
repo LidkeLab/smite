@@ -34,7 +34,6 @@ FrameNum = SMD.FrameNum(SortIndices);
 DatasetNum = SMD.DatasetNum(SortIndices);
 Photons = SMD.Photons(SortIndices);
 Bg = SMD.Bg(SortIndices);
-LogLikelihood = SMD.LogLikelihood(SortIndices);
 switch SMF.Fitting.FitType
     case 'XYNBS'
         PSFSigma = SMD.PSFSigma(SortIndices);
@@ -69,7 +68,6 @@ for ii = 1:NUnique
     SMDCombined.DatasetNum(ii, 1) = DatasetNum(IndexArray(1));
     SMDCombined.Photons(ii, 1) = sum(Photons(IndexArray));
     SMDCombined.Bg(ii, 1) = sum(Bg(IndexArray));
-    SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
 end
 SMDCombined.NCombined = NLocPerID;
 
@@ -111,7 +109,9 @@ switch SMF.Fitting.FitType
         end
 end
 
-% Combine some fields that may or may not be in the SMD.
+% Combine some fields that may or may not be in the SMD (e.g., a simulation
+% might not produce a value for log-likelihood, which can become a burden
+% to deal with).
 % NOTE: For Photons_SE and Bg_SE, I'm not sure if this is the correct
 %       result.  However, it's probably decent: these are the correct
 %       results assuming only Poisson (shot) noise.
@@ -127,6 +127,30 @@ if ~isempty(SMD.Bg_SE)
     for ii = 1:NUnique
         IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
         SMDCombined.Bg_SE(ii, 1) = sqrt(sum(Bg_SE(IndexArray).^2));
+    end
+end
+if ~isempty(SMD.LogLikelihood)
+    LogLikelihood = SMD.LogLikelihood(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
+    end
+end
+if ~isempty(SMD.ThreshFlag)
+    ThreshFlag = SMD.ThreshFlag(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.ThreshFlag(ii, 1) = sum(ThreshFlag(IndexArray));
+    end
+end
+if ~(isempty(SMD.XBoxCorner) || isempty(SMD.YBoxCorner))
+    XBoxCorner = SMD.XBoxCorner(SortIndices);
+    YBoxCorner = SMD.YBoxCorner(SortIndices);
+    for ii = 1:NUnique
+        SMDCombined.XBoxCorner(ii, 1) = ...
+            XBoxCorner(NLocPerID(ii) + NLocCumulative(ii), 1);
+        SMDCombined.YBoxCorner(ii, 1) = ...
+            YBoxCorner(NLocPerID(ii) + NLocCumulative(ii), 1);
     end
 end
 
