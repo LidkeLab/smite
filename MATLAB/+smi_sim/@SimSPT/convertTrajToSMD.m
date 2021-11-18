@@ -26,7 +26,8 @@ end
 
 % Prepare the SMD.
 SMD = smi_core.SingleMoleculeData.createSMD();
-SMD.NFrames = SimParams.NFrames; 
+SMD.NFrames = SimParams.NFrames;
+SMD.NDatasets = 1;
 SMD.XSize = SimParams.FrameSize(2);
 SMD.YSize = SimParams.FrameSize(1);
 DataSize = size(TrajStruct.Photons);
