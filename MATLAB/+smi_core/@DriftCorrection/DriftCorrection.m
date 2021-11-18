@@ -114,6 +114,7 @@ methods(Static)
                  DriftX_True, DriftY_True, DriftZ_True)
    [FigHandle] = plotCumDrift(SMD, FieldName)
    [FigHandle] = plotXYDriftParametric(SMD)
+   [varargout] = plotDriftAndReg(PlotAxes, SMD, SMF)
    [delta12, Statistics] = regViaDC(SMD1, SMD2)
    [SMD] = changeInterRef(SMD, RefDatasetNum);
    [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
