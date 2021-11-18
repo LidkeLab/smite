@@ -38,12 +38,18 @@ methods (Static)
     %   DipImage
         fprintf('Testing gaussBlobROIStack...\n')
         [Model,Data]=smi_sim.GaussBlobs.gaussBlobROIStack();
-        dipshow(Model)
-        dipshow(Data)
-        fprintf('Testing gaussBlobImage...\n')
-        [Model,Data]=smi_sim.GaussBlobs.gaussBlobImage();
-        dipshow(Model)
-        dipshow(Data)
+        figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
+        figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
+        %dipshow(Model)
+        %dipshow(Data)
+%       fprintf('Testing gaussBlobImage...\n')
+%       SMF = smi_core.SingleMoleculeFitting();
+%       SMD = smi_core.SingleMoleculeData.createSMD();
+%       [Model,Data]=smi_sim.GaussBlobs.gaussBlobImage(SMD, SMF);
+%       figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
+%       figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
+        %dipshow(Model)
+        %dipshow(Data)
     end
 end
     

@@ -22,9 +22,11 @@ function unitTest()
    [Model, Data] = obj.genImageStack();
 
    % Display the blobs without noise:
-   dipshow(Model)
+   figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
+   %dipshow(Model)
    
     % Display the blobs having Poisson noise:
-   dipshow(Data)
+   figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
+   %dipshow(Data)
     
 end
