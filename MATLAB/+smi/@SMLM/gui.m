@@ -26,7 +26,6 @@ ControlPanel = uipanel(GUIFigure, 'Title', 'Controls', ...
 obj.SMF.gui(SMFPanel)
 
 % Add some controls to the ControlPanel.
-% NOTE: At this time, these controls don't do anything!
 % NOTE: To anyone adding to this, I'm trying to follow the convention
 %       that the uicontrol handles have their type appended to the end
 %       of the name, e.g., a pushbutton might be called 'TestFitPushbutton'
