@@ -7,7 +7,7 @@ function [ParamStruct] = defineDefaultParams()
 %   ParamStruct: structure array of default parameters.
 %                ParticleDensity: Density of particles within the 
 %                                 simulation. (particles / pixel^2)
-%                                 (Default = 0.1)
+%                                 (Default = 0.005)
 %                NFrames: Number of (full) frames in the simulation (i.e.,
 %                         if NFrames = 100 and SubframeDensity = 2, we will
 %                         simulate 200 subframes). (Default = 100)
@@ -61,9 +61,9 @@ function [ParamStruct] = defineDefaultParams()
 %                KOnToBleach: Rate parameter defining photobleaching.
 %                            (1 / frame)(Default = 0.1)
 %                KOnToOff: Rate parameter defining the turning off of 
-%                          visible emitters. (1 / frame)(Default = 0.5)
+%                          visible emitters. (1 / frame)(Default = 0.2)
 %                KOffToOn: Rate parameter defining the turning on of 
-%                          dark emitters. (1 / frame)(Default = 0.5)
+%                          dark emitters. (1 / frame)(Default = 0.8)
 %                PMiss: Probability of missing a localization of a visible
 %                       emitter. (Default = 0.01)
 %                Bg: Bg specifies a uniform background present in the raw 
@@ -74,7 +74,7 @@ function [ParamStruct] = defineDefaultParams()
 
 
 % Populate the output structure.
-ParamStruct.ParticleDensity = 0.01;
+ParamStruct.ParticleDensity = 0.005;
 ParamStruct.NFrames = 100;
 ParamStruct.SubframeDensity = 1;
 ParamStruct.FrameSize = [32, 32];
@@ -89,9 +89,9 @@ ParamStruct.InteractionDistance = 0.5;
 ParamStruct.InteractionProb = 0.5;
 ParamStruct.RestrictToDimers = true;
 ParamStruct.KDisconnect = 0.1;
-ParamStruct.KOnToBleach = 0.1;
-ParamStruct.KOnToOff = 0.5;
-ParamStruct.KOffToOn = 0.5;
+ParamStruct.KOnToBleach = 0.01;
+ParamStruct.KOnToOff = 0.2;
+ParamStruct.KOffToOn = 0.8;
 ParamStruct.PMiss = 0.01;
 
 
