@@ -35,7 +35,7 @@ if obj.SMF.Tracking.TryLowPValueLocs
         & ismember(obj.SMD.ConnectID, UniqueTraj));
     obj.SMD = smi_core.Threshold.applyThresh(obj.SMD, obj.Verbose);
 end
-obj.SMD.ConnectID = smi.SPT.validifyConnectID(obj.SMD.ConnectID);
+obj.SMD.ConnectID = smi_helpers.compressToRange(obj.SMD.ConnectID);
 
 % Perform the gap closing on the trajectory segments.
 CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...

@@ -104,7 +104,7 @@ for ii = 1:numel(DatasetArray)
 end
 SMDClustered = SMD;
 SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
-SMDClustered.ConnectID = smi.SPT.validifyConnectID(SMDClustered.ConnectID);
+SMDClustered.ConnectID = smi_helpers.compressToRange(SMDClustered.ConnectID);
 
 
 end

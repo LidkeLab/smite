@@ -155,7 +155,7 @@ for rr = 1:SMF.FrameConnection.NIterations
             ConnectID, MaxConnectID, ...
             ClusterData{nn}(:, 8), Link12);
     end
-    SMD.ConnectID = smi.SPT.validifyConnectID(ConnectID);
+    SMD.ConnectID = smi_helpers.compressToRange(ConnectID);
 end
 InternalParams.KOn = KOn;
 InternalParams.KOff = KOff;
