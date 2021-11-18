@@ -103,6 +103,8 @@ classdef SingleMoleculeData
         
         [SMD] = catSMD(SMD1, SMD2)
         [Density] = computeDensity(SMD);
+        [DensityIm] = computeDensityImage(SMD, SigmaScale, ...
+            NEmitters, TimeSeries, FastGauss);
         [SMD] = isolateSubSMD(SMD, SubIndices);
         [SMD, KeepBool] = extractDatasets(SMD, Datasets, Compress);
         
