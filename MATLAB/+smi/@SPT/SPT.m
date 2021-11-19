@@ -180,6 +180,9 @@ classdef SPT < handle
     
     methods(Static)
         [Success] = unitTestFFGC()
+        [SMD] = genTrajFF(SMD, SMF, DiffusionConstants, NonLinkMarker);
+        [SMD] = genTrajGC(SMD, SMF, DiffusionConstants, ...
+            NonLinkMarker, UseSparseMatrices);
         [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
             DiffusionConstants, FrameNumber, NonLinkMarker);
         [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
@@ -187,7 +190,6 @@ classdef SPT < handle
         [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
-        [ConnectID] = validifyConnectID(ConnectID);
         [KOn, KOff] = estimateRateParameters(SMD);
     end
     

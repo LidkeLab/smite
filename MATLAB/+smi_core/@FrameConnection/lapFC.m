@@ -82,13 +82,13 @@ if (numel(unique(SMDPreClustered.FrameNum)) ...
     return
 end
 
-% Recursively perform the frame-connection, using updated density and
+% Iteratively perform the frame-connection, using updated density and
 % fluorophore transition rate estimates from the previous iteration.
-for rr = 1:SMF.FrameConnection.NRecursions
+for rr = 1:SMF.FrameConnection.NIterations
     if (Verbose > 2)
         fprintf(['\tFrameConnection.lapFC(): ', ...
-            'LAP-FC recursion %i of %i...\n'], ...
-            rr, SMF.FrameConnection.NRecursions)
+            'LAP-FC iteration %i of %i...\n'], ...
+            rr, SMF.FrameConnection.NIterations)
     end
     % Estimate the number of emitters present at the start of the
     % experiment.  For now, I'll just use the total number of clusters,
@@ -155,7 +155,7 @@ for rr = 1:SMF.FrameConnection.NRecursions
             ConnectID, MaxConnectID, ...
             ClusterData{nn}(:, 8), Link12);
     end
-    SMD.ConnectID = smi.SPT.validifyConnectID(ConnectID);
+    SMD.ConnectID = smi_helpers.compressToRange(ConnectID);
 end
 InternalParams.KOn = KOn;
 InternalParams.KOff = KOff;

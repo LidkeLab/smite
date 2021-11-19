@@ -79,7 +79,7 @@ end
 
 % Ensure SMD.ConnectID consists of the set of integers 1:NTraj without
 % skipping any integers.
-SMD.ConnectID = smi.SPT.validifyConnectID(SMD.ConnectID);
+SMD.ConnectID = smi_helpers.compressToRange(SMD.ConnectID);
 
 
 end

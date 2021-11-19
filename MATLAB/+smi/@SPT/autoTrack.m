@@ -1,8 +1,8 @@
 function [] = autoTrack(obj)
-%autoTrack performs recursive tracking by updating tracking parameters.
-% This method will recursively track the data pointed to by obj.SMF making
+%autoTrack performs iterative tracking by updating tracking parameters.
+% This method will iteratively track the data pointed to by obj.SMF making
 % new estimates of some parameters (e.g., diffusion constant) after each
-% recursion.
+% iteration.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -23,15 +23,15 @@ obj.DiffusionConstant = [];
 obj.SMF.Tracking.ParamsHistory = {obj.SMF.Tracking};
 obj.generateTrajectories()
 
-% If needed, perform the recursive tracking.
+% If needed, perform the iterative tracking.
 OnesArray = ones(numel(obj.SMD.FrameNum), 1);
 obj.DiffusionEstimator.FitIndividualTrajectories = ...
     obj.SMF.Tracking.TrajwiseD;
-for rr = 1:(obj.SMF.Tracking.NRecursionsMax-1)
+for rr = 1:(obj.SMF.Tracking.NIterationsMax-1)
     % Send an update to the command window.
     if (obj.Verbose > 1)
         fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
-            'Tracking recursion %i...\n'], rr)
+            'Tracking iteration %i...\n'], rr)
     end
     
     % Estimate the diffusion constants from the previous tracking results.

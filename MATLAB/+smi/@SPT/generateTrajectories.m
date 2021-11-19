@@ -8,22 +8,8 @@ function generateTrajectories(obj)
 
 
 % Perform the frame-to-frame connection of the localizations.
-obj.SMD.ConnectID = (1:numel(obj.SMD.FrameNum)).';
-for ff = min(obj.SMD.FrameNum):(max(obj.SMD.FrameNum)-1)
-    % Create the frame-to-frame connection cost matrix.
-    CostMatrix = smi.SPT.createCostMatrixFF(obj.SMD, obj.SMF, ...
-        obj.DiffusionConstant, ff, obj.NonlinkMarker);
-    if (numel(CostMatrix) < 2)
-        % If there's only one localization considered, there's no use in
-        % proceeding.
-        continue
-    end
-    
-    % Perform the linear assignment problem to determine how we should link
-    % together trajectories.
-    Link12 = obj.solveLAP(CostMatrix);
-    obj.SMD = obj.connectTrajFF(obj.SMD, Link12, ff);
-end
+obj.SMD = obj.genTrajFF(obj.SMD, obj.SMF, ...
+    obj.DiffusionConstant, obj.NonLinkMarker);
 
 % Throw away unconnected low p-value localizations.
 if obj.SMF.Tracking.TryLowPValueLocs
@@ -35,13 +21,11 @@ if obj.SMF.Tracking.TryLowPValueLocs
         & ismember(obj.SMD.ConnectID, UniqueTraj));
     obj.SMD = smi_core.Threshold.applyThresh(obj.SMD, obj.Verbose);
 end
-obj.SMD.ConnectID = smi.SPT.validifyConnectID(obj.SMD.ConnectID);
+obj.SMD.ConnectID = smi_helpers.compressToRange(obj.SMD.ConnectID);
 
 % Perform the gap closing on the trajectory segments.
-CostMatrix = obj.createCostMatrixGC(obj.SMD, obj.SMF, ...
+obj.SMD = obj.genTrajGC(obj.SMD, obj.SMF, ...
     obj.DiffusionConstant, obj.NonlinkMarker, obj.UseSparseMatrices);
-Link12 = obj.solveLAP(CostMatrix);
-obj.SMD = obj.connectTrajGC(obj.SMD, Link12);
 
 % Convert obj.SMD to a TR structure.
 obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);

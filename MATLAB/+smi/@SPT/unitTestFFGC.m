@@ -5,8 +5,6 @@ function [Success] = unitTestFFGC()
 % connection, gap closing, and associated methods).  The idea behind this
 % unit test is to test the tracking components without concern for the
 % underlying localizations (i.e., we start from perfect localizations).
-% For now, we're still relying on some older sma-core-alpha methods to make
-% use of this unit test.
 
 
 % Simulate Tracking Data (create a simulated SMD structure).
@@ -20,16 +18,16 @@ SMF.Fitting.PSFSigma = 1.3;
 
 % Perform the frame-to-frame connection process.
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Tracking.D = SimParams.D;
-SMF.Tracking.K_off = SimParams.KOnToOff;
-SMF.Tracking.K_on = SimParams.KOffToOn;
+SMF.Tracking.D = SPTSim.SimParams.D;
+SMF.Tracking.K_off = SPTSim.SimParams.KOnToOff;
+SMF.Tracking.K_on = SPTSim.SimParams.KOffToOn;
 SMF.Tracking.MaxFrameGap = 20;
 SMF.Tracking.MaxDistGC = 10;
 SMF.Tracking.MaxDistFF = 2 * SMF.Tracking.MaxDistGC ...
     / sqrt(SMF.Tracking.MaxFrameGap);
 SMD.ConnectID = zeros(numel(SMD.X), 1); 
 RhoOnMean = mean(smi_core.SingleMoleculeData.computeDensity(SMD));
-RhoOffMean = (SimParams.KOnToOff/SimParams.KOffToOn) * RhoOnMean;
+RhoOffMean = (SPTSim.SimParams.KOnToOff/SPTSim.SimParams.KOffToOn) * RhoOnMean;
 SMF.Tracking.Rho_off = RhoOffMean;
 for ff = min(SMD.FrameNum):(max(SMD.FrameNum)-1)
     [CM] = smi.SPT.createCostMatrixFF(SMD, SMF, [], ff, -1);
