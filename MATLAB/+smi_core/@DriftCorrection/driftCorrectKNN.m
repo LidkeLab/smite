@@ -48,6 +48,10 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 %                     with brightfield registration, while final drift works
 %                     well generally (but the optimization process may not
 %                     converge quite as quickly) (Default = SMD.NFrames)
+%      BFRegistration override value for Init_inter from obj if BFRegistration
+%                     is false and the current value for Init_inter is zero, so
+%                     the two are in conflict.  BFRegistration will take
+%                     precedence
 %      Verbose        verbosity level (Default = 1)
 %      NDatasets      [OPTIONAL] override the collected value.  This causes the
 %                     dataset/frame numbering to be reorganized internally as
@@ -114,6 +118,12 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    DriftParams.TolFun_inter   = obj.TolFun_inter;
    DriftParams.TolX_inter     = obj.TolX_inter;
    DriftParams.Init_inter     = obj.Init_inter;
+   % Override value for Init_inter from obj if BFRegistration is false and the
+   % current value for Init_inter is zero, so the two are in conflict.
+   % BFRegistration will take precedence.
+   if ~obj.BFRegistration && DriftParams.Init_inter == 0
+      DriftParams.Init_inter = SMD.NFrames;
+   end
    if ~isempty(obj.NDatasets)
       DriftParams.NDatasets   = obj.NDatasets;
    end
