@@ -45,7 +45,7 @@ end
 
 % Solve the gap-closing LAP(s).
 CostMatrix = smi.SPT.createCostMatrixGC(SMD, SMF, ...
-    DiffusionConstant, NonLinkMarker, UseSparseMatrices);
+    DiffusionConstants, NonLinkMarker, UseSparseMatrices);
 Link12 = smi.SPT.solveLAP(CostMatrix);
 SMD = smi.SPT.connectTrajGC(SMD, Link12);
 
