@@ -110,7 +110,6 @@ classdef FrameConnection < handle
         [SMD, InternalParams] = lapFC(SMD, SMF, Verbose, InternalParams);
         [SMD] = classicalFC(SMD, SMF, Verbose);
         [SMD] = revisedClassicalFC(SMD, SMF, Verbose);
-        [SMD] = preClusterCoords(SMD, SMF);
         [ClusterData] = organizeClusterData(SMD);
         [KOn, KOff, KBleach, PMiss, NEmitters] = ...
             estimateRateParameters(ClusterData, Verbose);

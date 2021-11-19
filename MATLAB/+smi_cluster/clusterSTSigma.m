@@ -1,19 +1,24 @@
-function [SMDClustered] = preClusterCoords(SMD, SMF)
-%preClusterCoords performs pre-clustering on localizations in SMD.
+function [ConnectID] = clusterSTSigma(SMD, MaxFrameGap, NSigmaDev)
+%clusterSTSigma performs pre-clustering on localizations in SMD.
 % This method clusters localizations in SMD based on their spatiotemporal
 % separations.  Localizations within SMF.FrameConnection.NSigmaDev*SE of
 % one another which appear within SMF.FrameConnection.MaxFrameGap frames
 % will be assigned to the same cluster.  The assignment is designated by a
 % shared integer value of the field SMDClustered.ConnectID.
 %
+% NOTE: This function was originally written in the context of
+%       FrameConnection.lapFC().
+%
 % INPUTS:
 %   SMD: SingleMoleculeData structure with the localizations that we wish
 %        to frame-connect.
-%   SMF: SingleMoleculeFitting structure defining relevant parameters.
+%   MaxFrameGap: Maximum frame gap allowed between cluster members.
+%   NSigmaDev: Standard error multiplier defining distance cutoff (see
+%              SMF.FrameConnection.NSigmaDev)
 %
 % OUTPUTS:
-%   SMDClustered: Same as the input SMD but with the field 'ConnectID' 
-%                 populated.
+%   ConnectID: Set of integers defining links between localizations in SMD,
+%              with indexing matching the indices of SMD localizations.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -36,8 +41,6 @@ ConnectID = (1:NLocalizations).';
 [NLocPerDataset, DatasetArray] = groupcounts(DatasetNum);
 CumulativeDatasetLocs = [0; cumsum(NLocPerDataset)];
 MaxID = NLocalizations;
-MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
-NSigmaDev = SMF.FrameConnection.NSigmaDev;
 for ii = 1:numel(DatasetArray)
     % Isolate some arrays for the current dataset (CDS = current dataset)
     CurrentDatasetInd = (1:NLocPerDataset(ii)) + CumulativeDatasetLocs(ii);
@@ -102,9 +105,8 @@ for ii = 1:numel(DatasetArray)
     end
     ConnectID(CurrentDatasetInd) = ConnectIDCDs;
 end
-SMDClustered = SMD;
-SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
-SMDClustered.ConnectID = smi_helpers.compressToRange(SMDClustered.ConnectID);
+ConnectID(SortIndices, 1) = ConnectID;
+ConnectID = smi_helpers.compressToRange(ConnectID);
 
 
 end

@@ -72,7 +72,9 @@ end
 if (Verbose > 2)
     fprintf('\tFrameConnection.lapFC(): Pre-clustering localizations...\n')
 end
-SMDPreClustered = smi_core.FrameConnection.preClusterCoords(SMD, SMF);
+SMDPreClustered = SMD;
+SMDPreClustered.ConnectID = smi_cluster.clusterSTSigma(SMD, ...
+    SMF.FrameConnection.MaxFrameGap, SMF.FrameConnection.NSigmaDev);
 SMD.ConnectID = SMDPreClustered.ConnectID;
 if (numel(unique(SMDPreClustered.FrameNum)) ...
         == numel(SMDPreClustered.FrameNum))

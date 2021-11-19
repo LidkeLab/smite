@@ -1,56 +1,23 @@
-function [SMD] = revisedClassicalFC(SMD, SMF, Verbose)
-%revisedClassicalFC connects localizations in 'SMD' by simple thresholds.
-% This method solves the frame-connection problem by connecting
-% localizations within hard spatiotemporal thresholds.  The "revision" with
-% respect to classicalFC() is that the spatial thresholds are defined in
-% terms of the position standard errors of the localizations.
-%
-% NOTE: This method is nearly identical to
-%       smi_cluster.clusterSTSigma(), with the only difference being
-%       that localizations within the same frame are prohibited from being
-%       connected to one another.
-%
-% NOTE: This method will add an additional field to SMD called
-%       "ConnectID".  SMD.ConnectID is an integer array indicating
-%       which localizations were connected during the frame connection
-%       process.  For example, if
-%       (SMD.ConnectID(nn) == SMD.ConnectID(mm)), the localizations
-%       in SMD identified by the indices nn and mm were connected during
-%       frame connection.  The exact value of the field "ConnectID" is
-%       itself arbitrary and carries no meaning further than associating
-%       localizations. This field is directly related to
-%       SMDCombined.ConnectID as follows:
-%           For a given ConnectID, say nn, the indices in arrays of SMD
-%           that were combined to generate a field in SMDCombined can be
-%           found as IndicesSMD = find(SMD.ConnectID == nn) (alternatively,
-%           IndicesSMD = smi_core.FrameConnection.findConnected(...
-%               SMDCombined, SMD, nn) )
+function [ClusterIDs] = clusterTraj(SMD, MaxDist, MaxFrameGap)
+%clusterTraj clusters nearby trajectories in SMD.
+% This method clusters localizations in SMD based on their spatiotemporal
+% separations.  Localizations within MaxDist and MaxFrameGap of one another
+% are placed in the same cluster (and hence the trajectories they belong
+% to).
 %
 % INPUTS:
 %   SMD: SingleMoleculeData structure with the localizations that we wish
 %        to frame-connect.
 %   SMF: SingleMoleculeFitting structure defining relevant parameters.
-%   Verbose: Integer specifying the verbosity level. (Default = 1)
 %
 % OUTPUTS:
-%   SMD: SMD but with the field 'ConnectID' populated.
-%
-% CITATION:
+%   ClusterIDs: 
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Set defaults if needed.
-if (~exist('SMF', 'var') || isempty(SMF))
-    SMF = smi_core.SingleMoleculeFitting;
-end
-if (~exist('Verbose', 'var') || isempty(Verbose))
-    Verbose = 1;
-end    
-
 % Gather/revise/reorganize some arrays for further use.
-NLocalizations = numel(SMD.FrameNum);
 [DatasetNum, SortIndices] = sort(SMD.DatasetNum);
 X = SMD.X(SortIndices);
 Y = SMD.Y(SortIndices);
@@ -58,30 +25,26 @@ X_SE = SMD.X_SE(SortIndices);
 Y_SE = SMD.Y_SE(SortIndices);
 FrameNum = SMD.FrameNum(SortIndices);
 MeanXYSE = mean([X_SE, Y_SE], 2);
-MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
-NSigmaDev = SMF.FrameConnection.NSigmaDev;
 
 % Initialize each localization as a new cluster.
+NLocalizations = numel(SMD.FrameNum);
 ConnectID = (1:NLocalizations).';
 
 % Loop through datasets and perform the pre-clustering.
 [NLocPerDataset, DatasetArray] = groupcounts(DatasetNum);
 CumulativeDatasetLocs = [0; cumsum(NLocPerDataset)];
 MaxID = NLocalizations;
+MaxFrameGap = SMF.FrameConnection.MaxFrameGap;
+NSigmaDev = SMF.FrameConnection.NSigmaDev;
 for ii = 1:numel(DatasetArray)
-    % Provide a Command Window update if needed.
-    if (Verbose > 2)
-        fprintf(['\tFrameConnection.revisedClassicalFC(): ', ...
-            'Performing frame connection for dataset %i...\n'], ii)
-    end
-    
     % Isolate some arrays for the current dataset (CDS = current dataset)
     CurrentDatasetInd = (1:NLocPerDataset(ii)) + CumulativeDatasetLocs(ii);
     [FrameNumCDs, SortIndicesFN] = sort(FrameNum(CurrentDatasetInd));
-    XCDs = X(CurrentDatasetInd(SortIndicesFN));
-    YCDs = Y(CurrentDatasetInd(SortIndicesFN));
-    MeanXYSECDs = MeanXYSE(CurrentDatasetInd(SortIndicesFN));
-    ConnectIDCDs = ConnectID(CurrentDatasetInd(SortIndicesFN));
+    CurrentDatasetInd = CurrentDatasetInd(SortIndicesFN);
+    XCDs = X(CurrentDatasetInd);
+    YCDs = Y(CurrentDatasetInd);
+    MeanXYSECDs = MeanXYSE(CurrentDatasetInd);
+    ConnectIDCDs = ConnectID(CurrentDatasetInd);
     
     % Loop through frames and add localizations to clusters.
     IsClustered = zeros(NLocPerDataset(ii), 1, 'logical');
@@ -97,19 +60,23 @@ for ii = 1:numel(DatasetArray)
         CurrentFrameInd = (1:NLocPerFrame(ff)) + CumulativeLocs(ff);
         CandidateFrameInd = ...
             find((FrameNumCDs >= (FrameArray(ff)-MaxFrameGap)) ...
-            & (FrameNumCDs<FrameArray(ff)));
+            & (FrameNumCDs<=FrameArray(ff)));
         if isempty(CandidateFrameInd)
+            MaxID = MaxID + 1;
             ConnectID(CurrentFrameInd) = (1:NLocPerFrame(ff)).' + MaxID;
             MaxID = MaxID + NLocPerFrame(ff);
             continue
         end
         
         % Determine the nearest neighbor to the current localizations in
-        % all candidate frames.
+        % all candidate frames (noting that we're allowing comparisons to
+        % the current frame as well).
         [NNIndices, NNDistances] = knnsearch(...
             [XCDs(CandidateFrameInd), YCDs(CandidateFrameInd)], ...
             [XCDs(CurrentFrameInd), YCDs(CurrentFrameInd)], ...
-            'k', 1);
+            'k', 2);
+        NNIndices = NNIndices(:, 2:end);
+        NNDistances = NNDistances(:, 2:end);
         
         % Place the CurrentFrameInd localizations into clusters.
         ValidNNInd = find(NNDistances ...
@@ -131,9 +98,11 @@ for ii = 1:numel(DatasetArray)
             end
         end
     end
-    ConnectID(CurrentDatasetInd(SortIndicesFN)) = ConnectIDCDs;
+    ConnectID(CurrentDatasetInd) = ConnectIDCDs;
 end
-SMD.ConnectID(SortIndices, 1) = smi_helpers.compressToRange(ConnectID);
+SMDClustered = SMD;
+SMDClustered.ConnectID(SortIndices, 1) = ConnectID;
+SMDClustered.ConnectID = smi_helpers.compressToRange(SMDClustered.ConnectID);
 
 
 end
