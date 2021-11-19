@@ -5,8 +5,6 @@ function [Success] = unitTestFFGC()
 % connection, gap closing, and associated methods).  The idea behind this
 % unit test is to test the tracking components without concern for the
 % underlying localizations (i.e., we start from perfect localizations).
-% For now, we're still relying on some older sma-core-alpha methods to make
-% use of this unit test.
 
 
 % Simulate Tracking Data (create a simulated SMD structure).

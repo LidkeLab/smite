@@ -180,6 +180,9 @@ classdef SPT < handle
     
     methods(Static)
         [Success] = unitTestFFGC()
+        [SMD] = genTrajFF(SMD, SMF, DiffusionConstants, NonLinkMarker);
+        [SMD] = genTrajGC(SMD, SMF, DiffusionConstants, ...
+            NonLinkMarker, UseSparseMatrices);
         [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
             DiffusionConstants, FrameNumber, NonLinkMarker);
         [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
