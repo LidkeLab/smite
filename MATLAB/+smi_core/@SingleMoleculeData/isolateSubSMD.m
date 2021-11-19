@@ -10,7 +10,9 @@ function [SMD] = isolateSubSMD(SMD, SubIndices)
 % INPUTS:
 %   SMD: A Single Molecule Data structure.
 %   SubIndices: Set of indices/booleans corresponding to the desired 
-%               entries of SMD. (integer array/logical array)
+%               entries of SMD. If not entered/left empty, this method
+%               will attempt to copy all fields that don't share the same
+%               size as SMD.FrameNum. (integer array/logical array)
 %
 % OUTPUTS:
 %   SMD: A Single Molecule Data structure whose vector fields correspond to
@@ -23,14 +25,17 @@ function [SMD] = isolateSubSMD(SMD, SubIndices)
 % Determine the length of vector fields and ensure consistency with the
 % provided SubIndices.
 ArrayLength = numel(SMD.FrameNum);
-if islogical(SubIndices)
-    assert(numel(SubIndices) == ArrayLength, ...
-        ['If ''SubIndices'' is a boolean array, it must be the same ', ...
-        'length as SMD.FrameNum'])
-else
-    assert(max(SubIndices) <= ArrayLength, ...
-        ['Provided ''SubIndices'' contains indices greater than the ', ...
-        'length of SMD.FrameNum'])
+VectorCopy = (exist('SubIndices', 'var') && ~isempty(SubIndices));
+if VectorCopy
+    if islogical(SubIndices)
+        assert(numel(SubIndices) == ArrayLength, ...
+            ['If ''SubIndices'' is a boolean array, it must be the same ', ...
+            'length as SMD.FrameNum'])
+    else
+        assert(max(SubIndices) <= ArrayLength, ...
+            ['Provided ''SubIndices'' contains indices greater than the ', ...
+            'length of SMD.FrameNum'])
+    end
 end
 
 % Loop through all SMD fields and update the output SMD as necessary.
@@ -38,7 +43,11 @@ SMDIn = SMD;
 SMDFields = fieldnames(SMD);
 for ff = 1:numel(SMDFields)
     if (numel(SMDIn.(SMDFields{ff})) == ArrayLength)
-        SMD.(SMDFields{ff}) = SMDIn.(SMDFields{ff})(SubIndices);
+        if VectorCopy
+            SMD.(SMDFields{ff}) = SMDIn.(SMDFields{ff})(SubIndices);
+        else
+            SMD.(SMDFields{ff}) = [];
+        end
     end
 end
 
