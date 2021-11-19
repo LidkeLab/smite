@@ -43,11 +43,24 @@ if (~exist('UseSparseMatrices', 'var') || isempty(UseSparseMatrices))
     UseSparseMatrices = true;
 end
 
+% Cluster trajectories together so that we can solve several smaller LAPs.
+TrajClusters = smi_cluster.clusterSTDist(SMD, ...
+    SMF.Tracking.MaxFrameGap, SMF.Tracking.MaxDistGC);
+
 % Solve the gap-closing LAP(s).
-CostMatrix = smi.SPT.createCostMatrixGC(SMD, SMF, ...
-    DiffusionConstants, NonLinkMarker, UseSparseMatrices);
-Link12 = smi.SPT.solveLAP(CostMatrix);
-SMD = smi.SPT.connectTrajGC(SMD, Link12);
+UniqueClusters = unique(TrajClusters);
+SMDOut = smi_core.SingleMoleculeData.isolateSubSMD(SMD);
+for nn = UniqueClusters.'
+    SMDSub = smi_core.SingleMoleculeData.isolateSubSMD(SMD, ...
+        TrajClusters == nn);
+    SMDSub.ConnectID = smi_helpers.compressToRange(SMDSub.ConnectID);
+    CostMatrix = smi.SPT.createCostMatrixGC(SMDSub, SMF, ...
+        DiffusionConstants, NonLinkMarker, UseSparseMatrices);
+    Link12 = smi.SPT.solveLAP(CostMatrix);
+    SMDSub = smi.SPT.connectTrajGC(SMDSub, Link12);
+    SMDOut = smi_core.SingleMoleculeData.catSMD(SMDOut, SMDSub);
+end
+SMD = SMDOut;
 
 
 end

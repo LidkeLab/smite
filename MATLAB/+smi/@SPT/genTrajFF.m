@@ -35,7 +35,8 @@ end
 
 % Loop over frames and solve the frame-to-frame connection LAP.
 SMD.ConnectID = (1:numel(SMD.FrameNum)).';
-for ff = min(SMD.FrameNum):(max(SMD.FrameNum)-1)
+UniqueFrames = unique(SMD.FrameNum, 'sorted');
+for ff = UniqueFrames(1:(end-1)).'
     % Create the frame-to-frame connection cost matrix.
     CostMatrix = smi.SPT.createCostMatrixFF(SMD, SMF, ...
         DiffusionConstants, ff, NonLinkMarker);

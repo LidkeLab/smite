@@ -39,7 +39,7 @@ classdef SPT < handle
         
         % Marker to ignore entries in cost matrices (Default = -1)
         % NonlinkMarker can't be inf or NaN.
-        NonlinkMarker = -1;
+        NonLinkMarker = -1;
         
         % Flag to indicate movies should be made (Default = true)
         GenerateMovies = true;

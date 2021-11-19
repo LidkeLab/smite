@@ -25,7 +25,7 @@ obj.SMD.ConnectID = smi_helpers.compressToRange(obj.SMD.ConnectID);
 
 % Perform the gap closing on the trajectory segments.
 obj.SMD = obj.genTrajGC(obj.SMD, obj.SMF, ...
-    obj.DiffusionConstant, obj.NonlinkMarker, obj.UseSparseMatrices);
+    obj.DiffusionConstant, obj.NonLinkMarker, obj.UseSparseMatrices);
 
 % Convert obj.SMD to a TR structure.
 obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
