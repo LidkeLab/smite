@@ -27,7 +27,7 @@ obj.generateTrajectories()
 OnesArray = ones(numel(obj.SMD.FrameNum), 1);
 obj.DiffusionEstimator.FitIndividualTrajectories = ...
     obj.SMF.Tracking.TrajwiseD;
-for rr = 1:(obj.SMF.Tracking.NIterationsMax-1)
+for rr = 1:(obj.SMF.Tracking.NIterMax-1)
     % Send an update to the command window.
     if (obj.Verbose > 1)
         fprintf(['\tsmi.spt.performFullAnalysis(): ', ...
