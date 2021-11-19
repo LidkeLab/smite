@@ -1,7 +1,7 @@
-function [ConnectID] = clusterSTSigma(SMD, MaxFrameGap, NSigmaDev)
+function [ConnectID] = clusterSTDist(SMD, MaxFrameGap, MaxDist)
 %clusterSTSigma performs pre-clustering on localizations in SMD.
 % This method clusters localizations in SMD based on their spatiotemporal
-% separations.  Localizations within NSigmaDev*SE of one another which 
+% separations.  Localizations within MaxDist of one another which 
 % appear within MaxFrameGap frames will be assigned to the same cluster.  
 % The assignment is designated by a shared integer value of the output 
 % ConnectID.
@@ -13,8 +13,7 @@ function [ConnectID] = clusterSTSigma(SMD, MaxFrameGap, NSigmaDev)
 %   SMD: SingleMoleculeData structure with the localizations that we wish
 %        to frame-connect.
 %   MaxFrameGap: Maximum frame gap allowed between cluster members.
-%   NSigmaDev: Standard error multiplier defining distance cutoff (see
-%              SMF.FrameConnection.NSigmaDev)
+%   MaxDist: Maximum distance allowed between members of the same cluster.
 %
 % OUTPUTS:
 %   ConnectID: Set of integers defining links between localizations in SMD,
@@ -84,8 +83,7 @@ for ii = 1:numel(DatasetArray)
         NNDistances = NNDistances(:, 2:end);
         
         % Place the CurrentFrameInd localizations into clusters.
-        ValidNNInd = find(NNDistances ...
-            <= (NSigmaDev*MeanXYSECDs(CurrentFrameInd)));
+        ValidNNInd = find(NNDistances <= MaxDist);
         if isempty(ValidNNInd)
             continue
         end
