@@ -17,8 +17,8 @@ if obj.SMF.Tracking.TryLowPValueLocs
     [GroupCounts, GroupIDs] = groupcounts(obj.SMD.ConnectID);
     UniqueTraj = GroupIDs(GroupCounts == 1);
     obj.SMD.ThreshFlag = ...
-        ((obj.SMD.PValue<obj.SMF.Thresholding.MinPValue) ...
-        & ismember(obj.SMD.ConnectID, UniqueTraj));
+        int32(((obj.SMD.PValue<obj.SMF.Thresholding.MinPValue) ...
+        & ismember(obj.SMD.ConnectID, UniqueTraj)));
     obj.SMD = smi_core.Threshold.applyThresh(obj.SMD, obj.Verbose);
 end
 obj.SMD.ConnectID = smi_helpers.compressToRange(obj.SMD.ConnectID);
