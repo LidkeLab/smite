@@ -54,11 +54,15 @@ for ee = 1:MaxTrajID
     % the same trajectory ID.
     if (Link12(ee) <= MaxTrajID)
         % Create a boolean array indicating which trajectory ID's we will
-        % be updating.
-        UpdateBoolean = (SMD.ConnectID == max(ee, Link12(ee)));
+        % be updating.  We need to update the ee-th trajectory, the
+        % Link12(ee)-th trajectory, as well as trajectories previously
+        % connected to trajectory ee.
+        UpdateBoolean = ismember(SMD.PreGCConnectID, [ee, Link12(ee)]);
+        UpdateBoolean = (UpdateBoolean ...
+            | ismember(SMD.ConnectID, SMD.ConnectID(UpdateBoolean)));
                 
-        % If the ee-th trajectory ID was already re-assigned, we need to
-        % account for that as well.
+        % If the ee-th trajectory ID was already re-assigned, determine
+        % which ID it was assigned to.
         ReassignedCurrentID = min(SMD.ConnectID(SMD.PreGCConnectID == ee));
         
         % If linking to a trajectory which itself had already been given a
@@ -71,9 +75,8 @@ for ee = 1:MaxTrajID
         
         % Re-assign the appropriate set of trajectories to their new
         % ConnectID.
-        SMD.ConnectID(UpdateBoolean) = ...
-            ones(sum(UpdateBoolean), 1, 'int32') ...
-            * min([ee, Link12(ee), ReassignedCurrentID, ReassigedLinkID]);
+        NewID = min([ee, Link12(ee), ReassignedCurrentID, ReassigedLinkID]);
+        SMD.ConnectID(UpdateBoolean) = int32(NewID);
     end
 end
 
