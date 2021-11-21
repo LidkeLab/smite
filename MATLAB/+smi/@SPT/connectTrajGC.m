@@ -30,7 +30,7 @@ function [SMD] = connectTrajGC(SMD, Link12)
 
 
 % Keep original ConnectID before Gap Closing (=SMD.PreGCConnectID) and
-% define the SMD.ConnectID for final results
+% define the SMD.ConnectID for final results.
 SMD.PreGCConnectID = SMD.ConnectID;
 
 % Determine the maximum value of ConnectID for later use.
@@ -56,7 +56,7 @@ for ee = 1:MaxTrajID
         % Create a boolean array indicating which trajectory ID's we will
         % be updating.  We need to update the ee-th trajectory, the
         % Link12(ee)-th trajectory, as well as trajectories previously
-        % connected to trajectory ee.
+        % connected to either of those trajectories.
         UpdateBoolean = ismember(SMD.PreGCConnectID, [ee, Link12(ee)]);
         UpdateBoolean = (UpdateBoolean ...
             | ismember(SMD.ConnectID, SMD.ConnectID(UpdateBoolean)));
