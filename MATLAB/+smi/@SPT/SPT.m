@@ -88,7 +88,7 @@ classdef SPT < handle
     end
     
     properties (Hidden)
-        % Diffusion constants for each localization in trajectories.
+        % Diffusion coefficients for each localization in trajectories.
         % This array is organized as a two-column array as [D, D_SE]
         % NOTE: This is only used when UseTrackByTrackD is set to true.
         %       I've made this hidden because the user shouldn't really be
@@ -96,7 +96,7 @@ classdef SPT < handle
         %       user should produce them in the diffusion estimator class,
         %       or access them in the appropriate properties of
         %       obj.DiffusionEstimator.
-        DiffusionConstant = [];
+        DiffusionCoefficients = [];
         
         % Copy of the SMF structure.
         % This is used for a few random tests/things like
@@ -173,6 +173,7 @@ classdef SPT < handle
         [TR, SMD, SMDPreThresh, FileList, TransformList] = batchTrack(obj);
         autoTrack(obj)
         generateTrajectories(obj)
+        updateTrackingParams(obj, SMD, TR)
         saveResults(obj)
         gui(obj)
         
@@ -180,17 +181,20 @@ classdef SPT < handle
     
     methods(Static)
         [Success] = unitTestFFGC()
-        [SMD] = genTrajFF(SMD, SMF, DiffusionConstants, NonLinkMarker);
-        [SMD] = genTrajGC(SMD, SMF, DiffusionConstants, ...
+        [SMD] = genTrajFF(SMD, SMF, DiffusionCoefficients, NonLinkMarker);
+        [SMD] = genTrajGC(SMD, SMF, DiffusionCoefficients, ...
             NonLinkMarker, UseSparseMatrices);
         [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-            DiffusionConstants, FrameNumber, NonLinkMarker);
+            DiffusionCoefficients, FrameNumber, NonLinkMarker);
         [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
-            DiffusionConstants, NonLinkMarker, CreateSparseMatrix);
+            DiffusionCoefficients, NonLinkMarker, CreateSparseMatrix);
         [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);
         [KOn, KOff] = estimateRateParameters(SMD);
+        [RhoOff, RhoOn] = estimateDensities(SMD, SMF);
+        [DiffusionStruct] = ...
+            estimateDiffCoeffs(TR, DiffusionEstimator, DReset)
     end
     
     
