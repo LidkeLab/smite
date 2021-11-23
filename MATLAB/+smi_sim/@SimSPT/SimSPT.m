@@ -37,6 +37,9 @@ classdef SimSPT < handle
     properties (Dependent)
         % obj.TrajStruct converted to the more useable SMD format.
         SMD
+        
+        % SMD converted to a Tracking Results structure.
+        TR
     end
     
     methods
@@ -60,6 +63,11 @@ classdef SimSPT < handle
         function [SMD] = get.SMD(obj)
             % This method converts obj.TrajStruct to an SMD.
             SMD = obj.convertTrajToSMD(obj.TrajStruct, obj.SimParams);
+        end
+        
+        function [TR] = get.TR(obj)
+            % This method converts obj.SMD to a TR.
+            TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
         end
         
         createSimulation(obj);
