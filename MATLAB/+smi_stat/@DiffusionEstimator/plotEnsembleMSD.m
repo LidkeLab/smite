@@ -60,13 +60,15 @@ if ~isempty(DiffusionStruct)
     
     % Plot the MSD fit.
     switch lower(DiffusionModel)
-        case 'brownian1c'
+        case 'brownian'
             % The Brownian diffusion model suggests the MSD is linear with
             % time.
             FitParams = DiffusionStruct(2).FitParams ...
                 * (JumpUnitConversion^2) ./ [1, TimeUnitConversion];
             plot(PlotAxes, ...
                 FrameLags, FitParams(2)*FrameLags + FitParams(1))
+        otherwise
+            warning('Unknown ''DiffusionModel'' = %s', DiffusionModel)
     end
 end
 TimeUnit = smi_helpers.arrayMUX({'frames', 'seconds'}, UnitFlag);

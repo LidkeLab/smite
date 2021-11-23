@@ -64,13 +64,10 @@ for ii = 1:NFits
     NPoints = double(MSDStruct(ii).NPoints(FitPointsIndices));
     MSD = double(MSDStruct(ii).MSD(FitPointsIndices));
     switch lower(DiffusionModel)
-        case 'brownian1c'
+        case 'brownian'
             [FitParams(ii, :), FitParamsSE(ii, :)] = ...
                 smi_stat.DiffusionEstimator.fitMSDBrownian(...
                 FrameLags, MSD, NPoints, FitMethod);
-        case 'brownian2c'
-            error(['The two component model ''Brownian2C'' can only ', ...
-                'be used when obj.FitTarget = ''CDFOfJumps'''])
         otherwise
             error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
     end

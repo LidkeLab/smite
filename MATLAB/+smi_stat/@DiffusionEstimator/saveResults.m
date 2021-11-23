@@ -82,8 +82,7 @@ if SaveParams.MakeFitPlot
                     FilePath)
             end
             obj.plotEnsembleCDFOfJumps(PlotAxes, obj.MSDEnsemble, ...
-                obj.DiffusionStruct, obj.DiffusionModel, ...
-                obj.UnitFlag);
+                obj.DiffusionStruct, obj.UnitFlag);
     end
     
     % Save the plot.

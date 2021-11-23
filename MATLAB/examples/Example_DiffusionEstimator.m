@@ -21,7 +21,8 @@ TR = SPTSim.TR;
 SMF = smi_core.SingleMoleculeFitting; % used for PixelSize and FrameRate
 DE = smi_stat.DiffusionEstimator(TR, SMF);
 DE.FitTarget = 'MSD';
-DE.DiffusionModel = 'Brownian1C'; % must be 'Brownian1C' for MSD fitting
+DE.DiffusionModel = 'Brownian'; % must be 'Brownian' for MSD fitting
+DE.NComponents = 1; % must be 1 for MSD fitting
 DE.FitMethod = 'WeightedLS'; % 'WeightedLS' or 'LS'
 DE.FrameLagRange = [1, 50]; % range of frame lags computed in MSD
 DE.NFitPoints = 5; % # of points in MSD used for fit.
@@ -56,7 +57,8 @@ TR = SPTSim.TR;
 SMF = smi_core.SingleMoleculeFitting; % used for PixelSize and FrameRate
 DE = smi_stat.DiffusionEstimator(TR, SMF);
 DE.FitTarget = 'CDFOfJumps';
-DE.DiffusionModel = 'Brownian2C';
+DE.DiffusionModel = 'Brownian';
+DE.NComponents = 2;
 DE.FrameLagRange = [1, 5]; % range of frame lags computed in MSD
 DE.EstimateSEs = false; % estimate standard errors of fit D values
 DE.FitIndividualTrajectories = false; % fit each trajectory MSD
@@ -66,7 +68,7 @@ DE.estimateDiffusionConstant();
 
 % Plot the CDF and fit results.
 DE.plotEnsembleCDFOfJumps(axes(figure()), ...
-    DE.MSDEnsemble, DE.DiffusionStruct, DE.DiffusionModel, DE.UnitFlag);
+    DE.MSDEnsemble, DE.DiffusionStruct, DE.UnitFlag);
 
 %% Two diffusing populations, estimating D with an MLE for the jumps.
 % (If estimating standard errors, this is faster than fitting the CDF, and
@@ -78,7 +80,8 @@ DE.plotEnsembleCDFOfJumps(axes(figure()), ...
 SMF = smi_core.SingleMoleculeFitting; % used for PixelSize and FrameRate
 DE = smi_stat.DiffusionEstimator(TR, SMF);
 DE.FitTarget = 'LikelihoodOfJumps';
-DE.DiffusionModel = 'Brownian2C';
+DE.DiffusionModel = 'Brownian';
+DE.NComponents = 2;
 DE.FrameLagRange = [1, inf]; % range of frame lags computed in MSD
 DE.EstimateSEs = true; % estimate standard errors of fit D values
 DE.FitIndividualTrajectories = false; % fit each trajectory MSD

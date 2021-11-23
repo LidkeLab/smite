@@ -1,5 +1,5 @@
 function [FitParams, FitParamsSE] = ...
-    fitCDFOfJumps(MSDStruct, FitMethod, DiffusionModel, Verbose)
+    fitCDFOfJumps(MSDStruct, FitMethod, NComponents, DiffusionModel, Verbose)
 %fitCDFOfJumps fits the CDF of displacement data (jumps).
 % This method will fit a model to the CDF (CPD) of trajectory
 % displacements.
@@ -10,9 +10,10 @@ function [FitParams, FitParamsSE] = ...
 %              already be populated with SortedJumps and CDFOfJumps (see
 %              computeCDFOfMSD()).
 %   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
+%   NComponents: Number of diffusive components used in fit. (Default = 1)
 %   DiffusionModel: A string specifying the diffusion model to fit to the
 %                   MSD. See options in DiffusionEstimator class property
-%                   'DiffusionModel'. (Default = 'Brownian2C')
+%                   'DiffusionModel'. (Default = 'Brownian')
 %   Verbose: Verbosity level specifying how many temporary outputs should
 %            be displayed (e.g., Command Window updates).
 %
@@ -32,23 +33,17 @@ function [FitParams, FitParamsSE] = ...
 if (~exist('FitMethod', 'var') || isempty(FitMethod))
     FitMethod = 'WeightedLS';
 end
+if (~exist('NComponents', 'var') || isempty(NComponents))
+    NComponents = 1;
+end
 if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
-    DiffusionModel = 'Brownian2C';
+    DiffusionModel = 'Brownian';
 end
 if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 0;
 end
 
-% Determine how many components and fit parameters are used in the desired
-% model.
-switch lower(DiffusionModel)
-    case 'brownian1c'
-        NComponents = 1;
-    case 'brownian2c'
-        NComponents = 2;
-    otherwise
-        error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
-end
+% Determine how many fit parameters are needed in the desired model.
 NFitParams = 2*NComponents - 1;
 
 % Fit the CDF data.
@@ -73,20 +68,25 @@ for ii = 1:NFits
     
     % Fit the CDF of the jumps to the desired diffusion model.
     % NOTE: We're only allowing Brownian motion for now.
-    if (nargout > 1)
-        [ParamsHat, ParamsHatSE] = ...
-            smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
-            SortedSquaredDisp, CDFOfJumps, ...
-            FrameLags, NPoints, LocVarianceSum, NComponents, ...
-            [], FitMethod);
-        FitParamsSE(ii, :) = ParamsHatSE.';
-    else
-        ParamsHat = smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
-            SortedSquaredDisp, CDFOfJumps, ...
-            FrameLags, NPoints, LocVarianceSum, NComponents, ...
-            [], FitMethod);
+    switch lower(DiffusionModel)
+        case 'brownian'
+            if (nargout > 1)
+                [ParamsHat, ParamsHatSE] = ...
+                    smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+                    SortedSquaredDisp, CDFOfJumps, ...
+                    FrameLags, NPoints, LocVarianceSum, NComponents, ...
+                    [], FitMethod);
+                FitParamsSE(ii, :) = ParamsHatSE.';
+            else
+                ParamsHat = smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+                    SortedSquaredDisp, CDFOfJumps, ...
+                    FrameLags, NPoints, LocVarianceSum, NComponents, ...
+                    [], FitMethod);
+            end
+            FitParams(ii, :) = ParamsHat.';
+        otherwise
+            error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
     end
-    FitParams(ii, :) = ParamsHat.';
 end
 
 

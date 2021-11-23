@@ -1,5 +1,5 @@
 function [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
-    MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag)
+    MSDEnsemble, DiffusionStruct, UnitFlag)
 %plotEnsembleCDFOfJumps plots the CDF of jumps and an associated fit.
 % This method will plot the CDF of jumps data provided in MSDEnsemble as
 % well as the associated fit provided in DiffusionStruct.
@@ -10,9 +10,6 @@ function [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
 %                computeMSD())
 %   DiffusionStruct: Structure array containing MSD fit ressults.
 %                    (Default = [], meaning no fit results are plotted).
-%   DiffusionModel: A string specifying the diffusion model to fit to the
-%                   MSD. See options in DiffusionEstimator class property
-%                   'DiffusionModel'. (Default = 'Brownian1C')
 %   UnitFlag: Flag to specify camera units (0) or physical units (1).
 %             (Default = 0)
 %
@@ -30,9 +27,6 @@ end
 if (~exist('DiffusionStruct', 'var') || isempty(DiffusionStruct))
     DiffusionStruct = [];
 end
-if (~exist('DiffusionModel', 'var') || isempty(DiffusionModel))
-    DiffusionModel = 'Brownian1C';
-end
 if (~exist('UnitFlag', 'var') || isempty(UnitFlag))
     UnitFlag = 0;
 end
@@ -46,17 +40,8 @@ SquaredJumps = MSDEnsemble.SortedSquaredDisp * SquaredJumpsConversion;
 stairs(PlotAxes, SquaredJumps, MSDEnsemble.CDFOfJumps)
 
 % If needed, plot the fit results.
-if ~isempty(DiffusionStruct)
-    % Determine how many components are used in the model.
-    switch lower(DiffusionModel)
-        case 'brownian1c'
-            NComponents = 1;
-        case 'brownian2c'
-            NComponents = 2;
-        otherwise
-            error('Unknown ''DiffusionModel'' = %s', DiffusionModel)
-    end
-    
+NComponents = numel(DiffusionStruct(2).DiffusionConstant);
+if ~isempty(DiffusionStruct)  
     % Define some unit conversion parameters. This is needed because the
     % DiffusionStruct allows for either camera units or physical units
     % (unlike the MSD structures).
