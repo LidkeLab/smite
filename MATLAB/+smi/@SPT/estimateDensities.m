@@ -21,8 +21,8 @@ function [RhoOff, RhoOn] = estimateDensities(SMD, SMF)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Estimate the average density of visible emitters.
-RhoOn = mean(smi_core.SingleMoleculeData.computeDensity(SMD));
+% Estimate the density of visible emitters.
+RhoOn = smi_core.SingleMoleculeData.computeDensityImage(SMD);
 
 % Estimate the density of dark emitters.
 RhoOff = RhoOn * (SMF.Tracking.K_off/SMF.Tracking.K_on);

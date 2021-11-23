@@ -27,30 +27,37 @@ if (~exist('SMD', 'var') || isempty(SMD))
     SMD = obj.SMD;
 end
 
-% Update obj.DiffusionCoefficients, storing results so that indices match
-% indices of obj.SMD.
-obj.DiffusionEstimator.FitIndividualTrajectories = ...
-    obj.SMF.Tracking.TrajwiseD;
-DiffusionStruct = obj.estimateDiffCoeffs(obj.TR, ...
-    obj.DiffusionEstimator, obj.SMF.Tracking.D);
-obj.SMF.Tracking.D = DiffusionStruct(2).DiffusionConstant;
-if obj.SMF.Tracking.TrajwiseD
-    for ii = 1:numel(obj.TR)
-        obj.DiffusionCoefficients(obj.TR(ii).IndSMD, 1) = ...
-            DiffusionStruct(1).DiffusionConstant(ii);
-        obj.DiffusionCoefficients(obj.TR(ii).IndSMD, 2) = ...
-            DiffusionStruct(1).DiffusionConstantSE(ii);
+% If SMD has the field ConnectID populated, estimate diffusion constants
+% and rate parameters.
+if ~isempty(SMD.ConnectID)
+    % Update obj.DiffusionCoefficients, storing results so that indices
+    % match indices of SMD.
+    obj.DiffusionEstimator.FitIndividualTrajectories = ...
+        obj.SMF.Tracking.TrajwiseD;
+    DiffusionStruct = obj.estimateDiffCoeffs(obj.TR, ...
+        obj.DiffusionEstimator, obj.SMF.Tracking.D);
+    obj.SMF.Tracking.D = DiffusionStruct(2).DiffusionConstant;
+    if obj.SMF.Tracking.TrajwiseD
+        for ii = 1:numel(obj.TR)
+            obj.DiffusionCoefficients(obj.TR(ii).IndSMD, 1) = ...
+                DiffusionStruct(1).DiffusionConstant(ii);
+            obj.DiffusionCoefficients(obj.TR(ii).IndSMD, 2) = ...
+                DiffusionStruct(1).DiffusionConstantSE(ii);
+        end
+    else
+        obj.DiffusionCoefficients = [DiffusionStruct(2).DiffusionConstant, ...
+            DiffusionStruct(2).DiffusionConstantSE];
     end
-else
-    obj.DiffusionCoefficients = [DiffusionStruct(2).DiffusionConstant, ...
-        DiffusionStruct(2).DiffusionConstantSE];
+    
+    % Update our rate parameter estimates.
+    [obj.SMF.Tracking.K_on, obj.SMF.Tracking.K_off] = ...
+        obj.estimateRateParameters(SMD);
 end
 
-% Update our rate parameter estimates.
-[obj.SMF.Tracking.K_on, obj.SMF.Tracking.K_off] = ...
-    obj.estimateRateParameters(SMD);
-
 % Estimate the density of off emitters (if requested).
+% NOTE: As it's written currently, this won't change as we iteratively
+%       track, however I've added it here just in case we update how
+%       we estimate the densities.
 if obj.SMF.Tracking.EstimateRho
     obj.SMF.Tracking.Rho_off = obj.estimateDensities(SMD, obj.SMF);
 end

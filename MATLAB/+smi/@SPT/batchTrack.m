@@ -76,9 +76,9 @@ SMD = cell(NFiles, 1);
 SMDPreThresh = cell(NFiles, 1);
 IsTestRunInit = obj.IsTestRun;
 obj.IsTestRun = (obj.SMF.Tracking.NIterMaxBatch > 1);
-ParamsHistory = {obj.SMF.Tracking};
 IsLastIter = false;
 ii = 1;
+ParamsHistory = {obj.SMF.Tracking};
 while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
     % Send an update to the command window.
     if (obj.Verbose > 1)
@@ -95,9 +95,7 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
             / PreviousParams.K_on);
         KOffChange = abs((PreviousParams.K_off-obj.SMF.Tracking.K_off) ...
             / PreviousParams.K_off);
-        RhoOffChange = abs((PreviousParams.Rho_off-obj.SMF.Tracking.Rho_off) ...
-            / PreviousParams.Rho_off);
-        if (all([DChange, KOnChange, KOffChange, RhoOffChange] ...
+        if (all([DChange, KOnChange, KOffChange] ...
                 <= obj.SMF.Tracking.MaxRelativeChange) ...
                 || (ii==obj.SMF.Tracking.NIterMaxBatch))
             % Indicate it's the last iteration and restore the initial 

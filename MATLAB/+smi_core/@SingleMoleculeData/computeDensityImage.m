@@ -56,7 +56,7 @@ if (~exist('NEmitters', 'var') || isempty(NEmitters))
     NEmitters = groupcounts(SMD.FrameNum, 1:(SMD.NFrames+1), ...
         'IncludeEmptyGroups', true, 'IncludedEdge', 'left');
     if ~TimeSeries
-        % In this case, we'll take the nmber of emitters to be the maximum
+        % In this case, we'll take the number of emitters to be the maximum
         % number of localizations seen in any single frame.
         NEmitters = max(NEmitters);
     end

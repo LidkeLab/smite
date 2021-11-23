@@ -12,7 +12,7 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
 %   DiffusionConstants: Diffusion constants for each localization in SMD
-%                       (column 1) and their SEs (column 2). If this is not 
+%                       (column 1) and their SEs (column 2). If this is not
 %                       provided, we'll use SMF.Tracking.D for all
 %                       trajectories.
 %                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
@@ -86,8 +86,8 @@ for ii = 1:N
         %       is more valid: D==DFrame1 in the following equations, or
         %       D==mean(DFrame1+DFrame2)?  I think D==DFrame1 makes more
         %       sense, however that might be too tight of a restriction
-        %       (e.g., if one of the localizations was previously estimated 
-        %       to be from a very slow trajectory, that might prevent us 
+        %       (e.g., if one of the localizations was previously estimated
+        %       to be from a very slow trajectory, that might prevent us
         %       from connecting the two localizations).
         Sigma_X = sqrt(DFrame1(1) + DFrame2(1) ...
             + X_SEFrame1^2 + X_SEFrame2^2);
@@ -107,7 +107,7 @@ for ii = 1:N
                 || (ZScoreD>SMF.Tracking.MaxZScoreD))
             continue
         end
-                
+        
         % Define the negative log-likelihood of the observed X, Y from
         % FrameNumber and FrameNumber+1 having come from the Normal
         % distributions defined by Sigma_X and Sigma_Y (i.e., this is
@@ -140,11 +140,24 @@ end
 % FrameNumber and FrameNumber+1 (the costs of introducing a new emitter
 % appearing in FrameNumber+1/an emitter disappearing in FrameNumber+1,
 % respectively).
-CostBirth = -log(SMF.Tracking.Rho_off * (1-exp(-SMF.Tracking.K_on)));
+if isscalar(SMF.Tracking.Rho_off)
+    CostBirth = -log(SMF.Tracking.Rho_off * (1-exp(-SMF.Tracking.K_on)));
+else
+    % Rescale the data to match the size of our density image.
+    Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
+    Y = ceil((SMD.Y(EmitterIndicesFrame2)-0.5)*Scale(1) + 0.5);
+    X = ceil((SMD.X(EmitterIndicesFrame2)-0.5)*Scale(2) + 0.5);
+    
+    % Compute the birth costs
+    CostBirth = inf(numel(Y));
+    for ii = 1:numel(Y)
+        CostBirth(:, ii) = -log(SMF.Tracking.Rho_off(Y(ii), X(ii)) ...
+            * (1-exp(-SMF.Tracking.K_on)));
+    end
+end
 CostDeath = -log(1-exp(-SMF.Tracking.K_off));
 
-% Populate the remaining blocks (lower left, upper right, bottom right) of
-% the cost matrix as appropriate.
+% Populate the remaining blocks of the cost matrix as appropriate.
 % NOTE: The bottom right "auxillary" block is not physically meaningful (at
 %       least not in an obvious way?).  Our choice to set it equal to the
 %       transpose of the upper left block seems appropriate but we never

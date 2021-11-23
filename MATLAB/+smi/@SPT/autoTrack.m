@@ -11,6 +11,7 @@ function [] = autoTrack(obj)
 % Perform the iterative tracking.
 obj.DiffusionCoefficients = [];
 NoBatchIter = (obj.SMF.Tracking.NIterMaxBatch == 1);
+obj.updateTrackingParams();
 ParamsHistory = {obj.SMF.Tracking};
 for ii = 1:obj.SMF.Tracking.NIterMax
     % Send an update to the command window.
@@ -38,9 +39,7 @@ for ii = 1:obj.SMF.Tracking.NIterMax
         / PreviousParams.K_on);
     KOffChange = abs((PreviousParams.K_off-obj.SMF.Tracking.K_off) ...
         / PreviousParams.K_off);
-    RhoOffChange = abs((PreviousParams.Rho_off-obj.SMF.Tracking.Rho_off) ...
-        / PreviousParams.Rho_off);
-    if (all([DChange, KOnChange, KOffChange, RhoOffChange] ...
+    if (all([DChange, KOnChange, KOffChange] ...
             <= obj.SMF.Tracking.MaxRelativeChange) ...
             || (ii==obj.SMF.Tracking.NIterMax))
         % Store the parameter history (if needed) and stop iterating.

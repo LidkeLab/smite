@@ -81,7 +81,6 @@ MaxZScoreD = SMF.Tracking.MaxZScoreD;
 MaxFrameGap = SMF.Tracking.MaxFrameGap;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
-Rho_off = SMF.Tracking.Rho_off;
 
 % Define various parameters that will be useful later on.
 NTraj = max(ConnectID);
@@ -243,6 +242,13 @@ for ee = 1:NTraj
     end
 end
 
+% Rescale the trajectory coordinates to match the size of
+% SMF.Tracking.Rho_off (which might be given as a density image instead of
+% a scalar).
+Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
+Y = ceil((SMD.Y(StartEndIndices(:, 2))-0.5)*Scale(1) + 0.5);
+X = ceil((SMD.X(StartEndIndices(:, 2))-0.5)*Scale(2) + 0.5);
+
 % Fill in the "birth" block (lower left) of the cost matrix.
 % NOTE: We set FirstFrame = 1 instead of min(SMD.FrameNum) based on the
 %       assumption that our experiment started at time corresponding to
@@ -250,7 +256,6 @@ end
 %       frame.
 FirstFrame = 1;
 OnesArray = ones(1, NTraj);
-CostTurningOn = -log(Rho_off * (1-exp(-K_on)));
 for bb = 1:NTraj
     % Find the starting frame for the bb-th trajectory.
     StartIndexCurrent = StartEndIndices(bb, 1);
@@ -266,6 +271,7 @@ for bb = 1:NTraj
     %       conventions used in MATLAB: usually, MATLAB is column oriented,
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, StartFrameCurrent-FirstFrame);
+    CostTurningOn = -log(SMF.Tracking.Rho_off(Y(bb), X(bb)) * (1-exp(-K_on)));
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
         CostTurningOn + FrameGap*K_on;
 end
