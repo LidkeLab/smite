@@ -145,8 +145,10 @@ if isscalar(SMF.Tracking.Rho_off)
 else
     % Rescale the data to match the size of our density image.
     Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
-    Y = ceil((SMD.Y(EmitterIndicesFrame2)-0.5)*Scale(1) + 0.5);
-    X = ceil((SMD.X(EmitterIndicesFrame2)-0.5)*Scale(2) + 0.5);
+    Y = min(size(SMF.Tracking.Rho_off, 1), ...
+        max(1, ceil((SMD.Y(EmitterIndicesFrame2)-0.5)*Scale(1) + 0.5)));
+    X = min(size(SMF.Tracking.Rho_off, 2), ...
+        max(1, ceil((SMD.X(EmitterIndicesFrame2)-0.5)*Scale(2) + 0.5)));
     
     % Compute the birth costs
     CostBirth = inf(numel(Y));

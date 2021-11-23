@@ -246,8 +246,10 @@ end
 % SMF.Tracking.Rho_off (which might be given as a density image instead of
 % a scalar).
 Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
-Y = ceil((SMD.Y(StartEndIndices(:, 2))-0.5)*Scale(1) + 0.5);
-X = ceil((SMD.X(StartEndIndices(:, 2))-0.5)*Scale(2) + 0.5);
+Y = min(size(SMF.Tracking.Rho_off, 1), ...
+    max(1, ceil((SMD.Y(StartEndIndices(:, 2))-0.5)*Scale(1) + 0.5)));
+X = min(size(SMF.Tracking.Rho_off, 2), ...
+    max(1, ceil((SMD.X(StartEndIndices(:, 2))-0.5)*Scale(2) + 0.5)));
 
 % Fill in the "birth" block (lower left) of the cost matrix.
 % NOTE: We set FirstFrame = 1 instead of min(SMD.FrameNum) based on the

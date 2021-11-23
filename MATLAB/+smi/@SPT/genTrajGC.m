@@ -58,7 +58,7 @@ for nn = UniqueClusters.'
         DiffusionConstants, NonLinkMarker, UseSparseMatrices);
     Link12 = smi.SPT.solveLAP(CostMatrix);
     SMDSub = smi.SPT.connectTrajGC(SMDSub, Link12);
-    SMDOut = smi_core.SingleMoleculeData.catSMD(SMDOut, SMDSub);
+    SMDOut = smi_core.SingleMoleculeData.catSMD(SMDOut, SMDSub, false);
 end
 SMD = SMDOut;
 

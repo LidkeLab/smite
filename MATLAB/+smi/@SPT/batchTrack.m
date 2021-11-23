@@ -117,7 +117,8 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
         obj.SMF.Data.RegistrationFilePath = TransformList{ff};
         obj.SMF.Data.FileName = FileNames(ff);
         [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
-        SMDCat = smi_core.SingleMoleculeData.catSMD(SMDCat, SMD{ff});
+        SMDCat = smi_core.SingleMoleculeData.catSMD(SMDCat, SMD{ff}, ...
+            (obj.Verbose > 1));
     end
     if IsLastIter
         obj.SMF.Tracking.ParamsHistory = ParamsHistory(1:ii);
@@ -129,6 +130,7 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
     ParamsHistory{ii+1, 1} = obj.SMF.Tracking;
     ii = ii + 1;
 end
+obj.IsTestRun = IsTestRunInit;
 if (obj.Verbose > 0)
     fprintf('smi.SPT.batchTrack(): Batch-tracking complete.\n')
 end
