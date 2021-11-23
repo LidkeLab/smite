@@ -111,7 +111,6 @@ methods
     function testFit(obj, DatasetIndex)
         % testFit performs detailed analysis and feedback of one dataset.
         
-        %obj.Verbose=3;
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         obj.FullvsTest = false;
@@ -156,7 +155,6 @@ methods
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
         obj.DC.Verbose = obj.Verbose;
-        %obj.DC.Verbose = max(0,obj.Verbose-1);
         obj.SMD=[];
         obj.SMDPreThresh=[];
         if obj.Verbose >= 1
@@ -205,7 +203,6 @@ methods
         ScaledDataset = DTP.convertData();
         
         % Generate localizations from the current Dataset.
-        %V= max(0,obj.Verbose-1);
         if obj.FullvsTest
            V = obj.Verbose;
         else
@@ -267,14 +264,20 @@ methods
             SubDir = [f, '_', obj.SMF.Data.AnalysisID];
         end
 
-        if obj.FullvsTest
+        if obj.FullvsTest   % fullFit
            ResultsDir = obj.SMF.Data.ResultsDir;
            ResultsSubDir = fullfile(ResultsDir, SubDir);
            ShowPlots = false;
-        else
+        else   % testFit
            ResultsDir = [];
-           ResultsSubDir = [];
-           ShowPlots = true;
+           if obj.Verbose >= 5
+              ResultsSubDir = [];
+              ShowPlots = true;
+           else
+              ResultsSubDir = fullfile(obj.SMF.Data.ResultsDir, ...
+                                       SubDir, 'TestFit');
+              ShowPlots = false;
+           end
         end
 
         SMD = obj.SMD;
