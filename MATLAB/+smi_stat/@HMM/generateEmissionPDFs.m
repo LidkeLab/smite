@@ -13,7 +13,7 @@ function [PDFHandles] = generateEmissionPDFs(ModelSpecifier)
 %       X{2}: Standard error in current frame, [particle 1, particle 2]
 %             (pixels)(NObservations x 2)
 %       X{3}: Frames elapsed since previous observation (DeltaT)
-%       X{4}: Sigma overlay (pixels)
+%       X{4}: Sigma overlay, i.e., channel registration error (pixels)
 %       X{5}: Dimer separation (pixels)
 %       X{6}: Diffusion constant for each trajectory (organized as
 %             [D trajectory 1, D trajectory 2]). (pixel^2 / frame)
@@ -80,11 +80,11 @@ end
         % Extract some arrays from X to make the code more readable.
         Separation = X{1};
         PositionSE = X{2};
-        SigmaReg = X{4};
+        SigmaOverlay = X{4};
         SeparationDimer = X{5};
         
         % Define the dimer state pdf.
-        VarianceDimer = sum(PositionSE.^2, 2) + SigmaReg;
+        VarianceDimer = sum(PositionSE.^2, 2) + SigmaOverlay;
         DimerPDF = (Separation./VarianceDimer) ...
             .* exp(-0.5*(Separation.^2+SeparationDimer^2)./VarianceDimer) ...
             .* besseli(0, Separation*SeparationDimer./VarianceDimer);
@@ -165,15 +165,15 @@ end
         SeparationPrevious = X{1}(IndexArrayPrevious);
         PositionSE = X{2}(IndexArrayCurrent, :);
         PositionSEPrevious = X{2}(IndexArrayPrevious, :);
-        DiffusionConstants = X{6};
+        DiffusionCoefficients = X{6};
         DeltaT = X{3};
         
         % Define the free state pdf.
         VarianceFree = sum(PositionSE.^2, 2) ...
             + sum(PositionSEPrevious.^2, 2) ...
-            + 2*sum(DiffusionConstants, 2).*DeltaT;
+            + 2*sum(DiffusionCoefficients, 2).*DeltaT;
         VarianceFreeInitial = 2*sum(PositionSEPrevious(1, :).^2, 2) ...
-            + 2*sum(DiffusionConstants, 2);
+            + 2*sum(DiffusionCoefficients, 2);
         FreePDF = (Separation./VarianceFree) ...
             .* exp(-0.5*(Separation.^2+SeparationPrevious.^2)...
             ./VarianceFree) ...

@@ -12,9 +12,9 @@ function [EmissionMatrix] = ...
 %             DataCell{1}: Separation in current frame (pixels)
 %             DataCell{2}: Standard error in current frame (pixels)
 %             DataCell{3}: Frames elapsed since previous observation
-%             DataCell{4}: Sigma overlay (pixels)
+%             DataCell{4}: Sigma overlay, i.e., registration error (pixels)
 %             DataCell{5}: Dimer separation (pixels)
-%             DataCell{6}: Diffusion constant for each trajectory.
+%             DataCell{6}: Diffusion coefficient for each trajectory.
 %                          (pixel^2 / frame)
 %             DataCell{7}: Maximum separation between two trajectories
 %                          (used in computing initial probability density

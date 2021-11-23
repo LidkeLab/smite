@@ -127,14 +127,14 @@ classdef HMM < handle
         % Registration files corresponding to dimer candidates in TRArray.
         RegFileNames(:, 1) cell
         
-        % Error in registration between two channels (pixels)(Default = 0)
-        % If this value is a scalar, the same registration error is used
-        % for all entries of obj.TRArray.  Alternatively, this can be a
-        % size(TRArray, 1)x1 array defining a unique registration error for
-        % each trajectory pair in TRArray.
-        % NOTE: If TRArray.RegError doesn't exist, this value will be used
-        %       instead.  Otherwise it does not get used.
-        RegistrationError = 0;
+        % Error in registration between two channels (pixels)(Default = {})
+        % This should be a cell array matching the size size(TRArray, 1)
+        % (see usage in obj.performFullAnalysis()).  If TRArray has the
+        % field RegError populated (and this field is kept empty), this 
+        % gets replaced with {TRArrayTrunc(:, 2).RegError}.', where
+        % TRArrayTrunc = obj.isolateCandidateTRArray(TRArray).  Otherwise,
+        % this field gets updated to zeros in obj.performFullAnalysis().
+        RegistrationError = {};
     end
     
     methods

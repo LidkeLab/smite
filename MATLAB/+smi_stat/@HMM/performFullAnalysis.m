@@ -37,20 +37,10 @@ StateSpace = (1:NStates).';
 % Isolate the dimer candidates that we wish to send through the HMM
 % analysis and add some new fields that we'll need.
 TRArrayTrunc = obj.isolateCandidateTRArray(TRArray);
-NCandidates = size(TRArrayTrunc, 1);
 
-% Ensure that the arrays obj.DiffusionCoefficient and obj.RegistrationError
-% make sense based on the size of TRArray.
-if isfield(TRArray, 'RegError')
-    obj.RegistrationError = [TRArray(:, 1).RegError].';
-end
-NRegError = numel(obj.RegistrationError);
-if (NRegError ~= NCandidates)
-    % In this case, we'll take the first entry of obj.RegistrationError and
-    % use it for all candidates.
-    obj.RegistrationError = ...
-        obj.RegistrationError(1) * ones(NCandidates, 1);
-end
+% Ensure that the arrays obj.DiffusionCoefficient makes sense based on the
+% size of TRArrayTrunc.
+NCandidates = size(TRArrayTrunc, 1);
 if isempty(obj.DiffusionCoefficient)
     obj.DiffusionCoefficient = obj.SMF.Tracking.D;
 end
@@ -71,6 +61,19 @@ else
         obj.DiffusionCoefficient(1) * ones(NCandidates, 2);
 end
 
+% Validate/populate obj.RegistrationError.
+if isempty(obj.RegistrationError)
+    if isfield(TRArrayTrunc, 'RegError')
+        % If the RegError field exists, assume TRArrayTrunc(:, 2).RegError 
+        % is the desired registration error to be used here.
+        obj.RegistrationError = {TRArrayTrunc(:, 2).RegError};
+    else
+        % If no registration error was provided, we'll set each entry to an
+        % array of zeros.
+        obj.RegistrationError = cellfun(@(X) 0 * X, TRArrayTrunc.X);
+    end
+end
+
 % Compute the emission pdf's for the HMM states for all of the trajectory
 % pairs.
 if (obj.Verbose > 1)
@@ -88,7 +91,7 @@ for ii = 1:NCandidates
     EmissionPDFInputs{2} = [TRArrayTrunc(ii, 1).AverageSE, ...
         TRArrayTrunc(ii, 2).AverageSE];
     EmissionPDFInputs{3} = double(diff(TRArrayTrunc(ii, 1).FrameNum));
-    EmissionPDFInputs{4} = obj.RegistrationError(ii);
+    EmissionPDFInputs{4} = obj.RegistrationError{ii};
     EmissionPDFInputs{6} = obj.DiffusionCoefficient(ii, :);
     DeltaT{ii} = EmissionPDFInputs{3};
     
