@@ -46,14 +46,7 @@ SMDCandidates.X = SMDCandidates.X + SMDCandidates.XBoxCorner;
 SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 
 % Threshold localizations.
-MinMax.X_SE = [0, obj.SMF.Thresholding.MaxXY_SE];
-MinMax.Y_SE = [0, obj.SMF.Thresholding.MaxXY_SE];
-MinMax.Z_SE = [0, obj.SMF.Thresholding.MaxZ_SE];
-MinMax.PValue = [obj.SMF.Thresholding.MinPValue, 1];
-MinMax.PSFSigma = [obj.SMF.Thresholding.MinPSFSigma, ...
-    obj.SMF.Thresholding.MaxPSFSigma];
-MinMax.Photons = [obj.SMF.Thresholding.MinPhotons, inf];
-MinMax.Bg = [0, obj.SMF.Thresholding.MaxBg];
+MinMax = smi_core.Threshold.setMinMax(obj.SMF);
 Threshold = smi_core.Threshold;
 Threshold.Verbose = obj.Verbose;
 [SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, MinMax);

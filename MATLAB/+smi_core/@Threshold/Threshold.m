@@ -52,6 +52,7 @@ end % methods
 methods(Static)
 
    [SMR] = applyThresh(SMD, Verbose)
+   MinMax = setMinMax(SMF)
    [ThreshFlagReadable, HotBits] = translateThreshFlag(ThreshFlag);
    success = unitTest()
 
