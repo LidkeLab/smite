@@ -101,7 +101,7 @@ classdef SingleMoleculeData
             SMD.RegError=[];
         end
         
-        [SMD] = catSMD(SMD1, SMD2)
+        [SMD] = catSMD(SMD1, SMD2, ShowWarnings)
         [Density] = computeDensity(SMD);
         [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
             NEmitters, TimeSeries, FastGauss);
