@@ -32,7 +32,7 @@ function [FitParams, FitParamsSE] =  fitCDFOfJumpsBrownian(...
 %            (Default = ones(NFrameLags, 1) i.e. no weighting)
 %   FitMethod: A string specifying the fit method. (Default = 'WeightedLS')
 %   FitOptions: Fit options sent directly to fminsearch (see doc fminsearch
-%               for details)(Default = optimset(@fminsearch) 
+%               for details)(Default = optimset(@fminsearch)
 %               or optimoptions('fmincon') as appropriate)
 %
 % OUTPUTS:
@@ -67,6 +67,7 @@ if (~exist('FitOptions', 'var') || isempty(FitOptions))
 end
 
 % Fit the CDF of the MSD to the model.
+NFitComponents = 2 * NComponents;
 switch FitMethod
     case {'LS', 'WeightedLS'}
         % For regular least squares ('LS'), overwrite Weights to just be an
@@ -74,36 +75,44 @@ switch FitMethod
         Weights = strcmpi(FitMethod, 'LS')*ones(NJumps, 1) ...
             + strcmpi(FitMethod, 'WeightedLS')*Weights;
         
+        % Define lower and upper bounds for the fit parameters (only used
+        % for NComponents > 1).
+        ParamsLowerBound = zeros(NFitComponents, 1);
+        ParamsUpperBound = [inf(NComponents, 1); ...
+            ones(NComponents, 1)];
+        
+        % Define constraints of the form A*x = b (e.g., for now
+        % I'm forcing the sum of N population ratios to be == 1).
+        Aeq = zeros(NFitComponents);
+        Aeq(1, (NComponents+1):end) = 1;
+        beq = zeros(NFitComponents, 1);
+        beq(1) = 1;
+                
         % Fit the CDF of the displacements using least squares. This
         % process is quite slow due to the bootstrap, so I'll only do the
         % bootstrap if the output FitParamsSE was requested.
-        % NOTE: This model can be found by taking the 
-        %       prob(r|sigma^2=2Dt+loc.error) (which is a product of 
-        %       Gaussians), converting to polar coordinates, integrating 
-        %       over theta, and then integrating from 0 to r' to get the 
+        % NOTE: This model can be found by taking the
+        %       prob(r|sigma^2=2Dt+loc.error) (which is a product of
+        %       Gaussians), converting to polar coordinates, integrating
+        %       over theta, and then integrating from 0 to r' to get the
         %       CDF. For multiple frame lags (as we have), we'll also need
-        %       to integrate over the frame lags times the proportion of 
+        %       to integrate over the frame lags times the proportion of
         %       each frame lag observed.
         CostFunction = @(Params, SortedJumps, CDFOfJumps) sum(Weights ...
             .* (smi_stat.DiffusionEstimator.brownianJumpCDF(...
             Params, SortedJumps, FrameLags, NPoints, LocVarianceSum) ...
             - CDFOfJumps).^2);
         ParamsInit = [0.1*ones(NComponents, 1); ...
-                    (1/NComponents)*ones(NComponents-1, 1)];
+            (1/NComponents)*ones(NComponents, 1)];
         if (nargout > 1)
             % For the single component fit, we'll just use fminsearch().
             % For the N-component fit, it sometimes seems important to
             % constrain the fit to get a reasonable result.
             if (NComponents > 1)
-                % Define lower and upper bounds for the fit parameters.
-                ParamsLowerBound = zeros(2*NComponents - 1, 1);
-                ParamsUpperBound = [inf(NComponents, 1); ...
-                    ones(NComponents-1, 1)];
-                
                 % Perform the constrained fit.
                 [FitParams, FitParamsSE] = smi_stat.bootstrapFitCon(...
                     SortedJumps, CDFOfJumps, ParamsInit, CostFunction, ...
-                    [], [], [], [], [], ...
+                    Aeq, beq, [], [], [], ...
                     ParamsLowerBound, ParamsUpperBound, FitOptions);
             else
                 [FitParams, FitParamsSE] = smi_stat.bootstrapFit(...
@@ -115,15 +124,10 @@ switch FitMethod
             % For the N-component fit, it sometimes seems important to
             % constrain the fit to get a reasonable result.
             if (NComponents > 1)
-                % Define lower and upper bounds for the fit parameters.
-                ParamsLowerBound = zeros(2*NComponents - 1, 1);
-                ParamsUpperBound = [inf(NComponents, 1); ...
-                    ones(NComponents-1, 1)];
-                
                 % Perform the constrained fit.
                 FitParams = fmincon(@(Params) ...
                     CostFunction(Params, SortedJumps, CDFOfJumps), ...
-                    ParamsInit, [], [], [], [], ...
+                    ParamsInit, [], [], Aeq, beq, ...
                     ParamsLowerBound, ParamsUpperBound);
             else
                 FitParams = fminsearch(@(Params) ...

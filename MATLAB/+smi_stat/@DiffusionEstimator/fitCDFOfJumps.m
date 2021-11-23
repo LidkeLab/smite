@@ -44,7 +44,7 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
 end
 
 % Determine how many fit parameters are needed in the desired model.
-NFitParams = 2*NComponents - 1;
+NFitParams = 2 * NComponents;
 
 % Fit the CDF data.
 if (Verbose > 1)
@@ -78,7 +78,8 @@ for ii = 1:NFits
                     [], FitMethod);
                 FitParamsSE(ii, :) = ParamsHatSE.';
             else
-                ParamsHat = smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
+                ParamsHat = ...
+                    smi_stat.DiffusionEstimator.fitCDFOfJumpsBrownian(...
                     SortedSquaredDisp, CDFOfJumps, ...
                     FrameLags, NPoints, LocVarianceSum, NComponents, ...
                     [], FitMethod);

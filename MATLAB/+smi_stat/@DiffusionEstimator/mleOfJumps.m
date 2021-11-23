@@ -35,7 +35,7 @@ if (~exist('Verbose', 'var') || isempty(Verbose))
 end
 
 % Determine how many fit parameters are used in the desired model.
-NFitParams = 2*NComponents - 1;
+NFitParams = 2 * NComponents;
 
 % Compute the MLE.
 if (Verbose > 1)
@@ -61,11 +61,13 @@ for ii = 1:NFits
             if (nargout > 1)
                 [ParamsHat, ParamsHatSE] = ...
                     smi_stat.DiffusionEstimator.mleOfJumpsBrownian(...
-                    SquaredDisplacement, FrameLagsAll, LocVarianceSum, NComponents);
+                    SquaredDisplacement, FrameLagsAll, LocVarianceSum, ...
+                    NComponents);
                 MLEParamsSE(ii, :) = ParamsHatSE.';
             else
                 ParamsHat = smi_stat.DiffusionEstimator.mleOfJumpsBrownian(...
-                    SquaredDisplacement, FrameLagsAll, LocVarianceSum, NComponents);
+                    SquaredDisplacement, FrameLagsAll, LocVarianceSum, ...
+                    NComponents);
             end
             MLEParams(ii, :) = ParamsHat.';
         otherwise

@@ -65,17 +65,25 @@ CostFunction = @(Params) ...
     -smi_stat.DiffusionEstimator.brownianJumpLikelihood(Params, ...
     SquaredDisplacement, FrameLagsAll, LocVarianceSum);
 ParamsInit = [0.1*ones(NComponents, 1); ...
-    (1/NComponents)*ones(NComponents-1, 1)];
+    (1/NComponents)*ones(NComponents, 1)];
+NFitComponents = 2 * NComponents;
 if (NComponents > 1)
     % Define lower and upper bounds for the fit parameters.
-    ParamsLowerBound = zeros(2*NComponents - 1, 1);
+    ParamsLowerBound = zeros(NFitComponents, 1);
     ParamsUpperBound = [inf(NComponents, 1); ...
-        ones(NComponents-1, 1)];
+        ones(NComponents, 1)];
+    
+    % Define constraints of the form A*x = b (e.g., for now
+    % I'm forcing the sum of N population ratios to be == 1).
+    Aeq = zeros(NFitComponents);
+    Aeq(1, (NComponents+1):end) = 1;
+    beq = zeros(NFitComponents, 1);
+    beq(1) = 1;
     
     % Perform the constrained fit (for multiple components, we often need
     % to constrain the parameters to get the right answer).
     MLEParams = fmincon(CostFunction, ...
-        ParamsInit, [], [], [], [], ...
+        ParamsInit, [], [], Aeq, beq, ...
         ParamsLowerBound, ParamsUpperBound);
 else
     % For the single component fit, we'll just use fminsearch().

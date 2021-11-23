@@ -7,9 +7,10 @@ function [LogLikelihood] = brownianJumpLikelihood(MotionParams, ...
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. For the one
 %                 component model, this is just D. For the two component
-%                 model, this is [D_1; D_2; alpha]. For N-components,
+%                 model, this is [D_1; D_2; alpha_1, alpha_2]. 
+%                 For N-components,
 %                 this is [D_1, D_2, ..., D_N, 
-%                         alpha_1, alpha_2, ..., alpha_{N-1}
+%                         alpha_1, alpha_2, ..., alpha_N
 %   SquaredDisplacement: The squared displacements made by the
 %                        trajectory(ies). (NDatax1 numeric array)
 %   FrameLagsAll: All of the frame lags associated with the jumps in
@@ -31,20 +32,14 @@ function [LogLikelihood] = brownianJumpLikelihood(MotionParams, ...
 %   David J. Schodt (Lidke lab, 2021)
 
 
-% Ensure MotionParams is a column vector.
-if isrow(MotionParams)
+% Ensure MotionParams is a row vector.
+if iscolumn(MotionParams)
     MotionParams = MotionParams.';
 end
 
 % Determine which model we're using (1-component, 2-component, ...).
 NParams = numel(MotionParams);
-NComponents = (NParams+1) / 2;
-
-% Pad the MotionParams with the constrained term (i.e., the population
-% parameters have to sum to 1 so one of them is defined in terms of the
-% others).
-MotionParams = [MotionParams; ...
-    1 - sum(MotionParams(NComponents+1:NParams))].';
+NComponents = NParams / 2;
 
 % Compute the likelihood.
 % NOTE: I'm taking the mean of the localization variance sums.  That's not

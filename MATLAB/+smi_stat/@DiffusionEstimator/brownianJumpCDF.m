@@ -7,9 +7,9 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. For the one
 %                 component model, this is just D. For the two component
-%                 model, this is [D_1; D_2; alpha]. For N-components,
-%                 this is [D_1, D_2, ..., D_N, 
-%                         alpha_1, alpha_2, ..., alpha_{N-1}
+%                 model, this is [D_1; D_2; alpha_1, alpha_2].
+%                 For N-components, this is [D_1, D_2, ..., D_N, 
+%                         alpha_1, alpha_2, ..., alpha_N
 %   SortedSquaredDisp: The sorted (in ascending order) squared jumps used 
 %                      to compute 'CDFOfJumps'. (numeric array)
 %   FrameLags: All of the unique frame lags associated with the jumps in
@@ -44,17 +44,11 @@ end
 
 % Determine which model we're using (1-component, 2-component, ...).
 NParams = numel(MotionParams);
-NComponents = (NParams+1) / 2;
+NComponents = NParams / 2;
 
 % Compute the probability of each frame lag (i.e., the proportion of data
 % corresponding to each frame lag).
 FrameLagProb = NPoints / sum(NPoints);
-
-% Pad the MotionParams with the constrained term (i.e., the population
-% parameters have to sum to 1 so one of them is defined in terms of the
-% others).
-MotionParams = [MotionParams; ...
-    1 - sum(MotionParams(NComponents+1:NParams))];
 
 % Compute the CDF model.
 % NOTE: I'm taking the mean of the localization variance sums.  That's not
