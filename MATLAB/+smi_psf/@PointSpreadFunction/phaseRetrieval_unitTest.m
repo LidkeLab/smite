@@ -19,11 +19,11 @@ Data=poissrnd(gather(PSF)*100000+10)+100;
 
 %Do phase retrieval and compare data stack
 P_Out=smi_psf.PointSpreadFunction.phaseRetrieval(P,Data)
-dipshow(gather(P_Out.Pupil))
+%dipshow(gather(P_Out.Pupil))
 Model=gather(smi_psf.PointSpreadFunction.scalarPSFPupil(P_Out));
 
-dipshow(gather(Data))
-dipshow(gather(Model))
+%dipshow(gather(Data))
+%dipshow(gather(Model))
 joinchannels('RGB',stretch(gather(Data)),stretch(Model))
 
 
@@ -41,7 +41,7 @@ P_Out.ZC_Phase
 close all
 load('C:\Data\Data_FastVarLaser2-2016-8-3-12-23-8.mat')
 SZ=128;
-%dipshow(1,CleanData);
+%%dipshow(1,CleanData);
 CNR=[141 107];
 Data=cut(CleanData,[SZ SZ size(CleanData,3)],[CNR-SZ/2 0]);
 
@@ -54,7 +54,7 @@ P.Z=ZVector;
 DataIn=Data;
 P_Out=smi_psf.PointSpreadFunction.phaseRetrieval(P,DataIn);
 
-dipshow(gather(P_Out.Pupil))
+%dipshow(gather(P_Out.Pupil))
 Model=gather(smi_psf.PointSpreadFunction.scalarPSFPupil(P_Out));
 
 KPixelSize=1/(size(P_Out.Pupil,1)*P_Out.PixelSize);
@@ -63,9 +63,9 @@ ZS=smi_psf.PointSpreadFunction.createZernikeStruct(P_Out.OSZ,PupilRadius,49);
 P_Out.ZC_Phase=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P_Out.Pupil(:,:,2),ZS));
 P_Out.ZC_Mag=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P_Out.Pupil(:,:,1),ZS));
 [PSFZ,P_OutZ]=smi_psf.PointSpreadFunction.scalarPSFZernike(P_Out);
-dipshow(gather(P_OutZ.Pupil))
-dipshow(gather(DataIn))
-dipshow(gather(PSFZ))
+%dipshow(gather(P_OutZ.Pupil))
+%dipshow(gather(DataIn))
+%dipshow(gather(PSFZ))
 P_OutZ.ZC_Phase
 
 %%
@@ -74,7 +74,7 @@ P_OutZ.ZC_Phase
 close all
 load('C:\Data\Data_FastVarLaser2-2016-8-3-12-23-8.mat')
 SZ=128;
-%dipshow(1,CleanData);
+%%dipshow(1,CleanData);
 CNR=[141 107];
 Data=cut(CleanData,[SZ SZ size(CleanData,3)],[CNR-SZ/2 0]);
 
@@ -88,7 +88,7 @@ DataIn=Data(:,:,[1,6]);
 P_Out=smi_psf.PointSpreadFunction.phaseRetrievalEM(P,DataIn);
 P_Out=smi_psf.PointSpreadFunction.phaseRetrieval(P_Out,DataIn);
 
-dipshow(gather(P_Out.Pupil))
+%dipshow(gather(P_Out.Pupil))
 Model=gather(smi_psf.PointSpreadFunction.scalarPSFPupil(P_Out));
 
 KPixelSize=1/(size(P_Out.Pupil,1)*P_Out.PixelSize);
@@ -97,9 +97,9 @@ ZS=smi_psf.PointSpreadFunction.createZernikeStruct(P_Out.OSZ,PupilRadius,49);
 P_Out.ZC_Phase=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P_Out.Pupil(:,:,2),ZS));
 P_Out.ZC_Mag=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P_Out.Pupil(:,:,1),ZS));
 [PSFZ,P_OutZ]=smi_psf.PointSpreadFunction.scalarPSFZernike(P_Out);
-dipshow(gather(P_OutZ.Pupil))
-dipshow(gather(DataIn))
-dipshow(gather(PSFZ))
+%dipshow(gather(P_OutZ.Pupil))
+%dipshow(gather(DataIn))
+%dipshow(gather(PSFZ))
 P_OutZ.ZC_Phase
 
 PSFStruct = P;

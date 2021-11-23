@@ -58,8 +58,7 @@ for nn=1:L
     D=cat(1,D,stretch(gather(Data(:,:,nn))));
 end
 
-dipshow(1234,cat(2,D,M))
-diptruesize(200);
+%dipshow(1234,cat(2,D,M))
 pause(.1)
 
 end

@@ -79,7 +79,7 @@ PFound.ZC_Phase=Phase;
 [PSF,PFound]=smi_psf.PointSpreadFunction.scalarPSFZernike(PFound); 
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PFound,Photons,Bg)
 PSF=gather(PSF);
-sliceViewer(PSF)
+sliceViewer(PSF);
 
 PSFStruct=PFound;
 end
