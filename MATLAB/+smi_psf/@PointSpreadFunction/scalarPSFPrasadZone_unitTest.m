@@ -14,8 +14,8 @@ P.SZ=256;
 P.OSZ=512;
 [PSF,P]=smi_psf.PointSpreadFunction.scalarPSFPrasadZone(P,L);
 
-sliceViewer(gather(PSF));
-imshow(gather(P.Pupil(:,:,2)));
+figure; sliceViewer(gather(PSF));
+figure; imshow(gather(P.Pupil(:,:,2)));
 smi_psf.PointSpreadFunction.crlbPSFPupil(P,Photons,Bg);
 smi_psf.PointSpreadFunction.crlbPSFPupil(smi_psf.PointSpreadFunction.createPSFStruct(),Photons,Bg)
 
