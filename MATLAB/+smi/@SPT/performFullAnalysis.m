@@ -67,6 +67,9 @@ if ~isempty(obj.SMF.Data.RegistrationFilePath)
         
         % Apply the transform to the localizations. If no transform was
         % matched, issue a warning and proceed.
+        % NOTE: For now, the registration error is just a scalar, but I'm
+        %       storing it in SMD as an array for consistency with other
+        %       "error" fields (which have a value for each localizations).
         if isempty(MatchedROI)
             warning(['smi.SPT.generateTrajectories(): None of the ', ...
                 'available transforms match SMF.Data.DataROI!'])
@@ -75,10 +78,12 @@ if ~isempty(obj.SMF.Data.RegistrationFilePath)
             obj.SMDPreThreshPreCR = obj.SMDPreThresh;
             obj.SMDPreThresh = smi_core.ChannelRegistration.transformSMD(...
                 RegistrationTransform{MatchedROI}, obj.SMDPreThresh);
-            obj.SMDPreThresh.RegError = RegistrationErrorLOO(MatchedROI);
+            obj.SMDPreThresh.RegError = ones(size(obj.SMDPreThresh.X)) ...
+                * RegistrationErrorLOO(MatchedROI);
             obj.SMD = smi_core.ChannelRegistration.transformSMD(...
                 RegistrationTransform{MatchedROI}, obj.SMD);
-            obj.SMD.RegError = RegistrationErrorLOO(MatchedROI);
+            obj.SMD.RegError = ones(size(obj.SMD.X)) ...
+                * RegistrationErrorLOO(MatchedROI);
         end
         obj.TRPreCR = smi_core.TrackingResults.convertSMDToTR(obj.SMDPreCR);
         obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);
