@@ -16,7 +16,10 @@ Image arrays follow MATLAB's column-major format.  An image coordinate of (1,1) 
 ### Dependencies
 For full functionality ***smite*** requires:
 - Nvidia GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
-- MATLAB Parallel Processing Toolbox
+- MATLAB Curve Fitting Toolbox [for smi_core.FRC]
+- MATLAB Image Processing Toolbox
+- MATLAB Optimization Toolbox
+- MATLAB Parallel Computing Toolbox
 - MATLAB Statistics and Machine Learning Toolbox
 
 ## Examples
