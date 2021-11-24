@@ -40,11 +40,15 @@ end
 % enough information is available.
 KOn = -log(1 - 1/mean(OffDurations));
 KOff = -log(1 - 1/mean(OnDurations));
+
+% If needed, reset KOn and KOff to boundary values.
+KOn = min(numel(FrameNum)/SMD.NFrames, max(1e-5, KOn));
+KOff = min(1, max(1/numel(FrameNum), KOff));
 if isnan(KOn)
-    KOn = 1;
+    KOn = numel(FrameNum)/SMD.NFrames;
 end
 if isnan(KOff)
-    KOff = 0;
+    KOff = 1/NLocalizations;
 end
 
 
