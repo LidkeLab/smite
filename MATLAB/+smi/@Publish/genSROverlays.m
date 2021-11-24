@@ -35,8 +35,7 @@ end
 
 % Load the Gaussian and histogram images for each label and store them in a
 % single array.
-% NOTE: pre-allocation assumes 5120x5120 images.
-GaussianImages = zeros(5120, 5120, NLabels);
+GaussianImages = [];
 CircleImages = [];
 for ii = 1:NLabels
     % Create a list of sub-directories under the current label (there could
@@ -67,8 +66,8 @@ for ii = 1:NLabels
             DatasetDirNames{jj});
         CircleImages = cat(3, CircleImages, sum(imread(fullfile(...
             FileDirectory, DatasetDirNames{jj}, FileNameCircle)), 3));
-        GaussianImages(:, :, ii) = sum(imread(...
-            fullfile(FileDirectory, FileNameGaussian)), 3);
+        GaussianImages = cat(3, GaussianImages, ...
+            sum(imread(fullfile(FileDirectory, FileNameGaussian)), 3));
     end
 end
 
