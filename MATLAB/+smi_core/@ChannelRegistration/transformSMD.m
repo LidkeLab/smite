@@ -14,7 +14,7 @@ function [SMDMoving] = transformSMD(RegistrationTransform, SMDMoving)
 %
 % OUTPUTS:
 %   SMDMoving: SMD structure (see SingleMoleculeData class) for the
-%              "moving" fiducial (see
+%              "moving" fiducial (see 
 %              ChannelRegistration.transformCoords()) which can be
 %              considered transformed after passing through this method
 %              (the actual transformed SMD will be either SMDMoving or
@@ -41,12 +41,18 @@ if isempty(RegistrationTransform)
 end
 
 % Call transformCoords on the input SMDs.
-MovingCoordinates = [SMDMoving.X, SMDMoving.Y];
+MovingCoords = [SMDMoving.X, SMDMoving.Y];
 MovingCoordsTransformed = ...
     smi_core.ChannelRegistration.transformCoords(...
-    RegistrationTransform, MovingCoordinates);
+    RegistrationTransform, MovingCoords);
 SMDMoving.X = MovingCoordsTransformed(:, 1);
 SMDMoving.Y = MovingCoordsTransformed(:, 2);
+
+% Populate the fields 'XRegCorrection' and 'YRegCorrection'.
+SMDMoving.XRegCorrection = ...
+    MovingCoordsTransformed(:, 1) - MovingCoords(:, 1);
+SMDMoving.YRegCorrection = ...
+    MovingCoordsTransformed(:, 2) - MovingCoords(:, 2);
 
 % Update the IsTransformed field.
 SMDMoving.IsTransformed = true;

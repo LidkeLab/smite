@@ -14,7 +14,7 @@ function [TransformedImages] = transformImages(...
 %   Images: A stack of images to be transformed (MxNxP numeric array)
 %
 % OUTPUTS:
-%   TransformedImages: Input Images transformed usingRegistrationTransform
+%   TransformedImages: Input Images transformed using RegistrationTransform
 %                      (MxNxP numeric array)
 
 % Created by:

@@ -28,6 +28,10 @@ else
     % Initialize this field to false for now.  transformSMD() will change
     % this below if all goes well.
     [TRMoving.IsTransformed] = deal(false);
+    
+    % Initialize the fields 'XRegCorrection' and 'YRegCorrection'.
+    [TRMoving.XRegCorrection] = deal([]);
+    [TRMoving.YRegCorrection] = deal([]);
 end
 
 % Loop through trajectories in 'TRMoving' and apply the transform.
