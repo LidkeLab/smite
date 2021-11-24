@@ -39,7 +39,8 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   Will Kanagy (Lidke Lab, 2018)
 %   Hanieh Mazloom-Farsibaf (Lidke Lab, 2019)
 %   Revised and added comments, David J. Schodt (Lidke Lab, 2020)
-%   Rewritten for smite, David J. Schodt (Lidke Lab, 2021)
+%   Rewritten for smite + several new parameters, David J. Schodt 
+%       (Lidke Lab, 2021)
 
 
 % Set defaults as needed.
@@ -55,13 +56,13 @@ end
 % FrameNumber+1.
 EmitterIndicesFrame1 = find(SMD.FrameNum == FrameNumber);
 EmitterIndicesFrame2 = find(SMD.FrameNum == (FrameNumber+1));
-N = numel(EmitterIndicesFrame1);
-M = numel(EmitterIndicesFrame2);
+NFrame1 = numel(EmitterIndicesFrame1);
+NFrame2 = numel(EmitterIndicesFrame2);
 
 % Generate the upper left (the upper NxM) block of the cost matrix.
-CMSize = M + N;
+CMSize = NFrame2 + NFrame1;
 CostMatrix = NonLinkMarker * ones(CMSize);
-for ii = 1:N
+for ii = 1:NFrame1
     % Isolate the localizations in frame FrameNumber from SMD.
     CurrentIndicesFrame1 = EmitterIndicesFrame1(ii);
     XFrame1 = SMD.X(CurrentIndicesFrame1);
@@ -69,7 +70,7 @@ for ii = 1:N
     YFrame1 = SMD.Y(CurrentIndicesFrame1);
     Y_SEFrame1 = SMD.Y_SE(CurrentIndicesFrame1);
     DFrame1 = DiffusionConstants(CurrentIndicesFrame1, :);
-    for jj = 1:M
+    for jj = 1:NFrame2
         % Isolate the localizations in frame FrameNumber+1 from SMD.
         CurrentIndicesFrame2 = EmitterIndicesFrame2(jj);
         XFrame2 = SMD.X(CurrentIndicesFrame2);
@@ -164,9 +165,10 @@ CostDeath = -log(1-exp(-SMF.Tracking.K_off));
 %       least not in an obvious way?).  Our choice to set it equal to the
 %       transpose of the upper left block seems appropriate but we never
 %       "proved" that this is always the best choice.
-CostMatrix((N+1):CMSize, 1:M) = CostBirth;
-CostMatrix(1:N, (M+1):CMSize) = CostDeath;
-CostMatrix((N+1):CMSize, (M+1):CMSize) = CostMatrix(1:N, 1:M).';
+CostMatrix((NFrame1+1):CMSize, 1:NFrame2) = CostBirth;
+CostMatrix(1:NFrame1, (NFrame2+1):CMSize) = CostDeath;
+CostMatrix((NFrame1+1):CMSize, (NFrame2+1):CMSize) = ...
+    CostMatrix(1:NFrame1, 1:NFrame2).';
 
 
 end
