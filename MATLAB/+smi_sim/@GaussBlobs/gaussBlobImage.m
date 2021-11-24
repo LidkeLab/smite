@@ -52,7 +52,7 @@ if nargin<4
 end
 
 if nargin<2
-    SZ=[SMD.XSize SMD.YSize];
+    SZ=[SMD.YSize SMD.XSize];
     ROIBoxType='auto';
 else
     %Get Image size
