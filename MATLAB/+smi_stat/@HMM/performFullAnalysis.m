@@ -70,7 +70,8 @@ if isempty(obj.RegistrationError)
     else
         % If no registration error was provided, we'll set each entry to an
         % array of zeros.
-        obj.RegistrationError = cellfun(@(X) 0 * X, TRArrayTrunc.X);
+        obj.RegistrationError = cellfun(@(X) 0 * X, {TRArrayTrunc.X}, ...
+            'UniformOutput', false);
     end
 end
 
