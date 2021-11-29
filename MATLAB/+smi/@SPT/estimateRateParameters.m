@@ -42,13 +42,15 @@ KOn = -log(1 - 1/mean(OffDurations));
 KOff = -log(1 - 1/mean(OnDurations));
 
 % If needed, reset KOn and KOff to boundary values.
-KOn = min(numel(FrameNum)/SMD.NFrames, max(1e-5, KOn));
+% NOTE: I'm taking max(SMD.NFrames) in case it's stored as an array instead
+%       of a scalar.
+KOn = min(numel(FrameNum)/max(SMD.NFrames), max(1e-5, KOn));
 KOff = min(1, max(1/numel(FrameNum), KOff));
 if isnan(KOn)
-    KOn = numel(FrameNum)/SMD.NFrames;
+    KOn = numel(FrameNum) / max(SMD.NFrames);
 end
 if isnan(KOff)
-    KOff = 1/NLocalizations;
+    KOff = 1 / NLocalizations;
 end
 
 
