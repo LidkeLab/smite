@@ -179,7 +179,7 @@ classdef SPT < handle
         
     end
     
-    methods(Static)
+    methods (Static)
         [Success] = unitTestFFGC()
         [SMD] = genTrajFF(SMD, SMF, DiffusionCoefficients, NonLinkMarker);
         [SMD] = genTrajGC(SMD, SMF, DiffusionCoefficients, ...
@@ -193,8 +193,18 @@ classdef SPT < handle
         [SMD] = connectTrajGC(SMD, Link12);
         [KOn, KOff] = estimateRateParameters(SMD);
         [RhoOff, RhoOn] = estimateDensities(SMD, SMF);
+    end
+    
+    methods (Static, Hidden)
+        % These methods are kept 'Hidden' because they are either not
+        % likely to be useful to users or may be risky/misleading to use in
+        % the wrong context.
+        
         [DiffusionStruct] = ...
             estimateDiffCoeffs(TR, DiffusionEstimator, DReset)
+        [Converged] = checkConvergence(NewParams, PreviousParams, ...
+            MaxRelativeChange);
+        
     end
     
     
