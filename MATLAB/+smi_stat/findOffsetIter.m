@@ -44,20 +44,21 @@ Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
     'post');
 
 % Iteratively estimate the shift.
-NewShift = [inf; inf; inf];
-Shift = [0; 0; 0];
+[~, Shift] = smi_stat.findStackOffset(RefStack, MovingStack, ...
+    ceil(StackSize/4), [], [], false, UseGPU);
+NewShift = Shift;
 ii = 1;
-while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))
+while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))  
+    % Shift the image stack.
+    ii = ii + 1;
+    MovingStack = smi_stat.shiftImage(MovingStack, NewShift, UseGPU);
+    
     % Compute the shift, up to a maximum offset of ceil(StackSize/4) (this
     % was chosen somewhat arbitrarily, however going too far out risks
     % finding an incorrect peak due to noise).
-    ii = ii + 1;
     [~, NewShift] = smi_stat.findStackOffset(RefStack, MovingStack, ...
         ceil(StackSize/4), [], [], false, UseGPU);
     Shift = Shift + NewShift;
-    
-    % Shift the image stack.
-    MovingStack = smi_stat.shiftImage(MovingStack, NewShift, UseGPU);
 end
 
 
