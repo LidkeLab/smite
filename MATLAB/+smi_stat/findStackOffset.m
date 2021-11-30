@@ -24,7 +24,7 @@ function [PixelOffset, SubPixelOffset, CorrData, MaxOffset] = ...
 %           Stack1 is the reference stack.
 %   Stack2: (mxnxo) The stack for which the offset relative to Stack1 
 %           is to be determined.
-%   MaxOffset: (3x1 or 1x3)(Default = [2; 2; 2]) Maximum offset between 
+%   MaxOffset: (3x1 or 1x3)(Default = [5; 5; 5]) Maximum offset between 
 %           Stack1 and Stack2 to be considered in the calculation of
 %           PixelOffset and SubPixelOffset.
 %   FitOffset: (3x1 or 1x3)(Default = [2; 2; 2]) Maximum offset from the
@@ -150,15 +150,6 @@ for ii = IndicesToModify
     MaxOffset(ii) = floor(SizeOfFullXCorr(ii) / 2);
 end
 
-% Scale each image in each stack by intensity to reduce linear trends in 
-% the cross-correlation.
-for ii = 1:Stack1Size(3)
-    Stack1(:, :, ii) = Stack1(:, :, ii) / sum(sum(Stack1(:, :, ii)));
-end
-for ii = 1:Stack2Size(3)
-    Stack2(:, :, ii) = Stack2(:, :, ii) / sum(sum(Stack2(:, :, ii)));
-end
-
 % Define the indices within a full cross-correlation (size SizeOfFullXCorr)
 % that we wish to inspect.
 CorrOffsetIndicesX = max(ceil(SizeOfFullXCorr(1)/2) - MaxOffset(1), 1) ...
@@ -168,15 +159,24 @@ CorrOffsetIndicesY = max(ceil(SizeOfFullXCorr(2)/2) - MaxOffset(2), 1) ...
 CorrOffsetIndicesZ = max(ceil(SizeOfFullXCorr(3)/2) - MaxOffset(3), 1) ...
     : ceil(SizeOfFullXCorr(3)/2) + MaxOffset(3);
 
+% Scale each image in each stack by intensity to reduce linear trends in 
+% the cross-correlation.
+for ii = 1:Stack1Size(3)
+    Stack1(:, :, ii) = Stack1(:, :, ii) / sum(sum(Stack1(:, :, ii)));
+end
+for ii = 1:Stack2Size(3)
+    Stack2(:, :, ii) = Stack2(:, :, ii) / sum(sum(Stack2(:, :, ii)));
+end
+
 % Whiten each image in the stack with respect to the entire stack, ignoring
 % the parts which are covered by the BinaryMask when computing mean, std., 
 % etc.
 Stack1Masked = Stack1(logical(BinaryMask));
 Stack2Masked = Stack2(logical(BinaryMask));
-Stack1Whitened = (Stack1 - mean(Stack1Masked)) ...
-    / (std(Stack1Masked) * sqrt(numel(Stack1Masked) - 1));
-Stack2Whitened = (Stack2 - mean(Stack2Masked)) ...
-    / (std(Stack2Masked) * sqrt(numel(Stack2Masked) - 1));
+Stack1Whitened = (Stack1-mean(Stack1Masked)) ...
+    / (std(Stack1Masked) * sqrt(numel(Stack1Masked)-1));
+Stack2Whitened = (Stack2-mean(Stack2Masked)) ...
+    / (std(Stack2Masked) * sqrt(numel(Stack2Masked)-1));
 
 % Re-apply the binary mask to ensure the masked points cannot contribute to
 % the cross-correlation.
