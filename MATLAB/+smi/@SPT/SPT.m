@@ -19,6 +19,13 @@ classdef SPT < handle
         %       regexp.
         TransformPattern = 'RegistrationTransform*.mat';
         
+        % Indicate we should search for files to track. (Default = true)
+        % NOTES: This is only used in obj.batchTrack().  If true,
+        %        obj.batchTrack() will search for the files matching
+        %        obj.FilePattern in obj.SMF.Data.FileDir.  If false, the
+        %        files in obj.SMF.Data.FileName will be used instead.
+        FindFiles = true;
+        
         % Pattern to match for file names in obj.SMF.FileDir.
         % (see obj.batchTrack() for usage)
         % NOTE: This is used in the MATLAB built-in method dir(), which

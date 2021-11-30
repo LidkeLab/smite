@@ -22,16 +22,19 @@ function [TR, SMD, SMDPreThresh, FileList, TransformList] = batchTrack(obj)
 %   David J. Schodt (Lidke Lab, 2021)
 
 
-% Generate a list of all files in obj.SMF.FileDir which match the pattern
-% given in obj.FilePattern.
-FileNames = smi_helpers.getFileNames(obj.SMF.Data.FileDir, obj.FilePattern);
-NFiles = numel(FileNames);
-FileList = cell(NFiles, 1);
-TransformList = cell(NFiles, 1);
-if isempty(FileNames)
-    return
+% Generate a list of all files in obj.SMF.Data.FileDir which match the 
+% pattern given in obj.FilePattern (if needed).
+if (obj.FindFiles || isempty(obj.SMF.Data.FileName))
+    FileNames = smi_helpers.getFileNames(obj.SMF.Data.FileDir, ...
+        obj.FilePattern);
+    if isempty(FileNames)
+        return
+    end
+else
+    FileNames = obj.SMF.Data.FileName;
 end
 FileList = fullfile(obj.SMF.Data.FileDir, FileNames);
+NFiles = numel(FileNames);
 if (obj.Verbose > 1)
     fprintf('smi.SPT.batchTrack(): Found %i files to be tracked.\n', NFiles)
     for ii = 1:NFiles
@@ -125,6 +128,10 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
     ii = ii + 1;
 end
 obj.IsTestRun = IsTestRunInit;
+
+% Restore the filenames in SMF (internally, this is overwitten, which
+% becomes annoying when testing batch-tracking in the GUI).
+obj.SMF.Data.FileName = FileNames;
 if (obj.Verbose > 0)
     fprintf('smi.SPT.batchTrack(): Batch-tracking complete.\n')
 end

@@ -50,44 +50,53 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
 
     function track(Source, ~)
         % Track the data based on the SMF GUI parameters.
-        if isfile(fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
-            try
-                Source.Enable = 'off';
+        try
+            Source.Enable = 'off';
+            FindFilesInit = obj.FindFiles;
+            obj.FindFiles = false;
+            if (numel(obj.SMF.Data.FileName) > 1)
+                % If multiple filenames are present, we'll try
+                % batch-tracking.
+                obj.batchTrack();
+            else
                 obj.performFullAnalysis()
-                Source.Enable = 'on';
-            catch MException
-                Source.Enable = 'on';
-                rethrow(MException)
             end
-        else
-            error('%s cannot be found', ...
-                fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
+            Source.Enable = 'on';
+            obj.FindFiles = FindFilesInit;
+        catch MException
+            Source.Enable = 'on';
+            obj.FindFiles = FindFilesInit;
+            rethrow(MException)
         end
     end
 
     function testTrack(Source, ~)
         % Track the data based on the SMF GUI parameters.
-        if isfile(fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
-            TestFlagInit = obj.IsTestRun;
-            VerboseInit = obj.Verbose;
-            obj.IsTestRun = true;
-            obj.Verbose = 3;
-            try
-                Source.Enable = 'off';
+        TestFlagInit = obj.IsTestRun;
+        VerboseInit = obj.Verbose;
+        FindFilesInit = obj.FindFiles;
+        obj.IsTestRun = true;
+        obj.Verbose = 3;
+        obj.FindFiles = false;
+        try
+            Source.Enable = 'off';
+            if (numel(obj.SMF.Data.FileName) > 1)
+                % For multiple files, we'll dispatch on batchTrack().
+                obj.batchTrack();
+            else
                 obj.performFullAnalysis()
-                Source.Enable = 'on';
-            catch MException
-                Source.Enable = 'on';
-                obj.IsTestRun = TestFlagInit;
-                obj.Verbose = VerboseInit;
-                rethrow(MException)
             end
+            Source.Enable = 'on';
+        catch MException
+            Source.Enable = 'on';
             obj.IsTestRun = TestFlagInit;
             obj.Verbose = VerboseInit;
-        else
-            error('%s cannot be found', ...
-                fullfile(obj.SMF.Data.FileDir, obj.SMF.Data.FileName{1}))
+            obj.FindFiles = FindFilesInit;
+            rethrow(MException)
         end
+        obj.IsTestRun = TestFlagInit;
+        obj.Verbose = VerboseInit;
+        obj.FindFiles = FindFilesInit;
     end
 
     function makeMovieGUI(~, ~)
