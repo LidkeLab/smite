@@ -5,7 +5,7 @@ function [ImageStack] = shiftImage(ImageStack, Shift, UseGPU)
 % INPUTS:
 %   ImageStack: Image(s) to be shifted. (YSizexXSizexNImages float)
 %   Shift: Shift to be applied to ImageStack. (2x1 or 3x1 float)(YxXxZ)
-%   UseGPU: Flag indicating GPU should be used. (Default based on system)
+%   UseGPU: Flag indicating GPU should be used. (Default = false)
 %
 % OUTPUTS:
 %   ImageStack: Shifted image stack. (YSizexXSizexNImages float)
@@ -16,7 +16,7 @@ function [ImageStack] = shiftImage(ImageStack, Shift, UseGPU)
 
 % Set defaults.
 if (~exist('UseGPU', 'var') || isempty(UseGPU))
-    UseGPU = logical(gpuDeviceCount());
+    UseGPU = false;
 end
 
 % Validate inputs.
