@@ -10,7 +10,9 @@ function [Shift] = findOffsetIter(RefStack, MovingStack, ...
 %   MovingStack: Stack that has moved w.r.t. RefStack (YSizexXSizexNImages)
 %   NIterMax: Maximum number of iterations. (Default = 10)
 %   Tolerance: Tolerance of the shifts allowing early stopping before
-%              NIterMax. (3x1 float)(Default = [0; 0; 0])
+%              NIterMax. That is, we stop before NIterMax when the newest
+%              estimated shift is less than 'Tolerance'. 
+%              (3x1 float)(Default = [0; 0; 0])
 %   UseGPU: Flag indicating GPU should be used. (Default = false)
 %
 % OUTPUTS:
@@ -42,14 +44,16 @@ Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
     'post');
 
 % Iteratively estimate the shift.
-PreviousShift = [inf; inf; inf];
+NewShift = [inf; inf; inf];
 Shift = [0; 0; 0];
 ii = 1;
-while (all(abs(Shift-PreviousShift)>Tolerance) && (ii<NIterMax))
-    % Compute the shift.
+while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))
+    % Compute the shift, up to a maximum offset of ceil(StackSize/4) (this
+    % was chosen somewhat arbitrarily, however going too far out risks
+    % finding an incorrect peak due to noise).
     ii = ii + 1;
     [~, NewShift] = smi_stat.findStackOffset(RefStack, MovingStack, ...
-        [], [], [], false, UseGPU);
+        ceil(StackSize/4), [], [], false, UseGPU);
     Shift = Shift + NewShift;
     
     % Shift the image stack.
