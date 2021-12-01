@@ -27,7 +27,10 @@ function [ParamsHat, ParamsHatSE] = bootstrapFitCon(XData, YData, ...
 %                 sum((Params(1) + Params(2)*XData - YData).^2))
 %   NBootstrap: Number of bootstrap samples to be made from the data.
 %               (Default = 100)
-%   AMatrix, BVector, AEq, BEq,
+%   AMatrix: See 'A' input to fmincon(). (Default = [])
+%   BVector: See 'b' input to fmincon(). (Default = [])
+%   AEq: See 'Aeq' input to fmincon(). (Default = [])
+%   BEq: See 'beq' input to fmincon(). (Default = [])
 %   LowerBounds, UpperBounds: Please see the inputs to fmincon() for
 %                             descriptions. Although my naming is
 %                             different, the ordering is maintained.
