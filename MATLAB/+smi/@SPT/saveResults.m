@@ -51,7 +51,7 @@ if obj.GenerateMovies
         LD.loadRawData(obj.SMF, 1, obj.SMF.Data.DataVariable);
     
     % Generate and save the movie.
-    if ~(isempty(RawData) || isempty(obj.TR))
+    if ~(isempty(RawData) || isempty(cell2mat({obj.TR.FrameNum}.')))
         MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
         MovieMaker.TR = obj.TR;
         MovieMaker.RawData = RawData;
@@ -66,7 +66,7 @@ end
 % Create and save 2D and 3D trajectory plots.
 if obj.GeneratePlots
     % Make and save the 2D plot.
-    if ~isempty(obj.TR)
+    if ~isempty(cell2mat({obj.TR.FrameNum}.'))
         PlotFigure = figure();
         PlotAxes = axes(PlotFigure);
         MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
