@@ -7,7 +7,7 @@ function [CDFOfJumps] = brownianJumpCDF(MotionParams, ...
 % INPUTS:
 %   MotionParams: Array of parameters needed for the model. For the one
 %                 component model, this is just D. For the two component
-%                 model, this is [D_1; D_2; alpha_1, alpha_2].
+%                 model, this is [D_1; D_2; alpha_1; alpha_2].
 %                 For N-components, this is [D_1, D_2, ..., D_N, 
 %                         alpha_1, alpha_2, ..., alpha_N
 %   SortedSquaredDisp: The sorted (in ascending order) squared jumps used 
