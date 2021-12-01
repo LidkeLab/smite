@@ -1,5 +1,5 @@
-function [FitParams, FitParamsSE] = ...
-    fitCDFOfJumps(MSDStruct, FitMethod, NComponents, DiffusionModel, Verbose)
+function [FitParams, FitParamsSE] = fitCDFOfJumps(MSDStruct, FitMethod, ...
+    NComponents, DiffusionModel, Verbose)
 %fitCDFOfJumps fits the CDF of displacement data (jumps).
 % This method will fit a model to the CDF (CPD) of trajectory
 % displacements.
