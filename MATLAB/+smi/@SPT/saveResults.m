@@ -51,43 +51,51 @@ if obj.GenerateMovies
         LD.loadRawData(obj.SMF, 1, obj.SMF.Data.DataVariable);
     
     % Generate and save the movie.
-    MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
-    MovieMaker.TR = obj.TR;
-    MovieMaker.RawData = RawData;
-    MovieMaker.SMF = obj.SMF;
-    MovieFileName = [BaseName, '_movie.mp4'];
-    MovieMaker.saveMovie(fullfile(obj.SMF.Data.ResultsDir, MovieFileName))
+    if ~(isempty(RawData) || isempty(obj.TR))
+        MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
+        MovieMaker.TR = obj.TR;
+        MovieMaker.RawData = RawData;
+        MovieMaker.SMF = obj.SMF;
+        MovieFileName = [BaseName, '_movie.mp4'];
+        MovieMaker.saveMovie(fullfile(obj.SMF.Data.ResultsDir, MovieFileName))
+    elseif (obj.Verbose > 0)
+        warning('smi.SPT.saveResults(): no movie produced, data is empty!')
+    end
 end
 
 % Create and save 2D and 3D trajectory plots.
 if obj.GeneratePlots
     % Make and save the 2D plot.
-    PlotFigure = figure();
-    PlotAxes = axes(PlotFigure);
-    MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
-    MovieMaker.SMF = obj.SMF;
-    MovieMaker.TR = obj.TR;
-    MovieMaker.setVitalParams()
-    MovieMaker.prepAxes(PlotAxes);
-    EmptySMD = smi_core.SingleMoleculeData.createSMD();
-    MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
-        obj.SMF, EmptySMD, obj.TR(1).NFrames);
-    Traj2DFileName = [BaseName, '_plot2D'];
-    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
-    saveas(PlotFigure, ...
-        fullfile(obj.SMF.Data.ResultsDir, [Traj2DFileName, '.png']))
-    
-    % Make and save the 3D plot.
-    MovieMaker.Params.LineOfSite = [-45, 15];
-    MovieMaker.prepAxes(PlotAxes);
-    EmptySMD = smi_core.SingleMoleculeData.createSMD();
-    MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
-        obj.SMF, EmptySMD, obj.TR(1).NFrames);
-    Traj3DFileName = [BaseName, '_plot3D'];
-    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
-    saveas(PlotFigure, ...
-        fullfile(obj.SMF.Data.ResultsDir, [Traj3DFileName, '.png']))
-    close(PlotFigure);
+    if ~isempty(obj.TR)
+        PlotFigure = figure();
+        PlotAxes = axes(PlotFigure);
+        MovieMaker = smi_vis.GenerateMovies(obj.MovieParams);
+        MovieMaker.SMF = obj.SMF;
+        MovieMaker.TR = obj.TR;
+        MovieMaker.setVitalParams()
+        MovieMaker.prepAxes(PlotAxes);
+        EmptySMD = smi_core.SingleMoleculeData.createSMD();
+        MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
+            obj.SMF, EmptySMD, obj.TR(1).NFrames);
+        Traj2DFileName = [BaseName, '_plot2D'];
+        saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj2DFileName))
+        saveas(PlotFigure, ...
+            fullfile(obj.SMF.Data.ResultsDir, [Traj2DFileName, '.png']))
+        
+        % Make and save the 3D plot.
+        MovieMaker.Params.LineOfSite = [-45, 15];
+        MovieMaker.prepAxes(PlotAxes);
+        EmptySMD = smi_core.SingleMoleculeData.createSMD();
+        MovieMaker.makeFrame(PlotAxes, obj.TR, [], MovieMaker.Params, ...
+            obj.SMF, EmptySMD, obj.TR(1).NFrames);
+        Traj3DFileName = [BaseName, '_plot3D'];
+        saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, Traj3DFileName))
+        saveas(PlotFigure, ...
+            fullfile(obj.SMF.Data.ResultsDir, [Traj3DFileName, '.png']))
+        close(PlotFigure);
+    elseif (obj.Verbose > 0)
+        warning('smi.SPT.saveResults(): no plots produced, no trajectories!')
+    end
 end
 
 
