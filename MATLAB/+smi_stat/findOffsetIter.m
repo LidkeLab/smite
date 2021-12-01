@@ -1,5 +1,5 @@
-function [Shift] = findOffsetIter(RefStack, MovingStack, ...
-    NIterMax, Tolerance, UseGPU)
+function [Shift, IntShift, CorrData, CorrParams] = ...
+    findOffsetIter(RefStack, MovingStack, NIterMax, Tolerance, CorrParams)
 %findOffsetIter estimates the sub-pixel shift between images.
 % This method esimates the shift between 'RefStack' and 'MovingStack' by
 % iteratively fitting a polynomial to a scaled cross-correlation between
@@ -13,10 +13,12 @@ function [Shift] = findOffsetIter(RefStack, MovingStack, ...
 %              NIterMax. That is, we stop before NIterMax when the newest
 %              estimated shift is less than 'Tolerance'. 
 %              (3x1 float)(Default = [0; 0; 0])
-%   UseGPU: Flag indicating GPU should be used. (Default = false)
+%   CorrParams: Structure of parameters passed to 
+%               smi_stat.findStackOffset()
 %
 % OUTPUTS:
 %   Shift: Shift between the image stacks. ([Y; X; Z])
+%   IntShift: Integer shift between the image stacks. ([Y; X; Z])
 %
 % CITATION: 
 %   Cross-correlation shift finding method: 
@@ -36,29 +38,29 @@ end
 if (~exist('Tolerance', 'var') || isempty(Tolerance))
     Tolerance = [0; 0; 0];
 end
-if (~exist('UseGPU', 'var') || isempty(UseGPU))
-    UseGPU = false;
+if (~exist('CorrParams', 'var') || isempty(CorrParams))
+    CorrParams = struct([]);
 end
 StackSize = size(RefStack);
 Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
     'post');
 
 % Iteratively estimate the shift.
-[~, Shift] = smi_stat.findStackOffset(RefStack, MovingStack, ...
-    ceil(StackSize/4), [], [], false, UseGPU);
+[Shift, IntShift, CorrData, CorrParams] = ...
+    smi_stat.findStackOffset(RefStack, MovingStack, CorrParams);
 NewShift = Shift;
 ii = 1;
 while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))  
     % Shift the image stack.
     ii = ii + 1;
-    MovingStack = smi_stat.shiftImage(MovingStack, NewShift, UseGPU);
+    MovingStack = smi_stat.shiftImage(MovingStack, NewShift, ...
+        CorrParams.UseGPU);
     
-    % Compute the shift, up to a maximum offset of ceil(StackSize/4) (this
-    % was chosen somewhat arbitrarily, however going too far out risks
-    % finding an incorrect peak due to noise).
-    [~, NewShift] = smi_stat.findStackOffset(RefStack, MovingStack, ...
-        ceil(StackSize/4), [], [], false, UseGPU);
+    % Compute the shift.
+    [NewShift, NewIntShift, CorrData, CorrParams] = ...
+        smi_stat.findStackOffset(RefStack, MovingStack, CorrParams);
     Shift = Shift + NewShift;
+    IntShift = IntShift + NewIntShift;
 end
 
 
