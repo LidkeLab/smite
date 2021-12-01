@@ -55,6 +55,7 @@ for ii = 1:NCDFs
 end
 
 % Plot the CDFs.
+hold(PlotAxes, 'on')
 LineHandles = gobjects(NCDFs, 1);
 for ii = 1:NCDFs
     LineHandles(ii) = stairs(PlotAxes, XData{ii}, CDFs{ii}, ...
