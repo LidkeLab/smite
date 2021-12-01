@@ -61,6 +61,7 @@ end
 if (~exist('FitOptions', 'var') || isempty(FitOptions))
     if (NComponents > 1)
         FitOptions = optimoptions('fmincon');
+        FitOptions.Display = 'none';
     else
         FitOptions = optimset(@fminsearch);
     end
@@ -112,7 +113,7 @@ switch FitMethod
                 % Perform the constrained fit.
                 [FitParams, FitParamsSE] = smi_stat.bootstrapFitCon(...
                     SortedJumps, CDFOfJumps, ParamsInit, CostFunction, ...
-                    Aeq, beq, [], [], [], ...
+                    [], Aeq, beq, [], [], ...
                     ParamsLowerBound, ParamsUpperBound, FitOptions);
             else
                 [FitParams, FitParamsSE] = smi_stat.bootstrapFit(...
