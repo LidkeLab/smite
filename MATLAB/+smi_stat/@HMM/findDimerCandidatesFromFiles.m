@@ -12,7 +12,7 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 %   FilePatterns: Patterns to match to find and pair tracking results in
 %                 FileDir. The pattern can contain a wildcard '*' but
 %                 is otherwise a normal string. 
-%                 (Default = {'*Channel1_Results.mat; 
+%                 (Default = {'*Channel1_Results.mat'; 
 %                             '*Channel2_Results.mat'})
 %   MaxDimerSeparation: Maximum value of the minimum trajectory separation
 %                       for a pair to be considered a dimer candidate.
