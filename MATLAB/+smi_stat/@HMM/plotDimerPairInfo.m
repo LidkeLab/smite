@@ -377,28 +377,40 @@ switch PlotType
         PlotAxes.YLim = [0, TRArray(1).YSize] ...
             * (UnitFlag*PixelSize + ~UnitFlag);
     case 'RegistrationPlot'
-        XRegCorrection = sum(...
-            [cell2mat({TRArray(1).XRegCorrection(DimerCandidateBool1)}),...
-            cell2mat({TRArray(2).XRegCorrection(DimerCandidateBool2)})], 2);
-        XRegCorrection = XRegCorrection ...
-            * (UnitFlag*PixelSize + ~UnitFlag);
-        YRegCorrection = sum(...
-            [cell2mat({TRArray(1).YRegCorrection(DimerCandidateBool1)}),...
-            cell2mat({TRArray(2).YRegCorrection(DimerCandidateBool2)})], 2);
-        YRegCorrection = YRegCorrection ...
-            * (UnitFlag*PixelSize + ~UnitFlag);
+        XRegCorrection = zeros(sum(DimerCandidateBool1), 1);
+        for ii = 1:numel(TRArray)
+            % Check if XRegCorrection is present and non-empty, adding it
+            % if possible.  (This is a workaround for some older data in
+            % which I left the field empty instead of set to zeros).
+            if ~isempty(TRArray(ii).XRegCorrection)
+                XRegCorrection = XRegCorrection ...
+                    + cell2mat({TRArray(ii).XRegCorrection(...
+                    TRArray(ii).DimerCandidateBool)});
+            end
+        end
+        XRegCorrection = XRegCorrection * (UnitFlag*PixelSize + ~UnitFlag);
+        YRegCorrection = zeros(sum(DimerCandidateBool1), 1);
+        for ii = 1:numel(TRArray)
+            % Check if YRegCorrection is present and non-empty, adding it
+            % if possible.  (This is a workaround for some older data in
+            % which I left the field empty instead of set to zeros).
+            if ~isempty(TRArray(ii).YRegCorrection)
+                YRegCorrection = YRegCorrection ...
+                    + cell2mat({TRArray(ii).YRegCorrection(...
+                    TRArray(ii).DimerCandidateBool)});
+            end
+        end
+        YRegCorrection = YRegCorrection * (UnitFlag*PixelSize + ~UnitFlag);
         plot(PlotAxes, FrameNum, XRegCorrection, 'kx')
         plot(PlotAxes, FrameNum, YRegCorrection, 'ko')
     case 'XYSeparationPlot'
         % Plot the separations in x and y over time.
         XSeparation = cell2mat({TRArray(2).X(DimerCandidateBool2)}.') ...
             - cell2mat({TRArray(1).X(DimerCandidateBool1)}.');
-        XSeparation = XSeparation ...
-            * (UnitFlag*PixelSize + ~UnitFlag);
+        XSeparation = XSeparation * (UnitFlag*PixelSize + ~UnitFlag);
         YSeparation = cell2mat({TRArray(2).Y(DimerCandidateBool2)}.') ...
             - cell2mat({TRArray(1).Y(DimerCandidateBool1)}.');
-        YSeparation = YSeparation ...
-            * (UnitFlag*PixelSize + ~UnitFlag);
+        YSeparation = YSeparation * (UnitFlag*PixelSize + ~UnitFlag);
         plot(PlotAxes, XSeparation, YSeparation, 'k-')
         
         % Mark the appropriate state (if requested) in the plot.
