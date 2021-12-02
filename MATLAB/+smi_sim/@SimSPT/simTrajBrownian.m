@@ -49,7 +49,7 @@ ConnectionMap = zeros(NTraj, 1);
 ConnectionMapT = zeros(NTraj, NSubframes);
 IsOligoSim = (SimParams.InteractionProb ...
     && ~isinf(SimParams.InteractionDistance));
-if (any(DSub) > 0)
+if any(DSub > 0)
     for ff = 2:NSubframes
         % Sample the proposed trajectory updates from the Normal
         % distribution (Brownian motion).
