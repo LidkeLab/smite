@@ -45,17 +45,13 @@ if Params.UseGPU
 end
 ImageStackFT = fftshift(fftn(ImageStack));
 
-% Apply the shift.
-[Kx, Ky, Kz] = meshgrid(1:ImSize(2), 1:ImSize(1), 1:ImSize(3));
+% Shift the coordinates and then mask signal beyond the Nyquist frequency.
+FNyquist = 0.5;
+[NyquistMask, ~, Ky, Kx, Kz] = smi_stat.frequencyMask(ImSize, FNyquist);
 ShiftedImFT = ImageStackFT .* exp(-2*pi*1i*Shift(1)*Ky/ImSize(1)) ...
     .* exp(-2*pi*1i*Shift(2)*Kx/ImSize(2)) ...
     .* exp(-2*pi*1i*Shift(3)*Kz/ImSize(3));
-
-% Mask components beyond the Nyquist frequency.
-NyquistEllipse = ((Kx - ImSize(2)/2 - 0.5) / (ImSize(2)/2 - 0.5)).^2 ...
-    + ((Ky - ImSize(1)/2 - 0.5) / (ImSize(1)/2 - 0.5)).^2 ...
-    + ((Kz - ImSize(3)/2 - 0.5) / (ImSize(3)/2 - 0.5)).^2;
-ShiftedImFT(NyquistEllipse > 1) = 0;
+ShiftedImFT(NyquistMask) = 0;
 
 % Invert the image back to the spatial domain.
 ImageStack = abs(ifftn(fftshift(ShiftedImFT)));

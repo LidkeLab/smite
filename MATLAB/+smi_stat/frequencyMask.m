@@ -1,4 +1,5 @@
-function [FreqEllipse, FreqMask] = frequencyMask(ImSize, FreqCutoff)
+function [FreqMask, FreqEllipse, YMesh, XMesh, ZMesh] = ...
+    frequencyMask(ImSize, FreqCutoff)
 %frequencyMask prepares a boolean mask defining a frequency cutoff.
 % This method prepares a boolean array that defines the indices of a
 % Fourier transform image that are <= or > the cutoff frequency.  For
@@ -14,6 +15,8 @@ function [FreqEllipse, FreqMask] = frequencyMask(ImSize, FreqCutoff)
 %               (1/pixels)(Default = Nyquist frequency)           
 %
 % OUTPUTS:
+%   FreqMask: Boolean array defining the indices to be masked. 
+%             (1xprod(ImSize))
 %   FreqEllipse: Ellipse defining the image frequencies (can be restored to
 %                as an image by doing reshape(FreqEllipse, ImSize)). This
 %                is defined by the convention that frequency is radially
@@ -21,9 +24,11 @@ function [FreqEllipse, FreqMask] = frequencyMask(ImSize, FreqCutoff)
 %                the frequency at the pixel center (as opposed to, e.g., 
 %                the far edge of the pixel, which would give a more
 %                restrictive mask). (1xprod(ImSize))
-%   
-%   FreqMask: Boolean array defining the indices to be masked. 
-% %           (1xprod(ImSize))
+%   YMesh, XMesh, ZMesh: Results from 
+%                        meshgrid(1:ImSize(2), 1:ImSize(1), 1:ImSize(3)).
+%                        This is the most expensive piece of this code, so
+%                        it's returned just in case the user still needs
+%                        it.
 
 % Created by:
 %   David J. Schodt (Lidke Lab 2021)
@@ -44,18 +49,16 @@ end
 ImSize = padarray(ImSize, [3-numel(ImSize), 0], 1, 'post');
 
 % Compute the image frequencies at each pixel of an image sized 'ImSize'.
-[YInd, XInd, ZInd] = ind2sub(ImSize, 1:prod(ImSize));
-FreqEllipse = ((YInd-ImSize(1)/2-0.5) / (ImSize(1)/2)).^2 ...
-    + ((XInd-ImSize(2)/2-0.5) / (ImSize(2)/2)).^2 ...
-    + ((ZInd-ImSize(3)/2-0.5) / (ImSize(3)/2)).^2;
+[XMesh, YMesh, ZMesh] = meshgrid(1:ImSize(2), 1:ImSize(1), 1:ImSize(3));
+FreqEllipse = ((YMesh-ImSize(1)/2-0.5) / (ImSize(1)/2)).^2 ...
+    + ((XMesh-ImSize(2)/2-0.5) / (ImSize(2)/2)).^2 ...
+    + ((ZMesh-ImSize(3)/2-0.5) / (ImSize(3)/2)).^2;
 
-% If requested, compute the binary mask.
-if (nargout() > 1)
-    % FreqEllipse==1 lies right on the Nyquist frequency of the image, so
-    % we can compare the ellipse to FreqCutoff * (RNyquist/FNyquist) = 
-    %   FreqCutoff * (1/FNyquist) to get the desired cutoff.
-    FreqMask = (FreqEllipse > (FreqCutoff*(1/FNyquist)));
-end
+% Compute the binary mask.
+% NOTE: FreqEllipse==1 lies right on the Nyquist frequency of the image, so
+%       we can compare the ellipse to FreqCutoff * (RNyquist/FNyquist) =
+%       FreqCutoff * (1/FNyquist) to get the desired cutoff.
+FreqMask = (FreqEllipse > (FreqCutoff*(1/FNyquist)));
 
 
 end
