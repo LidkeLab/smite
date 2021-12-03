@@ -1,5 +1,6 @@
-function [Shift, IntShift, CorrData, CorrParams] = ...
-    findOffsetIter(RefStack, MovingStack, NIterMax, Tolerance, CorrParams)
+function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
+    findOffsetIter(RefStack, MovingStack, NIterMax, Tolerance, ...
+    CorrParams, ShiftParams)
 %findOffsetIter estimates the sub-pixel shift between images.
 % This method esimates the shift between 'RefStack' and 'MovingStack' by
 % iteratively fitting a polynomial to a scaled cross-correlation between
@@ -15,6 +16,7 @@ function [Shift, IntShift, CorrData, CorrParams] = ...
 %              (3x1 float)(Default = [0; 0; 0])
 %   CorrParams: Structure of parameters passed to 
 %               smi_stat.findStackOffset()
+%   ShiftParams: Structure of parameters passed to smi_stat.shiftImage()
 %
 % OUTPUTS:
 %   Shift: Shift between the image stacks. ([Y; X; Z])
@@ -41,6 +43,9 @@ end
 if (~exist('CorrParams', 'var') || isempty(CorrParams))
     CorrParams = struct([]);
 end
+if (~exist('ShiftParams', 'var') || isempty(ShiftParams))
+    ShiftParams = struct([]);
+end
 StackSize = size(RefStack);
 Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
     'post');
@@ -53,8 +58,7 @@ ii = 1;
 while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))  
     % Shift the image stack.
     ii = ii + 1;
-    MovingStack = smi_stat.shiftImage(MovingStack, NewShift, ...
-        CorrParams.UseGPU);
+    MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
     
     % Compute the shift.
     [NewShift, NewIntShift, CorrData, CorrParams] = ...
