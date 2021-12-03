@@ -25,6 +25,7 @@ properties
     VerboseTest = 3   % Verbosity level for testFits
     FullvsTest        % Logical value set by fullAnalysis or testFit to tell
                       % saveResults to make the proper call to generatePlots
+    CalledByGUI=false % Keeps track of how fitting is called
 end
 % =========================================================================
 
@@ -270,9 +271,11 @@ methods
            ShowPlots = false;
         else   % testFit
            ResultsDir = [];
-           if obj.Verbose >= 5
+           if obj.Verbose >= 5 || obj.CalledByGUI
               ResultsSubDir = [];
               ShowPlots = true;
+              % Reset CalledByGUI for the next call that comes here.
+              obj.CalledByGUI = false;
            else
               ResultsSubDir = fullfile(obj.SMF.Data.ResultsDir, ...
                                        SubDir, 'TestFit');

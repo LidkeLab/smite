@@ -63,10 +63,12 @@ ControlHandles.DatasetNumberEdit = uicontrol(ControlPanel, ...
 
     function runTestFit(~,~)
         DatasetID=str2num(ControlHandles.DatasetNumberEdit.String);
+        obj.CalledByGUI = true;
         obj.testFit(DatasetID);  
     end
 
     function runFullFit(~,~)
+        obj.CalledByGUI = true;
         obj.fullAnalysis();  
     end
 
