@@ -1,8 +1,7 @@
 function [Struct] = padStruct(Struct, DefaultStruct)
 %padStruct pads the input 'Struct' with defaults in 'DefaultStruct'.
 % This method merges the two structures 'Struct' and 'DefaultStruct', with
-% values in 'Struct' taking precedent unless not available.  Furthermore,
-% typecasting is done to match the defaults where appropriate.
+% values in 'Struct' taking precedent unless not available.
 %
 % INPUTS:
 %   Struct: Structure array which is to be padded.
@@ -27,13 +26,7 @@ for pp = 1:numel(DefaultFieldNames)
         % Struct structure and so the default must be added.
         Struct.(DefaultFieldNames{pp}) = ...
             DefaultStruct.(DefaultFieldNames{pp});
-    elseif ~iscell(DefaultStruct.(DefaultFieldNames{pp}))
-        % Make sure that this field in 'Struct' is of the same type as the
-        % one in 'DefaultStruct'.
-        Struct.(DefaultFieldNames{pp}) = ...
-            cast(Struct.(DefaultFieldNames{pp}), 'like', ...
-            DefaultStruct.(DefaultFieldNames{pp}));
-    else
+    elseif iscell(DefaultStruct.(DefaultFieldNames{pp}))
         % Type casting can't be done on cells as above, so we'll just place
         % whatever is present in a cell array.
         if ~iscell(Struct.(DefaultFieldNames{pp}))
