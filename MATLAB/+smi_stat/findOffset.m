@@ -176,12 +176,12 @@ Stack2 = Stack2 ./ sum(Stack2, [1, 2]);
 % Whiten each image in the stack with respect to the entire stack, ignoring
 % the parts which are covered by the BinaryMask when computing mean, std., 
 % etc.
-Stack1Masked = Stack1(logical(Params.BinaryMask));
-Stack2Masked = Stack2(logical(Params.BinaryMask));
-Stack1Whitened = (Stack1-mean(Stack1Masked)) ...
-    / (std(Stack1Masked) * sqrt(numel(Stack1Masked)-1));
-Stack2Whitened = (Stack2-mean(Stack2Masked)) ...
-    / (std(Stack2Masked) * sqrt(numel(Stack2Masked)-1));
+Stack1Masked = Stack1 .* Params.BinaryMask;
+Stack2Masked = Stack2 .* Params.BinaryMask;
+Stack1Whitened = (Stack1-mean(Stack1Masked(:))) ...
+    / (std(Stack1Masked(:)) * sqrt(numel(Stack1Masked)-1));
+Stack2Whitened = (Stack2-mean(Stack2Masked(:))) ...
+    / (std(Stack2Masked(:)) * sqrt(numel(Stack2Masked)-1));
 
 % Compute the 3D FFT's of each stack, padding with zeros before computing.
 % Also, ensure that the Params.BinaryMask is reapplied.
