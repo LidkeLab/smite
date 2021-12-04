@@ -1,7 +1,7 @@
 function [Shift, IntShift, CorrData, Params] = ...
-    findStackOffset(Stack1, Stack2, Params)
-%findStackOffset estimates a sub-pixel offset between two stacks of images.
-% findStackoffset() will estimate the offset between two 3D stacks of
+    findOffset(Stack1, Stack2, Params)
+%findOffset estimates a sub-pixel offset between two stacks of images.
+% findOffset() will estimate the offset between two 3D stacks of
 % images.  This method computes an integer pixel offset between the two
 % stacks via a cross-correlation and then fits 2nd order polynomials to the 
 % resulting cross-correlation.  An estimate of a sub-pixel offset is then 
@@ -75,7 +75,6 @@ function [Shift, IntShift, CorrData, Params] = ...
 % Set default parameter values if needed.
 Stack1Size = [size(Stack1, 1:2), max(2, size(Stack1, 3))];
 Stack2Size = [size(Stack2, 1:2), max(2, size(Stack2, 3))];
-SizeOfFullXCorr = Stack1Size + Stack2Size - 1;
 DefaultParams.MaxOffset = ceil(Stack1Size / 2);
 DefaultParams.FitOffset = [2, 2, 2];
 DefaultParams.BinaryMask = ones(Stack1Size);

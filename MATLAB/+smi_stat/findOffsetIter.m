@@ -58,7 +58,7 @@ CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
 
 % Iteratively estimate the shift.
 [Shift, IntShift, CorrData, CorrParams] = ...
-    smi_stat.findStackOffset(RefStack, MovingStack, CorrParams);
+    smi_stat.findOffset(RefStack, MovingStack, CorrParams);
 NewShift = Shift;
 ii = 1;
 while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))  
@@ -68,7 +68,7 @@ while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))
     
     % Compute the shift.
     [NewShift, NewIntShift, CorrData, CorrParams] = ...
-        smi_stat.findStackOffset(RefStack, MovingStack, CorrParams);
+        smi_stat.findOffset(RefStack, MovingStack, CorrParams);
     Shift = Shift + NewShift;
     IntShift = IntShift + NewIntShift;
 end
