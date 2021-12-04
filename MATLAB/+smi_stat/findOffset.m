@@ -98,7 +98,6 @@ elseif ~all(size(Params.FTMask) == Params.FTSize)
     Params.FTMask = ones(Params.FTSize);
 end
 
-
 % If requested, turn of warnings.
 if Params.SuppressWarnings
     WarningState = warning('off');
@@ -152,6 +151,8 @@ end
 %       stacks to the GPU with gpuArray() (it's faster this way).
 Stack1 = single(Stack1);
 Stack2 = single(Stack2);
+Params.BinaryMask = single(Params.BinaryMask);
+Params.FTMask = single(Params.FTMask);
 
 % Ensure that MaxOffset and FitOffset are valid, modifying their values if
 % needed.
@@ -169,12 +170,8 @@ Params.FitOffset(BadFitOffset) = Params.MaxOffset(BadFitOffset);
 
 % Scale each image in each stack by intensity to reduce linear trends in 
 % the cross-correlation.
-for ii = 1:Stack1Size(3)
-    Stack1(:, :, ii) = Stack1(:, :, ii) / sum(sum(Stack1(:, :, ii)));
-end
-for ii = 1:Stack2Size(3)
-    Stack2(:, :, ii) = Stack2(:, :, ii) / sum(sum(Stack2(:, :, ii)));
-end
+Stack1 = Stack1 ./ sum(Stack1, [1, 2]);
+Stack2 = Stack2 ./ sum(Stack2, [1, 2]);
 
 % Whiten each image in the stack with respect to the entire stack, ignoring
 % the parts which are covered by the BinaryMask when computing mean, std., 
@@ -186,26 +183,19 @@ Stack1Whitened = (Stack1-mean(Stack1Masked)) ...
 Stack2Whitened = (Stack2-mean(Stack2Masked)) ...
     / (std(Stack2Masked) * sqrt(numel(Stack2Masked)-1));
 
-% Re-apply the binary mask to ensure the masked points cannot contribute to
-% the cross-correlation.
-Stack1Whitened = Params.BinaryMask .* Stack1Whitened;
-Stack2Whitened = Params.BinaryMask .* Stack2Whitened;
-
 % Compute the 3D FFT's of each stack, padding with zeros before computing.
-% The padding size selected such that the result is approximately 
-% equivalent to the brute forced cross-correlation.
-Stack1PaddedFFT = fftn(Stack1Whitened, Params.FTSize);
-Stack2PaddedFFT = fftn(Stack2Whitened, Params.FTSize);
+% Also, ensure that the Params.BinaryMask is reapplied.
+Stack1PaddedFFT = fftn(Params.BinaryMask .* Stack1Whitened, Params.FTSize);
+Stack2PaddedFFT = fftn(Params.BinaryMask .* Stack2Whitened, Params.FTSize);
 
 % Compute the 3D cross-correlation in the Fourier domain.
-XCorr3D = ifftn(conj(Stack1PaddedFFT) .* Stack2PaddedFFT .* Params.FTMask);
+XCorr3D = ...
+    real(ifftn(conj(Stack1PaddedFFT) .* Stack2PaddedFFT .* Params.FTMask));
 
 % Compute the binary cross-correlation for later use in scaling.
-Stack1Binary = Params.BinaryMask .* ones(Stack1Size);
-Stack2Binary = Params.BinaryMask .* ones(Stack2Size);
-Stack1BinaryFFT = fftn(Stack1Binary, Params.FTSize);
-Stack2BinaryFFT = fftn(Stack2Binary, Params.FTSize);
-XCorr3DBinary = ifftn(conj(Stack1BinaryFFT) .* Stack2BinaryFFT);
+BinaryStackFFT = fftn(Params.BinaryMask, Params.FTSize);
+XCorr3DBinary = ...
+    real(ifftn(conj(BinaryStackFFT) .* BinaryStackFFT .* Params.FTMask));
 
 % Scale the 3D cross-correlation by the cross-correlation of the
 % zero-padded binary images (an attempt to reduce the bias to a [0, 0, 0]
@@ -227,9 +217,9 @@ CorrOffsetIndicesZ = (-Params.MaxOffset(3):Params.MaxOffset(3)) ...
     + CorrCenter(3);
 
 % Isolate the central chunk of the cross-correlation.
-XCorr3D = real(XCorr3D(CorrOffsetIndicesY, ...
+XCorr3D = XCorr3D(CorrOffsetIndicesY, ...
     CorrOffsetIndicesX, ...
-    CorrOffsetIndicesZ));
+    CorrOffsetIndicesZ);
 
 % Fetch the cross-correlation result from the GPU (if needed).
 if Params.UseGPU
