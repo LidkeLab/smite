@@ -5,18 +5,18 @@ function [Shift, IntShift, CorrData, Params] = ...
 % images.  This method computes an integer pixel offset between the two
 % stacks via a cross-correlation and then fits 2nd order polynomials to the 
 % resulting cross-correlation.  An estimate of a sub-pixel offset is then 
-% produced by determining the location of the peaks of the three (x, y, z)
+% produced by determining the location of the peaks of the three (y, x, z)
 % 2nd order polynomial fits.
 %
 % NOTE: The convention used here for the offset is based on indices as
 %       follows: If Stack is a 3D stack of images, and
 %       Stack1 = Stack(m:n, m:n, m:n) 
-%       Stack2 = Stack((m:n)+x, (m:n)+y, (m:n)+z)
-%       then PixelOffset = findStackOffset(Stack1, Stack2) == [x; y; z]
+%       Stack2 = Stack((m:n)+y, (m:n)+x, (m:n)+z)
+%       then PixelOffset = findStackOffset(Stack1, Stack2) == [y; x; z]
 % NOTE: All inputs besides Stack1 and Stack2 are optional and can be
 %       replaced by [] (an empty array).
-% NOTE: Stack1 and Stack2 must be the same size in all 3 dimensions (x, y,
-%       and z)
+% NOTE: Stack1 and Stack2 must be the same size in all 3 dimensions 
+%       (y, x, and z)
 %
 % INPUTS:
 %   Stack1: The stack to which Stack2 is compared to, i.e. Stack1 is the
@@ -27,14 +27,22 @@ function [Shift, IntShift, CorrData, Params] = ...
 %           MaxOffset: Maximum offset between Stack1 and Stack2 to be 
 %                      considered in the calculation of 'Shift' and
 %                      'IntShift'.
-%                      (3x1)(Default = ceil(size(Stack1)/2)) 
+%                      (1x3)(Default = ceil(size(Stack1)/2)) 
 %           FitOffset: Maximum offset from the peak of the 
 %                      cross-correlation curve for which data will be fit
 %                      to determine 'Shift'. 
-%                      (3x1)(Default = [2; 2; 2]) 
+%                      (1x3)(Default = [2; 2; 2]) 
 %           BinaryMask: Mask to multiply the stacks with before computing
 %                       to cross-correlation. 
-%                       (MxNxO)(Default = ones(M, N, O)) 
+%                       (MxNxO)(Default = ones(M, N, O))
+%           FTSize: Size of the Fourier transform used internally.
+%                   (Default = 2 * size(Stack1))
+%                   NOTE: Typically, we would pad to 2*size(Stack)-1, 
+%                         however 2*size(Stack) can improve performance of 
+%                         the FFT when the dimensions of Stack are powers 
+%                         of 2.
+%           FTMask: Mask to apply to the Fourier domain cross-correlation
+%                   before inverting. (FTSize array)
 %           PlotFlag: Specifies whether or not plot(s) will be generated.
 %           UseGPU: Flag indicating GPU should be used.
 %                   (boolean)(Default = logical(gpuDeviceCount()))
@@ -44,10 +52,10 @@ function [Shift, IntShift, CorrData, Params] = ...
 % OUTPUTS:
 %   Shift: The sub-pixel offset of Stack2 relative to Stack1, approximated 
 %          based on a 2nd order polynomial fit(s) to a scaled 
-%          cross-correlation. (3x1)
+%          cross-correlation. (3x1)([y; x; z])
 %   IntShift: The integer pixel offset of Stack2 relative to Stack1,
 %             determined based on the location of the peak of the xcorr 
-%             coefficient field between the two stacks. (3x1)
+%             coefficient field between the two stacks. (3x1)([y; x; z])
 %   CorrData: Structure array containing the scaled cross-correlation 
 %             corresponding to MaxOffset as well as the fitting results 
 %             which were used to determine 'Shift'.
@@ -65,9 +73,14 @@ function [Shift, IntShift, CorrData, Params] = ...
 
 
 % Set default parameter values if needed.
-DefaultParams.MaxOffset = ceil(size(Stack1) / 2);
-DefaultParams.FitOffset = [2; 2; 2];
-DefaultParams.BinaryMask = ones(size(Stack1));
+Stack1Size = [size(Stack1, 1:2), max(2, size(Stack1, 3))];
+Stack2Size = [size(Stack2, 1:2), max(2, size(Stack2, 3))];
+SizeOfFullXCorr = Stack1Size + Stack2Size - 1;
+DefaultParams.MaxOffset = ceil(Stack1Size / 2);
+DefaultParams.FitOffset = [2, 2, 2];
+DefaultParams.BinaryMask = ones(Stack1Size);
+DefaultParams.FTSize = 2 * Stack1Size;
+DefaultParams.FTMask = [];
 DefaultParams.PlotFlag = false;
 DefaultParams.UseGPU = logical(gpuDeviceCount());
 DefaultParams.SuppressWarnings = false;
@@ -76,36 +89,44 @@ if (~exist('Params', 'var') || isempty(Params))
 else
     Params = smi_helpers.padStruct(Params, DefaultParams);
 end
+if isempty(Params.FTMask)
+    Params.FTMask = ones(Params.FTSize);
+elseif ~all(size(Params.FTMask) == Params.FTSize)
+    if ~Params.SuppressWarnings
+        warning(['Params.FTMask reset to ones: size not ', ...
+            'compatible with Params.FTSize.'])
+    end
+    Params.FTMask = ones(Params.FTSize);
+end
+
 
 % If requested, turn of warnings.
 if Params.SuppressWarnings
     WarningState = warning('off');
 end
 
-% Ensure MaxOffset and FitOffset are column vectors.
-if isrow(Params.MaxOffset)
+% Ensure MaxOffset and FitOffset are row vectors.
+if iscolumn(Params.MaxOffset)
     Params.MaxOffset = Params.MaxOffset.';
 end
-if isrow(Params.FitOffset)
+if iscolumn(Params.FitOffset)
     Params.FitOffset = Params.FitOffset.';
 end
 
 % Check if the stacks are actually stacks (i.e. multiple images in each
 % stack).  If they are not, copy the given image to match the stack size of
 % the other stack.
-NImagesStack1 = size(Stack1, 3);
-NImagesStack2 = size(Stack2, 3);
-if ((NImagesStack1==1) || (NImagesStack2==1))
+if ((Stack1Size(3)==1) || (Stack2Size(3)==1))
     % One of the two stacks is just a single image, copy that image to
     % match the size of the other stack.
-    if (NImagesStack1 < NImagesStack2)
+    if (Stack1Size(3) < Stack2Size(3))
         % Stack1 is a single image: create copies of this image to ensure
         % Stack1 and Stack2 are the same size.
-        Stack1 = repmat(Stack1, [1, 1, NImagesStack2]);
-    elseif (NImagesStack1 > NImagesStack2)
+        Stack1 = repmat(Stack1, [1, 1, Stack2Size(3)]);
+    elseif (Stack1Size(3) > Stack2Size(3))
         % Stack2 is a single image: create copies of this image to ensure
         % Stack1 and Stack2 are the same size.
-        Stack2 = repmat(Stack2, [1, 1, NImagesStack1]);
+        Stack2 = repmat(Stack2, [1, 1, Stack1Size(3)]);
     else
         % Both stacks contain only a single image.  Make these stacks of
         % two images so that we can still proceed with the shift finding in
@@ -124,6 +145,7 @@ if Params.UseGPU
     Stack1 = gpuArray(Stack1);
     Stack2 = gpuArray(Stack2);
     Params.BinaryMask = gpuArray(Params.BinaryMask);
+    Params.FTMask = gpuArray(Params.FTMask);
 end
 
 % Ensure the stacks are floating point arrays.
@@ -132,35 +154,19 @@ end
 Stack1 = single(Stack1);
 Stack2 = single(Stack2);
 
-% Determine dimensions relevant to the problem to improve code readability.
-Stack1Size = size(Stack1).';
-Stack2Size = size(Stack2).';
-SizeOfFullXCorr = Stack1Size + Stack2Size - 1;
-
 % Ensure that MaxOffset and FitOffset are valid, modifying their values if
 % needed.
 % NOTE: This is just ensuring that the MaxOffset corresponds to shifts
 %       between the two stacks that still maintain some overlap.
-IndicesToModify = find(Params.MaxOffset > floor(SizeOfFullXCorr/2)).';
+MaxAllowedOffset = floor(Params.FTSize/2) - 1;
+IndicesToModify = find(Params.MaxOffset > MaxAllowedOffset);
 for ii = IndicesToModify
     warning('MaxOffset(%i) = %g is too big and was reset to %i', ...
-        ii, Params.MaxOffset(ii), floor(SizeOfFullXCorr(ii) / 2))
-    Params.MaxOffset(ii) = floor(SizeOfFullXCorr(ii) / 2);
+        ii, Params.MaxOffset(ii), MaxAllowedOffset(ii))
+    Params.MaxOffset(ii) = MaxAllowedOffset(ii);
 end
 BadFitOffset = (Params.FitOffset > Params.MaxOffset);
 Params.FitOffset(BadFitOffset) = Params.MaxOffset(BadFitOffset);
-
-% Define the indices within a full cross-correlation (size SizeOfFullXCorr)
-% that we wish to inspect.
-CorrOffsetIndicesY = ...
-    max(ceil(SizeOfFullXCorr(1)/2) - Params.MaxOffset(1), 1) ...
-    : ceil(SizeOfFullXCorr(1)/2) + Params.MaxOffset(1);
-CorrOffsetIndicesX = ...
-    max(ceil(SizeOfFullXCorr(2)/2) - Params.MaxOffset(2), 1) ...
-    : ceil(SizeOfFullXCorr(2)/2) + Params.MaxOffset(2);
-CorrOffsetIndicesZ = ...
-    max(ceil(SizeOfFullXCorr(3)/2) - Params.MaxOffset(3), 1) ...
-    : ceil(SizeOfFullXCorr(3)/2) + Params.MaxOffset(3);
 
 % Scale each image in each stack by intensity to reduce linear trends in 
 % the cross-correlation.
@@ -189,20 +195,17 @@ Stack2Whitened = Params.BinaryMask .* Stack2Whitened;
 % Compute the 3D FFT's of each stack, padding with zeros before computing.
 % The padding size selected such that the result is approximately 
 % equivalent to the brute forced cross-correlation.
-% NOTE: Typically, we would pad to 2*size(Stack)-1, however using
-%       2*size(Stack) will improve the performance of the FFT when the 
-%       dimensions of Stack are powers of 2.
-Stack1PaddedFFT = fftn(Stack1Whitened, 2 * size(Stack1Whitened));
-Stack2PaddedFFT = fftn(Stack2Whitened, 2 * size(Stack2Whitened));
+Stack1PaddedFFT = fftn(Stack1Whitened, Params.FTSize);
+Stack2PaddedFFT = fftn(Stack2Whitened, Params.FTSize);
 
 % Compute the 3D cross-correlation in the Fourier domain.
-XCorr3D = ifftn(conj(Stack1PaddedFFT) .* Stack2PaddedFFT);
+XCorr3D = ifftn(conj(Stack1PaddedFFT) .* Stack2PaddedFFT .* Params.FTMask);
 
 % Compute the binary cross-correlation for later use in scaling.
-Stack1Binary = Params.BinaryMask .* ones(size(Stack1Whitened));
-Stack2Binary = Params.BinaryMask .* ones(size(Stack2Whitened));
-Stack1BinaryFFT = fftn(Stack1Binary, 2 * size(Stack1Whitened));
-Stack2BinaryFFT = fftn(Stack2Binary, 2 * size(Stack2Whitened));
+Stack1Binary = Params.BinaryMask .* ones(Stack1Size);
+Stack2Binary = Params.BinaryMask .* ones(Stack2Size);
+Stack1BinaryFFT = fftn(Stack1Binary, Params.FTSize);
+Stack2BinaryFFT = fftn(Stack2Binary, Params.FTSize);
 XCorr3DBinary = ifftn(conj(Stack1BinaryFFT) .* Stack2BinaryFFT);
 
 % Scale the 3D cross-correlation by the cross-correlation of the
@@ -213,7 +216,16 @@ XCorr3D = (XCorr3D./XCorr3DBinary) * max(XCorr3DBinary(:));
 
 % Shift the cross-correlation image such that an auto-correlation image 
 % will have it's energy peak at the center of the 3D image.
-XCorr3D = circshift(XCorr3D, size(Stack1Whitened) - 1);
+XCorr3D = circshift(XCorr3D, ceil(Params.FTSize/2));
+
+% Define the indices within the cross-correlation that we wish to inspect.
+CorrCenter = ceil(Params.FTSize / 2);
+CorrOffsetIndicesY = (-Params.MaxOffset(2):Params.MaxOffset(2)) ...
+    + CorrCenter(2);
+CorrOffsetIndicesX = (-Params.MaxOffset(1):Params.MaxOffset(1)) ...
+    + CorrCenter(1);
+CorrOffsetIndicesZ = (-Params.MaxOffset(3):Params.MaxOffset(3)) ...
+    + CorrCenter(3);
 
 % Isolate the central chunk of the cross-correlation.
 XCorr3D = real(XCorr3D(CorrOffsetIndicesY, ...
@@ -225,31 +237,20 @@ if Params.UseGPU
     XCorr3D = gather(XCorr3D);
 end
 
-% Stack the 3D xcorr cube into a 1D array.  
-% NOTE: MATLAB stacks columns in each 2D array (dimensions 1 and 2) then 
-%       stacks the resulting columns along the third dimension, e.g. when
-%       Array(:, :, 1) = [1, 3; 2, 4] and Array(:, :, 2) = [5, 7; 6, 8], 
-%       Array(:) = [1, 2, 3, 4, 5, 6, 7, 8].' 
-StackedCorrCube = XCorr3D(:);
-
 % Determine the integer offset between the two stacks.
-[~, IndexOfMax] = max(StackedCorrCube);
+[~, IndexOfMax] = max(XCorr3D(:));
 [PeakRow, PeakColumn, PeakHeight] = ind2sub(size(XCorr3D), IndexOfMax);
 RawOffsetIndices = [PeakRow; PeakColumn; PeakHeight];
 
-% Compute the integer offset between the two stacks.  The additional minus
-% sign was just a chosen convention for the output of this code (see note 
-% at top of this code).
-% NOTE: We subtract MaxOffset+1 because that is the location of the 
-%       [0, 0, 0] offset (the center of the cross-correlation).
-IntShift = -(RawOffsetIndices - Params.MaxOffset - 1);
+% Compute the integer offset between the two stacks.
+IntShift = Params.MaxOffset.' - RawOffsetIndices + 2;
 
 % Fit a second order polynomial through a line varying with y at the peak
 % of the cross-correlation in x, z, and use that polynomial to predict an
 % offset.  If possible, center the fit around the integer peak of the
 % cross-correlation.
-YArray = (max(1, RawOffsetIndices(1)-Params.FitOffset(1)) ...
-    : min(2*Params.MaxOffset(1)+1, RawOffsetIndices(1)+Params.FitOffset(1))).';
+YArray = (-Params.FitOffset(1):Params.FitOffset(1)).' ...
+    + RawOffsetIndices(1);
 YData = XCorr3D(YArray, RawOffsetIndices(2), RawOffsetIndices(3));
 X = [ones(numel(YArray), 1), YArray, YArray.^2];
 Beta = ((X.'*X) \ X.') * YData;
@@ -258,8 +259,8 @@ PolyFitFunctionY = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
 % Fit a second order polynomial through a line varying with x at the peak 
 % of the cross-correlation in y, z.
-XArray = (max(1, RawOffsetIndices(2)-Params.FitOffset(2)) ...
-    : min(2*Params.MaxOffset(2)+1, RawOffsetIndices(2)+Params.FitOffset(2))).';
+XArray = (-Params.FitOffset(2):Params.FitOffset(2)).' ...
+    + RawOffsetIndices(2);
 XData = ...
     XCorr3D(RawOffsetIndices(1), XArray, RawOffsetIndices(3)).';
 X = [ones(numel(XArray), 1), XArray, XArray.^2];
@@ -269,8 +270,8 @@ PolyFitFunctionX = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
 % Fit a second order polynomial through a line varying with z
 % at the peak of the cross-correlation in x, y.
-ZArray = (max(1, RawOffsetIndices(3)-Params.FitOffset(3)) ...
-    : min(2*Params.MaxOffset(3)+1, RawOffsetIndices(3)+Params.FitOffset(3))).';
+ZArray = (-Params.FitOffset(3):Params.FitOffset(3)).' ...
+    + RawOffsetIndices(3);
 ZData = squeeze(...
     XCorr3D(RawOffsetIndices(1), RawOffsetIndices(2), ZArray));
 X = [ones(numel(ZArray), 1), ZArray, ZArray.^2];
@@ -289,12 +290,8 @@ ZFitAtPeak = PolyFitFunctionZ(ZArrayDense);
 % Compute the predicted offset based on the polynomial fits.
 RawOffsetFit = [RawOffsetFitY; RawOffsetFitX; RawOffsetFitZ];
         
-% Determine the predicted offset between the stack.  The additional minus
-% sign was just a chosen convention for the output of this code (see note 
-% at top of this code).
-% NOTE: We subtract MaxOffset+1 because that is the location of the 
-%       [0, 0, 0] offset (the center of the cross-correlation).
-Shift = -(RawOffsetFit - Params.MaxOffset - 1);
+% Determine the predicted offset between the stack.
+Shift = Params.MaxOffset.' - RawOffsetFit + 2;
 
 % Populate the CorrData struct with information that we might wish to use
 % later.

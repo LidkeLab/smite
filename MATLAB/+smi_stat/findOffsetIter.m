@@ -40,15 +40,21 @@ end
 if (~exist('Tolerance', 'var') || isempty(Tolerance))
     Tolerance = [0; 0; 0];
 end
+StackSize = size(RefStack);
 if (~exist('CorrParams', 'var') || isempty(CorrParams))
-    CorrParams = struct([]);
+    CorrParams.FTSize = StackSize;
 end
 if (~exist('ShiftParams', 'var') || isempty(ShiftParams))
     ShiftParams = struct([]);
 end
-StackSize = size(RefStack);
 Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
     'post');
+
+% Prepare a Nyquist mask for findStackOffset().
+% NOTE: The extra scaling of FNyquist (which is 0.5) accounts for the size
+%       difference between the Fourier transform and the input images.
+FNyquist = 0.5 * (StackSize/CorrParams.FTSize);
+CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
 
 % Iteratively estimate the shift.
 [Shift, IntShift, CorrData, CorrParams] = ...
