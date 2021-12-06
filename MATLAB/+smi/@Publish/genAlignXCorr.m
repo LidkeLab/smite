@@ -78,8 +78,9 @@ for ii = 1:NSequences
     end
     
     % Re-compute the scaled cross-correlations between the two stacks.
-    [~, ~, CorrData] = smi_stat.findStackOffset(...
-        ReferenceSubStack, CurrentStack, [], [], [], 1, 0);
+    CorrParams.PlotFlag = true;
+    [~, ~, CorrData] = smi_stat.findOffset(...
+        ReferenceSubStack, CurrentStack, CorrParams);
     
     % Generate the x, y, z cross-correlation fitting plots and save them.
     FigHandle = findobj('Tag', 'CorrWindow');

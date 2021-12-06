@@ -1,5 +1,5 @@
 function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
-    estimateLocalImShifts(Image1, Image2, SubROISize, MaxOffset, UseGPU)
+    estimateLocalImShifts(Image1, Image2, SubROISize, CorrParams)
 %estimateLocalImShifts estimates local shifts between two images.
 %
 % INPUT:
@@ -10,9 +10,7 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
 %   SubROISize: The size of local regions in which the shift will be
 %               computed, ideally evenly divides [m, n].
 %               (Pixels)(2x1 array)(Default = size(Image1))
-%   MaxOffset: Max offset for which the cross correlation is computed
-%              between the two images. 
-%              (Pixels)(Default = ceil(SubROISize / 4))
+%   CorrParams: Structure of parameters passed to smi_stat.findOffset().
 %
 % OUTPUT:
 %   PixelOffset: The integer pixel offset of Image2 relative to Image1,
@@ -36,11 +34,8 @@ ImageSize = size(Image1);
 if (~exist('SubROISize', 'var') || isempty(SubROISize))
     SubROISize = ImageSize.';
 end
-if (~exist('MaxOffset', 'var') || isempty(MaxOffset))
-    MaxOffset = ceil(SubROISize / 4);
-end
-if (~exist('UseGPU', 'var') || isempty(UseGPU))
-    UseGPU = logical(gpuDeviceCount());
+if (~exist('CorrParams', 'var') || isempty(CorrParams))
+    CorrParams = struct([]);
 end
 
 % Split the images up into the sub-ROIs.
@@ -53,9 +48,9 @@ NROIs = size(ImageROIs, 1);
 PixelOffsets = zeros(NROIs, 2);
 SubPixelOffsets = PixelOffsets;
 for nn = 1:NROIs
-    [Offset, SubOffset] = smi_stat.findStackOffset(...
+    [Offset, SubOffset] = smi_stat.findOffset(...
         DividedImages1{nn}, DividedImages2{nn}, ...
-        [MaxOffset, 1], [], [], 0, UseGPU);
+        CorrParams);
     PixelOffsets(nn, :) = Offset(1:2);
     SubPixelOffsets(nn, :) = SubOffset(1:2);
 end
