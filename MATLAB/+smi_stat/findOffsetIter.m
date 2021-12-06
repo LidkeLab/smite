@@ -39,7 +39,7 @@ end
 if (~exist('Tolerance', 'var') || isempty(Tolerance))
     Tolerance = [0; 0; 0];
 end
-StackSize = size(RefStack);
+StackSize = size(RefStack, 1:3);
 if (~exist('CorrParams', 'var') || isempty(CorrParams))
     CorrParams.FTSize = StackSize;
 end
@@ -60,7 +60,7 @@ CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
     smi_stat.findOffset(RefStack, MovingStack, CorrParams);
 NewShift = Shift;
 ii = 1;
-while (all(abs(NewShift)>Tolerance) && (ii<NIterMax))  
+while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))  
     % Shift the image stack.
     ii = ii + 1;
     MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
