@@ -40,7 +40,8 @@ if (~exist('Tolerance', 'var') || isempty(Tolerance))
     Tolerance = [0; 0; 0];
 end
 StackSize = size(RefStack, 1:3);
-if (~exist('CorrParams', 'var') || isempty(CorrParams))
+if (~exist('CorrParams', 'var') || isempty(CorrParams) ...
+        || ~isfield(CorrParams, 'FTSize') || isempty(CorrParams.FTSize))
     CorrParams.FTSize = StackSize;
 end
 if (~exist('ShiftParams', 'var') || isempty(ShiftParams))

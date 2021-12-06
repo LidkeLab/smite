@@ -35,12 +35,10 @@ function [Shift, IntShift, CorrData, Params] = ...
 %           BinaryMask: Mask to multiply the stacks with before computing
 %                       to cross-correlation. 
 %                       (MxNxO)(Default = ones(M, N, O))
-%           FTSize: Size of the Fourier transform used internally.
-%                   (Default = 2 * size(Stack1))
-%                   NOTE: Typically, we would pad to 2*size(Stack)-1, 
-%                         however 2*size(Stack) can improve performance of 
-%                         the FFT when the dimensions of Stack are powers 
-%                         of 2.
+%           FTSize: Size of the Fourier transform used internally.  It's
+%                   best to set this to be a power of 2 along each
+%                   dimension as doing so improves FFT speed.
+%                   (Default = 2 ^ nextpow2(Stack1Size))
 %           FTMask: Mask to apply to the Fourier domain cross-correlation
 %                   before inverting. (FTSize array)
 %           PlotFlag: Specifies whether or not plot(s) will be generated.
@@ -78,7 +76,7 @@ Stack2Size = size(Stack2, 1:3);
 DefaultParams.MaxOffset = ceil(Stack1Size / 2);
 DefaultParams.FitOffset = [2, 2, 2];
 DefaultParams.BinaryMask = ones(Stack1Size);
-DefaultParams.FTSize = 2 * Stack1Size;
+DefaultParams.FTSize = 2 .^ nextpow2(Stack1Size);
 DefaultParams.FTMask = [];
 DefaultParams.PlotFlag = false;
 DefaultParams.UseGPU = logical(gpuDeviceCount());
