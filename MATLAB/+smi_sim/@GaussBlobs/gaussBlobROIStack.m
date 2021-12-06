@@ -95,7 +95,7 @@ g = gpuDevice;
 %Find how many loops need to be run so that ROIimStack fits in GPU memory
 %Transpose added to prevent an error for an SMD with no localizations.
 Nelem = SZ'*SZ*NFrames;
-Nloops = ceil(4*4*Nelem/(g.TotalMemory));
+Nloops = ceil(4*4*Nelem/(g.AvailableMemory));
 %number of frames in each chunk.
 NFramesChunk = ceil(NFrames/Nloops);
 
