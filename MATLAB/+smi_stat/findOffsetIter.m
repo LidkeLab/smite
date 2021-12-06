@@ -14,8 +14,7 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 %              NIterMax. That is, we stop before NIterMax when the newest
 %              estimated shift is less than 'Tolerance'. 
 %              (3x1 float)(Default = [0; 0; 0])
-%   CorrParams: Structure of parameters passed to 
-%               smi_stat.findStackOffset()
+%   CorrParams: Structure of parameters passed to smi_stat.findOffset().
 %   ShiftParams: Structure of parameters passed to smi_stat.shiftImage()
 %
 % OUTPUTS:
