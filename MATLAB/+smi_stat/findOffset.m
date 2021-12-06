@@ -43,7 +43,7 @@ function [Shift, IntShift, CorrData, Params] = ...
 %                   before inverting. (FTSize array)
 %           PlotFlag: Specifies whether or not plot(s) will be generated.
 %           UseGPU: Flag indicating GPU should be used.
-%                   (boolean)(Default = logical(gpuDeviceCount()))
+%                   (boolean)(Default = false)
 %           SuppressWarnings: Flag indicating we should suppress all
 %                             warnings. (Default = false)
 %
@@ -276,9 +276,9 @@ Shift = Params.MaxOffset.' - RawOffsetFit + 1;
 Shift(isnan(Shift)) = 0;
 
 % Create arrays of the polynomial fits to use for visualization.
-XArrayDense = linspace(XArray(1), XArray(end), size(Stack1, 1));
-YArrayDense = linspace(YArray(1), YArray(end), size(Stack1, 1));
-ZArrayDense = linspace(ZArray(1), ZArray(end), size(Stack1, 1));
+XArrayDense = linspace(XArray(1), XArray(end), max(Stack1Size));
+YArrayDense = linspace(YArray(1), YArray(end), max(Stack1Size));
+ZArrayDense = linspace(ZArray(1), ZArray(end), max(Stack1Size));
 XFitAtPeak = PolyFitFunctionX(XArrayDense);
 YFitAtPeak = PolyFitFunctionY(YArrayDense);
 ZFitAtPeak = PolyFitFunctionZ(ZArrayDense);
