@@ -73,8 +73,8 @@ function [Shift, IntShift, CorrData, Params] = ...
 
 
 % Set default parameter values if needed.
-Stack1Size = [size(Stack1, 1:2), max(2, size(Stack1, 3))];
-Stack2Size = [size(Stack2, 1:2), max(2, size(Stack2, 3))];
+Stack1Size = size(Stack1, 1:3);
+Stack2Size = size(Stack2, 1:3);
 DefaultParams.MaxOffset = ceil(Stack1Size / 2);
 DefaultParams.FitOffset = [2, 2, 2];
 DefaultParams.BinaryMask = ones(Stack1Size);
@@ -136,6 +136,7 @@ if ((Stack1Size(3)==1) || (Stack2Size(3)==1))
     % We no longer care about the z shift, so change the third element of
     % MaxOffset to 0 to reduce computation time.
     Params.MaxOffset(3) = 0;
+    Params.FitOffset(3) = 0;
 end
 
 % Convert the stacks to gpuArrays if needed.
@@ -205,10 +206,10 @@ XCorr3D = (XCorr3D./XCorr3DBinary) * max(XCorr3DBinary(:));
 
 % Shift the cross-correlation image such that an auto-correlation image 
 % will have it's energy peak at the center of the 3D image.
-XCorr3D = circshift(XCorr3D, ceil(Params.FTSize/2));
+XCorr3D = circshift(XCorr3D, ceil(Params.FTSize/2) - 1);
 
 % Define the indices within the cross-correlation that we wish to inspect.
-CorrCenter = ceil(Params.FTSize / 2);
+CorrCenter = floor(Params.FTSize / 2) + rem(Params.FTSize, 2);
 CorrOffsetIndicesY = (-Params.MaxOffset(2):Params.MaxOffset(2)) ...
     + CorrCenter(2);
 CorrOffsetIndicesX = (-Params.MaxOffset(1):Params.MaxOffset(1)) ...
@@ -232,7 +233,8 @@ end
 RawOffsetIndices = [PeakRow; PeakColumn; PeakHeight];
 
 % Compute the integer offset between the two stacks.
-IntShift = Params.MaxOffset.' - RawOffsetIndices + 2;
+IntShift = Params.MaxOffset.' - RawOffsetIndices + 1;
+IntShift(isnan(IntShift)) = 0;
 
 % Fit a second order polynomial through a line varying with y at the peak
 % of the cross-correlation in x, z, and use that polynomial to predict an
@@ -268,7 +270,14 @@ Beta = ((X.'*X) \ X.') * ZData;
 RawOffsetFitZ = -Beta(2) / (2 * Beta(3));
 PolyFitFunctionZ = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
-% Create arrays of the polynomial fits to use for visualization later on.
+% Compute the predicted offset based on the polynomial fits.
+RawOffsetFit = [RawOffsetFitY; RawOffsetFitX; RawOffsetFitZ];
+        
+% Determine the predicted offset between the stack.
+Shift = Params.MaxOffset.' - RawOffsetFit + 1;
+Shift(isnan(Shift)) = 0;
+
+% Create arrays of the polynomial fits to use for visualization.
 XArrayDense = linspace(XArray(1), XArray(end), size(Stack1, 1));
 YArrayDense = linspace(YArray(1), YArray(end), size(Stack1, 1));
 ZArrayDense = linspace(ZArray(1), ZArray(end), size(Stack1, 1));
@@ -276,14 +285,7 @@ XFitAtPeak = PolyFitFunctionX(XArrayDense);
 YFitAtPeak = PolyFitFunctionY(YArrayDense);
 ZFitAtPeak = PolyFitFunctionZ(ZArrayDense);
 
-% Compute the predicted offset based on the polynomial fits.
-RawOffsetFit = [RawOffsetFitY; RawOffsetFitX; RawOffsetFitZ];
-        
-% Determine the predicted offset between the stack.
-Shift = Params.MaxOffset.' - RawOffsetFit + 2;
-
-% Populate the CorrData struct with information that we might wish to use
-% later.
+% Populate the CorrData struct.
 CorrData.XCorr3D = XCorr3D;
 CorrData.XFitAtPeak = XFitAtPeak;
 CorrData.YFitAtPeak = YFitAtPeak;
@@ -302,7 +304,7 @@ if Params.PlotFlag
         XCorr3D(:, RawOffsetIndices(2), RawOffsetIndices(3)), 'x')
     hold(PlotAxes, 'on')
     plot(PlotAxes, YArrayDense-Params.MaxOffset(1)-1, YFitAtPeak)
-    title(PlotAxes, 'Y Correlation')
+    title(PlotAxes, 'Y Correlation') 
     PlotAxes = subplot(3, 1, 2, 'Parent', PlotFigure);
     plot(PlotAxes, -Params.MaxOffset(2):Params.MaxOffset(2), ...
         XCorr3D(RawOffsetIndices(1), :, RawOffsetIndices(3)), 'x')
