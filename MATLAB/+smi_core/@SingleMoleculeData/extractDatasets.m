@@ -33,6 +33,17 @@ end
 KeepBool = ismember(SMD.DatasetNum, Datasets);
 SMD = smi_core.SingleMoleculeData.isolateSubSMD(SMD, KeepBool);
 
+% Modify the drift fields to only show the drift for the selected dataset.
+if ~isempty(SMD.DriftX)
+    SMD.DriftX = SMD.DriftX(:, Datasets);
+end
+if ~isempty(SMD.DriftY)
+    SMD.DriftY = SMD.DriftY(:, Datasets);
+end
+if ~isempty(SMD.DriftZ)
+    SMD.DriftZ = SMD.DriftZ(:, Datasets);
+end
+
 % Rename datasets if needed.
 if Compress
     SMD.DatasetNum = smi_helpers.compressToRange(SMD.DatasetNum);
