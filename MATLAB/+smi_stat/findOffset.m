@@ -73,8 +73,8 @@ function [Shift, IntShift, CorrData, Params] = ...
 
 
 % Set default parameter values if needed.
-Stack1Size = [size(Stack1, 1:2), max(2, size(Stack1, 3))];
-Stack2Size = [size(Stack2, 1:2), max(2, size(Stack2, 3))];
+Stack1Size = size(Stack1, 1:3);
+Stack2Size = size(Stack2, 1:3);
 DefaultParams.MaxOffset = ceil(Stack1Size / 2);
 DefaultParams.FitOffset = [2, 2, 2];
 DefaultParams.BinaryMask = ones(Stack1Size);
@@ -136,6 +136,7 @@ if ((Stack1Size(3)==1) || (Stack2Size(3)==1))
     % We no longer care about the z shift, so change the third element of
     % MaxOffset to 0 to reduce computation time.
     Params.MaxOffset(3) = 0;
+    Params.FitOffset(3) = 0;
 end
 
 % Convert the stacks to gpuArrays if needed.
@@ -233,6 +234,7 @@ RawOffsetIndices = [PeakRow; PeakColumn; PeakHeight];
 
 % Compute the integer offset between the two stacks.
 IntShift = Params.MaxOffset.' - RawOffsetIndices + 1;
+IntShift(isnan(IntShift)) = 0;
 
 % Fit a second order polynomial through a line varying with y at the peak
 % of the cross-correlation in x, z, and use that polynomial to predict an
@@ -273,6 +275,7 @@ RawOffsetFit = [RawOffsetFitY; RawOffsetFitX; RawOffsetFitZ];
         
 % Determine the predicted offset between the stack.
 Shift = Params.MaxOffset.' - RawOffsetFit + 1;
+Shift(isnan(Shift)) = 0;
 
 % Create arrays of the polynomial fits to use for visualization.
 XArrayDense = linspace(XArray(1), XArray(end), size(Stack1, 1));
