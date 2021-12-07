@@ -88,7 +88,7 @@ else
 end
 if isempty(Params.FTMask)
     Params.FTMask = ones(Params.FTSize);
-elseif ~all(size(Params.FTMask) == Params.FTSize)
+elseif ~all(size(Params.FTMask, 1:3) == Params.FTSize)
     if ~Params.SuppressWarnings
         warning(['Params.FTMask reset to ones: size not ', ...
             'compatible with Params.FTSize.'])
