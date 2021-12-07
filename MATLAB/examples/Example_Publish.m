@@ -14,7 +14,7 @@ SMF.Data.CameraType = 'SCMOS';
 SMF.Data.CalibrationFilePath = 'Y:\sCMOS Calibrations\Sequential SR\GainCalibration-2015-12-10-17-19-23.mat';
 SMF.Data.PixelSize = 0.0954; % microns
 SMF.BoxFinding.BoxSize = 8; % pixels
-SMF.Fitting.FitType = 'XYNB';
+SMF.Fitting.FitType = 'XYNBS';
 SMF.Fitting.PSFSigma = 1.3; % pixels
 SMF.Thresholding.MaxXY_SE = 0.15; % pixels
 SMF.Thresholding.MinPhotons = 200;
@@ -32,6 +32,7 @@ Publish.Verbose = 1;
 Publish.GenerateSR = 1;
 Publish.GenerateImagingStats = 1;
 Publish.GenerateOverlayStats = 0;
+Publish.ShiftToReg = 0; % can be useful for color overlay data, use with caution!
 
 % smi.Publish contains several useful methods, however we'll almost always
 % just call performFullAnalysis().
