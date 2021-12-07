@@ -46,14 +46,12 @@ for ii = 1:NDataFiles
     
     % Generate figures associated with the brightfield registration of the
     % cell (if that data exists).
+    FilePath = fullfile(DataDir, DataFileNames{ii});
+    H5FileStruct = h5info(FilePath);
+    FileGroupList = ...
+        {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
     if obj.GenerateImagingStats
-        % Define the path to the .h5 data file.
-        FilePath = fullfile(DataDir, DataFileNames{ii});
-        
-        % Create a list of the groups available in each dataset.
-        H5FileStruct = h5info(FilePath);
-        FileGroupList = ...
-            {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        % Generate the results.
         if any(contains(FileGroupList, 'AlignReg'))
             if (obj.Verbose > 1)
                 fprintf(['\t\tPublish.processLabel(): ', ...
@@ -101,8 +99,20 @@ for ii = 1:NDataFiles
             if (obj.ShiftToReg && obj.GenerateImagingStats)
                 % Load the brightfield images taken just before each
                 % sequence at the focal plane.
-                FocusImages = ...
-                    smi_core.LoadData.readH5File(FilePath, 'FocusImages');
+                FocusImages = cell(numel(AlignResultsStruct.AlignReg), 1);
+                if any(contains(FileGroupList, 'FocusImages'))
+                    FocusImageStruct = smi_core.LoadData.readH5File(...
+                        FilePath, 'FocusImages');
+                    for nn = 1:numel(AlignResultsStruct.AlignReg)
+                        FocusImages{nn} = ...
+                            FocusImageStruct(nn).Data.PreSeqImages;
+                    end
+                else
+                    for nn = 1:numel(AlignResultsStruct.AlignReg)
+                        FocusImages{nn} = ...
+                            AlignResultsStruct.AlignReg(nn).Data.Image_Current;
+                    end
+                end
                 
                 % Determine which focus image has the least shift w.r.t.
                 % the reference (in XY, ignoring Z).

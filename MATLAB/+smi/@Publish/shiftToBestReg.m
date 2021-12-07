@@ -7,8 +7,10 @@ function [SMD, BestRegInd] = shiftToBestReg(SMD, RefImage, FocusImages)
 % INPUTS:
 %   SMD: Single Molecule Data structure of localizations.
 %   RefImage: Reference image at the focus. (YxX)
-%   FocusImages: Structure containing the YxX images at the focal plane
-%                taken before each SR sequence. (NDatasetsx1 struct)
+%   FocusImages: Cell array of the NDatasets YxX images at the focal plane
+%                taken before each SR sequence.  A median image is 
+%                generated from each cell array entry to allow each entry
+%                to be a stack of images. (NDatasetsx1 cell array)
 %
 % OUTPUTS:
 %   SMD: Input SMD with SMD.X and SMD.Y shifted based on info. in
@@ -25,8 +27,7 @@ Shift = zeros(2, numel(FocusImages));
 Params.SuppressWarnings = true;
 for ii = 1:numel(FocusImages)
     CurrentShift = smi_stat.findOffsetIter(...
-        median(FocusImages(ii).Data.PreSeqImages, 3), ...
-        RefImage, [], [], Params);
+        median(FocusImages{ii}, 3), RefImage, [], [], Params);
     Shift(:, ii) = CurrentShift(1:2);
 end
 [~, BestRegInd] = min(sum(Shift.^2, 1));
