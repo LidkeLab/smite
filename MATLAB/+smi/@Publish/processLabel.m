@@ -97,24 +97,18 @@ for ii = 1:NDataFiles
             obj.SMLM.analyzeAll();
 
             % Re-shift the XY coordinates w.r.t. the best registration
-            % dataset (i.e., shift all coordinates as though the
-            % inter-dataset drift correction was applied with dataset n as
-            % the reference, where n is the dataset for which we had the
-            % best brightfield registration performance).
-            if obj.GenerateImagingStats
-                % Determine the best registration result based on the
-                % maximum correlation coefficient.
-                ValidRegInd = find(AlignResultsStruct.OffsetFitSuccess ...
-                    & (~AlignResultsStruct.MaxIterReached));
-                [~, BestReg] = max(AlignResultsStruct.MaxCorr(ValidRegInd));
-                BestRegInd = ValidRegInd(BestReg);
+            % dataset.
+            if (obj.ShiftToReg && obj.GenerateImagingStats)
+                % Load the brightfield images taken just before each
+                % sequence at the focal plane.
+                FocusImages = ...
+                    smi_core.LoadData.readH5File(FilePath, 'FocusImages');
                 
-                % Re-shift coordinates in SMD such that the BestRegInd
-                % dataset is considered the reference.
-                if ~isempty(BestRegInd)
-                    obj.SMLM.SMD = smi_core.DriftCorrection.changeInterRef(...
-                        obj.SMLM.SMD, BestRegInd);
-                end
+                % Determine which focus image has the least shift w.r.t.
+                % the reference (in XY, ignoring Z).
+                RefImage = AlignResultsStruct.AlignReg(1).Data.Image_Reference;
+                obj.SMLM.SMD = obj.shiftToBestReg(obj.SMLM.SMD, ...
+                    RefImage, FocusImages);
             end
             
             % Save the SR results.

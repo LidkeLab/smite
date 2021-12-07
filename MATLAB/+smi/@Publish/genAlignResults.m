@@ -148,6 +148,7 @@ AlignResultsStruct.MaxCorr = XCorrStruct.MaxCorr;
 AlignResultsStruct.MaxCorrFit = XCorrStruct.MaxCorrFit;
 AlignResultsStruct.OffsetFitSuccess = XCorrStruct.OffsetFitSuccess;
 AlignResultsStruct.MaxIterReached = XCorrStruct.MaxIterReached;
+AlignResultsStruct.AlignReg = AlignReg;
 
 
 end

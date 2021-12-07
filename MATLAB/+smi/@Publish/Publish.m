@@ -57,6 +57,9 @@ classdef Publish < handle
         % Flag to perform analysis on bleaching results (Default = false)
         AnalyzeBleaching = false;
         
+        % Shift localizations based on brightfield results (Default = true)
+        ShiftToReg = true;
+        
         % Verbosity of the main analysis workflow. (Default = 1)
         Verbose = 1;
         
@@ -111,7 +114,7 @@ classdef Publish < handle
     end
     
     methods (Static)
-        genSROverlays(ResultsCellDir, SaveDir)
+        genSROverlays(ResultsCellDir, SaveDir, AnalysisID)
         [OverlayImage, ColorOrderTag] = overlayNImages(ImageStack);
         genOverlayPlots(ImageShift, RegError, MaxCorr, BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
@@ -121,11 +124,11 @@ classdef Publish < handle
             SRPixelSize, BPPixelSize, SaveDir)
         [PlotAxes, RegError] = plotXYRegError(PlotAxes, SMD);
         [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
-            estimateLocalImShifts(Image1, Image2, ...
-            SubROISize, MaxOffset, UseGPU);
+            estimateLocalImShifts(Image1, Image2, SubROISize, CorrParams);
         [SubPixelOffsets, SMDROIs, SMDStats] = ...
             estimateLocalCoordShifts(SMD1, SMD2, SubROISize);
         [RegCorrection] = computeRegCorrection(SMF);
+        [SMD, BestRegInd] = shiftToBestReg(SMD, RefImage, FocusImages)
     end
     
     
