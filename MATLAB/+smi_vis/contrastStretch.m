@@ -40,8 +40,11 @@ if ~any(Image(:))
 end
 
 % Scale the 'Image' array.
-MaxIntensity = max(prctile(Image(:), PercentileCeiling), MinScaleIntensity);
-Image(Image > MaxIntensity) = MaxIntensity;
+if (PercentileCeiling ~= 100)
+    MaxIntensity = ...
+        max(prctile(Image(:), PercentileCeiling), MinScaleIntensity);
+    Image(Image > MaxIntensity) = MaxIntensity;
+end
 Image = (Image-min(Image(:))) ...
     * (MinMax(2)-MinMax(1))/(max(Image(:))-min(Image(:))) ...
     + MinMax(1);
