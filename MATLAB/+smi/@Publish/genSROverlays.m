@@ -1,4 +1,4 @@
-function [] = genSROverlays(ResultsCellDir, SaveDir)
+function [] = genSROverlays(ResultsCellDir, SaveDir, AnalysisID)
 %genSROverlays generates various types of  SR overlay images.
 % This method will generate different types of overlay images for
 % super-resolution (SR) data.  A multicolor overlay of the Gaussian SR
@@ -15,10 +15,19 @@ function [] = genSROverlays(ResultsCellDir, SaveDir)
 %   ResultsCellDir: Directory containing the sub-directories for each label
 %   SaveDir: Directory in which the resulting .png overlay images will be
 %            saved.
+%   AnalysisID: Analysis ID used to help identify the correct files.
+%               (Default = '')
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2018)
 
+
+% Set defaults/modify inputs.
+if ~exist('AnalysisID', 'var')
+    AnalysisID = '';
+elseif ~isempty(AnalysisID)
+    AnalysisID = ['_', AnalysisID];
+end
 
 % Get the names of the directories containing the results for each label,
 % throwing warnings if appropriate.
@@ -52,18 +61,19 @@ for ii = 1:NLabels
     end
     
     % Load our images into the appropriate arrays.
-    for jj = 1:numel(DatasetDirNames)
-        % Ensure that we skip results from photobleaching rounds.
-        if contains(DatasetDirNames{jj}, 'bleach', 'IgnoreCase', true)
-            continue
-        end
-        
+    DatasetDirNames = ...
+        DatasetDirNames(contains(DatasetDirNames, AnalysisID));
+    DatasetDirNames = ...
+        DatasetDirNames(~contains(DatasetDirNames, 'bleach', ...
+        'IgnoreCase', true));
+    DatasetNames = erase(DatasetDirNames, AnalysisID);
+    for jj = 1:numel(DatasetDirNames)       
         % Create the appropriate filepaths and read in the images.
         FileDirectory = fullfile(ResultsCellDir, LabelDirNames{ii});
-        FileNameCircle = sprintf('%s_CircleImage.png', ...
-            DatasetDirNames{jj});
-        FileNameGaussian = sprintf('%s_GaussImage.png', ...
-            DatasetDirNames{jj});
+        FileNameCircle = sprintf('%s%s_CircleImage.png', ...
+            DatasetNames{jj}, AnalysisID);
+        FileNameGaussian = sprintf('%s%s_GaussImage.png', ...
+            DatasetNames{jj}, AnalysisID);
         CircleImages = cat(3, CircleImages, sum(imread(fullfile(...
             FileDirectory, DatasetDirNames{jj}, FileNameCircle)), 3));
         GaussianImages = cat(3, GaussianImages, ...
@@ -80,12 +90,12 @@ end
 % Save the overlay images in the top level directory.
 CellName = ResultsCellDir(regexp(ResultsCellDir, 'Cell*'):end);
 CellNameClean = erase(CellName, '_');
-OverlayImageGaussianName = sprintf('%s_GaussianOverlay_%s.png', ...
-    CellNameClean, ColorOrderTagGaussian);
+OverlayImageGaussianName = sprintf('%s%s_GaussianOverlay_%s.png', ...
+    CellNameClean, AnalysisID, ColorOrderTagGaussian);
 imwrite(OverlayImageGaussian, ...
     fullfile(SaveDir, OverlayImageGaussianName));
-OverlayImageCircleName = sprintf('%s_CircleOverlay_%s.png', ...
-    CellNameClean, ColorOrderTagCircle);
+OverlayImageCircleName = sprintf('%s%s_CircleOverlay_%s.png', ...
+    CellNameClean, AnalysisID, ColorOrderTagCircle);
 imwrite(OverlayImageCircle, ...
     fullfile(SaveDir, OverlayImageCircleName));
 
