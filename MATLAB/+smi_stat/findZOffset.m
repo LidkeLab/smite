@@ -110,10 +110,11 @@ IntShift = ZeroImageInd - IndexOfMax;
 
 % Fit a second order polynomial through the xcorr maxima to determine a
 % sub-pixel offset.
-XArray = (-Params.FitOffset:Params.FitOffset).';
+XArray = (max(1, IndexOfMax-Params.FitOffset) ...
+    : min(NImages, IndexOfMax+Params.FitOffset)).';
 X = [ones(numel(XArray), 1), XArray, XArray.^2];
-Beta = ((X.'*X) \ X.') * XCorrMax(XArray + IndexOfMax);
-Shift = -Beta(2) / (2*Beta(3)) - IntShift;
+Beta = ((X.'*X) \ X.') * XCorrMax(XArray);
+Shift = ZeroImageInd + Beta(2) / (2*Beta(3));
 PolyFitFunction = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
 % Create arrays of the polynomial fits to use for visualization.
@@ -133,9 +134,9 @@ if Params.PlotFlag
     end
     clf(PlotFigure);
     PlotAxes = axes(PlotFigure);
-    plot(PlotAxes, XArray + IntShift, XCorrMax(XArray + IndexOfMax), 'x')
+    plot(PlotAxes, ZeroImageInd - XArray, XCorrMax(XArray), 'x')
     hold(PlotAxes, 'on')
-    plot(PlotAxes, XArrayDense + IntShift, FitAtPeak)
+    plot(PlotAxes, ZeroImageInd - XArrayDense, FitAtPeak)
     title(PlotAxes, 'Max. Correlation') 
 end
 
