@@ -153,19 +153,16 @@ Stack2 = single(Stack2);
 Params.BinaryMask = single(Params.BinaryMask);
 Params.FTMask = single(Params.FTMask);
 
-% Ensure that MaxOffset and FitOffset are valid, modifying their values if
-% needed.
+% Ensure that MaxOffset is valid.
 % NOTE: This is just ensuring that the MaxOffset corresponds to shifts
 %       between the two stacks that still maintain some overlap.
-MaxAllowedOffset = floor(Params.FTSize/2) - 1;
+MaxAllowedOffset = max(0, floor(Params.FTSize / 2) - 1);
 IndicesToModify = find(Params.MaxOffset > MaxAllowedOffset);
 for ii = IndicesToModify
     warning('MaxOffset(%i) = %g is too big and was reset to %i', ...
         ii, Params.MaxOffset(ii), MaxAllowedOffset(ii))
     Params.MaxOffset(ii) = MaxAllowedOffset(ii);
 end
-BadFitOffset = (Params.FitOffset > Params.MaxOffset);
-Params.FitOffset(BadFitOffset) = Params.MaxOffset(BadFitOffset);
 
 % Scale each image in each stack by intensity to reduce linear trends in 
 % the cross-correlation.
@@ -238,8 +235,8 @@ IntShift(isnan(IntShift)) = 0;
 % of the cross-correlation in x, z, and use that polynomial to predict an
 % offset.  If possible, center the fit around the integer peak of the
 % cross-correlation.
-YArray = (-Params.FitOffset(1):Params.FitOffset(1)).' ...
-    + RawOffsetIndices(1);
+YArray = (max(1, RawOffsetIndices(1)-Params.FitOffset(1)) ...
+    : min(size(XCorr3D, 1), RawOffsetIndices(1)+Params.FitOffset(1))).';
 YData = XCorr3D(YArray, RawOffsetIndices(2), RawOffsetIndices(3));
 X = [ones(numel(YArray), 1), YArray, YArray.^2];
 Beta = ((X.'*X) \ X.') * YData;
@@ -248,8 +245,8 @@ PolyFitFunctionY = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
 % Fit a second order polynomial through a line varying with x at the peak 
 % of the cross-correlation in y, z.
-XArray = (-Params.FitOffset(2):Params.FitOffset(2)).' ...
-    + RawOffsetIndices(2);
+XArray = (max(1, RawOffsetIndices(2)-Params.FitOffset(2)) ...
+    : min(size(XCorr3D, 2), RawOffsetIndices(2)+Params.FitOffset(2))).';
 XData = ...
     XCorr3D(RawOffsetIndices(1), XArray, RawOffsetIndices(3)).';
 X = [ones(numel(XArray), 1), XArray, XArray.^2];
@@ -259,8 +256,8 @@ PolyFitFunctionX = @(R) Beta(1) + Beta(2)*R + Beta(3)*R.^2;
 
 % Fit a second order polynomial through a line varying with z
 % at the peak of the cross-correlation in x, y.
-ZArray = (-Params.FitOffset(3):Params.FitOffset(3)).' ...
-    + RawOffsetIndices(3);
+ZArray = (max(1, RawOffsetIndices(3)-Params.FitOffset(3)) ...
+    : min(size(XCorr3D, 3), RawOffsetIndices(3)+Params.FitOffset(3))).';
 ZData = squeeze(...
     XCorr3D(RawOffsetIndices(1), RawOffsetIndices(2), ZArray));
 X = [ones(numel(ZArray), 1), ZArray, ZArray.^2];
