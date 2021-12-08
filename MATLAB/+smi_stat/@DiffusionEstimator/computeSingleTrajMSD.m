@@ -64,7 +64,7 @@ MeanVariance = mean([TR(1).X_SE.^2, TR(1).Y_SE.^2], 2);
 FrameLags = (FrameLagRange(1):FrameLagRange(2)).';
 NFrameLags = numel(FrameLags);
 SquaredDisplacement = zeros(NLocalizations-1, NFrameLags);
-SquaredDisplacementMask = logical(SquaredDisplacement);
+SquaredDisplacementMask = zeros(NLocalizations-1, NFrameLags, 'logical');
 LocVarianceSum = SquaredDisplacement;
 for ff = 1:NFrameLags
     % Start with the first localization and find the distance to the
@@ -83,7 +83,7 @@ for ff = 1:NFrameLags
             SquaredDisplacement(Index1, ff) = ...
                 (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
                 + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
-            SquaredDisplacementMask(Index1, ff) = 1;
+            SquaredDisplacementMask(Index1, ff) = true;
             
             % Store the sum of the localization variances.
             LocVarianceSum(Index1, ff) = ...
