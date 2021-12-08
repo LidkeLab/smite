@@ -5,6 +5,17 @@ classdef InspectResults < handle
     % associate localizations from a reconstruction image (e.g., a Gaussian
     % SR image) and the entries of a Single Molecule Data structure
     % (see smi_core.SingleMoleculeData).
+    %
+    % The suggested usage of this class is through the GUI, which will be
+    % opened by default when creating an instance of this class:
+    %   Inspect = smi_vis.InspectResults();
+    % From the GUI, you should load a super-resolution image reconstruction
+    % (saved as, e.g., a .png) as well as a *_Results.mat file containing
+    % the SMD structure (see usage of smi.SMLM, which generates a 
+    % *_Results.mat file).
+
+    % Created by:
+    %   David J. Schodt (Lidke lab, 2021)
     
     properties
         % Single Molecule Data structure. (see smi_core.SingleMoleculeData)
@@ -43,7 +54,13 @@ classdef InspectResults < handle
     end
     
     methods
-        function obj = InspectResults()
+        function obj = InspectResults(StartGUI)
+            if (~exist('StartGUI', 'var') || isempty(StartGUI))
+                StartGUI = true;
+            end
+            if StartGUI
+                obj.gui()
+            end
         end
         
         [] = gui(obj)
