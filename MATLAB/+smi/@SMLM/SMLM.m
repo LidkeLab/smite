@@ -271,7 +271,7 @@ methods
            ShowPlots = false;
         else   % testFit
            ResultsDir = [];
-           if obj.Verbose >= 5 || obj.CalledByGUI
+           if obj.CalledByGUI || obj.VerboseTest >= 5
               ResultsSubDir = [];
               ShowPlots = true;
               % Reset CalledByGUI for the next call that comes here.

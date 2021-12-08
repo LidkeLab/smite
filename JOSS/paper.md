@@ -33,6 +33,9 @@ authors:
   - name: Derek Rinaldi
     orcid: 
     affiliation: 1
+  - name: Elton Jhamba
+    orcid: 
+    affiliation: 1
   - name: 
     orcid: 
     affiliation: 1
@@ -42,7 +45,7 @@ authors:
 affiliations:
  - name: Physics & Astronomy, University of New Mexico
    index: 1
-date: 13 August 2017
+date: 10 Decemer 2020
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
