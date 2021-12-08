@@ -30,7 +30,7 @@ end
 
 % Estimate the diffusion coefficients.
 DiffusionEstimator.UnitFlag = false;
-% DiffusionEstimator.FitIndividualTrajectories = true;
+DiffusionEstimator.FitIndividualTrajectories = true;
 DiffusionEstimator.TR = TR;
 DiffusionEstimator.estimateDiffusionConstant();
 DiffusionStruct = DiffusionEstimator.DiffusionStruct;
