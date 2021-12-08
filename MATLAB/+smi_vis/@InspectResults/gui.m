@@ -260,10 +260,12 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         % ROI and update displays.
         if ~isempty(obj.SMD)
             % Define the ROI in SMD coordinates.
+            % NOTE: This is currently written with the convention that the
+            %       pixel coordinates of pixel n range from [n-1, n]!
             ROI = [obj.ROIHandle.Position([2, 1]), ...
                 obj.ROIHandle.Position([2, 1])+obj.ROIHandle.Position([4, 3])];
             ROI = ROI ./ [ImSize(1), ImSize(2), ImSize(1), ImSize(2)];
-            obj.ROI = ROI .* [obj.SMD.YSize, obj.SMD.XSize, ...
+            obj.ROI = 1 + ROI.*[obj.SMD.YSize, obj.SMD.XSize, ...
                 obj.SMD.YSize, obj.SMD.XSize];
 
             % Update the ROI information panel.
