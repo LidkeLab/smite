@@ -53,9 +53,7 @@ if (~exist('FitOptions', 'var') || isempty(FitOptions))
     end
 end
 
-% Find the MLE based on the Brownian motion model.  If needed, compute the
-% standard errors of parameters as the CRLB (which isn't correct, since our
-% parameters are actually constrained!)
+% Find the MLE based on the Brownian motion model using a constrained fit.
 % NOTE: This model can be found by taking the prob(r|sigma^2=2Dt+loc.error)
 %       (which is a product of Gaussians), converting to polar
 %       coordinates, and integrating over theta. For multiple frame lags
@@ -64,31 +62,21 @@ end
 CostFunction = @(Params) ...
     -smi_stat.DiffusionEstimator.brownianJumpLikelihood(Params, ...
     SquaredDisplacement, FrameLagsAll, LocVarianceSum);
-ParamsInit = [0.1*ones(NComponents, 1); ...
+ParamsInit = [mean(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
     (1/NComponents)*ones(NComponents, 1)];
 NFitComponents = 2 * NComponents;
-if (NComponents > 1)
-    % Define lower and upper bounds for the fit parameters.
-    ParamsLowerBound = zeros(NFitComponents, 1);
-    ParamsUpperBound = [inf(NComponents, 1); ...
-        ones(NComponents, 1)];
-    
-    % Define constraints of the form A*x = b (e.g., for now
-    % I'm forcing the sum of N population ratios to be == 1).
-    Aeq = zeros(NFitComponents);
-    Aeq(1, (NComponents+1):end) = 1;
-    beq = zeros(NFitComponents, 1);
-    beq(1) = 1;
-    
-    % Perform the constrained fit (for multiple components, we often need
-    % to constrain the parameters to get the right answer).
-    MLEParams = fmincon(CostFunction, ...
-        ParamsInit, [], [], Aeq, beq, ...
-        ParamsLowerBound, ParamsUpperBound);
-else
-    % For the single component fit, we'll just use fminsearch().
-    MLEParams = fminsearch(CostFunction, ParamsInit, FitOptions);
-end
+ParamsLowerBound = zeros(NFitComponents, 1);
+ParamsUpperBound = ...
+    [max(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
+    ones(NComponents, 1)];
+Aeq = zeros(NFitComponents);
+Aeq(1, (NComponents+1):end) = 1;
+beq = zeros(NFitComponents, 1);
+beq(1) = 1;
+MLEParams = fmincon(CostFunction, ParamsInit, [], [], Aeq, beq, ...
+    ParamsLowerBound, ParamsUpperBound);
+
+% If requested, estimate the CRLB.
 if (nargout > 1)
     % Errors were requested for our MLE, so we'll return those as the CRLB
     % (which isn't correct, since we expect our parameters to be
