@@ -14,14 +14,14 @@ if (isempty(obj.GUIFigure) || ~isvalid(obj.GUIFigure))
         'Position', [DefaultFigurePosition(1:2), 1000, 500]);
 end
 
-% Prepare a panel for loading data.
-DataPanelPos = [0, 0, 0.25, 1];
+% Prepare a panel for data controls.
+ControlPanelPos = [0, 0, 0.25, 1];
 ControlPanel = uipanel(obj.GUIFigure, ...
-    'Title', 'Data Information', ...
+    'Title', 'Control Panel', ...
     'FontWeight', 'bold', 'Units', 'normalized', ...
-    'Position', DataPanelPos);
+    'Position', ControlPanelPos);
 ButtonSize = [0, 0, 0.5, 0.1];
-LoadImagePos = [0, DataPanelPos(4)-ButtonSize(4), ButtonSize(3:4)];
+LoadImagePos = [0, ControlPanelPos(4)-ButtonSize(4), ButtonSize(3:4)];
 uicontrol('Parent', ControlPanel, ...
     'Style', 'pushbutton', 'String', 'Load Image', ...
     'Units', 'normalized', 'Position', LoadImagePos, ...
@@ -31,9 +31,20 @@ uicontrol('Parent', ControlPanel, ...
     'Style', 'pushbutton', 'String', 'Load SMD', ...
     'Units', 'normalized', 'Position', LoadSMDPos, ...
     'Callback', @loadSMD);
+ExportButtonPos = LoadSMDPos + [0, -ButtonSize(4), 0, 0];
+uicontrol('Parent', ControlPanel, ...
+    'Style', 'pushbutton', 'String', 'Export SMD', ...
+    'Units', 'normalized', 'Position', ExportButtonPos, ...
+    'Callback', @exportSMD);
+RefreshGUIPos = ButtonSize + [0, 0, 0, 0];
+uicontrol('Parent', ControlPanel, ...
+    'Style', 'pushbutton', 'String', 'Refresh GUI', ...
+    'Units', 'normalized', 'Position', RefreshGUIPos, ...
+    'Callback', @refreshGUI);
+
 
 % Prepare axes for the image.
-ImagePanelPos = [sum(DataPanelPos([1, 3])), 0, 0.5, 1];
+ImagePanelPos = [sum(ControlPanelPos([1, 3])), 0, 0.5, 1];
 ImagePanel = uipanel(obj.GUIFigure, ...
     'Units', 'normalized', 'Position', ImagePanelPos);
 obj.ImageAxes = axes(ImagePanel);
@@ -81,6 +92,9 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
 
     function updateROIInfo()
         %updateROIInfo updates the ROI Information panel.
+        if (isempty(obj.SMDIsolated) || isempty(obj.ROI))
+            return
+        end
         NLoc = numel(obj.SMDIsolated.FrameNum);
         NLocText.String = sprintf('%i localizations selected', NLoc);
         DatasetRangeText.String = sprintf('Dataset range: %i-%i', ...
@@ -157,6 +171,15 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         ylabel(PlotAxes, DesiredPlotString)
     end
 
+    function refreshGUI(~, ~)
+        % Update the GUI to display obj.SRImage as well as any other useful
+        % updates.
+        cla(obj.ImageAxes)
+        imshow(obj.SRImage, [0, 1], 'Parent', obj.ImageAxes)
+        makeToolbar(obj.ImageAxes)
+        updateROIInfo()
+    end
+
     function loadImage(Source, ~)
         %loadImage loads an SR image.
 
@@ -176,11 +199,8 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
                 return
             end
 
-            % Display the image in the axes and restore the toolbar (which
-            % imshow removes).
-            cla(obj.ImageAxes)
-            imshow(obj.SRImage, [0, 1], 'Parent', obj.ImageAxes)
-            makeToolbar(obj.ImageAxes)
+            % Update the GUI.
+            refreshGUI()
             Source.Enable = 'on';
         catch MException
             Source.Enable = 'on';
@@ -199,8 +219,12 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
 
             % Load the data into obj.SMD.
             if ~isequal(File, 0)
-                load(fullfile(Path, File), 'SMD')
+                load(fullfile(Path, File), 'SMD', 'SMF')
                 obj.SMD = SMD;
+                if exist('SMF', 'var')
+                    % Added for back compatability with older results.
+                    obj.SMF = SMF;
+                end
             else
                 Source.Enable = 'on';
                 return
@@ -210,6 +234,16 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
             rethrow(MException)
         end
         Source.Enable = 'on';
+    end
+
+    function exportSMD(~, ~)
+        %exportSMD allows the user to export obj.SMDIsolated to a .mat file
+        [File, Path] = uiputfile('*.mat', 'Save current ROI to a file.');
+        if ~isequal(File, 0)
+            SMD = obj.SMDIsolated;
+            SMF = obj.SMF;
+            save(fullfile(Path, File), 'SMD', 'SMF')
+        end
     end
 
     function getROI(~, ~)
@@ -231,10 +265,6 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
             ROI = ROI ./ [ImSize(1), ImSize(2), ImSize(1), ImSize(2)];
             obj.ROI = ROI .* [obj.SMD.YSize, obj.SMD.XSize, ...
                 obj.SMD.YSize, obj.SMD.XSize];
-
-            % Isolate the data within the ROI.
-            obj.SMDIsolated = smi_core.SingleMoleculeData.isolateSubROI(...
-                obj.SMD, obj.ROI);
 
             % Update the ROI information panel.
             updateROIInfo()

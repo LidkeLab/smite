@@ -12,7 +12,10 @@ classdef InspectResults < handle
     % From the GUI, you should load a super-resolution image reconstruction
     % (saved as, e.g., a .png) as well as a *_Results.mat file containing
     % the SMD structure (see usage of smi.SMLM, which generates a 
-    % *_Results.mat file).
+    % *_Results.mat file).  Once the image is loaded, it'll be displayed in
+    % the GUI figure.  Hovering over the GUI figure will reveal a toolbar
+    % with a '+' icon which can be used to highlight a ROI and display
+    % info. about localizations from the ROI.
 
     % Created by:
     %   David J. Schodt (Lidke lab, 2021)
@@ -29,17 +32,20 @@ classdef InspectResults < handle
 
         % Axes containing the SR image.
         ImageAxes
-    end
-
-    properties (SetAccess = 'protected')
-        % ROI handle selected in the GUI.
-        ROIHandle
 
         % ROI in SMD coordinates. ([YStart, XStart, YEnd, XEnd])
         ROI
+    end
 
+    properties (Dependent)
         % Isolated SMD within the ROI defined by ROIHandle.
         SMDIsolated
+    end
+
+
+    properties (Hidden, SetAccess = 'protected')
+        % ROI handle selected in the GUI.
+        ROIHandle
     end
 
     properties (Hidden)
@@ -51,6 +57,11 @@ classdef InspectResults < handle
             'PSFSigma_SE', 'PSFSigmaX_SE', 'PSFSigmaY_SE', ...
             'PValue', 'LogLikelihood', 'ThreshFlag', ...
             'ConnectID', 'NCombined'}
+
+        % Single Molecule Fitting structure loaded along with SMD.
+        % NOTE: This is only kept as an aid to exporting, so that both SMD
+        %       and SMF can be exported to a file.
+        SMF
     end
     
     methods
@@ -60,6 +71,19 @@ classdef InspectResults < handle
             end
             if StartGUI
                 obj.gui()
+            end
+        end
+
+        function SMDIsolated = get.SMDIsolated(obj)
+            % get method for obj.SMDIsolated.
+            if isempty(obj.ROI)
+                SMDIsolated = obj.SMD;
+                if ~isempty(SMDIsolated)
+                    obj.ROI = [1, 1, SMDIsolated.YSize, SMDIsolated.XSize];
+                end
+            else
+                SMDIsolated = smi_core.SingleMoleculeData.isolateSubROI(...
+                    obj.SMD, obj.ROI);
             end
         end
         
