@@ -33,9 +33,7 @@ rng(1234)
 %       failure in the unitTest(): it might be easier to track down if
 %       there is something meaningful to look at.
 FrameSizeFull = 256; % don't change this! other numbers assume = 256
-CalibrationROI = [1, 1, FrameSizeFull, FrameSizeFull];
 NFrames = 10;
-Background = 10; % e- (treated as photons)
 CameraGain = 2 + 0.2*randn(FrameSizeFull, 'single'); % ADU / e-
 CameraOffset = 100 + 0.5*randn(FrameSizeFull, 'single'); % ADU
 CameraReadNoise = (3 + randn(FrameSizeFull, 'single')).^2; % ADU^2
@@ -46,8 +44,10 @@ SMD.Photons = 1e3 * ones(5*NFrames, 1);
 SMD.PSFSigma = 1.3;
 SMD.FrameNum = repelem((1:NFrames).', 5);
 SMD.Bg = zeros(5*NFrames, 1);
-[~, Data] = smi_sim.GaussBlobs.gaussBlobImage(FrameSizeFull, NFrames, ...
-    SMD, Background);
+SMD.YSize = FrameSizeFull;
+SMD.XSize = FrameSizeFull;
+SMD.NFrames = NFrames;
+[~, Data] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
 
 % Add read noise to the simulated data and then convert to ADU.
 % NOTE: gaussBlobImage() can also add read noise (in photons) but I wanted
