@@ -30,5 +30,6 @@ for nn = 1:length(ParticleFrame)
    plot(PlotAxes, XCorners(nn):XCorners(nn)+BoxSize-1,YCorners(nn)*ones(1,BoxSize),'y') 
    plot(PlotAxes, XCorners(nn):XCorners(nn)+BoxSize-1,(YCorners(nn)+BoxSize-1)*ones(1,BoxSize),'y')
 end
+hold off
 
 end
