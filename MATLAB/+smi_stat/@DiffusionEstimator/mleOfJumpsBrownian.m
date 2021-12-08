@@ -46,11 +46,8 @@ if (~exist('NComponents', 'var') || isempty(NComponents))
     NComponents = 2;
 end
 if (~exist('FitOptions', 'var') || isempty(FitOptions))
-    if (NComponents > 1)
-        FitOptions = optimoptions('fmincon');
-    else
-        FitOptions = optimset(@fminsearch);
-    end
+    FitOptions = optimoptions('fmincon');
+    FitOptions.Display = 'none';
 end
 
 % Find the MLE based on the Brownian motion model using a constrained fit.
@@ -65,7 +62,9 @@ CostFunction = @(Params) ...
 ParamsInit = [mean(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
     (1/NComponents)*ones(NComponents, 1)];
 NFitComponents = 2 * NComponents;
-ParamsLowerBound = zeros(NFitComponents, 1);
+ParamsLowerBound = ...
+    [min(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1);
+    zeros(NComponents, 1)];
 ParamsUpperBound = ...
     [max(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
     ones(NComponents, 1)];
@@ -74,7 +73,7 @@ Aeq(1, (NComponents+1):end) = 1;
 beq = zeros(NFitComponents, 1);
 beq(1) = 1;
 MLEParams = fmincon(CostFunction, ParamsInit, [], [], Aeq, beq, ...
-    ParamsLowerBound, ParamsUpperBound);
+    ParamsLowerBound, ParamsUpperBound, [], FitOptions);
 
 % If requested, estimate the CRLB.
 if (nargout > 1)
