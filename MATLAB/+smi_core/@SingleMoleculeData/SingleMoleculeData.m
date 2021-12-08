@@ -106,6 +106,7 @@ classdef SingleMoleculeData
         [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
             NEmitters, TimeSeries, FastGauss);
         [SMD] = isolateSubSMD(SMD, SubIndices);
+        [SMD] = isolateSubROI(SMD, ROI);
         [SMD, KeepBool] = extractDatasets(SMD, Datasets, Compress);
         
     end
