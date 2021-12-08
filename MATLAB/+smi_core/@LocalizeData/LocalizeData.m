@@ -13,6 +13,10 @@ classdef LocalizeData < handle
     %   [SMD, SMDPreThresh] = LD.genLocalizations();
     %   OR
     %   [~, SMD, SMDPreThresh] = smi_core.LocalizeData(RawData, SMF, 1);
+    %
+    % REQUIRES:
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
     
     
     properties

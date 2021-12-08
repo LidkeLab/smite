@@ -16,6 +16,10 @@ classdef InspectResults < handle
     % the GUI figure.  Hovering over the GUI figure will reveal a toolbar
     % with a '+' icon which can be used to highlight a ROI and display
     % info. about localizations from the ROI.
+    %
+    % REQUIRES:
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
 
     % Created by:
     %   David J. Schodt (Lidke lab, 2021)

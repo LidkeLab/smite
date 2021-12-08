@@ -11,7 +11,9 @@ classdef Publish < handle
     %       Cell*\Label*\Data*.h5
     %
     % REQUIRES: MATLAB 2018a or later (for Publish.genAlignStats())
-    %           MATLAB Image Processing Toolbox 2014a or later
+    %           Image Processing Toolbox
+    %           Statistics and Machine Learning Toolbox
+    %           Curve Fitting Toolbox
     %
     % CITATION:
     

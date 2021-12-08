@@ -2,6 +2,10 @@ classdef GenerateMovies < handle
     %GenerateMovies contains methods for generating movies.
     % This class consists of methods useful for generating movies,
     % particularly for single-particle tracking data.
+    % 
+    % REQUIRES:
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
     
     % Created by:
     %   David J. Schodt (Lidke Lab, 2021)

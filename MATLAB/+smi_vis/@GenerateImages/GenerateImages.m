@@ -16,7 +16,6 @@ classdef GenerateImages
     % REQUIRES:
     %    Statistics Toolbox
     %    Parallel Procesing Toolbox
-    %    Dipimage toolbox
     %    NVidia GPU
     %
     % SEE ALSO (other visualization routines):

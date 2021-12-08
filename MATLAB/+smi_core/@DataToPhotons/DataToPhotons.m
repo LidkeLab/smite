@@ -20,6 +20,10 @@ classdef DataToPhotons < handle
     %       DTP = smi_core.DataToPhotons(SMF, ...
     %           RawData, RawDataROI, CalibrationROI);
     %       [Data, ReadNoise] = DTP.convertData();
+    %
+    % REQUIRES:
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
     
     
     properties

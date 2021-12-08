@@ -18,7 +18,10 @@ classdef HMM < handle
     % crosstalk. BioRxiv, 2020.08.11.246785.
     % https://doi.org/10.1101/2020.08.11.246785
     %
-    % REQUIRES: Optimization Toolbox
+    % REQUIRES:
+    %   Optimization Toolbox
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
     
     % Created by:
     %   David J. Schodt (Lidke Lab, 2021)

@@ -6,7 +6,8 @@ classdef ChannelRegistration < handle
     % REQUIRES:
     %   MATLAB 2019b or later (some newer method inputs are used, e.g.,
     %       size(Image, [1, 2]) wasn't allowed pre-2019b).
-    %   MATLAB Image Processing Toolbox 2013b or later
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
     
     % Created by:
     %   David J. Schodt (Lidke Lab, 2020)

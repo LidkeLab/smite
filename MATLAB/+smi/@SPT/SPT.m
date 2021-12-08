@@ -2,6 +2,13 @@ classdef SPT < handle
     % SPT contains methods useful for single-particle tracking analysis.
     %   This class contains a collection of analysis/visualization methods
     %   useful for the analysis of single-particle tracking data.
+    %
+    % REQUIRES:
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
+
+    % Created by:
+    %   David J. Schodt (Lidke lab, 2021)
     
     
     properties

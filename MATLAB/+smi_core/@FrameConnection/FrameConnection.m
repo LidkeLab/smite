@@ -15,6 +15,15 @@ classdef FrameConnection < handle
     %
     % REQUIRES:
     %   smi_c_FrameConnection.mex*
+    %   Optimization Toolbox
+    %   Image Processing Toolbox
+    %   Statistics and Machine Learning Toolbox
+    %
+    % CITATION:
+    %   David J. Schodt and Keith A. Lidke, "Spatiotemporal Clustering of
+    %   Repeated Super-Resolution Localizations via Linear Assignment
+    %   Problem", Frontiers in Bioinformatics, 2021 
+    %   https://doi.org/10.3389/fbinf.2021.724325
     
     % Created by:
     %   David J. Schodt (Lidke Lab 2020)
