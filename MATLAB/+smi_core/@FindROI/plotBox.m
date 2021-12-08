@@ -22,7 +22,7 @@ XCorners = double(SMD.XBoxCorner(ParticleFrame));
 YCorners = double(SMD.YBoxCorner(ParticleFrame));
 PlotAxes = axes(figure());
 imshow(Data(:,:,Frame), [], 'Parent', PlotAxes)
-PlotAxes.Visible = 'off';
+%PlotAxes.Visible = 'off';
 hold(PlotAxes, 'on')
 for nn = 1:length(ParticleFrame)
    plot(PlotAxes, XCorners(nn)*ones(1,BoxSize),YCorners(nn):YCorners(nn)+BoxSize-1,'y') 
