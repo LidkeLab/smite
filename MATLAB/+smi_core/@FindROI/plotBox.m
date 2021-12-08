@@ -13,9 +13,6 @@ function plotBox(SMD,Data,Frame,BoxSize)
 %    Data            raw image data (XSize x YSize x NFrames)
 %    Frame           user specified frame number of interest
 %    BoxSize         linear box size for fitting (pixels)
-%
-% REQUIRES
-%    DIPimage Toolbox
 
 % Created by
 %    Mohamad Fazel
@@ -23,13 +20,15 @@ function plotBox(SMD,Data,Frame,BoxSize)
 ParticleFrame = find(SMD.FrameNum==Frame);
 XCorners = double(SMD.XBoxCorner(ParticleFrame));
 YCorners = double(SMD.YBoxCorner(ParticleFrame));
-dipshow(Data(:,:,Frame))
-hold
+PlotAxes = axes(figure());
+imshow(Data(:,:,Frame), [], 'Parent', PlotAxes)
+PlotAxes.Visible = 'off';
+hold(PlotAxes, 'on')
 for nn = 1:length(ParticleFrame)
-   plot(XCorners(nn)*ones(1,BoxSize),YCorners(nn):YCorners(nn)+BoxSize-1,'y') 
-   plot((XCorners(nn)+BoxSize-1)*ones(1,BoxSize),YCorners(nn):YCorners(nn)+BoxSize-1,'y')
-   plot(XCorners(nn):XCorners(nn)+BoxSize-1,YCorners(nn)*ones(1,BoxSize),'y') 
-   plot(XCorners(nn):XCorners(nn)+BoxSize-1,(YCorners(nn)+BoxSize-1)*ones(1,BoxSize),'y')
+   plot(PlotAxes, XCorners(nn)*ones(1,BoxSize),YCorners(nn):YCorners(nn)+BoxSize-1,'y') 
+   plot(PlotAxes, (XCorners(nn)+BoxSize-1)*ones(1,BoxSize),YCorners(nn):YCorners(nn)+BoxSize-1,'y')
+   plot(PlotAxes, XCorners(nn):XCorners(nn)+BoxSize-1,YCorners(nn)*ones(1,BoxSize),'y') 
+   plot(PlotAxes, XCorners(nn):XCorners(nn)+BoxSize-1,(YCorners(nn)+BoxSize-1)*ones(1,BoxSize),'y')
 end
 
 end
