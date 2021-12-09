@@ -159,6 +159,7 @@ classdef SPT < handle
             
             % Create an instance of the diffusion estimator class.
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
+            obj.DiffusionEstimator.FitTarget = 'LikelihoodOfJumps';
             obj.DiffusionEstimator.FitIndividualTrajectories = true;
             obj.DiffusionEstimator.UnitFlag = false;
             
