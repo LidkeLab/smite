@@ -72,7 +72,7 @@ P2nm = PixelSizeZUnit * 1000;
 SMDin = SMDsim;
 SMDin.X_SE = ones(n_particles, 1);
 SMDin.Y_SE = ones(n_particles, 1);
-SMDin.bg = zeros(n_particles, 1);
+SMDin.Bg = zeros(n_particles, 1);
 SMDin.PixelSizeZUnit = PixelSizeZUnit;
 
 % Histogram image of this data.
