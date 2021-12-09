@@ -111,15 +111,12 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
                 ff, NFiles)
         end
         obj.SMF.Tracking = ParamsHistory{ii};
+        obj.SMF.Tracking.ParamsHistory = ParamsHistory;
         obj.SMF.Data.RegistrationFilePath = TransformList{ff};
         obj.SMF.Data.FileName = FileNames(ff);
         [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
         SMDCat = smi_core.SingleMoleculeData.catSMD(SMDCat, SMD{ff}, ...
             (obj.Verbose > 1));
-    end
-    if IsLastIter
-        obj.SMF.Tracking.ParamsHistory = ParamsHistory(1:ii);
-        continue
     end
     
     % Update the tracking parameters.
