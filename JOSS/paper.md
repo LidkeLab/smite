@@ -36,16 +36,13 @@ authors:
   - name: Elton Jhamba
     orcid: 
     affiliation: 1
-  - name: 
-    orcid: 
-    affiliation: 1
   - name: Keith A. Lidke^[corresponding author]
     orcid: 0000-0002-9328-4318
     affiliation: 1
 affiliations:
- - name: Physics & Astronomy, University of New Mexico
+ - name: Physics and Astronomy, University of New Mexico
    index: 1
-date: 10 Decemer 2020
+date: 10 December 2020
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
@@ -90,23 +87,6 @@ it have already been published or in the process, e.g., frame connection
 [@Schodt_article:2021], drift correction [@Wester_article:2021], Bayesian
 grouping of localizations [@Fazel_unpub:2019].  Applications are described in
 [@Mazloom-Farsibaf_article:2021] and [@Bailey_article:2021].
-
-# Mathematics
-
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
-
-Double dollars make self-standing equations:
-
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
-
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
 
 # Citations
 
