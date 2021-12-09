@@ -49,6 +49,8 @@ XYSize = SIM.SZ;
 n_frames = SIM.NDatasets * SIM.NFrames;
 PpFX = 0.04;      % x drift (pixels per frame)
 PpFY = 0.07;      % y drift (pixels per frame)
+
+rho = SIM.Rho;
 FpD = SIM.NFrames; % number of frames per dataset
 
 %load('SMDsim2D');
@@ -63,10 +65,6 @@ fprintf('Number of emitters = %d, per pixel = %f, per dataset = %f\n', ...
 fprintf( ...
    '# of emitters = %d, blinks = %d, localizations = %d, datasets = %d\n', ...
    n_emitters, n_blinks, n_local, n_datasets);
-%for i = 1 : numel(DatasetNum)
-%   DatasetNum(i) = (FrameNum(i) - 1 - mod(FrameNum(i) - 1, FpD)) / FpD + 1;
-%   FrameNum(i)   = mod(FrameNum(i) - 1, FpD) + 1;
-%end
 PixelSizeZUnit = 0.1; % um
 P2nm = PixelSizeZUnit * 1000;
 
