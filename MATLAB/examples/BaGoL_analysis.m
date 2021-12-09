@@ -72,10 +72,12 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %                         results from the 1st pass
 %       Make2ndPassExpPrior If true, adjust the 1st pass Lambda posterior to an
 %                         exponential to used as the prior for the 2nd pass
+%       Y_Adjust          Apply coordinate transform for y-coordinates if
+%                         non-empty in the form Y = Y_Adjust - Y (pixels)
 %
 % NOTES:
 %    If Make2ndPassExpPrior is true, then the posterior Lambda from the 1st
-%    pass % is converted into an exponential prior for the 2nd pass via:
+%    pass is converted into an exponential prior for the 2nd pass via:
 %       [k2_prior, theta2_prior] = [1, k1_posterior * theta1_posterior]
 %    noting that k is the shape parameter (1 produces an exponential) and theta
 %    is the scale parameter for a gamma distribution, where the product
@@ -119,6 +121,8 @@ N_Burnin1 = BaGoLParams.N_Burnin1;       %Length of Burn-in chain      (1st)
 N_Trials1 = BaGoLParams.N_Trials1;       %Length of post-burn-in chain (1st)
 N_Burnin2 = BaGoLParams.N_Burnin2;       %Length of Burn-in chain      (2nd)
 N_Trials2 = BaGoLParams.N_Trials2;       %Length of post-burn-in chain (2nd)
+DataROI = BaGoLParams.DataROI;           %Optional 1st pass analysis ROI (nm)
+Y_Adjust = BaGoLParams.Y_Adjust;         % LL vs UL origin transform
 
 % --------- Initialize BaGoL
 
@@ -127,23 +131,36 @@ load(fullfile(DataDir,FileNameIn));
 % The above data is assumed to be an SMR structure, however, as smite comes in,
 % the above may be an SMD structure, so deal with that.  The two structures are
 % the same for the fields (Photons, X, Y, X_SE, Y_SE, DatasetNum, FrameNum)
-% used below, but different for Nframes/NFrames.
+% used below, but different for Nframes/NFrames.  Note that X/Y and X_SE/Y_SE
+% units are pixels, later to be transformed into nm for the BaGoL analysis.
 if ~exist('SMR', 'var') && exist('SMD', 'var')
    SMR = SMD;
    SMR.Nframes = SMD.NFrames;
 end
+% If Y_Adjust is non-empty (y-coordinate origin is in the upper left and y
+% increases downward), adjust the Y values so their origin is in the lower left
+% and y increases upward.
+%if ~isempty(Y_Adjust)
+%   SMR.Y = Y_Adjust - SMR.Y; 
+%end
 % BaGoL seems to work better with non-negative coordinates.
 minX = min(SMR.X);   % pixels
 minY = min(SMR.Y);   % pixels
 if minX < 0
    SMR.X = SMR.X - minX;
+   %if ~isempty(DataROI)
+   %   DataROI(1 : 2) = DataROI(1 : 2) - minX;
+   %end
 end
 if minY < 0
    SMR.Y = SMR.Y - minY;
+   %if ~isempty(DataROI)
+   %   DataROI(3 : 4) = DataROI(3 : 4) - minY;
+   %end
 end
+
 % Eliminate trailing _Results* from the FileName for saving results.
 FileName = regexprep(FileNameIn, '_Results.*$', '');
-
 % Save the BaGoL _ResultsStruct.mat file in SaveDir and the rest of the BaGoL
 % outputs in SaveDirLong.  This arrangement is chosen so that Results_BaGoL
 % holds only uniquely named files/directories for the situation where several
@@ -165,19 +182,26 @@ IndP = SMR.Photons < IntensityCutoff;
 Lambda = BaGoLParams.Lambda; %[k, theta] parameters for gamma prior.
 % Make the first run on a smaller subregion (commented out for now).
 %DataROI = [80 120 120 160]; %Region to find Lambda (pixel) [XStart XEnd YStart YEnd]
-if ~isempty(BaGoLParams.DataROI)
-   Ind = SMR.X > BaGoLParams.DataROI(1) & SMR.X < BaGoLParams.DataROI(2) & ...
-         SMR.Y > BaGoLParams.DataROI(3) & SMR.Y < BaGoLParams.DataROI(4) & ...
-         IndP;
+if ~isempty(DataROI)
+   if ~isempty(Y_Adjust)
+      SMR.Y = Y_Adjust - SMR.Y;
+   end
+   Ind = SMR.X >= DataROI(1) & SMR.X <= DataROI(2) & ...
+         SMR.Y >= DataROI(3) & SMR.Y <= DataROI(4) & IndP;
+   if ~isempty(Y_Adjust)
+      SMR.Y = Y_Adjust - SMR.Y;
+   end
 else
    Ind = IndP;
 end
 n_Ind = sum(Ind);
-fprintf('[1] Localizations kept = %d\n', n_Ind);
+fprintf('[1] Localizations kept = %d out of %d\n', n_Ind, numel(Ind));
 if n_Ind == 0
    error('No localizations kept!');
 end
 
+figure; hold on; plot(SMD.X, SMD.Y, 'k.'); title(FileName); hold off;
+saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
 nPre = numel(Ind);
 SMD = [];
 SMD.X = PixelSize*SMR.X(Ind);
@@ -188,7 +212,9 @@ SMD.Y_SE = PixelSize*SMR.Y_SE(Ind)+SE_Adjust;
 SMD.Z_SE = [];
 SMD.FrameNum = SMR.Nframes*single((SMR.DatasetNum(Ind)-1))+single(SMR.FrameNum(Ind));
 
-%Setting the class properties
+figure; hold on; plot(SMD.X, SMD.Y, 'k.'); title(FileName); hold off;
+saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
+% Setting the class properties
 BGL = smi.BaGoL;
 %BGL = BaGoL;
 BGL.SMD = SMD;
@@ -259,9 +285,8 @@ ImSize = SZ*PixelSize;
 %FileList = dir(fullfile(DataDir,'*.mat'));
     
 %if ~isempty(BaGoLParams.DataROI)
-%   Ind = SMR.X > BaGoLParams.DataROI(1) & SMR.X < BaGoLParams.DataROI(2) & ...
-%         SMR.Y > BaGoLParams.DataROI(3) & SMR.Y < BaGoLParams.DataROI(4) & ...
-%         IndP;
+%   Ind = SMR.X > DataROI(1) & SMR.X < DataROI(2) & ...
+%         SMR.Y > DataROI(3) & SMR.Y < DataROI(4) & IndP;
 %else
    Ind = IndP;
 %end

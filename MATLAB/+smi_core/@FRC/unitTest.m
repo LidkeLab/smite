@@ -31,7 +31,7 @@ function success = unitTest()
    % Generate localizations and put them into an SMD structure.
    SIM = smi_sim.SimSMLM();
    SIM.SZ = 64;
-   SIM.Rho = 10;
+   SIM.Rho = 50;
    SIM.NDatasets = 1;
    SIM.NFrames = 1000;
    SIM.simStar(16);
@@ -77,6 +77,7 @@ function success = unitTest()
    % Correction removes spurious correlations and is the recommended method to
    % use for typical applications.
 
+   try
    [res_corr, res_uncorr, Q, frc_curve_corr, frc_curve_uncorr] = ...
       FRCc.qCorrectionLocs(SMD);
 
@@ -103,6 +104,7 @@ function success = unitTest()
    title('Corrected Fourier Ring Correlation curve');
    legend({'corrected', 'uncorrected'}, 'Location', 'NorthEast');
    hold off
+   end
 
    success = 1;
 

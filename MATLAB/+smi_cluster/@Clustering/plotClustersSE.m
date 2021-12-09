@@ -57,7 +57,7 @@ function clusterFig = plotClustersSE(obj, SMD, C, centers, ptsI, txt, ...
    fprintf('\n');
    theta = 0 : 0.05 : 2*pi + 0.05;
    for i = 1 : nC
-      j = SMA_Cluster.nMODm(i, n_colors);
+      j = smi_helpers.nMODm(i, n_colors);
       if onecolor
          color = 'm';
       else

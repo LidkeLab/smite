@@ -259,3 +259,5 @@ for algorithm_range = {'DBSCAN', 'Hierarchal', 'Voronoi'}
    end
 end % for algorithm_range
 fprintf('\n');
+
+fprintf('Done.\n');

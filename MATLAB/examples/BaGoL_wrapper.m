@@ -2,10 +2,29 @@
 % results are placed in the subdirectory Results_BaGoL under the directory
 % containing the *_ResultsStruct.mat files.
 
+% Typical usage is to run two passes of BaGoL.  The 1st pass determines the
+% lambda prior for the 2nd pass.  Lambda is the estimated number of blinking
+% events per emitter.  The 1st pass can be run on the same data or a subset of
+% it (see DataROI) or some other related data (often sparse).  The initial
+% value of Lambda defined in BaGoLParams is used as the prior for the
+% calculation by BaGoL_analysis.  Different scenarios are possible (see also
+% BaGoL_analysis):
+%
+%    Lambda1Prior     is the prior     for the 1st pass
+%    Lambda1Posterior is the posterior for the 1st pass 
+%    Lambda2Prior     is the prior     for the 2nd pass
+%
+% Skip1stPass = false;   Skip2ndPass = false;
+%    Use BaGoLParams.Lambda for Lambda1Prior
+%    Use Lambda1Posterior for Lambda2Prior
+% Skip1stPass = false;   Skip2ndPass = true;
+%    Use BaGoLParams.Lambda for Lambda1Prior
+% Skip1stPass = false;   Skip2ndPass = true;
+%    Use BaGoLParams.Lambda for Lambda2Prior
+%
+% Also, see BaGoLParams.Make2ndPassExpPrior below.
+
 % Generic parameters
-%start_DataDir = 'Y:\MJW\SR\play';
-%start_DataDir = 'Y:\Sandeep\Genmab';
-start_DataDir = 'Y:\Will K\Good Low Density IgE-AF647_dSTORM Data\Cell_02_b_test file\Label_01\No FC_Results';
 %start_DataDir = '.';
 BaGoLParams.ImageSize = 256;        % (pixel)
 %BaGoLParams.PixelSize = 108.018;    % (nm) [TIRF]
@@ -15,9 +34,17 @@ BaGoLParams.N_Burnin1 = 3000;       % Length of Burn-in chain      (1st pass)
 BaGoLParams.N_Trials1 = 3000;       % Length of post-burn-in chain (1st pass)
 BaGoLParams.N_Burnin2 = 8000;       % Length of Burn-in chain      (2nd pass)
 BaGoLParams.N_Trials2 = 4000;       % Length of post-burn-in chain (2nd pass)
+
+% Y_Adjust is sometimes needed to deal with lower left versus upper left
+% y-origin issues.  Lower left with y increasing upwards is the default,
+% requiring no changes, while upper left with y increasing downwards can
+% sometimes occur, so Y must be replaced by Y - Y_Adjust, where Y_Adjust is the
+% image size (see below) [pixels].
+%BaGoLParams.Y_Adjust = BaGoLParams.ImageSize;
+BaGoLParams.Y_Adjust = [];
 % If Skip1stPass is true, skip the 1st pass in BaGoL_analysis and directly use
 % the values for Lambda defined below.
-BaGoLParams.Skip1stPass = false;
+BaGoLParams.Skip1stPass = true;
 % If Skip2ndPass is true, skip the 2nd pass in BaGoL_analysis and directly
 % save the results from the 1st pass.  This is useful when analyzing a set of
 % sparse files in the 1st pass to determine an appropriate Lambda to use in a
@@ -41,6 +68,8 @@ BaGoLParams.Make2ndPassExpPrior = true;
 % as many computer cores as possible in a single run.  This option goes well
 % with Skip1stPass when priors have been computed on previous BaGoL runs.
 Lambda = {};
+% Similar for DataROI, which should be dimensioned n_files x 4 if non-empty.
+DataROI = [];
 
 % For very sparse datasets, turn off filtering (NNR = inf, NN = 0,
 % NNNmax = inf).
@@ -101,15 +130,17 @@ if BaGoLParams.Skip1stPass && BaGoLParams.Skip2ndPass
    error('Skipping both passes of BaGoL!');
 end
 
-c = SMA_Cluster();
-Files = c.uipickfiles('FilterSpec', start_DataDir, 'REFilter', ...
-                      '.*_ResultsStruct.*\.mat', 'Prompt',     ...
-                      '_ResultsStruct.mat files');
+%Files = uipickfiles('FilterSpec', start_DataDir, 'REFilter', ...
+%                    '.*_ResultsStruct.*\.mat', 'Prompt',     ...
+%                    '_ResultsStruct.mat files');
 % ### Comment out the 4 lines above and use the commented out lines below when
 % ### making batch runs, for example, on CARC.
-%Files = { ...
-%};
-%Lambda = { ... };
+Files = {
+};
+Lambda = {
+};
+DataROI = [
+];
 
 if iscell(Files)
    n_files = numel(Files);
@@ -120,6 +151,9 @@ fprintf('Files to analyze = %d\n', n_files);
 nLambda = numel(Lambda);
 if nLambda ~= 0 && nLambda ~= n_files
    error('Lambda must either be {} or contain %d values!', n_files);
+end
+if ~isempty(DataROI) && size(DataROI, 1) ~= n_files
+   error('DataROI must either be [] or contain %d rows!', n_files);
 end
 % This code is needed to avoid DIPimage's split interfering with the parfor
 % when using BaGoLParams.Lambda rather than manually defining Lambda above.
@@ -146,6 +180,9 @@ if n_files > 0
       %if nLambda > 0
          BGLParams.Lambda = Lambda{i};
       %end
+      if ~isempty(DataROI)
+         BGLParams.DataROI = DataROI(i, :);
+      end
       try
          warning('OFF', 'stats:kmeans:FailedToConvergeRep');
          BaGoL_analysis(File, DataDir, SaveDir, BGLParams);

@@ -59,7 +59,7 @@ function clusterFig = plotClusters(obj, SMD, C, centers, ptsI, txt, options)
       fprintf('\n');
    end
    for i = 1 : nC
-      j = SMA_Cluster.nMODm(i, n_colors);
+      j = smi_helpers.nMODm(i, n_colors);
       if onecolor
          color = 'm';
       else
