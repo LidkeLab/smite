@@ -107,10 +107,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   Method:         Type of method used for tracking (Default='CostMatrix')
     %   D:              Diffusion Constant (Pixels^2/Frame) (Default=0.01)
     %   TrajwiseD:      Use traj.-wise value for D (logical)(Default=true)
-    %   K_on:           Off to On Rate (Frame^-1) (Default=.1)
+    %   K_on:           Off to On Rate (Frame^-1) (Default=.9)
     %   K_off:          On to Off Rate (Frame^-1) (Default=.1)
-    %   Rho_off:        Density of dark emitters (emitters/pixel^2)(Default=1e-3)
-    %   EstimateRho:    Estimate rho from the data (logical)(Default = true)
     %   MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels)(Default=5)
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
@@ -120,7 +118,6 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   MaxRelativeChange: Max. relative param. change to end iterations (Default = 1e-5)
     %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=inf)
     %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=inf)
-    %   MaxZScoreD: Max. abs(z-score) for diffusion constant diffs. (Default=inf)
     %   TryLowPValueLocs: Try to incorporate low p-val. locs. (Default=false)
     
     % created by:
@@ -228,17 +225,14 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Tracking.Method='CostMatrix';
             obj.Tracking.D=0.01;
             obj.Tracking.TrajwiseD=true;
-            obj.Tracking.K_on=.1;
+            obj.Tracking.K_on=.9;
             obj.Tracking.K_off=.1;
-            obj.Tracking.Rho_off=1e-3;
-            obj.Tracking.EstimateRho=true;
             obj.Tracking.MaxDistFF=5;
             obj.Tracking.MaxDistGC=10;
             obj.Tracking.MaxFrameGap=10;
             obj.Tracking.MinTrackLength=3;
             obj.Tracking.MaxZScoreDist=inf;
             obj.Tracking.MaxZScorePhotons=inf;
-            obj.Tracking.MaxZScoreD=inf;
             obj.Tracking.NIterMax=1;
             obj.Tracking.NIterMaxBatch=10;
             obj.Tracking.ParamsHistory={};
@@ -314,13 +308,10 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.TrajwiseD.Units = 'logical';
             obj.SMFFieldNotes.Tracking.K_on.Units = '1 / frame';
             obj.SMFFieldNotes.Tracking.K_off.Units = '1 / frame';
-            obj.SMFFieldNotes.Tracking.Rho_off.Units = 'emitters / pixel^2';
-            obj.SMFFieldNotes.Tracking.EstimateRho.Units = 'logical';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxDistGC.Units = 'pixels';
             obj.SMFFieldNotes.Tracking.MaxZScoreDist.Units = '';
             obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Units = '';
-            obj.SMFFieldNotes.Tracking.MaxZScoreD.Units = '';
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Units = 'frames';
             obj.SMFFieldNotes.Tracking.MinTrackLength.Units = ...
                 'observations';
@@ -498,10 +489,6 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.K_off.Tip = ...
                 sprintf(['Known/anticipated rate at which emitters\n', ...
                 'transition to a dark state.']);
-            obj.SMFFieldNotes.Tracking.Rho_off.Tip = ...
-                sprintf('Density of emitters in the dark state');
-            obj.SMFFieldNotes.Tracking.EstimateRho.Tip = ...
-                'Estimate emitter densities directly from the data.';
             obj.SMFFieldNotes.Tracking.MaxDistFF.Tip = ...
                 sprintf(['Maximum separation between localizations\n', ...
                 'such that they can still be considered candidates\n', ...
@@ -516,9 +503,6 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Tracking.MaxZScorePhotons.Tip = ...
                 sprintf(['Maximum z-score for photon differences\n', ...
                 'allowed for trajectory connections.']);
-            obj.SMFFieldNotes.Tracking.MaxZScoreD.Tip = ...
-                sprintf(['Maximum z-score for diffusion constant\n', ...
-                'differences allowed for trajectory connections.']);
             obj.SMFFieldNotes.Tracking.MaxFrameGap.Tip = ...
                 sprintf(['Maximum number of frames elapsed between\n', ...
                 'localizations such that they can still be\n', ...
@@ -1044,21 +1028,6 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                     error('''SMF.Tracking.K_off'' must be numeric.')
                 end
             end
-            if isfield(TrackingInput, 'Rho_off')
-                if ~isnumeric(TrackingInput.Rho_off)
-                    error('''SMF.Tracking.Rho_off'' must be numeric.')
-                end
-            end
-            if isfield(TrackingInput, 'EstimateRho')
-                if ~(islogical(TrackingInput.EstimateRho) ...
-                        || isnumeric(TrackingInput.EstimateRho))
-                    error(['''SMF.Tracking.EstimateRho'' must be ', ...
-                        'logical or interpretable as logical (numeric).'])
-                elseif isnumeric(TrackingInput.EstimateRho)
-                    TrackingInput.EstimateRho = ...
-                        logical(TrackingInput.EstimateRho);
-                end
-            end
             if isfield(TrackingInput, 'MaxDistFF')
                 if ~isnumeric(TrackingInput.MaxDistFF)
                     error('''SMF.Tracking.MaxDistFF'' must be numeric.')
@@ -1078,11 +1047,6 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 if ~isnumeric(TrackingInput.MaxZScorePhotons)
                     error(['''SMF.Tracking.MaxZScorePhotons'' ', ...
                         'must be numeric.'])
-                end
-            end
-            if isfield(TrackingInput, 'MaxZScoreD')
-                if ~isnumeric(TrackingInput.MaxZScoreD)
-                    error('''SMF.Tracking.MaxZScoreD'' must be numeric.')
                 end
             end
             if isfield(TrackingInput, 'MaxFrameGap')
