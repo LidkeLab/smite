@@ -51,7 +51,8 @@ end
 OverlayImage=smi_vis.GenerateImages.rgbImage(Sequence,Model2,Model2*0);
 
 if nargout == 0
-    smi_vis.GenerateImages.showim(OverlayImage);
+    %smi_vis.GenerateImages.showim(OverlayImage);
+    imshow(OverlayImage);
 end
 
 end
