@@ -1,5 +1,5 @@
 function [LineHandles] = plotTrajectories(PlotAxes, ...
-    TR, FrameRange, MaxTrajLength, Color, varargin)
+    TR, FrameRange, Color, varargin)
 %plotTrajectories plots trajectories in the specified axes.
 % This method plots trajectories in 'TR'.  This method is intended to
 % remain "lightweight" for speed purposes, so minimal input checks/default
@@ -9,8 +9,6 @@ function [LineHandles] = plotTrajectories(PlotAxes, ...
 %   PlotAxes: Axes in which the trajectories will be plotted.
 %   TR: Tracking Results structure (see smi_core.TrackingResults).
 %   FrameRange: Range of frames over which trajectories should be plotted.
-%   MaxTrajLength: Maximum number of points to be plotted for each
-%                  trajectory.
 %   Color: Color of the trajectory lines. (NTrajectoriesx3(4) float array)
 %   varargin: Additional inputs that can be provided as keyword arguments
 %             for the MATLAB line() method (see Line Properties from line()
@@ -39,10 +37,8 @@ for nn = 1:NTraj
     X = TR(nn).X(KeepBool);
     Y = TR(nn).Y(KeepBool);
     FrameNum = TR(nn).FrameNum(KeepBool);
-    NLoc = numel(FrameNum);
-    IndexArray = (1:min(NLoc, MaxTrajLength));
     LineHandles(nn) = line(PlotAxes, ...
-        X(IndexArray), Y(IndexArray), FrameNum(IndexArray), ...
+        X, Y, FrameNum, ...
         'Color', Color(nn, :), varargin{:});
 end
 
