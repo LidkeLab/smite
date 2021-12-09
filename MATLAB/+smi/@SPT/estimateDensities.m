@@ -22,7 +22,13 @@ function [RhoOff, RhoOn] = estimateDensities(SMD, SMF)
 
 
 % Estimate the density of visible emitters.
-RhoOn = smi_core.SingleMoleculeData.computeDensityImage(SMD);
+% NOTE: It might be more accurate to set the second input to 0 (so that the
+%       density image represents the localization distribution), however
+%       smoothing by the max. gap size between trajectories gives a better
+%       approximation to the density we really want (that is, the density
+%       in the vicinity of the emitter).
+RhoOn = smi_core.SingleMoleculeData.computeDensityImage(SMD, ...
+    max(SMF.Tracking.MaxDistFF, SMF.Tracking.MaxDistGC));
 
 % Estimate the density of dark emitters.
 RhoOff = RhoOn * (SMF.Tracking.K_off/SMF.Tracking.K_on);

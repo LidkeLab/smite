@@ -13,7 +13,7 @@ function [DiffusionStruct] = ...
 %           (Default = [1e-5; inf])
 %
 % OUTPUTS:
-%   DiffusionStruct: DiffusionEstimator.DiffusionStruct with DMinMax
+%   DiffusionStruct: DiffusionEstimator.DiffusionStruct with DReset
 %                    applied.
 
 % Created by:
@@ -38,17 +38,17 @@ DiffusionStruct = DiffusionEstimator.DiffusionStruct;
 % Filter the diffusion coefficients.
 if (numel(DReset) > 1)
     % DReset represents a minimum and maximum allowed value.
-    SetToMin = ((DiffusionStruct(1).DiffusionConstant<DMinMax(1)) ...
+    SetToMin = ((DiffusionStruct(1).DiffusionConstant<DReset(1)) ...
         | isnan(DiffusionStruct(1).DiffusionConstant));
-    SetToMax = (DiffusionStruct(1).DiffusionConstant > DMinMax(2));
-    DiffusionStruct(1).DiffusionConstant(SetToMin) = DMinMax(1);
-    DiffusionStruct(1).DiffusionConstant(SetToMax) = DMinMax(2);
+    SetToMax = (DiffusionStruct(1).DiffusionConstant > DReset(2));
+    DiffusionStruct(1).DiffusionConstant(SetToMin) = DReset(1);
+    DiffusionStruct(1).DiffusionConstant(SetToMax) = DReset(2);
     DiffusionStruct(1).DiffusionConstant(SetToMin | SetToMax) = inf;
-    SetToMin = ((DiffusionStruct(2).DiffusionConstant<DMinMax(1)) ...
+    SetToMin = ((DiffusionStruct(2).DiffusionConstant<DReset(1)) ...
         || isnan(DiffusionStruct(2).DiffusionConstant));
-    SetToMax = (DiffusionStruct(2).DiffusionConstant > DMinMax(2));
-    DiffusionStruct(2).DiffusionConstant(SetToMin) = DMinMax(1);
-    DiffusionStruct(2).DiffusionConstant(SetToMax) = DMinMax(2);
+    SetToMax = (DiffusionStruct(2).DiffusionConstant > DReset(2));
+    DiffusionStruct(2).DiffusionConstant(SetToMin) = DReset(1);
+    DiffusionStruct(2).DiffusionConstant(SetToMax) = DReset(2);
     DiffusionStruct(2).DiffusionConstant(SetToMin || SetToMax) = inf;
 else
     % DReset is a scalar that we'll use to set all bad values.

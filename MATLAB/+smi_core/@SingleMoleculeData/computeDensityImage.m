@@ -1,4 +1,4 @@
-function [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
+function [DensityIm] = computeDensityImage(SMD, SigmaSmooth, Mag, ...
     NEmitters, TimeSeries, FastGauss)
 %computeDensityImage estimates the local density of observed emitters.
 % This method prepares a smoothed Gaussian image of the localizations in
@@ -10,10 +10,10 @@ function [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
 %
 % INPUTS:
 %   SMD: Single Molecule Data structure.
-%   SigmaScale: Scaling factor of the average localization precision which
-%               becomes the standard deviation of the Gaussian smoothing
-%               filter (i.e., smoothing has st. dev.
-%               s=SigmaScale*mean(s_loc)). (Default = 3)
+%   SigmaSmooth: Standard deviation of the smoothing filter applied to the
+%                Gaussian image to generate the density image, given in
+%                units of SMD coordinates.
+%                (pixels)(Default = 0)
 %   Mag: Approximate magnification from SMD pixels to output image pixels.
 %        (Default = 1)
 %   NEmitters: Total number of emitters from which SMD was generated.
@@ -39,8 +39,8 @@ function [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
 
 
 % Set defaults.
-if (~exist('SigmaScale', 'var') || isempty(SigmaScale))
-    SigmaScale = 3;
+if (~exist('SigmaSmooth', 'var') || isempty(SigmaSmooth))
+    SigmaSmooth = 0;
 end
 if (~exist('Mag', 'var') || isempty(Mag))
     Mag = 20;
@@ -88,9 +88,11 @@ GaussIm = smi_sim.GaussBlobs.gaussBlobImage(SMD);
 
 % Apply a Gaussian filter to the GaussIm of localizations.
 % NOTE: gaussInPlace() is an approximation to a Gaussian filter.  As a
-%       result, some artifacts appear
-Sigma = SigmaScale * Mag * mean([SMD.X_SE; SMD.Y_SE]);
-if FastGauss
+%       result, some artifacts appear.
+Sigma = SigmaSmooth * Mag;
+if (Sigma <= 0)
+    DensityIm = GaussIm;
+elseif FastGauss
     DensityIm = gather(smi_core.FindROI.gaussInPlace(GaussIm, Sigma));
 else
     DensityIm = imgaussfilt(GaussIm, Sigma);

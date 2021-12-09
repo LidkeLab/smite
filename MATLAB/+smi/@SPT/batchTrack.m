@@ -111,7 +111,9 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
                 ff, NFiles)
         end
         obj.SMF.Tracking = ParamsHistory{ii};
-        obj.SMF.Tracking.ParamsHistory = ParamsHistory;
+        if IsLastIter
+            obj.SMF.Tracking.ParamsHistory = ParamsHistory;
+        end
         obj.SMF.Data.RegistrationFilePath = TransformList{ff};
         obj.SMF.Data.FileName = FileNames(ff);
         [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();

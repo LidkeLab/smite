@@ -1,4 +1,4 @@
-function [SMD] = genTrajFF(SMD, SMF, DiffusionConstants, NonLinkMarker)
+function [SMD] = genTrajFF(SMD, SMF, RhoOff, NonLinkMarker)
 %genTrajFF connects localizations frame-to-frame into trajectories.
 % This method loops through frames of localizations in SMD and stitches
 % localizations into trajectories frame-to-frame.
@@ -10,11 +10,8 @@ function [SMD] = genTrajFF(SMD, SMF, DiffusionConstants, NonLinkMarker)
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD
-%                       (column 1) and their SEs (column 2). If this is not 
-%                       provided, we'll use SMF.Tracking.D for all
-%                       trajectories.
-%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
+%   RhoOff: Density of dark emitters, given as an image with the same
+%           aspect ratio as the SMD coordinate system.
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we
 %                  don't want to select that element in the linear
 %                  assignment problem.
@@ -38,8 +35,8 @@ SMD.ConnectID = (1:numel(SMD.FrameNum)).';
 UniqueFrames = unique(SMD.FrameNum, 'sorted');
 for ff = UniqueFrames(1:(end-1)).'
     % Create the frame-to-frame connection cost matrix.
-    CostMatrix = smi.SPT.createCostMatrixFF(SMD, SMF, ...
-        DiffusionConstants, ff, NonLinkMarker);
+    CostMatrix = smi.SPT.createCostMatrixFF(SMD, SMF, RhoOff, ...
+        ff, NonLinkMarker);
     if (numel(CostMatrix) < 2)
         % If there's only one localization considered, there's no use in
         % proceeding.

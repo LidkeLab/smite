@@ -1,5 +1,5 @@
 function [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
-    DiffusionConstants, NonLinkMarker, CreateSparseMatrix)
+    RhoOff, NonLinkMarker, CreateSparseMatrix)
 %createCostMatrixGC creates the cost matrix for gap closing in SPT.
 % This method creates a cost matrix whose elements represent the cost for
 % connecting trajectory segments produced by the frame-to-frame step in the
@@ -12,11 +12,8 @@ function [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD
-%                       (column 1) and their SEs (column 2). If this is not 
-%                       provided, we'll use SMF.Tracking.D for all
-%                       trajectories.
-%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
+%   RhoOff: Density of dark emitters, given as an image with the same
+%           aspect ratio as the SMD coordinate system.
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we
 %                  don't want to select that element in the linear
 %                  assignment problem.
@@ -58,10 +55,6 @@ end
 if (~exist('CreateSparseMatrix', 'var') || isempty(CreateSparseMatrix))
     CreateSparseMatrix = true;
 end
-if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
-    DiffusionConstants = [SMF.Tracking.D, inf] ...
-        .* ones(numel(SMD.FrameNum), 1);
-end
 
 % Extract some arrays from the SMD/SMF structure.  Doing this outside of
 % for loops can speed things up for very large SMD structures (although for
@@ -77,10 +70,10 @@ ConnectID = SMD.ConnectID;
 MaxDistGC = SMF.Tracking.MaxDistGC;
 MaxZScoreDist = SMF.Tracking.MaxZScoreDist;
 MaxZScorePhotons = SMF.Tracking.MaxZScorePhotons;
-MaxZScoreD = SMF.Tracking.MaxZScoreD;
 MaxFrameGap = SMF.Tracking.MaxFrameGap;
 K_on = SMF.Tracking.K_on;
 K_off = SMF.Tracking.K_off;
+DiffusionCoefficients = SMF.Tracking.D;
 
 % Define various parameters that will be useful later on.
 NTraj = max(ConnectID);
@@ -133,7 +126,7 @@ for ee = 1:NTraj
     X_SEEndCurrent = X_SE(EndIndexCurrent);
     YEndCurrent = Y(EndIndexCurrent);
     Y_SEEndCurrent = Y_SE(EndIndexCurrent);
-    DEndCurrent = DiffusionConstants(EndIndexCurrent, :);
+    DEndCurrent = DiffusionCoefficients(EndIndexCurrent);
     MeanPhotonsCurrent = PhotonMean(ee);
     StDevPhotonsCurrent = PhotonStDev(ee);
     
@@ -175,8 +168,7 @@ for ee = 1:NTraj
         %       in some cases (e.g., connecting very small trajectories)
         %       this proved to cause some issues.  Instead, I'll try using
         %       the average of the two diffusion constants.
-        DSumCurrent = ...
-            DEndCurrent(1) + DiffusionConstants(StartIndexCurrent, 1);
+        DSumCurrent = DEndCurrent + DiffusionCoefficients(StartIndexCurrent);
         Sigma_X = sqrt(DSumCurrent*DeltaFrame ...
             + X_SEEndCurrent^2 + X_SE(StartIndexCurrent)^2);
         Sigma_Y = sqrt(DSumCurrent*DeltaFrame ...
@@ -187,16 +179,11 @@ for ee = 1:NTraj
         % case we don't care to calculate this cost).
         ZScorePhotons = PhotonsDev ...
             / sqrt(StDevPhotonsCurrent^2+PhotonStDev(bb)^2);
-        ZScoreD = abs(DEndCurrent(1) ...
-            -DiffusionConstants(StartIndexCurrent, 1)) ...
-            / sqrt(DEndCurrent(2)^2 ...
-            +DiffusionConstants(StartIndexCurrent, 2)^2);
         if ((DeltaFrame<=MaxFrameGap) ...
                 && (Separation<=MaxDistGC) ...
                 && (abs(XJump/Sigma_X)<=MaxZScoreDist) ...
                 && (abs(YJump/Sigma_Y)<=MaxZScoreDist) ...
-                && (ZScorePhotons<=MaxZScorePhotons) ...
-                && (ZScoreD<=MaxZScoreD))
+                && (ZScorePhotons<=MaxZScorePhotons))
             % Define the log-likelihood of the observed X, Y from
             % FrameNumber and FrameNumber+1 having come from the Normal
             % distributions defined by Sigma_X and Sigma_Y (i.e., this is
@@ -242,13 +229,12 @@ for ee = 1:NTraj
     end
 end
 
-% Rescale the trajectory coordinates to match the size of
-% SMF.Tracking.Rho_off (which might be given as a density image instead of
-% a scalar).
-Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
-Y = min(size(SMF.Tracking.Rho_off, 1), ...
+% Rescale the trajectory coordinates to match the size of RhoOff (which 
+% can be an image with the same aspect ratio as SMD coordinates).
+Scale = size(RhoOff) ./ [SMD.YSize, SMD.XSize];
+Y = min(size(RhoOff, 1), ...
     max(1, ceil((SMD.Y(StartEndIndices(:, 2))-0.5)*Scale(1) + 0.5)));
-X = min(size(SMF.Tracking.Rho_off, 2), ...
+X = min(size(RhoOff, 2), ...
     max(1, ceil((SMD.X(StartEndIndices(:, 2))-0.5)*Scale(2) + 0.5)));
 
 % Fill in the "birth" block (lower left) of the cost matrix.
@@ -273,7 +259,7 @@ for bb = 1:NTraj
     %       conventions used in MATLAB: usually, MATLAB is column oriented,
     %       but our usage of CMIndices here (and sparse()) is row oriented.
     FrameGap = min(MaxFrameGap, StartFrameCurrent-FirstFrame);
-    CostTurningOn = -log(SMF.Tracking.Rho_off(Y(bb), X(bb)) * (1-exp(-K_on)));
+    CostTurningOn = -log(RhoOff(Y(bb), X(bb)) * (1-exp(-K_on)));
     CMElements(sub2ind(CMSize, bb*OnesArray, (NTraj+1):(2*NTraj))) = ...
         CostTurningOn + FrameGap*K_on;
 end

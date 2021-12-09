@@ -9,9 +9,8 @@ function [] = autoTrack(obj)
 
 
 % Perform the iterative tracking.
-obj.DiffusionCoefficients = [];
 NoBatchIter = (obj.SMF.Tracking.NIterMaxBatch == 1);
-obj.updateTrackingParams();
+obj.updateTrackingParams(obj.SMD)
 ParamsHistory = {obj.SMF.Tracking};
 for ii = 1:obj.SMF.Tracking.NIterMax
     % Send an update to the command window.

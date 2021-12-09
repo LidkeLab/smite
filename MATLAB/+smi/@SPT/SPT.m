@@ -98,20 +98,13 @@ classdef SPT < handle
         SMDPreThreshPreCR = struct([]);
         
         % Scaled raw data.
-        ScaledData;
+        ScaledData
+        
+        % Density of dark emitters. (see obj.estimateDensities() for usage)
+        RhoOff
     end
     
-    properties (Hidden)
-        % Diffusion coefficients for each localization in trajectories.
-        % This array is organized as a two-column array as [D, D_SE]
-        % NOTE: This is only used when UseTrackByTrackD is set to true.
-        %       I've made this hidden because the user shouldn't really be
-        %       using these values to do anything.  If they're needed, the
-        %       user should produce them in the diffusion estimator class,
-        %       or access them in the appropriate properties of
-        %       obj.DiffusionEstimator.
-        DiffusionCoefficients = [];
-        
+    properties (Hidden)       
         % Copy of the SMF structure.
         % This is used for a few random tests/things like
         % obj.TryLowPValueLocs which, when enabled, requires us to modify
@@ -196,13 +189,13 @@ classdef SPT < handle
     
     methods (Static)
         [Success] = unitTestFFGC()
-        [SMD] = genTrajFF(SMD, SMF, DiffusionCoefficients, NonLinkMarker);
-        [SMD] = genTrajGC(SMD, SMF, DiffusionCoefficients, ...
+        [SMD] = genTrajFF(SMD, SMF, RhoOff, NonLinkMarker);
+        [SMD] = genTrajGC(SMD, SMF, RhoOff, ...
             NonLinkMarker, UseSparseMatrices);
-        [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-            DiffusionCoefficients, FrameNumber, NonLinkMarker);
+        [CostMatrix] = createCostMatrixFF(SMD, SMF, RhoOff, ...
+            FrameNumber, NonLinkMarker);
         [CostMatrix, StartEndIndices] = createCostMatrixGC(SMD, SMF, ...
-            DiffusionCoefficients, NonLinkMarker, CreateSparseMatrix);
+            RhoOff, NonLinkMarker, CreateSparseMatrix);
         [Assign12, Cost12] = solveLAP(CostMatrix, NonlinkMarker);
         [SMD] = connectTrajFF(SMD, Link12, FrameNumber);
         [SMD] = connectTrajGC(SMD, Link12);

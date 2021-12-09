@@ -103,7 +103,7 @@ classdef SingleMoleculeData
         
         [SMD] = catSMD(SMD1, SMD2, ShowWarnings)
         [Density] = computeDensity(SMD);
-        [DensityIm] = computeDensityImage(SMD, SigmaScale, Mag, ...
+        [DensityIm] = computeDensityImage(SMD, SigmaSmooth, Mag, ...
             NEmitters, TimeSeries, FastGauss);
         [SMD] = isolateSubSMD(SMD, SubIndices);
         [SMD] = isolateSubROI(SMD, ROI);
