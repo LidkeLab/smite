@@ -25,7 +25,6 @@ rng(1234)
 % Generate some simulated data in units of photons.
 FrameSizeFull = 256; % don't change this! other numbers assume = 256
 NFrames = 10;
-Background = 10;
 SMD = smi_core.SingleMoleculeData.createSMD();
 SMD.X = repmat(128 + 64*[0; 1; 1; -1; -1], [NFrames, 1]);
 SMD.Y = repmat(128 + 64*[0; 1; -1; 1; -1], [NFrames, 1]);
@@ -33,8 +32,10 @@ SMD.Photons = 1e3 * ones(5*NFrames, 1);
 SMD.PSFSigma = 1.3;
 SMD.FrameNum = repelem((1:NFrames).', 5);
 SMD.Bg = zeros(5*NFrames, 1);
-[~, ScaledData] = smi_sim.GaussBlobs.gaussBlobImage(...
-    FrameSizeFull, NFrames, SMD, Background);
+SMD.NFrames = NFrames;
+SMD.YSize = FrameSizeFull;
+SMD.XSize = FrameSizeFull;
+[~, ScaledData] = smi_sim.GaussBlobs.gaussBlobImage(SMD);
 
 % Generate an SMF structure.
 SMF = smi_core.SingleMoleculeFitting;
