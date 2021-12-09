@@ -26,7 +26,7 @@ function success = unitTest()
     SMF = smi_core.SingleMoleculeFitting();
 
     %Data=SMA_Sim.gaussBlobImage();
-    Data=smi_sim.GaussBlobs.gaussBlobImage();
+    Data=smi_sim.GaussBlobs.genRandomBlobImage();
 
     %Data2Photons
     CameraType='EMCCD';
