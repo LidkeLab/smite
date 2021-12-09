@@ -34,8 +34,8 @@ function success = unitTest()
    n_frames = 1000;   % number of frames
 
    % Generate localizations and put them into an SMR structure.
-   [Data, SMR] = SMA_Sim.smlmData(shape, 'No', 1, 0.0005, 1, 2000, rho, ...
-                                  1.3, 15, XYSize, n_frames, 'Equib');
+   %[Data, SMR] = SMA_Sim.smlmData(shape, 'No', 1, 0.0005, 1, 2000, rho, ...
+   %                               1.3, 15, XYSize, n_frames, 'Equib');
 
    n_particles = numel(SMR.X);
    SMR.XSize = XYSize;
