@@ -70,6 +70,9 @@ P2nm = PixelSizeZUnit * 1000;
 
 % Re-organize so X and Y are the first inputs.
 SMDin = SMDsim;
+SMDin.X_SE = ones(n_particles, 1);
+SMDin.Y_SE = ones(n_particles, 1);
+SMDin.bg = zeros(n_particles, 1);
 SMDin.PixelSizeZUnit = PixelSizeZUnit;
 
 % Histogram image of this data.
@@ -260,7 +263,11 @@ if n_nans > 0
    X_Yrue(nans) = [];
 end
 
-% Consistency check.
+% Consistency checks.  These should be 0 to a few hundred if all is correct.
+%
+% SMDin.X/Y, SMD.X/Y are the drifted/drift corrected coordinates, respectively.
+% SMD.DriftX/Y are the drift corrections defined such that
+%    drifted coordinates - drift correction = drift corrected coordinates
 N = numel(SMD.X);
 X_inDC = zeros(N, 1, 'single');
 Y_inDC = zeros(N, 1, 'single');
@@ -274,11 +281,15 @@ for k = 1:N
    X_unDC(k) = SMD.X(k) + SMD.DriftX(i, j);
    Y_unDC(k) = SMD.Y(k) + SMD.DriftY(i, j);
 end
+% consistency_un =
+%    drifted coordinates - (drift corrected coordinates + drift correction)
+% consistency_in =
+%    drifted corrected coordinates - (drifted coordinates - drift correction)
 consistency_un = sum(abs(SMDin.X - X_unDC) + abs(SMDin.Y - Y_unDC));
 consistency_in = sum(abs(SMD.X - X_inDC) + abs(SMD.Y - Y_inDC));
-fprintf('SMDin.X/Y - (SMD.X/Y + SMD.DriftX/Y = %f nm\n', ...
+fprintf('SMDin.X/Y - (SMD.X/Y + SMD.DriftX/Y) = %f nm\n', ...
         consistency_un * P2nm);
-fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y = %f nm\n', ...
+fprintf('SMD.X/Y - (SMDin.X/Y - SMD.DriftX/Y) = %f nm\n', ...
         consistency_in * P2nm);
 
 correctedDriftIm = smi_vis.GenerateImages.histogramImage(SMD, SRImageZoom);
