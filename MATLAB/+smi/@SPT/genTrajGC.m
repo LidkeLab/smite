@@ -1,4 +1,4 @@
-function [SMD] = genTrajGC(SMD, SMF, DiffusionConstants, ...
+function [SMD] = genTrajGC(SMD, SMF, RhoOff, ...
     NonLinkMarker, UseSparseMatrices)
 %genTrajFF connects trajectory segments into longer trajectories.
 % This method solves the linear assignment problem for connecting
@@ -11,11 +11,8 @@ function [SMD] = genTrajGC(SMD, SMF, DiffusionConstants, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD
-%                       (column 1) and their SEs (column 2). If this is not 
-%                       provided, we'll use SMF.Tracking.D for all
-%                       trajectories.
-%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
+%   RhoOff: Density of dark emitters, given as an image with the same
+%           aspect ratio as the SMD coordinate system.
 %   NonLinkMarker: A marker in the output CostMatrix that indicates we
 %                  don't want to select that element in the linear
 %                  assignment problem.
@@ -54,8 +51,8 @@ for nn = UniqueClusters.'
     SMDSub = smi_core.SingleMoleculeData.isolateSubSMD(SMD, ...
         TrajClusters == nn);
     SMDSub.ConnectID = smi_helpers.compressToRange(SMDSub.ConnectID);
-    CostMatrix = smi.SPT.createCostMatrixGC(SMDSub, SMF, ...
-        DiffusionConstants, NonLinkMarker, UseSparseMatrices);
+    CostMatrix = smi.SPT.createCostMatrixGC(SMDSub, SMF, RhoOff, ...
+        NonLinkMarker, UseSparseMatrices);
     Link12 = smi.SPT.solveLAP(CostMatrix);
     SMDSub = smi.SPT.connectTrajGC(SMDSub, Link12);
     SMDOut = smi_core.SingleMoleculeData.catSMD(SMDOut, SMDSub, false);

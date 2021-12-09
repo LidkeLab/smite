@@ -8,8 +8,7 @@ function generateTrajectories(obj)
 
 
 % Perform the frame-to-frame connection of the localizations.
-obj.SMD = obj.genTrajFF(obj.SMD, obj.SMF, ...
-    obj.DiffusionCoefficients, obj.NonLinkMarker);
+obj.SMD = obj.genTrajFF(obj.SMD, obj.SMF, obj.RhoOff, obj.NonLinkMarker);
 
 % Throw away unconnected low p-value localizations.
 if obj.SMF.Tracking.TryLowPValueLocs
@@ -24,8 +23,8 @@ end
 obj.SMD.ConnectID = smi_helpers.compressToRange(obj.SMD.ConnectID);
 
 % Perform the gap closing on the trajectory segments.
-obj.SMD = obj.genTrajGC(obj.SMD, obj.SMF, ...
-    obj.DiffusionCoefficients, obj.NonLinkMarker, obj.UseSparseMatrices);
+obj.SMD = obj.genTrajGC(obj.SMD, obj.SMF, obj.RhoOff, ...
+    obj.NonLinkMarker, obj.UseSparseMatrices);
 
 % Convert obj.SMD to a TR structure.
 obj.TR = smi_core.TrackingResults.convertSMDToTR(obj.SMD);

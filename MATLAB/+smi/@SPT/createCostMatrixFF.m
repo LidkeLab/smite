@@ -1,5 +1,5 @@
-function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
-    DiffusionConstants, FrameNumber, NonLinkMarker)
+function [CostMatrix] = ...
+    createCostMatrixFF(SMD, SMF, RhoOff, FrameNumber, NonLinkMarker)
 %createCostMatrixFF generates frame-to-frame connection cost matrix.
 % This method creates the cost matrix for the frame-to-frame connection of
 % localizations present in SMD.
@@ -11,11 +11,8 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 %   SMF: Single Molecule Fitting structure defining many of the parameters
 %        we'll just to populate cost matrix elements.
 %       (see smi_core.SingleMoleculeFitting)
-%   DiffusionConstants: Diffusion constants for each localization in SMD
-%                       (column 1) and their SEs (column 2). If this is not
-%                       provided, we'll use SMF.Tracking.D for all
-%                       trajectories.
-%                       (numel(SMD.FrameNum)x2 array)(px^2/frame)
+%   RhoOff: Density of dark emitters, given as an image with the same
+%           aspect ratio as the SMD coordinate system.
 %   FrameNumber: The frame containing the localizations for which we want
 %                to construct a cost matrix (for connection to
 %                FrameNumber+1).
@@ -47,10 +44,6 @@ function [CostMatrix] = createCostMatrixFF(SMD, SMF, ...
 if (~exist('NonLinkMarker', 'var') || isempty(NonLinkMarker))
     NonLinkMarker = -1;
 end
-if (~exist('DiffusionConstants', 'var') || isempty(DiffusionConstants))
-    DiffusionConstants = [SMF.Tracking.D, inf] ...
-        .* ones(numel(SMD.FrameNum), 1);
-end
 
 % Determine which emitters in SMD were present in frames FrameNumber and
 % FrameNumber+1.
@@ -69,7 +62,7 @@ for ii = 1:NFrame1
     X_SEFrame1 = SMD.X_SE(CurrentIndicesFrame1);
     YFrame1 = SMD.Y(CurrentIndicesFrame1);
     Y_SEFrame1 = SMD.Y_SE(CurrentIndicesFrame1);
-    DFrame1 = DiffusionConstants(CurrentIndicesFrame1, :);
+    DFrame1 =  SMF.Tracking.D(CurrentIndicesFrame1);
     for jj = 1:NFrame2
         % Isolate the localizations in frame FrameNumber+1 from SMD.
         CurrentIndicesFrame2 = EmitterIndicesFrame2(jj);
@@ -77,7 +70,7 @@ for ii = 1:NFrame1
         X_SEFrame2 = SMD.X_SE(CurrentIndicesFrame2);
         YFrame2 = SMD.Y(CurrentIndicesFrame2);
         Y_SEFrame2 = SMD.Y_SE(CurrentIndicesFrame2);
-        DFrame2 = DiffusionConstants(CurrentIndicesFrame2, :);
+        DFrame2 =  SMF.Tracking.D(CurrentIndicesFrame2);
         
         % Define the standard deviations of the distribution of observed X
         % and Y separations between two localizations in consecutive
@@ -100,12 +93,9 @@ for ii = 1:NFrame1
         XJump = XFrame1 - XFrame2;
         YJump = YFrame1 - YFrame2;
         Separation = sqrt(XJump^2 + YJump^2);
-        ZScoreD = abs(DFrame1(1)-DFrame2(1)) ...
-            / sqrt(DFrame1(2)^2 + DFrame2(2)^2);
         if ((Separation>SMF.Tracking.MaxDistFF) ...
                 || (abs(XJump/Sigma_X)>SMF.Tracking.MaxZScoreDist) ...
-                || (abs(YJump/Sigma_Y)>SMF.Tracking.MaxZScoreDist) ...
-                || (ZScoreD>SMF.Tracking.MaxZScoreD))
+                || (abs(YJump/Sigma_Y)>SMF.Tracking.MaxZScoreDist))
             continue
         end
         
@@ -141,21 +131,21 @@ end
 % FrameNumber and FrameNumber+1 (the costs of introducing a new emitter
 % appearing in FrameNumber+1/an emitter disappearing in FrameNumber+1,
 % respectively).
-if isscalar(SMF.Tracking.Rho_off)
-    CostBirth = -log(SMF.Tracking.Rho_off * (1-exp(-SMF.Tracking.K_on)));
+if isscalar(RhoOff)
+    CostBirth = -log(RhoOff * (1-exp(-SMF.Tracking.K_on)));
 else
     % Rescale the data to match the size of our density image.
-    Scale = size(SMF.Tracking.Rho_off) ./ [SMD.YSize, SMD.XSize];
-    Y = min(size(SMF.Tracking.Rho_off, 1), ...
+    Scale = size(RhoOff) ./ [SMD.YSize, SMD.XSize];
+    Y = min(size(RhoOff, 1), ...
         max(1, ceil((SMD.Y(EmitterIndicesFrame2)-0.5)*Scale(1) + 0.5)));
-    X = min(size(SMF.Tracking.Rho_off, 2), ...
+    X = min(size(RhoOff, 2), ...
         max(1, ceil((SMD.X(EmitterIndicesFrame2)-0.5)*Scale(2) + 0.5)));
     
     % Compute the birth costs
     CostBirth = inf(numel(Y));
     for ii = 1:numel(Y)
-        CostBirth(:, ii) = -log(SMF.Tracking.Rho_off(Y(ii), X(ii)) ...
-            * (1-exp(-SMF.Tracking.K_on)));
+        CostBirth(:, ii) = ...
+            -log(RhoOff(Y(ii), X(ii)) * (1-exp(-SMF.Tracking.K_on)));
     end
 end
 CostDeath = -log(1-exp(-SMF.Tracking.K_off));
