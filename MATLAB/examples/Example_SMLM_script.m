@@ -1,7 +1,7 @@
 % A real example used to develop SMLM.  See also smi.SMLM.unitTest
 
 % If true, save plots produced into the ResultsDir defined below for a full
-% analysis or a test fit with SMLMobj.Verbose < 5.
+% analysis or a test fit with SMLMobj.VerboseTest < 5.
 Saving = false;
 
 % --- 2D ---
@@ -51,9 +51,11 @@ SMF.DriftCorrection.On    = true;
 
 % Create an SMLM object using the values in the SMF structure.
 SMLMobj = smi.SMLM(SMF);
-% Do a test fit, displaying all the results to the screen (if Verbose >= 5,
-% otherwise saving the results in ResultsDir/TestFit).
-SMLMobj.Verbose = 5;
+SMLMobj.Verbose = 1;
+% Do a test fit, displaying all the results to the screen (if VerboseTest >= 5,
+% otherwise saving the results in ResultsDir/TestFit).  Note that calling
+% testFit from the smi.gui is equivalent to what we are doing here.
+SMLMobj.VerboseTest = 5;
 SMLMobj.testFit(1);
 % Do a full analysis, saving results in ResultsDir.
-%SMLMobj.fullAnalysis();
+SMLMobj.fullAnalysis();
