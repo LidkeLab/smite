@@ -48,11 +48,17 @@ NComponents = NParams / 2;
 % NOTE: For emphasis, 'LocVarianceSum' is the sum of the localization
 %       variances of the two localizations, thus we don't need to
 %       multiply it by a factor of 2.
+% NOTE: Occasionally, outlier data (i.e., very large jumps due to, e.g.,
+%       tracking errors) lead to infinite log-likelihood.  I'm ignoring
+%       those outliers using the JumpLikelihood(JumpLikelihood == 0) = 1;
+%       below (so that log(JumpLikelihood)=0 for those terms).
 Variance = 2*FrameLagsAll*MotionParams(1:NComponents) ...
     + mean(LocVarianceSum);
-LogLikelihood = sum(log(sum((sqrt(SquaredDisplacement)./Variance) ...
+JumpLikelihood = sum((sqrt(SquaredDisplacement)./Variance) ...
     .* exp(-0.5*SquaredDisplacement./Variance) ...
-    .* MotionParams((NComponents+1):end), 2)));
+    .* MotionParams((NComponents+1):end), 2);
+JumpLikelihood(JumpLikelihood == 0) = 1;
+LogLikelihood = sum(log(JumpLikelihood));
 
 
 end
