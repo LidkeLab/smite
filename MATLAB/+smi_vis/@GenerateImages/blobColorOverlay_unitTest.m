@@ -34,11 +34,11 @@ SMD.FrameNum = SMD.FrameNum(1:NBlobs/2);
 SMD.Bg=5*ones(NBlobs/2,1); % now add background to SMD for overlay
 
 % test with no output
-fprintf('Testing with no output...\n');
-smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
-fprintf('Check sequence if you like, it will close in 20 sec...\n');
-pause(20)
-close all
+%fprintf('Testing with no output...\n');
+%smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
+%fprintf('Check sequence if you like, it will close in 20 sec...\n');
+%pause(20)
+%close all
 
 % test with output
 fprintf('Testing with output...\n');
