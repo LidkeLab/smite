@@ -13,12 +13,12 @@
 
 function out = isect(x,a,b)
 % Avoid being in menu
-%if nargin==1
-%   if ischar(varargin{1}) & strcmp(varargin{1},'DIP_GetParamList')
-%      out = struct('menu','none');
-%      return
-%   end
-%end
+if nargin==1
+   if ischar(varargin{1}) & strcmp(varargin{1},'DIP_GetParamList')
+      out = struct('menu','none');
+      return
+   end
+end
 
 if (size(x)~= size(a)) OR (size(x)~= size(b))
     error('x, a, and b must have the same size.');
