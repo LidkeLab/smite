@@ -12,8 +12,21 @@ obj.GUIFigure = figure('MenuBar', 'none', 'NumberTitle', 'off', ...
     'Units', 'pixels', ...
     'Position', [DefaultFigurePosition(1:2), 1000, 500]);
 
+% Add a panel for loading existing data.
+LoadPanelPos = [0, 0.8, 0.25, 0.2];
+LoadPanel = uipanel(obj.GUIFigure, ...
+    'Title', 'Load Data', ...
+    'FontWeight', 'bold', 'Units', 'normalized', ...
+    'Position', LoadPanelPos);
+ButtonSize = [0, 0, 1, 1];
+LoadResultsPos = [0, 0, ButtonSize(3:4)];
+uicontrol('Parent', LoadPanel, ...
+    'Style', 'pushbutton', 'String', 'Load Results', ...
+    'Units', 'normalized', 'Position', LoadResultsPos, ...
+    'Callback', @loadResults);
+
 % Add a panel for display options.
-ParamsPanelPos = [0, 0, 0.25, 1];
+ParamsPanelPos = [0, 0, LoadPanelPos(3), 1-LoadPanelPos(4)];
 ParamsPanel = uipanel(obj.GUIFigure, ...
     'Title', 'Parameters', ...
     'FontWeight', 'bold', 'Units', 'normalized', ...
@@ -26,12 +39,19 @@ ControlPanel = uipanel(obj.GUIFigure, 'Title', 'Movie Controls', ...
     'FontWeight', 'bold', 'Units', 'normalized', ...
     'Position', ControlPanelPos);
 FrameSliderPos = [0.1, 0.5, 0.89, 0.5];
+if isempty(obj.TRInternal)
+    SliderMaxVal = 1;
+    SliderStep = [1, 1];
+else
+    SliderMaxVal = obj.TRInternal(1).NFrames;
+    SliderStep = [1, 1] / SliderMaxVal;
+end
 FrameSlider = uicontrol('Parent', ControlPanel, ...
     'Style', 'slider', ...
     'Units', 'normalized', 'Position', FrameSliderPos, ...
     'HorizontalAlignment', 'left', ...
-    'Min', 1, 'Max', obj.TRInternal(1).NFrames, ...
-    'SliderStep', [1, 1] / obj.TRInternal(1).NFrames, ...
+    'Min', 1, 'Max', SliderMaxVal, ...
+    'SliderStep', SliderStep, ...
     'Value', 1, ...
     'Callback', @frameSlider);
 FrameNumDisplayPos = [FrameSliderPos(1), 0, ...
@@ -68,7 +88,7 @@ uicontrol('Parent', SaveMoviePanel, 'Style', 'pushbutton', ...
     'Callback', @saveMovieButtonClicked);
 
 % Add a panel to contain trajectory information about clicked trajectories.
-CurrentTrajIndex = min([obj.TRInternal.ConnectID]);
+CurrentTrajIndex = 1;
 TrajInfoPanelPos = ...
     [SaveMoviePanelPos(1), sum(SaveMoviePanelPos([2, 4])), ...
     SaveMoviePanelPos(3), MoviePanelPos(4)];
@@ -359,6 +379,54 @@ end
             'TR.FrameNum and cannot be plotted'])
         plot(PlotAxes, FrameNum, DesiredField, 'x')
         xlabel(PlotAxes, 'Frame number (frames)')
+    end
+
+    function loadResults(Source, ~)
+        %loadResults loads tracking results from a .mat file.
+        % This function loads the selected .mat file and additionally
+        % attempts to load the raw data used to generate the results.
+        
+        % Wrap everything in a try/catch so we can re-enable the load
+        % button if there's an error.
+        Source.Enable = 'off';
+        try
+            % Ask the user to select an results file.
+            [File, Path] = uigetfile('*.mat', 'Select a *Results.mat file');
+            
+            % Load the results and attempt to load the raw data.
+            if ~isequal(File, 0)
+                % Load results.
+                load(fullfile(Path, File), 'TR', 'SMD', 'SMF')
+                obj.TR = TR;
+                obj.SMD = SMD;
+                if exist('SMF', 'var')
+                    % If the SMF exists, store it and attempt to load the
+                    % designated raw data.
+                    obj.SMF = SMF;
+                    LD = smi_core.LoadData;
+                    [~, obj.RawData] = LD.loadRawData(obj.SMF, 1, ...
+                        obj.SMF.Data.DataVariable);
+                    obj.prepRawData()
+                    obj.prepAxes()
+                    obj.makeFrame(obj.MovieAxes, ...
+                        obj.TRInternal, obj.ScaledData(:, :, :, end), ...
+                        obj.Params, obj.SMF, obj.SMD, obj.Params.ZFrames(1));
+                end
+                
+                % Update the frame slider.
+                FrameSlider.Value = 1;
+                FrameSlider.Min = 1;
+                FrameSlider.Max = obj.TRInternal(1).NFrames;
+                FrameSlider.SliderStep = [1, 1] / FrameSlider.Max;
+                Source.Enable = 'on';
+            else
+                Source.Enable = 'on';
+                return
+            end
+        catch MException
+            Source.Enable = 'on';
+            rethrow(MException)
+        end
     end
 
 

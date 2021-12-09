@@ -78,7 +78,7 @@ classdef GenerateMovies < handle
     
     properties (Hidden, GetAccess = 'protected')
         % Internally modified version of the user set field 'TR'.
-        TRInternal
+        TRInternal = smi_core.TrackingResults.createTR();
     end
     
     methods
