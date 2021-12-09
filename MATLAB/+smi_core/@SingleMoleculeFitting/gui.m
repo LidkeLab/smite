@@ -314,6 +314,9 @@ for ff = 1:NSMFFields
             else
                 % Make the edit box (the default behavior for property
                 % fields).
+                if iscolumn(CurrentSubfield)
+                    CurrentSubfield = CurrentSubfield.';
+                end
                 UIControls{ff}{ss}{1} = uicontrol(PropertyTabs{ff}, ...
                     'Style', 'edit', ...
                     'String', num2str(CurrentSubfield), ...
@@ -474,6 +477,9 @@ propertiesToGUI()
                     if islogical(PropertyValue)
                         UIControls{nn}{mm}{1}.Value = PropertyValue;
                     else
+                        if iscolumn(PropertyValue)
+                            PropertyValue = PropertyValue.';
+                        end
                         UIControls{nn}{mm}{1}.String = ...
                             num2str(PropertyValue);
                     end
