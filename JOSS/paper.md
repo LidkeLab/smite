@@ -1,5 +1,5 @@
 ---
-title: 'SMITE: Single Molecule Imaging Toolbox Extraordinaire
+title: 'SMITE: Single Molecule Imaging Toolbox Extraordinaire'
 tags:
   - MATLAB
   - single molecule localization microscopy (SMLM)
