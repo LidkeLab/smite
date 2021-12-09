@@ -13,28 +13,28 @@ authors:
     orcid: 0000-0002-3520-7605
     affiliation: 1
   - name: Mohamadreza Fazel
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
     orcid: 0000-0002-2571-0418
     affiliation: 1
   - name: Sandeep Pallikkuth
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Sajjad Khan
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Marjolein B. M. Meddens
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Will Kanagy
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Derek Rinaldi
-    orcid: 
+#   orcid: 
     affiliation: 1
   - name: Elton Jhamba
-    orcid: 
+    orcid: 0000-0002-5272-6466
     affiliation: 1
   - name: Keith A. Lidke^[corresponding author]
     orcid: 0000-0002-9328-4318
