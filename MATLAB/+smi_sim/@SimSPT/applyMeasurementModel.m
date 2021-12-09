@@ -70,7 +70,6 @@ if (SimParams.SubframeDensity > 1)
         Y(nn, :) = sum(YCurrent./XYVarCurrent, 2) ...
             ./ sum(1./XYVarCurrent, 2);
     end
-    TrajStructModel.IsOn = IsOn;
     TrajStructModel.Photons = Photons;
     TrajStructModel.Photons_SE = sqrt(Photons);
     TrajStructModel.Bg = SimParams.Bg * ones(size(Photons));
@@ -84,11 +83,13 @@ else
     TrajStructModel.Trajectories_SE = ...
         repmat(SimParams.PSFSigma ./ sqrt(TrajStructModel.Photons), 1, 1, 2);
 end
+TrajStructModel.IsOn = (TrajStructModel.IsOn ...
+    & (TrajStructModel.Photons>=SimParams.MinIntensity));
 TrajStruct = TrajStructModel;
-TrajStruct.Trajectories = TrajStruct.Trajectories ...
-    + TrajStructModel.Trajectories_SE.*randn(NTraj, SimParams.NFrames, 2);
 TrajStruct.Photons = poissrnd(TrajStruct.Photons);
 TrajStruct.Bg = poissrnd(TrajStruct.Bg);
+TrajStruct.Trajectories = TrajStruct.Trajectories ...
+    + TrajStructModel.Trajectories_SE.*randn(NTraj, SimParams.NFrames, 2);
 
 
 end

@@ -34,6 +34,12 @@ function [ParamStruct] = defineDefaultParams()
 %                Intensity: Photons present in the simulated trajectory in
 %                           each full frame. 
 %                           (photons / frame)(Default = 1000)
+%                MinIntensity: Minimum allowed photons.  This is added to
+%                              prevent strange effects after noising, e.g.,
+%                              if an emitter had a tiny number of photons
+%                              in a frame, Poisson noise might result in an
+%                              apparent 0 photon count. 
+%                              (photons / frame)(Default = 50)
 %                Bg: Uniform background signal per full frame stored for
 %                    trajectories. (photons / frame)(Default = 5)
 %                D: Diffusion coefficients(s) for the Brownian motion 
@@ -83,6 +89,7 @@ ParamStruct.InitialDensityMask = ones(ParamStruct.FrameSize);
 ParamStruct.LabelingEfficiency = 1;
 ParamStruct.BoundaryCondition = 'Periodic';
 ParamStruct.Intensity = 1000;
+ParamStruct.MinIntensity = 50;
 ParamStruct.Bg = 5;
 ParamStruct.D = 0.1;
 ParamStruct.InteractionDistance = 0.5;
