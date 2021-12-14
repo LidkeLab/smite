@@ -27,6 +27,9 @@ authors:
   - name: Marjolein B. M. Meddens
 #   orcid: 
     affiliation: 1
+  - name: Farzin Farzam
+#   orcid: 
+    affiliation: 1
   - name: Will Kanagy
 #   orcid: 
     affiliation: 1
@@ -63,7 +66,9 @@ microscropy (SMLM), which is used to produce 2D or 3D high or super-resolution
 images of static structures, and single particle tracking (SPT), which follows 
 the time course of one or a very small number of tagged molecules.  These
 procedures all require intensive numerical computation, and the methods are
-tightly interwoven.
+tightly interwoven.  The distribution includes some C (mex) and CUDA code
+embedded in a MATLAB infrastructure in order to provide GPU speed ups for some
+computations.
 
 # Statement of need
 
@@ -80,6 +85,15 @@ and SMD structures.  SMITE is organized into a set of namespaces that group
 similar tools and concepts.  The namespace  `+smi`  containes the highest level
 tools that will be the most common entry point for processing SMLM and SPT data
 sets. 
+
+Code coverage includes mature SMLM data analysis techniques (gain and offset
+corrections applied to raw data, finding localizations, thresholding
+localizations based on various criteria, frame connection and drift
+correction), SMLM simulations, sophisticated SPT analyses, post-processing
+clustering and statistical analyses (diffusion estimation and hidden Markov
+models for dimer production), a variety of visualizations, experimental point
+spread function creation and characterization, all sprinkled with various
+examples of usage.  Interaction with these tools is via GUIs or scripting.
 
 SMITE is a tool designed to be used by researchers and upper level students
 interested in fluorescence single molecule imaging and applications.  Parts of
