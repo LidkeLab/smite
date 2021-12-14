@@ -26,7 +26,8 @@ function [Shift, IntShift, CorrData, Params] = ...
 %   Params: Structure of parameters.
 %           MaxOffset: Maximum offset between Stack1 and Stack2 to be
 %                      considered in the calculation of 'Shift' and
-%                      'IntShift'.
+%                      'IntShift'.  This also gets applied as a maximum
+%                      shift for the output 'Shift'.
 %                      (1x3)(Default = ceil(size(Stack1)/2))
 %           FitOffset: Maximum offset from the peak of the
 %                      cross-correlation curve for which data will be fit
@@ -328,6 +329,7 @@ RawOffsetFit = [RawOffsetFitY; RawOffsetFitX; RawOffsetFitZ];
 % Determine the predicted offset between the stack.
 Shift = Params.MaxOffset.' - RawOffsetFit + 1;
 Shift(isnan(Shift)) = 0;
+Shift = min(Params.MaxOffset.', max(-Params.MaxOffset.', Shift));
 
 % Create arrays of the polynomial fits to use for visualization.
 XArrayDense = linspace(XArray(1), XArray(end), max(Stack1Size));
