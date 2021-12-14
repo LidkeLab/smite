@@ -103,7 +103,7 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
         % Prepare the movie maker.
         MovieMaker = smi_vis.GenerateMovies;
         MovieMaker.TR = obj.TR;
-        MovieMaker.SMD = obj.SMDPreThresh;
+        MovieMaker.SMD = obj.SMD;
         MovieMaker.RawData = obj.ScaledData;
         MovieMaker.SMF = copy(obj.SMF);
         MovieMaker.gui()
