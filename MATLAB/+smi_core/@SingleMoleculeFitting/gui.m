@@ -710,7 +710,7 @@ propertiesToGUI()
         Response = questdlg(['Are you sure you want to reset the SMF ', ...
             'properties to their defaults?'], 'Warning', ...
             'yes', 'no', 'no');
-        if strcmp(Response, 'no')
+        if (strcmp(Response, 'no') || isempty(Response))
             return
         end
         
