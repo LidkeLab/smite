@@ -66,10 +66,15 @@ function [Shift, IntShift, CorrData, Params] = ...
 %           on the data.
 %
 % REQUIRES:
-%   MATLAB Parallel Computing Toolbox (if setting UseGPU = 1)
-%   Supported NVIDIA CUDA GPU (if setting UseGPU = 1)
+%   MATLAB Statistics and Machine Learning Toolbox (if setting
+%       SymmetrizeFit = true)
+%   MATLAB Parallel Computing Toolbox (if setting UseGPU = true)
+%   Supported NVIDIA CUDA GPU (if setting UseGPU = true)
 %
 % CITATION:
+%   Wester, M.J., Schodt, D.J., Mazloom-Farsibaf, H. et al. Robust,
+%   fiducial-free drift correction for super-resolution imaging. 
+%   Sci Rep 11, 23672 (2021). https://doi.org/10.1038/s41598-021-02850-7
 
 % Created by:
 %   David J. Schodt (LidkeLab 2018)

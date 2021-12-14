@@ -23,7 +23,10 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 %
 % CITATION: 
 %   Cross-correlation shift finding method: 
-%       https://doi.org/10.1101/2021.03.26.437196
+%       Wester, M.J., Schodt, D.J., Mazloom-Farsibaf, H. et al. Robust,
+%       fiducial-free drift correction for super-resolution imaging. 
+%       Sci Rep 11, 23672 (2021). 
+%       https://doi.org/10.1038/s41598-021-02850-7
 %   Iterative idea motivated by https://doi.org/10.1117/12.603304 , noting
 %       that the xcorr bias should approach zero as the shift approaches
 %       zero.
