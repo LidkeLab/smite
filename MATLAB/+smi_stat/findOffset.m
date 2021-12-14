@@ -274,7 +274,7 @@ if Params.SymmetrizeFit
     YArrayProposed = (max(1, ProposedInd-Params.FitOffset(1)) ...
         : min(size(XCorr3D, 1), ProposedInd+Params.FitOffset(1))).';
     YDataProposed = ...
-        XCorr3D(YArray, RawOffsetIndices(2), RawOffsetIndices(3));
+        XCorr3D(YArrayProposed, RawOffsetIndices(2), RawOffsetIndices(3));
     if (abs(skewness(YDataProposed)) < abs(YSkewInit))
         RawOffsetIndices(1) = ProposedInd;
         YArray = YArrayProposed;
@@ -287,7 +287,7 @@ if Params.SymmetrizeFit
     XArrayProposed = (max(1, ProposedInd-Params.FitOffset(2)) ...
         : min(size(XCorr3D, 2), ProposedInd+Params.FitOffset(2))).';
     XDataProposed = ...
-        XCorr3D(RawOffsetIndices(1), XArray, RawOffsetIndices(3)).';
+        XCorr3D(RawOffsetIndices(1), XArrayProposed, RawOffsetIndices(3)).';
     if (abs(skewness(XDataProposed)) < abs(XSkewInit))
         RawOffsetIndices(2) = ProposedInd;
         XArray = XArrayProposed;
