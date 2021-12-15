@@ -155,7 +155,7 @@ methods
         end
 
         % Initialize FitFramePreFC for this invocation of analyzeAll.
-        obj.FitFramePreFC = cell(numel(DatasetList), 1);
+        obj.FitFramePreFC = cell(max(DatasetList), 1);
 
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
