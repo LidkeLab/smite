@@ -168,7 +168,7 @@ if ismember("FitFrame", PlotDo)
    for ii=1:length(Nloc_frame)-1
        FitFrame=cat(2, FitFrame, Nloc_frame{ii+1});
    end
-   %FitFrames = smi.SMLM.fitsPerFrame(SMD);
+   %FitFrame = smi.SMLM.fitsPerFrame(SMD);
 
    % plot fits per frame
    figure;

@@ -18,7 +18,7 @@ properties
     SMDPreThresh      % Keeps track of why localizations were filtered out
     SMD               % SMD structure with final analysis results
     SMF               % Single Molecule Fitting structure
-    FitsFramePreFC    % Fits per frame pre-frame connection
+    FitFramePreFC     % Fits per frame pre-frame connection
     PlotDo = [] % Plots to generate (all by default);see generatePlots comments
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
@@ -225,7 +225,7 @@ methods
         SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
 
         % Perform frame-connection on localizations in SMD.
-        obj.FitsFramePreFC = obj.fitsPerFrame(SMD);
+        obj.FitFramePreFC = obj.fitsPerFrame(SMD);
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
@@ -316,7 +316,7 @@ end % methods
 
 % =========================================================================
 methods(Static)
-    FitsFrame = fitsPerFrame(SMD)
+    FitFrame = fitsPerFrame(SMD)
     Success = unitTest()
 end % methods(Static)
 % =========================================================================
