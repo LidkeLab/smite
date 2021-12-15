@@ -156,15 +156,23 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
 end
 
 if ismember("FitFrame", PlotDo)
+   Frames=1:length(FitFrame);
    FitFrame = smi.SMLM.fitsPerFrame(SMD);
 
    % plot fits per frame
    figure;
-   Frames=1:length(FitFrame);
+   subplot(2, 1, 1);
+   plot(Frames,obj.FitFramePreFC);
+   xlabel('Frames');
+   ylabel('Number of Fits');
+   title('Fits per frame (pre-frame connected)');
+
+   subplot(2, 1, 2);
    plot(Frames,FitFrame);
    xlabel('Frames');
    ylabel('Number of Fits');
-   title('Number of fits per frame');
+   title('Fits per frame (post-frame connected)');
+
    if ~isempty(PlotSaveDir2)
       FileName = [BaseName '_FitsPerFrame.png'];
       saveas(gcf, fullfile(PlotSaveDir2, FileName), 'png');
