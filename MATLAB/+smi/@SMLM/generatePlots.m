@@ -158,11 +158,12 @@ end
 if ismember("FitFrame", PlotDo)
    FitFrame = smi.SMLM.fitsPerFrame(SMD);
    Frames=1:length(FitFrame);
+   FramesPreFC=1:length(obj.FitFramePreFC);
 
    % plot fits per frame
    figure;
    subplot(2, 1, 1);
-   plot(Frames,obj.FitFramePreFC);
+   plot(FramesPreFC,obj.FitFramePreFC);
    xlabel('Frames');
    ylabel('Number of Fits');
    title('Fits per frame (pre-frame connected)');
