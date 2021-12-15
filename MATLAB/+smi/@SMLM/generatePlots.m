@@ -156,8 +156,8 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
 end
 
 if ismember("FitFrame", PlotDo)
-   Frames=1:length(FitFrame);
    FitFrame = smi.SMLM.fitsPerFrame(SMD);
+   Frames=1:length(FitFrame);
 
    % plot fits per frame
    figure;
