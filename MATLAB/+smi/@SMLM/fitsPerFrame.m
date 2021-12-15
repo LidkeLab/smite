@@ -11,8 +11,8 @@ function FitFrame = fitsPerFrame(SMD)
        end
    end
    FitFrame = Nloc_frame{1};
-   for ii=1:length(Nloc_frame)-1
-       FitFrame=cat(2, FitFrame, Nloc_frame{ii+1});
+   for ii=2:length(Nloc_frame)
+       FitFrame=cat(2, FitFrame, Nloc_frame{ii});
    end
 
 end

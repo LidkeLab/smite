@@ -99,7 +99,11 @@ methods
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         obj.FullvsTest = true;
-        obj.analyzeAll();
+        if isempty(obj.SMF.Data.DatasetList)
+           obj.analyzeAll();
+        else
+           obj.analyzeAll(obj.SMF.Data.DatasetList);
+        end
         obj.saveResults();
 
         if obj.Verbose >= 1
@@ -152,6 +156,8 @@ methods
         % DatasetList takes priority over what is in SMF.
         if ~exist('DatasetList', 'var')
             DatasetList = obj.SMF.Data.DatasetList;
+        else
+            obj.SMF.Data.DatasetList = DatasetList;
         end
 
         % Initialize FitFramePreFC for this invocation of analyzeAll.
