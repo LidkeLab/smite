@@ -75,16 +75,26 @@ beq(1) = 1;
 MLEParams = fmincon(CostFunction, ParamsInit, [], [], Aeq, beq, ...
     ParamsLowerBound, ParamsUpperBound, [], FitOptions);
 
-% If requested, estimate the CRLB.
+% If requested, estimate the CRLBs of fit parameters.
 if (nargout > 1)
-    % Errors were requested for our MLE, so we'll return those as the CRLB
-    % (which isn't correct, since we expect our parameters to be
-    % constrained [at the least to be positive values]).
-    DeltaHFraction = 1e-2;
-    DeltaHBound = [1e-9; 1e-1];
-    HessianAboutMLE = smi_stat.computeHessian(CostFunction, MLEParams, ...
-        DeltaHFraction, DeltaHBound);
-    MLEParamsSE = sqrt(diag(inv(HessianAboutMLE)));
+    % Compute the CRLB for the variance of the jump distribution.
+    r = sqrt(SquaredDisplacement);
+    v = 2*FrameLagsAll*MLEParams(1:NComponents).' + mean(LocVarianceSum);
+    alpha = MLEParams((NComponents+1):end).';
+    Top = alpha .* r .* exp(-0.5*r.^2./v) ...
+        .* (0.5*(r.^2)./(v.^3) - (1./v.^2));
+    Bottom = sum(alpha .* (r./v) .* exp(-0.5*r.^2./v), 2);
+    DTopDV = alpha .* r .* exp(-0.5*r.^2./v) ...
+        .* (2./(v.^3) - 2*(r.^2)./(v.^4) + (r.^4)./(4*v.^5));
+    DBottomDV = Top;
+    DSqDVLogL = sum((Bottom.*DTopDV - Top.*DBottomDV) ./ (Bottom.^2), 1);
+    CRLBOfVariance = sqrt(-1 ./ DSqDVLogL);
+
+    % Compute the CRLB for the population ratios.
+    DSqDAlphaLogL = sum(-((r./v) .* exp(-0.5*r.^2./v)).^2 ...
+        ./ sum(alpha .* (r./v) .* exp(-0.5*r.^2./v), 2).^2, 1);
+    CRLBOfAlpha = sqrt(-1 ./ DSqDAlphaLogL);
+    MLEParamsSE = [CRLBOfVariance, CRLBOfAlpha].';
 end
 
 
