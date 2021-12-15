@@ -154,6 +154,9 @@ methods
             DatasetList = obj.SMF.Data.DatasetList;
         end
 
+        % Initialize FitFramePreFC for this invocation of analyzeAll.
+        FitFramePreFC = {};
+
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
         obj.DC.Verbose = obj.Verbose;
@@ -225,7 +228,7 @@ methods
         SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
 
         % Perform frame-connection on localizations in SMD.
-        obj.FitFramePreFC = obj.fitsPerFrame(SMD);
+        obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD);
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
