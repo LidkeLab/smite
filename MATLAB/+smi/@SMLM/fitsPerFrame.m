@@ -1,4 +1,4 @@
-function FitsFrame = fitsPerFrame(SMD)
+function FitFrame = fitsPerFrame(SMD)
 %fitsPerFrame finds the fits per frame for the localizations in the given SMD
 % structure.
 
