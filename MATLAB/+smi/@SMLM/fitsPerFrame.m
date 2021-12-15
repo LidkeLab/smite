@@ -5,7 +5,7 @@ function FitFrame = fitsPerFrame(SMD)
    Nloc_frame = [];
    % Number of localizations per frame
    for jj=1:max(SMD.DatasetNum)
-       for ii=1:max(SMD.FrameNum)
+       for ii=1:SMD.NFrames
            idx=find(SMD.FrameNum==ii & SMD.DatasetNum==jj);
            Nloc_frame{jj}(ii)=length(idx);
        end

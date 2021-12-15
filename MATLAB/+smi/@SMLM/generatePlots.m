@@ -170,13 +170,13 @@ if ismember("FitFrame", PlotDo)
    % plot fits per frame
    figure;
 
-%  subplot(2, 1, 1);
-%  plot(FramesPreFC,FitFramePreFC);
-%  xlabel('Frames');
-%  ylabel('Number of Fits');
-%  title('Fits per frame (pre-frame connection)');
+   subplot(2, 1, 1);
+   plot(FramesPreFC,FitFramePreFC);
+   xlabel('Frames');
+   ylabel('Number of Fits');
+   title('Fits per frame (pre-frame connection)');
 
-%  subplot(2, 1, 2);
+   subplot(2, 1, 2);
    plot(Frames,FitFrame);
    xlabel('Frames');
    ylabel('Number of Fits');
