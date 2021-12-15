@@ -234,7 +234,7 @@ methods
         SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
 
         % Perform frame-connection on localizations in SMD.
-        obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD);
+        obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD, DatasetIndex);
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
@@ -325,7 +325,7 @@ end % methods
 
 % =========================================================================
 methods(Static)
-    FitFrame = fitsPerFrame(SMD)
+    FitFrame = fitsPerFrame(SMD, DatasetIndex)
     Success = unitTest()
 end % methods(Static)
 % =========================================================================
