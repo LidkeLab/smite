@@ -160,26 +160,27 @@ if ismember("FitFrame", PlotDo)
    Frames=1:length(FitFrame);
 
    FitFramePreFC = [];
-   for i = 1 : max(obj.FitFramePreFC)
+   for i = 1 : obj.SMD.NDatasets
       if ~isempty(obj.FitFramePreFC{i})
-         FitFramePreFC = [FitFramePreFC, FitFramePreFC{i}];
+         FitFramePreFC = [FitFramePreFC, obj.FitFramePreFC{i}];
       end
    end  
    FramesPreFC=1:length(FitFramePreFC);
 
    % plot fits per frame
    figure;
-   subplot(2, 1, 1);
-   plot(FramesPreFC,FitFramePreFC);
-   xlabel('Frames');
-   ylabel('Number of Fits');
-   title('Fits per frame (pre-frame connected)');
 
-   subplot(2, 1, 2);
+%  subplot(2, 1, 1);
+%  plot(FramesPreFC,FitFramePreFC);
+%  xlabel('Frames');
+%  ylabel('Number of Fits');
+%  title('Fits per frame (pre-frame connection)');
+
+%  subplot(2, 1, 2);
    plot(Frames,FitFrame);
    xlabel('Frames');
    ylabel('Number of Fits');
-   title('Fits per frame (post-frame connected)');
+   title('Fits per frame (post-frame connection)');
 
    if ~isempty(PlotSaveDir2)
       FileName = [BaseName '_FitsPerFrame.png'];
