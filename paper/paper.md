@@ -56,19 +56,25 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 # Summary
 
-Fluorescence single molecule imaging comprises a variety of techniques that use
-blinking fluorescent particles to overcome the diffraction limit of light which
-normally limits the spatial resolution of microscopes.  These methodologies are
-widely used to image biological structures at the nanometer scale by
-fluorescently tagging proteins, elucidating details of the biological behavior
-observed.  Two of the main techniques are single-molecule localization
-microscropy (SMLM), which is used to produce 2D or 3D high or super-resolution
-images of static structures, and single particle tracking (SPT), which follows 
-the time course of one or a very small number of tagged molecules.  These
-procedures all require intensive numerical computation, and the methods are
-tightly interwoven.  The distribution includes some C (mex) and CUDA code
-embedded in a MATLAB infrastructure in order to provide GPU speed ups for some
-computations.
+Fluorescence single molecule imaging comprises a variety of techniques that
+involve detecting individual fluorescent particles.  Many of these techniques
+involve particles which switch stochastically between fluorescent and dark
+states, where this "blinking" behavior enables the microscopes to overcome the
+diffraction limit, a fundamental limitation on the resolution of light, which
+limits the spatial resolution of (visible) light-based microscopes.  These
+methodologies are widely used to image biological structures at the nanometer
+scale by fluorescently tagging the structures of interest, elucidating details
+of the biological behavior observed.
+
+Two common techniques are single-molecule localization microscropy (SMLM),
+which is used to produce 2D or 3D super-resolution images of static or nearly
+static structures, and single particle tracking (SPT), which follows the time
+course of one or a very small number of moving tagged molecules.  SMLM often
+involves distributions of particles at medium to high density, while SPT works
+in a very low density domain.  These procedures all require intensive numerical
+computation, and the methods are tightly interwoven.  The SMITE toolbox
+consists of a MATLAB infrastructure with some C and CUDA code embedded to
+provide CPU/GPU speed-ups for particularly expensive computations.
 
 # Statement of need
 
@@ -82,25 +88,26 @@ analysis.  The results are completely contained in a Single Molecule Data (SMD)
 structure.  SMITE is designed to make lowest-level tools just as easy to use as
 the higher-level application-specific classes.  All tools make use of the SMF
 and SMD structures.  SMITE is organized into a set of namespaces that group
-similar tools and concepts.  The namespace  `+smi`  containes the highest level
+similar tools and concepts.  The namespace  `+smi`  contains the highest level
 tools that will be the most common entry point for processing SMLM and SPT data
 sets. 
 
 Code coverage includes mature SMLM data analysis techniques (gain and offset
 corrections applied to raw data, finding localizations, thresholding
 localizations based on various criteria, frame connection and drift
-correction), SMLM simulations, sophisticated SPT analyses, post-processing
-clustering and statistical analyses (diffusion estimation and hidden Markov
-models for dimer production), a variety of visualizations, experimental point
-spread function creation and characterization, all sprinkled with various
-examples of usage.  Interaction with these tools is via GUIs or scripting.
+correction), SMLM/SPT simulations, sophisticated SPT analyses, post-processing
+clustering and statistical analyses (e.g., diffusion analysis and hidden Markov
+models for characterizing dimers in SPT results), a variety of visualizations,
+experimental point spread function creation and characterization, all sprinkled
+with various examples of usage.  Interaction with these tools is via GUIs or
+scripting.
 
 SMITE is a tool designed to be used by researchers and upper level students
 interested in fluorescence single molecule imaging and applications.  Parts of
-it have already been published or in the process, e.g., frame connection
-[@Schodt_article:2021], drift correction [@Wester_article:2021], Bayesian
-grouping of localizations [@Fazel_unpub:2019].  Applications are described in
-[@Mazloom-Farsibaf_article:2021] and [@Bailey_article:2021].
+it have already been or are in the process of being published, e.g., frame
+connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
+Bayesian grouping of localizations [@Fazel_unpub:2019].  Applications are
+described in [@Mazloom-Farsibaf_article:2021] and [@Bailey_article:2021].
 
 # Citations
 
