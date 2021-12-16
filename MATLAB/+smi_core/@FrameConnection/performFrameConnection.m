@@ -73,6 +73,8 @@ obj.SMDCombined = SMDCombined;
 if (obj.Verbose > 0)
     fprintf(['FrameConnection.performFrameConnection(): ', ...
         'Frame connection complete.\n'])
+    fprintf('FrameConnection: %d -> %d localizations\n', ...
+        numel(obj.SMD.X), numel(SMDCombined.X));
 end
 
 

@@ -99,7 +99,11 @@ methods
         obj.ResultsDir = obj.SMF.Data.ResultsDir;
 
         obj.FullvsTest = true;
-        obj.analyzeAll();
+        if isempty(obj.SMF.Data.DatasetList)
+           obj.analyzeAll();
+        else
+           obj.analyzeAll(obj.SMF.Data.DatasetList);
+        end
         obj.saveResults();
 
         if obj.Verbose >= 1
@@ -152,6 +156,8 @@ methods
         % DatasetList takes priority over what is in SMF.
         if ~exist('DatasetList', 'var')
             DatasetList = obj.SMF.Data.DatasetList;
+        else
+            obj.SMF.Data.DatasetList = DatasetList;
         end
 
         % Initialize FitFramePreFC for this invocation of analyzeAll.
@@ -228,7 +234,7 @@ methods
         SMD.DatasetNum = DatasetCount * ones(size(SMD.FrameNum));
 
         % Perform frame-connection on localizations in SMD.
-        obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD);
+        obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD, DatasetIndex);
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
@@ -239,7 +245,7 @@ methods
             if obj.Verbose >= 1
                 fprintf('Drift correcting (intra-dataset) ...\n');
             end
-            SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
+            SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount, DatasetIndex);
         end
     end
 
@@ -319,7 +325,7 @@ end % methods
 
 % =========================================================================
 methods(Static)
-    FitFrame = fitsPerFrame(SMD)
+    FitFrame = fitsPerFrame(SMD, DatasetIndex)
     Success = unitTest()
 end % methods(Static)
 % =========================================================================
