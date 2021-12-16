@@ -245,7 +245,7 @@ methods
             if obj.Verbose >= 1
                 fprintf('Drift correcting (intra-dataset) ...\n');
             end
-            SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetIndex);
+            SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount);
         end
     end
 
