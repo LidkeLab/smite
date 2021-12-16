@@ -70,10 +70,9 @@ ParamsLowerBound = ...
 ParamsUpperBound = ...
     [max(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
     ones(NComponents, 1)];
-[Prob, Bins] = histcounts(SquaredDisplacement./(4*FrameLagsAll), ...
-    NComponents, 'Normalization', 'probability');
-DInitGuess = (Bins(1:(end-1))+Bins(2:end)) ./ 2;
-AlphaInitGuess = Prob;
+Quantiles = quantile(SquaredDisplacement./(4*FrameLagsAll), NComponents+2);
+DInitGuess = Quantiles(2:(end-1));
+AlphaInitGuess = (1/NComponents) * ones(1, NComponents);
 ParamsInit = [DInitGuess, AlphaInitGuess].';
 Aeq = zeros(NFitComponents);
 Aeq(1, (NComponents+1):end) = 1;
