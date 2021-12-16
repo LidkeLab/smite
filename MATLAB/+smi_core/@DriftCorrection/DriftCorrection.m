@@ -10,7 +10,7 @@ classdef DriftCorrection < handle
 %    DC = smi_core.DriftCorrection(SMF, SMDin);
 %    SMDIntra = [];
 %    for i = 1 : NDatasets
-%       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i);
+%       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i, i);
 %       SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i);
 %    end
 %    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
@@ -73,7 +73,7 @@ end % properties(SetAccess = protected)
 methods
 
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
-   [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
+   [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, cDataset, iDataset)
    [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
    DC_fig = plotDriftCorrection(obj, SMD, option)
 

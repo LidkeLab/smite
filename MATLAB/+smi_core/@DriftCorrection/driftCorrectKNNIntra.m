@@ -1,4 +1,4 @@
-function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
+function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, cDataset, iDataset)
 %driftCorrectKNNIntra calculates intra-dataset drift directly from X,Y{,Z} coordinates
 % by fitting a polynomial depending on time (i.e., frame number) to the frames
 % with each dataset (intra-dataset), and fitting constant shifts between
@@ -16,7 +16,15 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
 %    end
 %
 % INPUTS:
-%   iDataset:    Dataset index
+%   cDataset:    Dataset count (the dataset number sequential count)
+%   iDataset:    Dataset index (actual dataset number being processed)
+%                For example, if driftCorrectKNNIntra is called in succession
+%                with iDataset = 1 (1st time), 3 (2nd time), 5 (3rd time), then
+%                the corresponding dataset count will be 1, 2, 3, respectively,
+%                i.e., call 3 to this routine (cDataset = 3) will correspond to
+%                iDataset = 5, where iDataset is the dataset to be analyzed.
+%                Typically, iDataset and cDataset are equal---this distinction
+%                only becomes important if datasets are being skipped
 %   SMD:         A structure with fields:
 %      X              x coordinates (Nx1) where N is total number of points
 %      Y              y coordinates (Nx1)
@@ -209,8 +217,8 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
       % Values corrected for drift.
       %SMRS{i}.XY = XYC;
       %SMRS{i}.n  = n;
-      SMRS{iDataset}.XY = XYC;
-      SMRS{iDataset}.n  = n;
+      SMRS{cDataset}.XY = XYC;
+      SMRS{cDataset}.n  = n;
 
       range = double(1:SMD.NFrames);
       SMD.DriftX(:, i) = polyval([PX', 0], range);
@@ -226,7 +234,7 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, iDataset)
    Statistics.Intra_elapsedTime = toc;
 
    obj.idx = [obj.idx; idx + numel(obj.idx)];
-   obj.SMRS{iDataset} = SMRS{iDataset};
+   obj.SMRS{cDataset} = SMRS{cDataset};
 
    % ---------- Inter-Dataset drift correction --------------------------------
 

@@ -240,7 +240,7 @@ for i = 1 : SMDin.NDatasets
    SMDin_i.Bg         = SMDin.Bg(mask);
    X_TrueTmp = [X_TrueTmp; X_True(mask)];
    Y_TrueTmp = [Y_TrueTmp; Y_True(mask)];
-   [SMDIntra_i, StatisticsIntra] = obj.DC.driftCorrectKNNIntra(SMDin_i, i);
+   [SMDIntra_i, StatisticsIntra] = obj.DC.driftCorrectKNNIntra(SMDin_i, i, i);
    SMDtmp   = smi_core.SingleMoleculeData.catSMD(SMDtmp,   SMDin_i);
    SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i);
 end
