@@ -58,13 +58,11 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 Fluorescence single molecule imaging comprises a variety of techniques that
 involve detecting individual fluorescent particles.  Many of these techniques
-involve particles which switch stochastically between fluorescent and dark
-states, where this "blinking" behavior enables the microscopes to overcome the
-diffraction limit, a fundamental limitation on the resolution of light, which
-limits the spatial resolution of (visible) light-based microscopes.  These
-methodologies are widely used to image biological structures at the nanometer
-scale by fluorescently tagging the structures of interest, elucidating details
-of the biological behavior observed.
+involve localizing individual fluorescent molecules with precisions below the
+diffraction limit, which limits the spatial resolution of (visible) light-based
+microscopes.  These methodologies are widely used to image biological
+structures at the nanometer scale by fluorescently tagging the structures of
+interest, elucidating details of the biological behavior observed.
 
 Two common techniques are single-molecule localization microscropy (SMLM),
 which is used to produce 2D or 3D super-resolution images of static or nearly
@@ -108,6 +106,7 @@ it have already been or are in the process of being published, e.g., frame
 connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
 Bayesian grouping of localizations [@Fazel_unpub:2019].  Applications are
 described in [@Mazloom-Farsibaf_article:2021] and [@Bailey_article:2021].
+Typical raw image data can be found in [@Pallikkuth_data2018].
 
 # Citations
 
