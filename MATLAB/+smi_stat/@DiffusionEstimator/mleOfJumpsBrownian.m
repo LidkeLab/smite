@@ -56,11 +56,13 @@ end
 %       coordinates, and integrating over theta. For multiple frame lags
 %       (which we have), we'll also need to integrate over the frame lags
 %       times the proportion of each frame lag observed.
+% NOTE: The parameter initial guess below was found to be less susceptible
+%       to local minima than a "uniform" (each component equal) initial
+%       guess (there tends to be a local minimum at the "uniform" initial
+%       guess).
 CostFunction = @(Params) ...
     -smi_stat.DiffusionEstimator.brownianJumpLikelihood(Params, ...
     SquaredDisplacement, FrameLagsAll, LocVarianceSum);
-ParamsInit = [mean(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
-    (1/NComponents)*ones(NComponents, 1)];
 NFitComponents = 2 * NComponents;
 ParamsLowerBound = ...
     [min(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1);
@@ -68,6 +70,11 @@ ParamsLowerBound = ...
 ParamsUpperBound = ...
     [max(SquaredDisplacement./(4*FrameLagsAll))*ones(NComponents, 1); ...
     ones(NComponents, 1)];
+[Prob, Bins] = histcounts(SquaredDisplacement./(4*FrameLagsAll), ...
+    NComponents, 'Normalization', 'probability');
+DInitGuess = (Bins(1:(end-1))+Bins(2:end)) ./ 2;
+AlphaInitGuess = Prob;
+ParamsInit = [DInitGuess, AlphaInitGuess].';
 Aeq = zeros(NFitComponents);
 Aeq(1, (NComponents+1):end) = 1;
 beq = zeros(NFitComponents, 1);
