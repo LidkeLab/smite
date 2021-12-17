@@ -39,13 +39,21 @@ for ii = 1:NLocalizations
     if (Link12(ii) > NLocalizations)
         continue
     end
-    
+
+    % Create a boolean array indicating which localizations we will
+    % be updating.  We need to update the ii-th localization, the
+    % Link12(ii)-th localization, as well as localizations previously
+    % connected to either of those groups.
+    UpdateBoolean = ismember(ConnectIDCopy, ConnectIDCopy([ii, Link12(ii)]));
+    UpdateBoolean = (UpdateBoolean ...
+        | ismember(ConnectIDCurrent, ConnectIDCurrent(UpdateBoolean)));
+
     % Determine the new ID which this cluster should be given.
     NewID = min([ConnectIDCurrent(ii), ConnectIDCurrent(Link12(ii)), ...
         ConnectIDCopy(ii), ConnectIDCopy(Link12(ii))]);
     
     % Update the connect IDs to reflect the connections.
-    ConnectIDCurrent([ii, Link12(ii)]) = NewID;
+    ConnectIDCurrent(UpdateBoolean) = NewID;
 end
 
 % Store the updated connect IDs, ensuring we don't use a previously used
