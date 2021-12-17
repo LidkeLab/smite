@@ -105,7 +105,7 @@ interested in fluorescence single molecule imaging and applications.  Parts of
 it have already been or are in the process of being published, e.g., frame
 connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
 Bayesian grouping of localizations [@Fazel_unpub:2019].  Applications are
-described in [@Mazloom-Farsibaf_article:2021] and [@Bailey_article:2021].
+described in [@Mazloom-Farsibaf_article:2021; [@Bailey_article:2021].
 Typical raw image data can be found in [@Pallikkuth_data:2018].
 
 # Citations

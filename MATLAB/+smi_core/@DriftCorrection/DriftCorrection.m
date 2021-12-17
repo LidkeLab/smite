@@ -42,6 +42,11 @@ properties
    % well generally (but the optimization process may not converge quite as
    % quickly).
    Init_inter     = 0;
+   % DriftCorrectKNNInterPair, instead of using Init_inter, uses the actual
+   % values of P0_inter to initialize the minimizer search.  The default of []
+   % indicates that the initial P0 value will be all zeros, otherwise the
+   % values in P0_inter will be used directly.
+   P0_inter       = [];
    % Semi-redundant variable, needed because SMD may not exist when the
    % constructor is invoked, so Init_inter has to be set in
    % driftCorrectKNNInter (only needed when breaking intra-dataset and
@@ -75,6 +80,7 @@ methods
    [SMD, Statistics] = driftCorrectKNN(obj, SMD)
    [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, cDataset, iDataset)
    [SMD, Statistics] = driftCorrectKNNInter(obj, SMD)
+   [SMDout, Statistics] = driftCorrectKNNInterPair(obj, SMD1, SMD2)
    DC_fig = plotDriftCorrection(obj, SMD, option)
 
    % Constructor.
@@ -112,11 +118,12 @@ methods(Static)
    [dist1, rmse1, dist2, rmse2, nnfig] =      ...
       calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
                  DriftX_True, DriftY_True, DriftZ_True)
+   [SMD] = changeInterRef(SMD, RefDatasetNum);
+   [sumNND, X] = minD(Theta, X, T, Ndims, L, NS)
    [FigHandle] = plotCumDrift(SMD, FieldName)
    [FigHandle] = plotXYDriftParametric(SMD)
    [varargout] = plotDriftAndReg(PlotAxes, SMD, SMF)
    [delta12, Statistics] = regViaDC(SMD1, SMD2)
-   [SMD] = changeInterRef(SMD, RefDatasetNum);
    [success, SMD2, SMD3, Statistics2, Statistics3] = unitTest()
 
 end % methods(Static)
