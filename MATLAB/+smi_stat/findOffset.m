@@ -74,7 +74,7 @@ function [Shift, IntShift, CorrData, Params] = ...
 %
 % CITATION:
 %   Wester, M.J., Schodt, D.J., Mazloom-Farsibaf, H. et al. Robust,
-%   fiducial-free drift correction for super-resolution imaging. 
+%   fiducial-free drift correction for super-resolution imaging.
 %   Sci Rep 11, 23672 (2021). https://doi.org/10.1038/s41598-021-02850-7
 
 % Created by:
@@ -257,42 +257,65 @@ if Params.SymmetrizeFit
     % Symmetrize Z arrays.
     % NOTE: Experimentally, this asymmetry issue is more prevalent for Z,
     %       so it's probably best to resymmetrize Z first.
-    ZSkewInit = skewness(ZData);
-    ProposedInd = RawOffsetIndices(3) - sign(ZSkewInit);
+    [~, MaxNeighborInd] = max(ZData(Params.FitOffset(3) + [0, 2]));
+    ProposedInd = ...
+        RawOffsetIndices(3) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     ZArrayProposed = (max(1, ProposedInd-Params.FitOffset(3)) ...
         : min(size(XCorr3D, 3), ProposedInd+Params.FitOffset(3))).';
     ZDataProposed = squeeze(...
         XCorr3D(RawOffsetIndices(1), RawOffsetIndices(2), ZArrayProposed));
-    if (abs(skewness(ZDataProposed)) < abs(ZSkewInit))
+    if (abs(skewness(ZDataProposed)) < abs(skewness(ZData)))
         RawOffsetIndices(3) = ProposedInd;
         ZArray = ZArrayProposed;
         ZData = ZDataProposed;
+        YArray = (max(1, RawOffsetIndices(1)-Params.FitOffset(1)) ...
+            : min(size(XCorr3D, 1), RawOffsetIndices(1)+Params.FitOffset(1))).';
+        YData = XCorr3D(YArray, RawOffsetIndices(2), RawOffsetIndices(3));
+        XArray = (max(1, RawOffsetIndices(2)-Params.FitOffset(2)) ...
+            : min(size(XCorr3D, 2), RawOffsetIndices(2)+Params.FitOffset(2))).';
+        XData = XCorr3D(RawOffsetIndices(1), XArray, RawOffsetIndices(3)).';
     end
 
     % Symmetrize Y arrays.
-    YSkewInit = skewness(YData);
-    ProposedInd = RawOffsetIndices(1) - sign(YSkewInit);
+    [~, MaxNeighborInd] = max(YData(Params.FitOffset(1) + [0, 2]));
+    ProposedInd = ...
+        RawOffsetIndices(1) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     YArrayProposed = (max(1, ProposedInd-Params.FitOffset(1)) ...
         : min(size(XCorr3D, 1), ProposedInd+Params.FitOffset(1))).';
     YDataProposed = ...
         XCorr3D(YArrayProposed, RawOffsetIndices(2), RawOffsetIndices(3));
-    if (abs(skewness(YDataProposed)) < abs(YSkewInit))
+    if (abs(skewness(YDataProposed)) < abs(skewness(YData)))
         RawOffsetIndices(1) = ProposedInd;
         YArray = YArrayProposed;
         YData = YDataProposed;
+        XArray = (max(1, RawOffsetIndices(2)-Params.FitOffset(2)) ...
+            : min(size(XCorr3D, 2), RawOffsetIndices(2)+Params.FitOffset(2))).';
+        XData = XCorr3D(RawOffsetIndices(1), XArray, RawOffsetIndices(3)).';
+        ZArray = (max(1, RawOffsetIndices(3)-Params.FitOffset(3)) ...
+            : min(size(XCorr3D, 3), RawOffsetIndices(3)+Params.FitOffset(3))).';
+        ZData = squeeze(XCorr3D(RawOffsetIndices(1), RawOffsetIndices(2), ...
+            ZArray));
     end
 
     % Symmetrize X arrays.
-    XSkewInit = skewness(XData);
-    ProposedInd = RawOffsetIndices(2) - sign(XSkewInit);
+    [~, MaxNeighborInd] = max(XData(Params.FitOffset(2) + [0, 2]));
+    ProposedInd = ...
+        RawOffsetIndices(2) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     XArrayProposed = (max(1, ProposedInd-Params.FitOffset(2)) ...
         : min(size(XCorr3D, 2), ProposedInd+Params.FitOffset(2))).';
     XDataProposed = ...
         XCorr3D(RawOffsetIndices(1), XArrayProposed, RawOffsetIndices(3)).';
-    if (abs(skewness(XDataProposed)) < abs(XSkewInit))
+    if (abs(skewness(XDataProposed)) < abs(skewness(XData)))
         RawOffsetIndices(2) = ProposedInd;
         XArray = XArrayProposed;
         XData = XDataProposed;
+        YArray = (max(1, RawOffsetIndices(1)-Params.FitOffset(1)) ...
+            : min(size(XCorr3D, 1), RawOffsetIndices(1)+Params.FitOffset(1))).';
+        YData = XCorr3D(YArray, RawOffsetIndices(2), RawOffsetIndices(3));
+        ZArray = (max(1, RawOffsetIndices(3)-Params.FitOffset(3)) ...
+            : min(size(XCorr3D, 3), RawOffsetIndices(3)+Params.FitOffset(3))).';
+        ZData = squeeze(XCorr3D(RawOffsetIndices(1), RawOffsetIndices(2), ...
+            ZArray));
     end
 end
 
