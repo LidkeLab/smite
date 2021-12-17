@@ -51,7 +51,8 @@ for ii = 1:NLabels
     % be multiple for a given label, e.g. an extra for a photobleaching
     % round of imaging).
     DatasetDirNames = smi_helpers.getDirectoryNames(...
-        fullfile(ResultsCellDir, LabelDirNames{ii}), 'Data*');
+        fullfile(ResultsCellDir, LabelDirNames{ii}), ...
+        sprintf('Data*%s', AnalysisID));
     
     % If more than two datasets exists for this label, throw an error
     % (we can have two: one desired result, one photobleaching result)
