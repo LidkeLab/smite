@@ -1,4 +1,4 @@
-function [Image] = removeBorder(Image, Border)
+function [Image] = removeBorder(Image, Border, Direction)
 %removeBorder removes border pixels from the input image.
 % This method isolates a central section of 'Image' which corresponds to
 % deleting a border of width 'Border' from the image.
@@ -8,6 +8,8 @@ function [Image] = removeBorder(Image, Border)
 %   Border: Border to be removed. If given as a scalar, the same border is
 %           from all dimensions.
 %           (scalar of NDimsx1 vector)(Default = zeros(ndims(Image), 1))
+%   Direction: Border mode describing which edges are removed.
+%              ('both', 'pre', 'post')(Default = 'both')
 %
 % OUTPUTS:
 %   Image: Input 'Image' with borders removed.
@@ -20,6 +22,9 @@ function [Image] = removeBorder(Image, Border)
 NDims = ndims(Image);
 if (~exist('Border', 'var') || isempty(Border))
     Border = zeros(NDims, 1);
+end
+if (~exist('Direction', 'var') || isempty(Direction))
+    Direction = 'both';
 end
 
 % Ensure that 'Border' is valid based on the size of 'Image'.
@@ -43,7 +48,14 @@ Border = max(0, min(MaxBorder, Border));
 ColonIndices = repmat({':'}, NDims, 1);
 for nn = 1:NDims
     NDimIndices = ColonIndices;
-    NDimIndices{nn} = (1+Border(nn)):(ImSize(nn)-Border(nn));
+    switch lower(Direction)
+        case 'pre'
+            NDimIndices{nn} = (1+Border(nn)):ImSize(nn);
+        case 'post'
+            NDimIndices{nn} = 1:(ImSize(nn)-Border(nn));
+        otherwise
+            NDimIndices{nn} = (1+Border(nn)):(ImSize(nn)-Border(nn));
+    end
     Image = Image(NDimIndices{:});
 end
 
