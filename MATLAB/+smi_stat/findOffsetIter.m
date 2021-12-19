@@ -45,7 +45,7 @@ end
 StackSize = size(RefStack, 1:3);
 if (~exist('CorrParams', 'var') || isempty(CorrParams) ...
         || ~isfield(CorrParams, 'FTSize') || isempty(CorrParams.FTSize))
-    CorrParams.FTSize = StackSize;
+    CorrParams.FTSize = 2 .^ nextpow2(StackSize);
 end
 if (~exist('ShiftParams', 'var') || isempty(ShiftParams))
     ShiftParams = struct([]);
@@ -56,8 +56,10 @@ Tolerance = padarray(Tolerance, max(0, sum(StackSize>1)-numel(Tolerance)), ...
 % Prepare a Nyquist mask for findStackOffset().
 % NOTE: The extra scaling of FNyquist (which is 0.5) accounts for the size
 %       difference between the Fourier transform and the input images.
-FNyquist = 0.5 * (StackSize/CorrParams.FTSize);
-CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
+if (~isfield(CorrParams, 'FTMask') || isempty(CorrParams.FTMask))
+    FNyquist = 0.5 * (StackSize/CorrParams.FTSize);
+    CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
+end
 
 % Iteratively estimate the shift.
 [Shift, IntShift, CorrData, CorrParams] = ...
@@ -68,7 +70,20 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
     % Shift the image stack.
     ii = ii + 1;
     MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
-    
+    for nn = 1:3
+        BorderDirection = ...
+            smi_helpers.arrayMUX({'pre', 'post'}, IntShift(nn) < 0);
+        Border = [0, 0, 0];
+        Border(nn) = IntShift(nn);
+        MovingStack = smi_helpers.removeBorder(MovingStack, Border, ...
+            BorderDirection);
+        RefStack = smi_helpers.removeBorder(RefStack, Border, ...
+            BorderDirection);
+        CorrParams.BinaryMask = ...
+            smi_helpers.removeBorder(CorrParams.BinaryMask, Border, ...
+            BorderDirection);
+    end
+
     % Compute the shift.
     [NewShift, NewIntShift, CorrData, CorrParams] = ...
         smi_stat.findOffset(RefStack, MovingStack, CorrParams);
