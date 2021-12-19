@@ -257,7 +257,9 @@ if Params.SymmetrizeFit
     % Symmetrize Z arrays.
     % NOTE: Experimentally, this asymmetry issue is more prevalent for Z,
     %       so it's probably best to resymmetrize Z first.
-    [~, MaxNeighborInd] = max(ZData(Params.FitOffset(3) + [0, 2]));
+    NeighborInds = min(size(XCorr3D, 3), ...
+        max(1, Params.FitOffset(3) + [0, 2]));
+    [~, MaxNeighborInd] = max(ZData(NeighborInds));
     ProposedInd = ...
         RawOffsetIndices(3) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     ZArrayProposed = (max(1, ProposedInd-Params.FitOffset(3)) ...
@@ -277,7 +279,9 @@ if Params.SymmetrizeFit
     end
 
     % Symmetrize Y arrays.
-    [~, MaxNeighborInd] = max(YData(Params.FitOffset(1) + [0, 2]));
+    NeighborInds = min(size(XCorr3D, 1), ...
+        max(1, Params.FitOffset(1) + [0, 2]));
+    [~, MaxNeighborInd] = max(YData(NeighborInds));
     ProposedInd = ...
         RawOffsetIndices(1) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     YArrayProposed = (max(1, ProposedInd-Params.FitOffset(1)) ...
@@ -298,7 +302,9 @@ if Params.SymmetrizeFit
     end
 
     % Symmetrize X arrays.
-    [~, MaxNeighborInd] = max(XData(Params.FitOffset(2) + [0, 2]));
+    NeighborInds = min(size(XCorr3D, 2), ...
+        max(1, Params.FitOffset(2) + [0, 2]));
+    [~, MaxNeighborInd] = max(XData(NeighborInds));
     ProposedInd = ...
         RawOffsetIndices(2) + (MaxNeighborInd==2) - (MaxNeighborInd==1);
     XArrayProposed = (max(1, ProposedInd-Params.FitOffset(2)) ...
