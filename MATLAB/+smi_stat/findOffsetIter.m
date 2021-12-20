@@ -65,6 +65,7 @@ end
 [Shift, IntShift, CorrData, CorrParams] = ...
     smi_stat.findOffset(RefStack, MovingStack, CorrParams);
 NewShift = Shift;
+NewIntShift = IntShift;
 ii = 1;
 while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))  
     % Shift the image stack.
@@ -72,9 +73,9 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
     MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
     for nn = 1:3
         BorderDirection = ...
-            smi_helpers.arrayMUX({'pre', 'post'}, IntShift(nn) < 0);
+            smi_helpers.arrayMUX({'pre', 'post'}, NewIntShift(nn) < 0);
         Border = [0, 0, 0];
-        Border(nn) = IntShift(nn);
+        Border(nn) = abs(NewIntShift(nn));
         MovingStack = smi_helpers.removeBorder(MovingStack, Border, ...
             BorderDirection);
         RefStack = smi_helpers.removeBorder(RefStack, Border, ...
