@@ -12,7 +12,7 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 %   NIterMax: Maximum number of iterations. (Default = 3)
 %   Tolerance: Tolerance of the shifts allowing early stopping before
 %              NIterMax. That is, we stop before NIterMax when the newest
-%              estimated shift is less than 'Tolerance'. 
+%              estimated shift is less than 'Tolerance'.
 %              (3x1 float)(Default = [0; 0; 0])
 %   CorrParams: Structure of parameters passed to smi_stat.findOffset().
 %   ShiftParams: Structure of parameters passed to smi_stat.shiftImage()
@@ -21,11 +21,11 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 %   Shift: Shift between the image stacks. ([Y; X; Z])
 %   IntShift: Integer shift between the image stacks. ([Y; X; Z])
 %
-% CITATION: 
-%   Cross-correlation shift finding method: 
+% CITATION:
+%   Cross-correlation shift finding method:
 %       Wester, M.J., Schodt, D.J., Mazloom-Farsibaf, H. et al. Robust,
-%       fiducial-free drift correction for super-resolution imaging. 
-%       Sci Rep 11, 23672 (2021). 
+%       fiducial-free drift correction for super-resolution imaging.
+%       Sci Rep 11, 23672 (2021).
 %       https://doi.org/10.1038/s41598-021-02850-7
 %   Iterative idea motivated by https://doi.org/10.1117/12.603304 , noting
 %       that the xcorr bias should approach zero as the shift approaches
@@ -65,24 +65,26 @@ end
 [Shift, IntShift, CorrData, CorrParams] = ...
     smi_stat.findOffset(RefStack, MovingStack, CorrParams);
 NewShift = Shift;
-NewIntShift = IntShift;
 ii = 1;
-while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))  
+while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
     % Shift the image stack.
     ii = ii + 1;
     MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
+    StackHalfWidth = floor(size(MovingStack, 1:3) / 2);
     for nn = 1:3
         BorderDirection = ...
-            smi_helpers.arrayMUX({'pre', 'post'}, NewIntShift(nn) < 0);
+            smi_helpers.arrayMUX({'pre', 'post'}, NewShift(nn) < 0);
         Border = [0, 0, 0];
-        Border(nn) = abs(NewIntShift(nn));
-        MovingStack = smi_helpers.removeBorder(MovingStack, Border, ...
-            BorderDirection);
-        RefStack = smi_helpers.removeBorder(RefStack, Border, ...
-            BorderDirection);
-        CorrParams.BinaryMask = ...
-            smi_helpers.removeBorder(CorrParams.BinaryMask, Border, ...
-            BorderDirection);
+        Border(nn) = ceil(abs(NewShift(nn)));
+        if ((StackHalfWidth(nn)-Border(nn)) >= CorrParams.FitOffset(nn))
+            MovingStack = smi_helpers.removeBorder(MovingStack, Border, ...
+                BorderDirection);
+            RefStack = smi_helpers.removeBorder(RefStack, Border, ...
+                BorderDirection);
+            CorrParams.BinaryMask = ...
+                smi_helpers.removeBorder(CorrParams.BinaryMask, Border, ...
+                BorderDirection);
+        end
     end
 
     % Compute the shift.
