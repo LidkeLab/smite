@@ -70,6 +70,10 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
     % Shift the image stack.
     ii = ii + 1;
     MovingStack =smi_stat.shiftImage(MovingStack, NewShift, ShiftParams);
+
+    % Remove the border behind the shift direction (this border now
+    % contains junk data that we don't want influencing the
+    % cross-correlation).
     StackHalfWidth = floor(size(MovingStack, 1:3) / 2);
     for nn = 1:3
         BorderDirection = ...
@@ -77,6 +81,8 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
         Border = [0, 0, 0];
         Border(nn) = ceil(abs(NewShift(nn)));
         if ((StackHalfWidth(nn)-Border(nn)) >= CorrParams.FitOffset(nn))
+            % We should only remove the border if there is enough data to
+            % still allow for a fit.
             MovingStack = smi_helpers.removeBorder(MovingStack, Border, ...
                 BorderDirection);
             RefStack = smi_helpers.removeBorder(RefStack, Border, ...
