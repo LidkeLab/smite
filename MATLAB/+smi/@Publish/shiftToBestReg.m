@@ -31,6 +31,7 @@ for ii = 1:numel(FocusImages)
     Shift(:, ii) = CurrentShift(1:2);
 end
 [~, BestRegInd] = min(sum(Shift.^2, 1));
+SMD.Shift = Shift;
 
 % Make the drift correction reference to dataset BestRegInd.
 SMD = smi_core.DriftCorrection.changeInterRef(SMD, BestRegInd);
