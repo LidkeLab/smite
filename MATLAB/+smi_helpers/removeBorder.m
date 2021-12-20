@@ -42,7 +42,7 @@ else
 end
 ImSize = size(Image);
 MaxBorder = floor(ImSize / 2).';
-Border = max(0, min(MaxBorder, Border));
+Border = max(0, min(MaxBorder, Border(1:NDims)));
 
 % Remove the border.
 ColonIndices = repmat({':'}, NDims, 1);
