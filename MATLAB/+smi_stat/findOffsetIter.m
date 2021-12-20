@@ -79,7 +79,7 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
         BorderDirection = ...
             smi_helpers.arrayMUX({'pre', 'post'}, NewShift(nn) < 0);
         Border = [0, 0, 0];
-        Border(nn) = ceil(abs(NewShift(nn)));
+        Border(nn) = round(abs(NewShift(nn)));
         if ((StackHalfWidth(nn)-Border(nn)) >= CorrParams.FitOffset(nn))
             % We should only remove the border if there is enough data to
             % still allow for a fit.
