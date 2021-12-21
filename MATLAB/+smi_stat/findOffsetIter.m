@@ -9,7 +9,7 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 % INPUTS:
 %   RefStack: Reference stack. (YSizexXSizexNImages)
 %   MovingStack: Stack that has moved w.r.t. RefStack (YSizexXSizexNImages)
-%   NIterMax: Maximum number of iterations. (Default = 3)
+%   NIterMax: Maximum number of iterations. (Default = 5)
 %   Tolerance: Tolerance of the shifts allowing early stopping before
 %              NIterMax. That is, we stop before NIterMax when the newest
 %              estimated shift is less than 'Tolerance'.
@@ -37,7 +37,7 @@ function [Shift, IntShift, CorrData, CorrParams, ShiftParams] = ...
 
 % Set defaults/validate inputs.
 if (~exist('NIterMax', 'var') || isempty(NIterMax))
-    NIterMax = 3;
+    NIterMax = 5;
 end
 if (~exist('Tolerance', 'var') || isempty(Tolerance))
     Tolerance = [0; 0; 0];
@@ -79,7 +79,7 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
         BorderDirection = ...
             smi_helpers.arrayMUX({'pre', 'post'}, NewShift(nn) < 0);
         Border = [0, 0, 0];
-        Border(nn) = round(abs(NewShift(nn)));
+        Border(nn) = ceil(abs(NewShift(nn)));
         if ((StackHalfWidth(nn)-Border(nn)) >= CorrParams.FitOffset(nn))
             % We should only remove the border if there is enough data to
             % still allow for a fit.
