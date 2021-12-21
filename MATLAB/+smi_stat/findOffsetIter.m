@@ -61,9 +61,13 @@ if (~isfield(CorrParams, 'FTMask') || isempty(CorrParams.FTMask))
     CorrParams.FTMask = smi_stat.frequencyMask(CorrParams.FTSize, FNyquist);
 end
 
-% Iteratively estimate the shift.
+% Iteratively estimate the shift, plotting the correlation for the first
+% iteration (the first iteration will ~show the actual shift, and if all
+% goes well, the later iterations will show a nearly 0 shift).
 [Shift, IntShift, CorrData, CorrParams] = ...
     smi_stat.findOffset(RefStack, MovingStack, CorrParams);
+PlotFlagInit = CorrParams.PlotFlag;
+CorrParams.PlotFlag = false;
 NewShift = Shift;
 ii = 1;
 while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
@@ -99,6 +103,7 @@ while (any(abs(NewShift)>Tolerance) && (ii<NIterMax))
     Shift = Shift + NewShift;
     IntShift = IntShift + NewIntShift;
 end
+CorrParams.PlotFlag = PlotFlagInit;
 
 
 end
