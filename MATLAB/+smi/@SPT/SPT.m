@@ -84,6 +84,9 @@ classdef SPT < handle
         
         % Pre-threshold SMD structure (see smi_core.SingleMoleculeData)
         SMDPreThresh
+
+        % SMD concatenated across all data in obj.batchTrack().
+        SMDBatch = struct([]);
         
         % Tracking Results structure (see smi_core.TrackingResults)
         TR
@@ -181,7 +184,7 @@ classdef SPT < handle
         [TR, SMD, SMDPreThresh, FileList, TransformList] = batchTrack(obj);
         autoTrack(obj)
         generateTrajectories(obj)
-        updateTrackingParams(obj, SMD, TR)
+        updateTrackingParams(obj, IsBatch)
         saveResults(obj)
         gui(obj)
         

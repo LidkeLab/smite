@@ -71,21 +71,27 @@ else
     end
 end
 
+% Temporarily reset obj.IsTestRun so that obj.saveResults() isn't called
+% for every iteration.  Also, reset obj.Verbose to hide some outputs during
+% iterations.
+VerboseInit = obj.Verbose;
+obj.Verbose = 0;
+IsTestRunInit = obj.IsTestRun;
+obj.IsTestRun = (obj.IsTestRun || (obj.SMF.Tracking.NIterMaxBatch>1));
+
 % Loop through the files and perform tracking. For iterative batch
 % tracking, track each file with the current set of SMF parameters before
 % making a new estimate from the results.
 TR = cell(NFiles, 1);
 SMD = cell(NFiles, 1);
 SMDPreThresh = cell(NFiles, 1);
-IsTestRunInit = obj.IsTestRun;
-obj.IsTestRun = (obj.SMF.Tracking.NIterMaxBatch > 1);
 IsLastIter = false;
 ii = 1;
 ParamsHistory = {obj.SMF.Tracking};
 while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
     % Send an update to the command window.
-    if (obj.Verbose > 1)
-        fprintf(['\tsmi.spt.batchTrack(): ', ...
+    if (VerboseInit > 1)
+        fprintf(['smi.spt.batchTrack(): ', ...
             'Batch tracking iteration %i...\n'], ii)
     end
     
@@ -99,15 +105,15 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
             % setting of obj.IsTestRun (which, if true, will allow for
             % results to be saved on this last iteration).
             obj.IsTestRun = IsTestRunInit;
+            obj.Verbose = VerboseInit;
             IsLastIter = true;
         end
     end
     
     % Track all of the files.
-    SMDCat = struct([]);
     for ff = 1:NFiles
-        if (obj.Verbose > 0)
-            fprintf('smi.SPT.batchTrack(): Tracking file %i of %i...\n', ...
+        if (VerboseInit > 0)
+            fprintf('\tsmi.SPT.batchTrack(): Tracking file %i of %i...\n', ...
                 ff, NFiles)
         end
         obj.SMF.Tracking = ParamsHistory{ii};
@@ -117,16 +123,15 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
         obj.SMF.Data.RegistrationFilePath = TransformList{ff};
         obj.SMF.Data.FileName = FileNames(ff);
         [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
-        SMDCat = smi_core.SingleMoleculeData.catSMD(SMDCat, SMD{ff}, ...
-            (obj.Verbose > 1));
+        obj.SMDBatch = smi_core.SingleMoleculeData.catSMD(...
+            obj.SMDBatch, SMD{ff}, (obj.Verbose > 1));
     end
     
     % Update the tracking parameters.
-    obj.updateTrackingParams(SMDCat)
+    obj.updateTrackingParams(true)
     ParamsHistory{ii+1, 1} = obj.SMF.Tracking;
     ii = ii + 1;
 end
-obj.IsTestRun = IsTestRunInit;
 
 % Restore the filenames in SMF (internally, this is overwitten, which
 % becomes annoying when testing batch-tracking in the GUI).

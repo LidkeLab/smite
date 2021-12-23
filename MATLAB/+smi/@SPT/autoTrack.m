@@ -9,8 +9,10 @@ function [] = autoTrack(obj)
 
 
 % Perform the iterative tracking.
-NoBatchIter = (obj.SMF.Tracking.NIterMaxBatch == 1);
-obj.updateTrackingParams(obj.SMD)
+NoBatchIter = ((obj.SMF.Tracking.NIterMaxBatch==1) ...
+    || (numel(obj.SMF.Data.FileName)==1));
+obj.SMD.ConnectID = [];
+obj.updateTrackingParams(false)
 ParamsHistory = {obj.SMF.Tracking};
 for ii = 1:obj.SMF.Tracking.NIterMax
     % Send an update to the command window.
@@ -23,8 +25,8 @@ for ii = 1:obj.SMF.Tracking.NIterMax
     obj.SMD.ConnectID = [];
     obj.generateTrajectories();
     
-    % Update the tracking parameters.
-    obj.updateTrackingParams(obj.SMD)
+    % Update the tracking parameters based only on the current file.
+    obj.updateTrackingParams(false)
     
     % Store the current set of tracking parameters.
     ParamsHistory{ii+1, 1} = obj.SMF.Tracking;
