@@ -83,9 +83,6 @@ if obj.GenerateOverlayStats
     obj.genOverlayResults()
 end
 
-% Save the results.
-obj.saveResults()
-
 % Indicate completion of the analysis/generation of results.
 EndTime = smi_helpers.genTimeString();
 ErrorLog = obj.ErrorLog;

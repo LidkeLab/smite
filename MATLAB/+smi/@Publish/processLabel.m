@@ -135,7 +135,8 @@ for ii = 1:NDataFiles
                 if ~isfolder(ResultsStructDir)
                     mkdir(ResultsStructDir)
                 end
-                NewName = [CellName, '_', LabelName, '_', 'Results.mat'];
+                NewName = [CellName, '_', LabelName, ...
+                    '_', FileName, '_Results.mat'];
                 copyfile(fullfile(ResultsFile.folder, ResultsFile.name), ...
                     fullfile(ResultsStructDir, NewName));
             end
