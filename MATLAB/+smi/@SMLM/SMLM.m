@@ -173,7 +173,7 @@ methods
         end
         for nn=1:numel(DatasetList)
             SMDnn = obj.analyzeDataset(DatasetList(nn), nn);
-            obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn);
+            obj.SMD=smi_core.SingleMoleculeData.catSMD(obj.SMD,SMDnn,false);
         end
 
         % Inter-dataset drift correction.
@@ -227,7 +227,7 @@ methods
 
         % Keep track of why localizations were filtered out.
         obj.SMDPreThresh = smi_core.SingleMoleculeData.catSMD( ...
-                              obj.SMDPreThresh, LD.SMDPreThresh);
+                              obj.SMDPreThresh, LD.SMDPreThresh, false);
 
         % Define NDatasets, and DatasetNum from the dataset count.
         SMD.NDatasets  = 1;

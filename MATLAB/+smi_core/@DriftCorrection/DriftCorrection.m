@@ -11,7 +11,7 @@ classdef DriftCorrection < handle
 %    SMDIntra = [];
 %    for i = 1 : NDatasets
 %       [SMDIntra_i, StatisticsIntra] = DC.driftCorrectKNNIntra(SMDin_i, i, i);
-%       SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i);
+%       SMDIntra = smi_core.SingleMoleculeData.catSMD(SMDIntra, SMDIntra_i, false);
 %    end
 %    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
 %    SMDout = SMDInter;

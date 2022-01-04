@@ -25,7 +25,7 @@ function simkTets(obj, kk, radius_kTet)
       center_kTet = rand(1, 2) * obj.SZ;
       SMD_True_tmp = obj.kTet(kk, center_kTet, radius_kTet);
       obj.SMD_True = ...
-         smi_core.SingleMoleculeData.catSMD(obj.SMD_True, SMD_True_tmp);
+         smi_core.SingleMoleculeData.catSMD(obj.SMD_True, SMD_True_tmp, false);
    end
    obj.SMD_True.NDims = 2;
    obj.SMD_True.XSize = obj.SZ;

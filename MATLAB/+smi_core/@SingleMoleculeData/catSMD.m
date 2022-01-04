@@ -1,4 +1,4 @@
-function [SMD] = catSMD(SMD1, SMD2, ShowWarnings)
+function [SMD] = catSMD(SMD1, SMD2, NewDataFlag, ShowWarnings)
 %catSMD concatenates two SMD structures into one.
 % This method will concatenate two SMD structures, SMD1 and SMD2, into a
 % single output structure, SMD.  Vector fields are concatenated directly,
@@ -26,6 +26,10 @@ function [SMD] = catSMD(SMD1, SMD2, ShowWarnings)
 % INPUTS:
 %   SMD1: A Single Molecule Data structure.
 %   SMD2: A Single Molecule Data structure.
+%   NewDataFlag: Flag indicating 'SMD2' represents new data from a distinct
+%                set of datasets, such that DatasetNum is incremented as
+%                SMD2.DatasetNum += SMD1.NDatasets before concatenation.
+%                (Default = true)
 %   ShowWarnings: Flag indicating warnings should be shown.
 %                 (Default = true)
 %
@@ -40,6 +44,9 @@ function [SMD] = catSMD(SMD1, SMD2, ShowWarnings)
 
 
 % Set defaults.
+if (~exist('NewDataFlag', 'var') || isempty(NewDataFlag))
+    NewDataFlag = true;
+end
 if (~exist('ShowWarnings', 'var') || isempty(ShowWarnings))
     ShowWarnings = true;
 end
@@ -108,6 +115,11 @@ if ~isempty(UniqueFields2)
             'The following SMD2 fields aren''t present in SMD1: ', ...
             PrintFriendlyFields2])
     end
+end
+
+% If needed, update SMD2.DatasetNum before proceeding.
+if NewDataFlag
+    SMD2.DatasetNum = SMD2.DatasetNum + SMD1.NDatasets;
 end
 
 % Place the unique fields (fields that are only in one of SMD1 or SMD2) in

@@ -124,7 +124,7 @@ while ((ii<=obj.SMF.Tracking.NIterMaxBatch) && ~IsLastIter)
         obj.SMF.Data.FileName = FileNames(ff);
         [TR{ff}, SMD{ff}, SMDPreThresh{ff}] = obj.performFullAnalysis();
         obj.SMDBatch = smi_core.SingleMoleculeData.catSMD(...
-            obj.SMDBatch, SMD{ff}, (obj.Verbose > 1));
+            obj.SMDBatch, SMD{ff}, false, (obj.Verbose > 1));
     end
     
     % Update the tracking parameters.
