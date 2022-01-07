@@ -85,13 +85,18 @@ classdef HMM < handle
         % Set of movie parameters (see createDimerMovie())
         MovieParams struct = struct();
         
-        % Set of plot parameters (see plotDimerPairInfo())
+        % Set of plot parameters (see DisplayParams in plotDimerPairInfo())
         PlotParams struct = struct();
         
         % Indicate plots should be generated and saved. (Default = true)
-        % NOTE: This is used when running obj.performFullAnalysis().
-        GeneratePlots logical = true;
-        
+        % GeneratePlots(1) indicates the histogram of dimer durations
+        %   should be generated.
+        % GeneratePlots(2) indicates the summaray plots should be
+        %   generated.
+        % NOTE: This is used when running obj.performFullAnalysis() inside
+        %       of obj.saveResults().
+        GeneratePlots = [true; true];
+
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
         % NOTE: As of this writing, this class uses SMF.Data.FrameRate and
         %       SMF.Data.PixelSize (when UnitFlag = true).  If

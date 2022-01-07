@@ -43,7 +43,7 @@ if isempty(obj.ConditionLabel)
     ConditionDirs = dir(fullfile(obj.SaveDir, 'Condition*'));
     ConditionDirNames = {ConditionDirs(...
         cell2mat({ConditionDirs.isdir})).name};
-    
+
     % Create a suffix for our new "Condition*" directory.
     if isempty(ConditionDirNames)
         obj.ConditionLabel = 'Condition1';
@@ -145,7 +145,7 @@ save(fullfile(NotDimerDir, 'TRArrayNotDimer.mat'), 'TRArrayNotDimer', ...
     '-v7.3');
 
 % Generate some interesting plots (if desired).
-if obj.GeneratePlots
+if obj.GeneratePlots(1)
     % Create a histogram of the event durations found from the Viterbi
     % algorithm, with the exponential distribution found in HMM plotted on
     % top.
@@ -171,9 +171,11 @@ if obj.GeneratePlots
     FileName = fullfile(DimerDir, 'DimerDurationsHistogram');
     saveas(FigureHandle, FileName, 'png');
     close(FigureHandle);
-    
-    % Create a single plot with several interesting subplots that can be
-    % viewed quickly as a summary.
+end
+
+% Create a single plot with several interesting subplots that can be
+% viewed quickly as a summary.
+if obj.GeneratePlots(2)
     FigureHandle = figure('Units', 'inches', ...
         'Position', [0, 0, 8.5, 11], ...
         'PaperSize', [8.5, 11], ...
@@ -188,7 +190,7 @@ if obj.GeneratePlots
         obj.PlotParams.PairNumber = ii;
         [~, obj.PlotParams] = obj.createSummaryPlot(FigureHandle, ...
             TRArrayDimer(ii, :), obj.SMF, obj.PlotParams, obj.UnitFlag);
-        
+
         % Save the plot.
         FileName = fullfile(DimerDir, sprintf('DimerPair%i', ii));
         saveas(FigureHandle, FileName, 'fig');
