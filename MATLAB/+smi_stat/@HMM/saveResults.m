@@ -145,11 +145,11 @@ save(fullfile(NotDimerDir, 'TRArrayNotDimer.mat'), 'TRArrayNotDimer', ...
     '-v7.3');
 
 % Generate some interesting plots (if desired).
+FiguresVisible = smi_helpers.arrayMUX({'off', 'on'}, (obj.Verbose > 1));
 if obj.GeneratePlots(1)
     % Create a histogram of the event durations found from the Viterbi
     % algorithm, with the exponential distribution found in HMM plotted on
     % top.
-    FiguresVisible = smi_helpers.arrayMUX({'off', 'on'}, (obj.Verbose > 1));
     FigureHandle = figure('Visible', FiguresVisible);
     PlotAxes = axes(FigureHandle);
     hold(PlotAxes, 'on');
