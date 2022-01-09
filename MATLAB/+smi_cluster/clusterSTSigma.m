@@ -60,7 +60,6 @@ for ii = 1:numel(DatasetArray)
     ConnectIDCDs = ConnectID(CurrentDatasetInd);
     
     % Loop through frames and add localizations to clusters.
-    IsClustered = zeros(NLocPerDataset(ii), 1, 'logical');
     ClusterInds = cell(NLocPerDataset(ii), 1);
     [NLocPerFrame, FrameArray] = groupcounts(FrameNumCDs);
     CumulativeLocs = [0; cumsum(NLocPerFrame)];
@@ -113,7 +112,6 @@ for ii = 1:numel(DatasetArray)
             for jj = UpdateInd.'
                 ClusterInds{jj} = [ClusterInds{jj}; UpdateInd];
             end
-            IsClustered(UpdateInd) = true;
         end
     end
     ConnectID(CurrentDatasetInd) = ConnectIDCDs;
