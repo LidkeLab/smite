@@ -174,7 +174,9 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         % Update the GUI to display obj.SRImage as well as any other useful
         % updates.
         cla(obj.ImageAxes)
-        imshow(obj.SRImage, [0, 1], 'Parent', obj.ImageAxes)
+        ImSize = size(obj.SRImage);
+        imshow(obj.SRImage, [0, 1], 'Parent', obj.ImageAxes, ...
+            'XData', [0.5, ImSize(2)-0.5], 'YData', [0.5, ImSize(1)-0.5])
         makeToolbar(obj.ImageAxes)
         updateROIInfo()
     end
@@ -264,7 +266,7 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
             ROI = [obj.ROIHandle.Position([2, 1]), ...
                 obj.ROIHandle.Position([2, 1])+obj.ROIHandle.Position([4, 3])];
             ROI = ROI ./ [ImSize(1), ImSize(2), ImSize(1), ImSize(2)];
-            obj.ROI = 1 + ROI.*[obj.SMD.YSize, obj.SMD.XSize, ...
+            obj.ROI = ROI .* [obj.SMD.YSize, obj.SMD.XSize, ...
                 obj.SMD.YSize, obj.SMD.XSize];
 
             % Update the ROI information panel.

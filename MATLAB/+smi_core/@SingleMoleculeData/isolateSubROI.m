@@ -20,8 +20,8 @@ function [SMD] = isolateSubROI(SMD, ROI)
 %   David J. Schodt (Lidke lab, 2021)
 
 
-KeepBool = ((SMD.Y>=(ROI(1)-1)) & (SMD.Y<=ROI(3)) ...
-    & (SMD.X>=(ROI(2)-1)) & (SMD.X<=ROI(4)));
+KeepBool = ((SMD.Y>=ROI(1)) & (SMD.Y<=ROI(3)) ...
+    & (SMD.X>=ROI(2)) & (SMD.X<=ROI(4)));
 SMD = smi_core.SingleMoleculeData.isolateSubSMD(SMD, KeepBool);
 
 
