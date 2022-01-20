@@ -14,9 +14,9 @@ classdef HMM < handle
     % Nitta, C. F., Green, E. W., Jhamba, E. D., Keth, J. M.,
     % Ortiz-Caraveo, I., Grattan, R. M., Schodt, D. J., Gibson, A. C.,
     % Rajput, A., Lidke, K. A., Steinkamp, M. P., Wilson, B. S.,
-    % & Lidke, D. S. (2020). EGFR transactivates RON to drive oncogenic
-    % crosstalk. BioRxiv, 2020.08.11.246785.
-    % https://doi.org/10.1101/2020.08.11.246785
+    % & Lidke, D. S. (2021). EGFR transactivates RON to drive oncogenic
+    % crosstalk. eLife
+    % https://doi.org/10.7554/eLife.63678
     %
     % REQUIRES:
     %   Optimization Toolbox
@@ -36,13 +36,6 @@ classdef HMM < handle
         
         % Max. separation for dimer candidates (pre-processing) (pixels)
         MaxSeparation(1, 1) {mustBeFloat(MaxSeparation)} = 5;
-        
-        % Diffusion coefficient(s) for the trajectories (pixel^2 / frame)
-        % This can be either a single diffusion constant, two diffusion
-        % coefficients (one for each channel), or
-        % size(TRArray, 1)x2 diffusion coefficients corresponding to the
-        % candidates in TRArray.
-        DiffusionCoefficient {mustBeFloat(DiffusionCoefficient)}
         
         % Identifier for one of the pre-built models. (Default = 'DF')
         % OPTIONS:
@@ -134,15 +127,6 @@ classdef HMM < handle
         
         % Registration files corresponding to dimer candidates in TRArray.
         RegFileNames(:, 1) cell
-        
-        % Error in registration between two channels (pixels)(Default = {})
-        % This should be a cell array matching the size size(TRArray, 1)
-        % (see usage in obj.performFullAnalysis()).  If TRArray has the
-        % field RegError populated (and this field is kept empty), this 
-        % gets replaced with {TRArrayTrunc(:, 2).RegError}.', where
-        % TRArrayTrunc = obj.isolateCandidateTRArray(TRArray).  Otherwise,
-        % this field gets updated to zeros in obj.performFullAnalysis().
-        RegistrationError = {};
     end
     
     methods
@@ -213,6 +197,8 @@ classdef HMM < handle
         % probably best that we don't overwhelm the user with too many
         % visible methods that they aren't likely to use!
         
+        [PlotFigure, DisplayParams] = plotSepDistribs(PlotFigure, ...
+            TRArray, PDFHandles, PDFInputs, DisplayParams);
         [PlotAxes, DisplayParams] = plotDimerPairInfo(PlotAxes, ...
             PlotType, TRArray, SMF, DisplayParams, UnitFlag);
         %         plotViterbiPath

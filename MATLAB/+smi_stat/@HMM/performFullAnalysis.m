@@ -38,40 +38,67 @@ StateSpace = (1:NStates).';
 % analysis and add some new fields that we'll need.
 TRArrayTrunc = obj.isolateCandidateTRArray(TRArray);
 
-% Ensure that the arrays obj.DiffusionCoefficient makes sense based on the
-% size of TRArrayTrunc.
+% Ensure that diffusion coefficients are available for each trajectory.
 NCandidates = size(TRArrayTrunc, 1);
-if isempty(obj.DiffusionCoefficient)
-    obj.DiffusionCoefficient = obj.SMF.Tracking.D;
-end
-DSize = size(obj.DiffusionCoefficient);
-if ((DSize(1)==NCandidates) && (DSize(2)==2))
-    % One diffusion coefficient was provided per trajectory, so no action
-    % is needed.
-elseif (prod(DSize) == 2)
-    % If two diffusion coefficients were provided, we'll use those values
-    % for each trajectory (depending on the channel).
-    obj.DiffusionCoefficient = ...
-        [obj.DiffusionCoefficient(1) * ones(NCandidates, 1), ...
-        obj.DiffusionCoefficient(2) * ones(NCandidates, 1)];
+if isfield(TRArrayTrunc, 'DiffusionCoefficient')
+    % Make sure the length of each DiffusionCoefficient array matches the
+    % number of frames (in case we ever have time-resolved Ds).  If the
+    % sizes don't match, we'll pad with median(D) for all values.
+    for nn = 1:NCandidates
+        PadSize = numel(TRArrayTrunc(nn, 1).FrameNum) ...
+            - numel(TRArrayTrunc(nn, 1).DiffusionCoefficient);
+        TRArrayTrunc(nn, 1).DiffusionCoefficient = ...
+            padarray(TRArrayTrunc(nn, 1).DiffusionCoefficient, ...
+            PadSize, ...
+            median(TRArrayTrunc(nn, 1).DiffusionCoefficient), ...
+            'post');
+        PadSize = numel(TRArrayTrunc(nn, 2).FrameNum) ...
+            - numel(TRArrayTrunc(nn, 2).DiffusionCoefficient);
+        TRArrayTrunc(nn, 2).DiffusionCoefficient = ...
+            padarray(TRArrayTrunc(nn, 2).DiffusionCoefficient, ...
+            PadSize, ...
+            median(TRArrayTrunc(nn, 2).DiffusionCoefficient), ...
+            'post');
+    end
 else
-    % In this case, we'll just take the first element of
-    % DiffusionCoefficient and use it for all trajectories.
-    obj.DiffusionCoefficient = ...
-        obj.DiffusionCoefficient(1) * ones(NCandidates, 2);
+    % If TRArrayTrunc doesn't have the DiffusionCoefficient field, we'll
+    % use the median of the value stored in obj.SMF.Tracking.D for all
+    % trajectories.
+    D = median(obj.SMF.Tracking.D);
+    for nn = 1:NCandidates
+        TRArrayTrunc(nn, 1).DiffusionCoefficient = ...
+            D * ones(size(TRArrayTrunc(nn, 1).FrameNum));
+        TRArrayTrunc(nn, 2).DiffusionCoefficient = ...
+            D * ones(size(TRArrayTrunc(nn, 2).FrameNum));
+    end
 end
 
-% Validate/populate obj.RegistrationError.
-if isempty(obj.RegistrationError)
-    if isfield(TRArrayTrunc, 'RegError')
-        % If the RegError field exists, assume TRArrayTrunc(:, 2).RegError 
-        % is the desired registration error to be used here.
-        obj.RegistrationError = {TRArrayTrunc(:, 2).RegError};
-    else
-        % If no registration error was provided, we'll set each entry to an
-        % array of zeros.
-        obj.RegistrationError = cellfun(@(X) 0 * X, {TRArrayTrunc.X}, ...
-            'UniformOutput', false);
+% Ensure that the registration error is available for each trajectory.
+if isfield(TRArrayTrunc, 'RegError')
+    % Make sure the length of each RegError array matches the number of
+    % frames.  If the sizes don't match, we'll pad with median(RegError) 
+    % for all values.
+    for nn = 1:NCandidates
+        NFrames = numel(TRArrayTrunc(nn, 1).FrameNum);
+        TRArrayTrunc(nn, 1).RegError = ...
+            padarray(TRArrayTrunc(nn, 1).RegError, ...
+            NFrames - numel(TRArrayTrunc(nn, 1).RegError), ...
+            median(TRArrayTrunc(nn, 1).RegError), ...
+            'post');
+        NFrames = numel(TRArrayTrunc(nn, 2).FrameNum);
+        TRArrayTrunc(nn, 2).RegError = ...
+            padarray(TRArrayTrunc(nn, 2).RegError, ...
+            NFrames - numel(TRArrayTrunc(nn, 2).RegError), ...
+            median(TRArrayTrunc(nn, 2).RegError), ...
+            'post');
+    end
+else
+    % If no registration error was provided, we'll assume it's 0.
+    for nn = 1:NCandidates
+        TRArrayTrunc(nn, 1).RegError = ...
+            zeros(size(TRArrayTrunc(nn, 1).FrameNum));
+        TRArrayTrunc(nn, 2).RegError = ...
+            zeros(size(TRArrayTrunc(nn, 2).FrameNum));
     end
 end
 
@@ -88,12 +115,15 @@ EmissionPDFInputs{8} = obj.DomainSeparation;
 DeltaT = EmissionPDFCell;
 for ii = 1:NCandidates
     % Update the EmissionPDFInputs for this candidate.
+    % NOTE: In general, TRArrayTrunc(ii, 2).RegError is the useful
+    %       registration error!
     EmissionPDFInputs{1} = TRArrayTrunc(ii, 1).Separation;
     EmissionPDFInputs{2} = [TRArrayTrunc(ii, 1).AverageSE, ...
         TRArrayTrunc(ii, 2).AverageSE];
     EmissionPDFInputs{3} = double(diff(TRArrayTrunc(ii, 1).FrameNum));
-    EmissionPDFInputs{4} = obj.RegistrationError{ii};
-    EmissionPDFInputs{6} = obj.DiffusionCoefficient(ii, :);
+    EmissionPDFInputs{4} = TRArrayTrunc(ii, 2).RegError;
+    EmissionPDFInputs{6} = [TRArrayTrunc(ii, 1).DiffusionCoefficient, ...
+        TRArrayTrunc(ii, 2).DiffusionCoefficient];
     DeltaT{ii} = EmissionPDFInputs{3};
     
     % Compute the emission pdf's and store them in the TRArray.
