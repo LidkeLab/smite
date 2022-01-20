@@ -80,6 +80,10 @@ classdef InspectResults < handle
 
         function SMDIsolated = get.SMDIsolated(obj)
             % get method for obj.SMDIsolated.
+            if isempty(obj.SMD)
+                SMDIsolated = smi_core.SingleMoleculeData.createSMD();
+                return
+            end
             if isempty(obj.ROI)
                 SMDIsolated = obj.SMD;
                 if ~isempty(SMDIsolated)

@@ -57,7 +57,19 @@ InfoPanel = uipanel(obj.GUIFigure, ...
     'FontWeight', 'bold', 'Units', 'normalized', ...
     'Position', InfoPanelPos);
 TextBoxSize = [0, 0, 1, 0.05];
-NLocTextPos = [0, InfoPanelPos(4)-TextBoxSize(4), TextBoxSize(3:4)];
+ROITextPos = [0, InfoPanelPos(4)-TextBoxSize(4), TextBoxSize(3:4)];
+ROIText = uicontrol('Parent', InfoPanel, 'Style', 'text', ...
+    'String', 'ROI: []', ...
+    'Units', 'normalized', ...
+    'Position', ROITextPos, ...
+    'HorizontalAlignment', 'left');
+ROIDescriptionPos = ROITextPos + [0, -TextBoxSize(4), 0, 0];
+uicontrol('Parent', InfoPanel, 'Style', 'text', ...
+    'String', '        [YStart, XStart, YEnd, XEnd]', ...
+    'Units', 'normalized', ...
+    'Position', ROIDescriptionPos, ...
+    'HorizontalAlignment', 'left');
+NLocTextPos = ROIDescriptionPos + [0, -TextBoxSize(4), 0, 0];
 NLocText = uicontrol('Parent', InfoPanel, 'Style', 'text', ...
     'String', '0 localizations selected', ...
     'Units', 'normalized', ...
@@ -90,7 +102,9 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
 
 
     function updateROIInfo()
-        %updateROIInfo updates the ROI Information panel.
+        %updateROIInfo updates the GUI to reflect changes to the ROI.
+        ROIString = sprintf('%.1f, ', obj.ROI);
+        ROIText.String = sprintf('ROI: [%s]', ROIString(1:(end-2)));
         if (isempty(obj.SMDIsolated) || isempty(obj.ROI))
             return
         end
@@ -103,6 +117,7 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         DensityText.String = ...
             sprintf('Density: %.4f localizations/pixel^2', ...
             NLoc / prod(obj.ROI(3:4)-obj.ROI(1:2)));
+        updateAxes(obj.ImageAxes)
     end
 
     function displayPlots(~, ~)
@@ -177,7 +192,7 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         ImSize = size(obj.SRImage);
         imshow(obj.SRImage, [0, 1], 'Parent', obj.ImageAxes, ...
             'XData', [0.5, ImSize(2)-0.5], 'YData', [0.5, ImSize(1)-0.5])
-        makeToolbar(obj.ImageAxes)
+        updateAxes(obj.ImageAxes)
         updateROIInfo()
     end
 
@@ -257,21 +272,22 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         obj.ROIHandle = drawrectangle(obj.ImageAxes, 'DrawingArea', ...
             [0, 0, ImSize(2), ImSize(1)]);
 
-        % If an SMD is present, isolate the SMD localizations within the
-        % ROI and update displays.
-        if ~isempty(obj.SMD)
-            % Define the ROI in SMD coordinates.
-            % NOTE: This is currently written with the convention that the
-            %       pixel coordinates of pixel n range from [n-1, n]!
-            ROI = [obj.ROIHandle.Position([2, 1]), ...
-                obj.ROIHandle.Position([2, 1])+obj.ROIHandle.Position([4, 3])];
+        % Define the ROI in terms of the data size (if obj.SMD is present)
+        % or the image size.
+        ROI = [obj.ROIHandle.Position([2, 1]), ...
+            obj.ROIHandle.Position([2, 1])+obj.ROIHandle.Position([4, 3])];
+        if isempty(obj.SMD)
+            % In this case, only the image was provided, so we'll define
+            % the ROI in image coordinates.
+            obj.ROI = ROI;
+        else
             ROI = ROI ./ [ImSize(1), ImSize(2), ImSize(1), ImSize(2)];
             obj.ROI = ROI .* [obj.SMD.YSize, obj.SMD.XSize, ...
                 obj.SMD.YSize, obj.SMD.XSize];
-
-            % Update the ROI information panel.
-            updateROIInfo()
         end
+
+        % Update the ROI information panel.
+        updateROIInfo()
     end
 
     function makeToolbar(ImageAxes)
@@ -287,6 +303,36 @@ uicontrol('Parent', InfoPanel, 'Style', 'pushbutton', ...
         Icon = repmat(Icon, [1, 1, 3]);
         axtoolbarbtn(Toolbar, 'push', 'Icon', Icon, ...
             'Tooltip', 'Select ROI', 'ButtonPushedFcn', @getROI);
+    end
+
+    function updateAxes(ImageAxes)
+        %updateAxes updates the axes in which the SR image is displayed.
+
+        % Ensure the toolbar is present/update it.
+        makeToolbar(ImageAxes)
+
+        % Update the axes tick labels based on obj.SMD, and if that's not
+        % present, based on the size of the SR image.
+        xtickformat(obj.ImageAxes, '%g')
+        ytickformat(obj.ImageAxes, '%g')
+        ImSize = size(obj.SRImage);
+        NTicksX = numel(obj.ImageAxes.XTick);
+        NTicksY = numel(obj.ImageAxes.YTick);
+        obj.ImageAxes.XTick = linspace(0, ImSize(2), NTicksX);
+        obj.ImageAxes.YTick = linspace(0, ImSize(1), NTicksY);
+        if ~(isempty(obj.SMD) ...
+                || isempty(obj.SMD.XSize) || isempty(obj.SMD.YSize))
+            % In this case, we want the axes to reflect the coordinates of
+            % SMD.
+            XTicks = linspace(0, obj.SMD.XSize+0.5, NTicksX).';
+            obj.ImageAxes.XTickLabel = num2str(XTicks, '%g');
+            YTicks = linspace(0, obj.SMD.YSize+0.5, NTicksY).';
+            obj.ImageAxes.YTickLabel = num2str(YTicks, '%g');
+        else
+            % If no SMD is present, we'll just use the image coordinates.
+            obj.ImageAxes.XTickLabel = num2str(obj.ImageAxes.XTick.', '%g');
+            obj.ImageAxes.YTickLabel = num2str(obj.ImageAxes.YTick.', '%g');
+        end
     end
 
 
