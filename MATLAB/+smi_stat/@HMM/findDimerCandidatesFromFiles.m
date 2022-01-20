@@ -100,10 +100,11 @@ FileList2 = fullfile(FileDir, FileList2);
 FileList = {};
 TRArray = struct([]);
 for ff = 1:numel(FileList1)
-    % Load the TR structures.
+    % Load the TR structures and add the filename.
     try
         load(FileList1{ff}, 'TR')
         TR1 = TR;
+        [TR1.FileName] = deal(FilesCh1{ff});
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...
@@ -114,6 +115,7 @@ for ff = 1:numel(FileList1)
     try
         load(FileList2{ff}, 'TR')
         TR2 = TR;
+        [TR2.FileName] = deal(FilesCh2{ff});
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...
