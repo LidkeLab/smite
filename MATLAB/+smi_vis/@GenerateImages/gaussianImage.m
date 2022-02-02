@@ -1,10 +1,11 @@
-function [GaussIm] = gaussianImage(SMD,SRImageZoom)
+function [GaussIm] = gaussianImage(SMD,SRImageZoom,ScalebarLength)
 %gaussianImage creates gaussian-blob image from SR data.
 %
-% INPUT:
-%   SMR - SMR results structure with fields X, Y, Bg, X_SE, Y_SE, Photons,
-%   FrameNum, XSize, YSize
-%   SRImageZoom - zoom factor (default value of 10)
+% INPUTS:
+%   SMR              SMD results structure with fields X, Y, Bg, X_SE, Y_SE,
+%                    Photons, FrameNum, XSize, YSize
+%   SRImageZoom      zoom factor [default value of 10]
+%   ScalebarLength   scalebar length (um) [default: 10 um]
 %
 % OUTPUT:
 %   GaussIm - Gaussian blob image 
@@ -24,7 +25,9 @@ elseif nargin<2
     SRImageZoom=10;
 end
 
-ScalebarLength = 10; % um
+if ~exist('ScalebarLength', 'var')
+   ScalebarLength = 10; % um
+end
 % creating inputs for smi_sim.GaussBlobs.gaussBlobImage
 RawImageSize=[SMD.YSize SMD.XSize];
 SZ=RawImageSize*SRImageZoom; %since we need big enough box sizes

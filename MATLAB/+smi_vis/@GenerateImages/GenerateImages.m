@@ -35,7 +35,7 @@ classdef GenerateImages
         showim(Image)
         dispIm()
         [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
-        [GaussIm] = gaussianImage(SMR, SMF,SRImageZoom)
+        [GaussIm] = gaussianImage(SMR, SRImageZoom, ScalebarLength)
         [CircleImage, CircleImageRGB, SRImageZoom] = ...
             circleImage(SMR, ColorMap, ...
             SRImageZoom, MinPixelsPerCircle, SEScaleFactor);
