@@ -91,5 +91,8 @@ if obj.Verbose
     fprintf('Results have been published to %s\n', obj.CoverslipDir);
 end
 
+% Save the results.
+obj.saveResults()
+
 
 end

@@ -64,6 +64,9 @@ classdef Publish < handle
         
         % Verbosity of the main analysis workflow. (Default = 1)
         Verbose = 1;
+
+        % Structure containing several analysis results.
+        ResultsStruct = struct([]);
     end
     
     properties (SetAccess = 'protected', Hidden)
@@ -94,6 +97,14 @@ classdef Publish < handle
         function set.SMF(obj, SMFInput)
             %set method for the property SMF.
             obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(SMFInput);
+        end
+
+        function saveResults(obj)
+            % This method saves the PublishedResultsStruct into the Results
+            % directory.
+            ResultsStruct = obj.ResultsStruct;
+            save(fullfile(obj.SaveBaseDir, 'ResultsStruct.mat'), ...
+                'ResultsStruct', '-v7.3');
         end
                 
         [AlignResultsStruct] = genAlignResults(obj, FilePath, SaveDir);
