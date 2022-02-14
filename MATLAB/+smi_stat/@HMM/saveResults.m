@@ -171,6 +171,16 @@ if obj.GeneratePlots(1)
     FileName = fullfile(DimerDir, 'DimerDurationsHistogram');
     saveas(FigureHandle, FileName, 'png');
     close(FigureHandle);
+
+    % Create a histogram of the distribution of dimer separations.
+    FigureHandle = figure('Visible', FiguresVisible);
+    PDFInputs{5} = obj.DimerSeparation;
+    DisplayParams.TitleString = 'Observed dimers';
+    obj.plotSepDistribs(FigureHandle, ...
+        TRArrayDimer, obj.PDFHandles, PDFInputs, DisplayParams);
+    FileName = fullfile(DimerDir, 'DimerSeparationsHistogram');
+    saveas(FigureHandle, FileName, 'png');
+    close(FigureHandle);
 end
 
 % Create a single plot with several interesting subplots that can be

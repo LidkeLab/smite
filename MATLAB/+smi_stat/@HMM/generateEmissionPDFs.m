@@ -127,11 +127,11 @@ end
         IsInvalid = (isinf(DomainPDF) | isnan(DomainPDF));
         if any(IsInvalid)
             % The Bessel function is unstable for large arguments, so we
-            % sometimes need to compute the integral numerically at certain
-            % points.
+            % sometimes need to compute the integral numerically for some
+            % observations.
             InvalidIndices = find(IsInvalid);
             Theta = linspace(0, 2*pi, 1e3);
-            DomainPDFInt = zeros(sum(IsInvalid), 1); % pre-allocate
+            DomainPDFInt = zeros(sum(IsInvalid), 1);
             for ii = 1:sum(IsInvalid)
                 Index = InvalidIndices(ii);
                 ProbIntegrand = ...
