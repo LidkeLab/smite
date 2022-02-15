@@ -34,7 +34,9 @@ end
 SMD.Shift = Shift;
 
 % Make the drift correction reference to dataset BestRegInd.
-SMD = smi_core.DriftCorrection.changeInterRef(SMD, BestRegInd);
+if ~(isempty(SMD.DriftX) || isempty(SMD.DriftY))
+    SMD = smi_core.DriftCorrection.changeInterRef(SMD, BestRegInd);
+end
 
 % Shift each dataset based on the shift estimated from brightfield.
 for nn = 1:SMD.NDatasets

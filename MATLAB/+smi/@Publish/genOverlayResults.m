@@ -10,6 +10,9 @@ Label1Results = dir(fullfile(ResultsStructDir, '*Label_01*'));
 Label1Paths = fullfile(ResultsStructDir, ...
     {Label1Results(~[Label1Results.isdir]).name});
 NOverlays = numel(Label1Paths);
+if (NOverlays == 0)
+    return
+end
 
 % Loop through all overlays images and compute the shift between labels.
 ImageShift = zeros(NOverlays, 2);
