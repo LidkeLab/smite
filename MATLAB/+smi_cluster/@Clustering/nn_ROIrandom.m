@@ -35,7 +35,7 @@ function hfig = nn_ROIrandom(obj, SMD, A_ROI, desc)
    end
    % Compute A_ROI from the coordinate extremes.
    if ~exist('A_ROI', 'var')
-      A_ROI = (max(X) - min(X)) * (max(Y) - min(Y));
+      A_ROI = (max(XY(:, 1)) - min(XY(:, 1)))*(max(XY(:, 2)) - min(XY(:, 2)));
    end
 
    % Nearest neighbor distances (NND).
