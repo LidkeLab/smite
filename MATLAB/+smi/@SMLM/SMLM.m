@@ -220,6 +220,7 @@ methods
            V = obj.VerboseTest;
         end
         LD = smi_core.LocalizeData(ScaledDataset, obj.SMF, V);
+        LD.ResultsDir = obj.ResultsSubDir;   % if saving the color overlay
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
         end

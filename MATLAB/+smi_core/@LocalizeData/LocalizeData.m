@@ -23,6 +23,7 @@ classdef LocalizeData < handle
         SMF % see smi_core.SingleMoleculeFitting
         ScaledData  % (float array)(Photons) Gain/offset corrected data
         Verbose = 1 % verbosity level
+        ResultsDir = [] % directory to save the color overlay if defined
     end
     
     properties (SetAccess = 'protected')
