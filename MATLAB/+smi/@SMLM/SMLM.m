@@ -35,11 +35,13 @@ properties (Hidden)
     DC                % DriftCorrection class object used internally
 
     % Top level results directory: A few special results/plots (like GaussIm)
-    % are saved here.  Default value is obj.SMF.Data.ResultsDir set in testFit
-    % and fullAnalysis.  The rest of the results/plots are saved in
+    % are saved here.  Default value is obj.SMF.Data.ResultsDir set in
+    % createDirectories.  The rest of the results/plots are saved in
     % ResultsSubDir which will be a subdirectory of ResultsDir; its name will
     % be derived from the dataset name and analysis ID.
     ResultsDir = []   % This is set from SMF.Data.ResultsDir
+    ResultsSubDir = []
+    ShowPlots         % Show plots interactively as when doing a testFit
 end % properties (Hidden)
 % =========================================================================
 
@@ -96,9 +98,8 @@ methods
     function fullAnalysis(obj)
         % fullAnalysis analyzes all data, saves results and plots.
 
-        obj.ResultsDir = obj.SMF.Data.ResultsDir;
-
         obj.FullvsTest = true;
+        obj.createDirectories();
         if isempty(obj.SMF.Data.DatasetList)
            obj.analyzeAll();
         else
@@ -117,9 +118,8 @@ methods
     function testFit(obj, DatasetIndex)
         % testFit performs detailed analysis and feedback of one dataset.
         
-        obj.ResultsDir = obj.SMF.Data.ResultsDir;
-
         obj.FullvsTest = false;
+        obj.createDirectories();
         obj.analyzeAll(DatasetIndex);
         obj.saveResults();
         
@@ -251,6 +251,43 @@ methods
 
     % ---------------------------------------------------------------------
 
+    function createDirectories(obj)
+        % createDirectories creates directories for saving results in
+        % throughout the calculations.
+
+        [~, f, ~] = fileparts(obj.SMF.Data.FileName{1});
+        if isempty(obj.SMF.Data.AnalysisID)
+            SubDir = f;
+        else
+            SubDir = [f, '_', obj.SMF.Data.AnalysisID];
+        end
+
+        if obj.FullvsTest   % fullFit
+           obj.ResultsDir = obj.SMF.Data.ResultsDir;
+           obj.ResultsSubDir = fullfile(obj.ResultsDir, SubDir);
+           obj.ShowPlots = false;   % Don't show, but rather save, plots.
+        else   % testFit
+           obj.ResultsDir = [];
+           if obj.CalledByGUI || obj.VerboseTest >= 5
+              obj.ResultsSubDir = [];
+              obj.ShowPlots = true;   % Show plots to the user in these cases.
+           else
+              obj.ResultsSubDir = fullfile(obj.SMF.Data.ResultsDir, ...
+                                           SubDir, 'TestFit');
+              obj.ShowPlots = false;  % Save testFit plots in TestFit subdir.
+           end
+        end
+
+        if ~isempty(obj.ResultsDir) && ~isfolder(obj.ResultsDir)
+            mkdir(obj.ResultsDir);
+        end
+        if ~isempty(obj.ResultsSubDir) && ~isfolder(obj.ResultsSubDir)
+            mkdir(obj.ResultsSubDir);
+        end
+    end
+
+    % ---------------------------------------------------------------------
+
     function saveResults(obj)
         % saveResults saves all results and plots in subfolder.
         % gaussblobs, drift image, fits/frame, NumConnected hist,
@@ -269,50 +306,27 @@ methods
         [~, f, ~] = fileparts(obj.SMF.Data.FileName{1});
         if isempty(obj.SMF.Data.AnalysisID)
             fn = [f, '_Results.mat'];
-            SubDir = f;
         else
             fnextend = strcat('_', obj.SMF.Data.AnalysisID, '_Results.mat');
             fn = [f, fnextend];
-            SubDir = [f, '_', obj.SMF.Data.AnalysisID];
         end
 
-        if obj.FullvsTest   % fullFit
-           ResultsDir = obj.SMF.Data.ResultsDir;
-           ResultsSubDir = fullfile(ResultsDir, SubDir);
-           ShowPlots = false;
-        else   % testFit
-           ResultsDir = [];
-           if obj.CalledByGUI || obj.VerboseTest >= 5
-              ResultsSubDir = [];
-              ShowPlots = true;
-              % Reset CalledByGUI for the next call that comes here.
-              obj.CalledByGUI = false;
-           else
-              ResultsSubDir = fullfile(obj.SMF.Data.ResultsDir, ...
-                                       SubDir, 'TestFit');
-              ShowPlots = false;
-           end
-        end
+        % Reset CalledByGUI for the next call that comes here.
+        obj.CalledByGUI = false;
 
         SMD = obj.SMD;
         SMF = obj.SMF;
         if obj.Verbose >= 1
             fprintf('Saving SMD and SMF structures ...\n');
         end
-        if ~isempty(ResultsDir) && ~isfolder(ResultsDir)
-            mkdir(ResultsDir);
-        end
-        if ~isempty(ResultsSubDir) && ~isfolder(ResultsSubDir)
-            mkdir(ResultsSubDir);
-        end
 
         % Save SMD and SMF structures.
-        if ~isempty(ResultsSubDir)
-           save(fullfile(ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
+        if ~isempty(obj.ResultsSubDir)
+           save(fullfile(obj.ResultsSubDir, fn), 'SMD', 'SMF', '-v7.3');
         end
         % Generate (and optionally) save various data plots/histograms.
-        obj.generatePlots(ResultsDir, ResultsSubDir, obj.SMF.Data.AnalysisID,...
-                          ShowPlots, obj.PlotDo);
+        obj.generatePlots(obj.ResultsDir, obj.ResultsSubDir, ...
+                          obj.SMF.Data.AnalysisID, obj.ShowPlots, obj.PlotDo);
     end
 
     % ---------------------------------------------------------------------
@@ -320,6 +334,7 @@ methods
     generatePlots(obj, PlotSaveDir1, PlotSaveDir2, AnalysisID, ...
                        ShowPlots, PlotDo)
     gui(obj)
+
 end % methods
 % =========================================================================
 
