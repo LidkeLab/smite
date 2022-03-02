@@ -8,10 +8,10 @@ tags:
 authors:
   - name: David J. Schodt^[co-first author] # note this makes a footnote saying 'co-first author'
     orcid: 0000-0002-8986-2736
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Michael J. Wester^[co-first author] # note this makes a footnote saying 'co-first author'
     orcid: 0000-0002-3520-7605
-    affiliation: 1
+    affiliation: "1, 2"
   - name: Mohamadreza Fazel
 #   orcid: 
     affiliation: 1
@@ -43,9 +43,11 @@ authors:
     orcid: 0000-0002-9328-4318
     affiliation: 1
 affiliations:
- - name: Physics and Astronomy, University of New Mexico
+ - name: Department of Physics and Astronomy, University of New Mexico
    index: 1
-date: 10 December 2020
+ - name: Department of Mathematics and Statistics, University of New Mexico
+   index: 2
+date: 3 March 2022
 bibliography: paper.bib
 
 ---
@@ -53,7 +55,7 @@ bibliography: paper.bib
 # Summary
 
 Fluorescence single molecule imaging comprises a variety of techniques that
-involve detecting individual fluorescent particles.  Many of these techniques
+involve detecting individual fluorescent molecules.  Many of these techniques
 involve localizing individual fluorescent molecules with precisions below the
 diffraction limit, which limits the spatial resolution of (visible) light-based
 microscopes.  These methodologies are widely used to image biological
@@ -62,7 +64,7 @@ interest, elucidating details of the biological behavior observed.
 
 Two common techniques are single-molecule localization microscropy (SMLM),
 which is used to produce 2D or 3D super-resolution images of static or nearly
-static structures, and single particle tracking (SPT), which follows the time
+static structures, and single-particle tracking (SPT), which follows the time
 course of one or a very small number of moving tagged molecules.  SMLM often
 involves distributions of particles at medium to high density, while SPT works
 in a very low density domain.  These procedures all require intensive numerical
@@ -74,7 +76,7 @@ provide CPU/GPU speed-ups for particularly expensive computations.
 
 SMITE is a MATLAB-based toolbox that provides analysis tools for fluorescence
 single molecule imaging with an emphasis on single molecule localization
-microscopy (SMLM) and single particle tracking (SPT).
+microscopy (SMLM) and single-particle tracking (SPT).
 
 SMITE is designed around the concept that a parameter structure, the Single
 Molecule Fitting (SMF) structure, uniquely and completely defines the data
@@ -86,8 +88,8 @@ similar tools and concepts.  The namespace  `+smi`  contains the highest level
 tools that will be the most common entry point for processing SMLM and SPT data
 sets. 
 
-Code coverage includes mature SMLM data analysis techniques (gain and offset
-corrections applied to raw data, finding localizations, thresholding
+Code coverage includes mature SMLM data analysis techniques (applying gain and 
+offset corrections to raw data, finding localizations, thresholding
 localizations based on various criteria, frame connection and drift
 correction), SMLM/SPT simulations, sophisticated SPT analyses, post-processing
 clustering and statistical analyses (e.g., diffusion analysis and hidden Markov
