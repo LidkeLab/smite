@@ -103,24 +103,24 @@ end
 ImFlag = 1;
 PixelSize = obj.PixelSize;
 [MapIm]=obj.genMAPNIm(ImFlag);
-MapIm = BaGoL.scaleIm(MapIm,98);
+MapIm = smi.BaGoL.scaleIm(MapIm,98);
 tMapIm = MapIm;
-MapIm = BaGoL.scalebar(MapIm,PixelSize,Length);
+MapIm = smi.BaGoL.scalebar(MapIm,PixelSize,Length);
 imwrite(MapIm,hot(256),fullfile(SaveDir,'MAPN-Im.png'));
 
 %Saving SR-image
 ImFlag = 2;
 [SRIm]=obj.genMAPNIm(ImFlag);
 tSRIm = SRIm;
-SRIm = BaGoL.scaleIm(SRIm,98);
-SRIm = BaGoL.scalebar(SRIm,PixelSize,Length);
+SRIm = smi.BaGoL.scaleIm(SRIm,98);
+SRIm = smi.BaGoL.scalebar(SRIm,PixelSize,Length);
 imwrite(SRIm,hot(256),fullfile(SaveDir,'SR-Im.png'));
 
 %Saving posterior image
 if obj.PImageFlag == 1
-    PIm = BaGoL.scaleIm(obj.PImage,98);
+    PIm = smi.BaGoL.scaleIm(obj.PImage,98);
     tPIm = PIm;
-    PIm = BaGoL.scalebar(PIm,PixelSize,Length);
+    PIm = smi.BaGoL.scalebar(PIm,PixelSize,Length);
     imwrite(PIm,hot(256),fullfile(SaveDir,'Post-Im.png'));
 end
 
@@ -131,9 +131,9 @@ if OverlayFlag
     overlayIm(:,:,1) = (2*tPIm/Scale+tSRIm/Scale)/3;                  
     overlayIm(:,:,2) = tSRIm/Scale/3;
     overlayIm(:,:,3) = tSRIm/Scale/3;
-    overlayIm(:,:,1) = BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
-    overlayIm(:,:,2) = BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
-    overlayIm(:,:,3) = BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
+    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
     imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post.png'), 'PNG');                  
 
     %Overlay of filtered SR image and MAPN image image
@@ -141,9 +141,9 @@ if OverlayFlag
     overlayIm(:,:,1) = (2*tMapIm/Scale+tSRIm/Scale)/3;                  
     overlayIm(:,:,2) = tSRIm/Scale/3;
     overlayIm(:,:,3) = tSRIm/Scale/3;
-    overlayIm(:,:,1) = BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
-    overlayIm(:,:,2) = BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
-    overlayIm(:,:,3) = BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
+    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
     %overlayIm = 10*overlayIm/Scale;
     imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG'); 
 end

@@ -26,7 +26,7 @@ obj.ClusterSMD = [];
 for iy = 1:Ys
     for ix = 1:Xs
         
-       [Coords,Ind] = BaGoL.SEfilter(ROIs(iy,ix));
+       [Coords,Ind] = smi.BaGoL.SEfilter(ROIs(iy,ix));
        
         if size(Coords,1) <= 1
             continue; 

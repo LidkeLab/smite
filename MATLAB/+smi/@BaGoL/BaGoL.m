@@ -213,7 +213,7 @@ classdef BaGoL < handle
                     end
 
                     AnimFlag = 0;
-                    [TChain]=BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Xi,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
+                    [TChain]=smi.BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Xi,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
 
                     if obj.PImageFlag == 1
                         PostIm = obj.genPosterior(PostIm,SZ,TChain,ROIs,nn);
@@ -281,11 +281,11 @@ classdef BaGoL < handle
                     for nn=1:ClustNumHeirar
                         if mm == 1
                             %For the first sample, the locations are intitialized to random values
-                            [K,MuX,MuY,AlphaX,AlphaY,ID]=BaGoL.BaGoL_RJMCMC_Hierarchical(obj.ClusterSMD(nn) ...
+                            [K,MuX,MuY,AlphaX,AlphaY,ID]=smi.BaGoL.BaGoL_RJMCMC_Hierarchical(obj.ClusterSMD(nn) ...
                                 ,PDFgrids{nn}.PDFgrid,MaxAlpha,obj.P_Jumps,obj.NSamples,tXi);
                         else
                             %For jumps other than the first one, the previous values in the chain are used
-                            [K,MuX,MuY,AlphaX,AlphaY,ID]=BaGoL.BaGoL_RJMCMC_Hierarchical(obj.ClusterSMD(nn) ...
+                            [K,MuX,MuY,AlphaX,AlphaY,ID]=smi.BaGoL.BaGoL_RJMCMC_Hierarchical(obj.ClusterSMD(nn) ...
                                 ,PDFgrids{nn}.PDFgrid,MaxAlpha,obj.P_Jumps,obj.NSamples,tXi,tmp(nn).MuX,...
                                 tmp(nn).MuY,tmp(nn).AlphaX,tmp(nn).AlphaY);
                         end
@@ -310,10 +310,10 @@ classdef BaGoL < handle
                     end
                     %Sampling Xi for either Poisson or gamma 
                     if IsPoiss
-                        tXi = BaGoL.samplePoiss(NPoints,tK,tXi,obj.Alpha_Xi,obj.Beta_Xi);
+                        tXi = smi.BaGoL.samplePoiss(NPoints,tK,tXi,obj.Alpha_Xi,obj.Beta_Xi);
                         obj.XiChain(mm,:) = tXi;
                     else
-                        tXi = BaGoL.sampleGam(NPoints,tK,tXi,obj.Alpha_Xi,obj.Beta_Xi);
+                        tXi = smi.BaGoL.sampleGam(NPoints,tK,tXi,obj.Alpha_Xi,obj.Beta_Xi);
                         obj.XiChain(mm,:) = tXi;
                     end
                     

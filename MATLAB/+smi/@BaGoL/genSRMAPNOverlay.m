@@ -132,7 +132,7 @@ OverlayImageCircleName = sprintf('Overlay_SR_Map_circle.png');
 % Add in a scalebar accounting for the size
 % AdjustedScaleBarLength = ScaleBarLength * ImageSize(1) / XSize;
 OverlayImageCircle = ...
-   BaGoL.scalebar(OverlayImageCircle, PixelSize, ScaleBarLength);
+   smi.BaGoL.scalebar(OverlayImageCircle, PixelSize, ScaleBarLength);
 if nargout == 0
    imwrite(OverlayImageCircle, jet, fullfile(SaveDir, OverlayImageCircleName));
 end
