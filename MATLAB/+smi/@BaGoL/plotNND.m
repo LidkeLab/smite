@@ -14,7 +14,7 @@ function plotNND(obj,SaveDir)
 %
 
 % Created by:
-%    Mohamadreza Fazel (LidkeLab 2019)
+%    Mohamadreza Fazel (LidkeLab 2020)
 
 NBins=30;
 [~,Dis]=knnsearch([obj.MAPN.X,obj.MAPN.Y],[obj.MAPN.X,obj.MAPN.Y],'k',2);

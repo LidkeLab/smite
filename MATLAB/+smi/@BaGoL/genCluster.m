@@ -12,7 +12,7 @@ function [SMD,SMC]=genCluster(StuctType,Scale,Ndist,PSF,MeanPhoton,Prec_Cutoff,D
 %  photons for each localization is drawn from an exponential distribution 
 %  parameterized by the mean number of photons. The number of localizations
 %  per emitter is taken from a Poisson distribution with a given mean
-%  value. The number of frames is the same as the length of drift vector.
+%  (lambda). The number of frames is the same as the length of drift vector.
 %
 % INPUTS:
 %    StuctType:    'MxNgrid', 'Nmer', 'user'. M,N must be integers
@@ -48,7 +48,6 @@ function [SMD,SMC]=genCluster(StuctType,Scale,Ndist,PSF,MeanPhoton,Prec_Cutoff,D
 
 if isscalar(Ndist)
     Ndist = Ndist*(1+expcdf((PSF/Prec_Cutoff)^2,MeanPhoton));
-    %Ndist = poisspdf((0:1000),Ndist); 
 end
 if ~exist('DriftVec','var')
    DriftVec = zeros(1,1000); 
@@ -59,8 +58,6 @@ end
 
 STR = StuctType(end-2:end);
 MaxFrame = length(DriftVec);
-% Nmean = find(Ndist==max(Ndist));
-% Tau = MaxFrame/Nmean(1);
 SMD.X = [];
 SMD.Y = [];
 SMD.Z = [];
@@ -81,13 +78,11 @@ if strcmp(STR,'rid')
     end
     SMC.Z = [];
     for nn = 1:N
-        NThisEmitter = poissrnd(Ndist);%genRand(Ndist); 
+        NThisEmitter = poissrnd(Ndist);
         if NThisEmitter == 0
             NThisEmitter = poissrnd(Ndist);
         end
         FrameNum = randperm(MaxFrame,NThisEmitter);
-        %FrameNum = round(cumsum(exprnd(Tau,[NThisEmitter,1])));
-        %FrameNum(FrameNum>MaxFrame | FrameNum == 0) = [];
         for mm = 1:length(FrameNum)
             Photons = exprnd(MeanPhoton); 
             Prec = PSF/sqrt(Photons);
@@ -95,7 +90,7 @@ if strcmp(STR,'rid')
             SMD.Y = cat(1,SMD.Y,SMC.Y(nn)+Prec*randn()+DriftVec(FrameNum(mm),2));
             SMD.X_SE = cat(1,SMD.X_SE,Prec);
             SMD.Y_SE = cat(1,SMD.Y_SE,Prec);
-            SMD.FrameNum = cat(1,SMD.FrameNum,FrameNum);
+            SMD.FrameNum = cat(1,SMD.FrameNum,FrameNum(mm));
             SMD.ID = cat(1,SMD.ID,nn);
         end
     end
@@ -117,13 +112,11 @@ elseif strcmp(STR,'mer') || strcmp(STR,'Mer')
     SMC.Y = YC + 2*Scale;
     SMC.Z = [];
     for nn = 1:N
-        NThisEmitter = poissrnd(Ndist);%genRand(Ndist);
+        NThisEmitter = poissrnd(Ndist);
         if NThisEmitter == 0
             NThisEmitter = poissrnd(Ndist);
         end
         FrameNum = randperm(MaxFrame,NThisEmitter);
-        %FrameNum = round(cumsum(exprnd(Tau,[NThisEmitter,1])));
-        %FrameNum(FrameNum > MaxFrame | FrameNum == 0) = [];
         for mm = 1:length(FrameNum)
             Photons = exprnd(MeanPhoton); 
             Prec = PSF/sqrt(Photons);
@@ -147,13 +140,11 @@ elseif strcmp(STR,'ser')
     SMC.Y = Scale.Y;
     SMC.Z = [];
     for nn = 1:length(SMC.X)
-        NThisEmitter = poissrnd(Ndist);%genRand(Ndist);
+        NThisEmitter = poissrnd(Ndist);
         if NThisEmitter == 0
             NThisEmitter = poissrnd(Ndist);
         end
         FrameNum = randperm(MaxFrame,NThisEmitter);
-        %FrameNum = round(cumsum(exprnd(Tau,[NThisEmitter,1])));
-        %FrameNum(FrameNum>MaxFrame | FrameNum == 0) = [];
         for mm = 1:length(FrameNum)
             Photons = exprnd(MeanPhoton); 
             Prec = PSF/sqrt(Photons);
@@ -202,9 +193,4 @@ end
 
 end
 
-% function Out=genRand(Ndist)
-%     CDFarray = cumsum(Ndist);
-%     RandNum = rand();
-%     IndArray = find(CDFarray-RandNum >= 0);
-%     Out = IndArray(1);
-% end
+

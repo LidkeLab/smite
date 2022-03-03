@@ -23,9 +23,4 @@ obj.SMD.Y_SE=SMD.Y_SE*PixelSize;
 obj.SMD.FrameNum=SMD.FrameNum; 
 
 
-
-
-
-
-
 end

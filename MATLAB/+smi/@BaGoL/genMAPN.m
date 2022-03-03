@@ -58,6 +58,8 @@ function genMAPN(obj,Chain,ROIs,ii)
             NChain = cat(1,NChain,NSum);
         end
     end
+    XChain = XChain(:);
+    YChain = YChain(:);
     Points(:,1)=XChain;
     Points(:,2)=YChain;
     if ~isempty(obj.SMD.Z)
@@ -70,8 +72,8 @@ function genMAPN(obj,Chain,ROIs,ii)
         Nt = NSeed(jj);
         KSeed(:,:,jj) = [XChain(Nt*MostFrequent+1:(Nt+1)*MostFrequent),YChain(Nt*MostFrequent+1:(Nt+1)*MostFrequent)];
     end
-    ID = kmeans(Points,MostFrequent,'Replicates',Iters,'MaxIter',300,'Start',KSeed);
-   
+    ID = kmeans(Points,MostFrequent,'Replicates',Iters,'MaxIter',300);
+    
     Map.X = [];
     Map.Y = [];
     Map.X_SE = [];

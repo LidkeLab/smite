@@ -18,7 +18,6 @@ Num = 1;
 guiFig = figure('Visible','on','Position',[250,100,710,800],'Name',...
     'Image display','NumberTitle','off','Interruptible','off');
 
-%HAxis1 = axes('Units','Pixel','YTick',[],'XTick',[],'Position',[10,10,690,720]);
 HAxis1 = axes('Units','normalize','YTick',[],'XTick',[],'Position',[.05,0.02,0.9,0.88]);
 
 fileButton1 = uicontrol('Style', 'pushbutton','String','Choose Image',...

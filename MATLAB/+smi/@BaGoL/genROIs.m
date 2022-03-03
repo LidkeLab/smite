@@ -1,5 +1,5 @@
 function ROIs = genROIs(obj)
-%genROIs Takes the input coordinates and splits them into smaller regions.
+%genROIs takes the input coordinates and splits them into smaller regions.
 % ROIs = obj.genROIs()
 %
 % genROIs() uses the ROIsize and overlap size (see BaGoL properties) to

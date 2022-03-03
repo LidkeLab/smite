@@ -1,26 +1,28 @@
-function [Chain]=BaGoL_RJMCMC(SMD,Xi,SigAlpha,PMove,NChain,NBurnin,DEBUG)
-%BaGoL_RJMCMC BaGoL's core RJMCMC algorithm
+function [K,Mu_X,Mu_Y,Alpha_X,Alpha_Y,Z]=BaGoL_RJMCMC_Hierarchical(SMD,PDFgrid,...
+               SigAlpha,PMove,NSamples,Xi,Mu_X,Mu_Y,Alpha_X,Alpha_Y)
+%BaGoL_RJMCMC_Hierarchical BaGoL's core RJMCMC algorithm that takes
+%NSamples samples from the posterior using RJMCMC and return the last
+%sample to be used in the hierarchical Bayes approach.
 % [Chain]=BaGoL.BaGoL_RJMCMC(SMD,Xi,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
 %
-% This the core BaGoL algorithm. It uses Reversible Jump Markov Chain 
+% This is the core BaGoL algorithm. It uses Reversible Jump Markov Chain 
 % Monte Carlo to add, remove and move emitters, and to explore the 
-% classification of localizations to emitters.  
+% allocation of localizations to emitters.  
 %
-% Prior information on the distribution of localizations per emitter is 
-% required. The prior distribution is parameterized by either a Poisson or 
-% Gamma distribution function.  For the Poisson distribution, the parameter
-% [lambda] is the mean number of localizations per emitter.  For the Gamma
-% distribution, [k, theta] are the shape and scale parameters.  k*theta
-% is the mean localizations per emitter. 
+% The number of localizations per emitter distribution is parameterized by  
+% either a Poisson or Gamma distribution function. For the Poisson 
+% distribution, the parameter [lambda] is the mean number of localizations 
+% per emitter. For the Gamma distribution, [k, theta] are the shape and 
+% scale parameters. k*theta is the mean localizations per emitter. 
 %
 % A linear drift of individual emitters can be included by allowing
 % MaxAlpha to be non-zero. Drift velocities are given a uniform prior for
 % each dimension from -MaxAlpha to MaxAlpha. 
 %
-% The output chain is a structure array of the post burn-in states 
-% for the input subregion. Each element of the array contains fields 
-% associated to a single accepted proposed parameter value. A description 
-% of the fields is given below. 
+% The output chain is a structure array of the post burn-in states for the
+% input subregion. Each element of the array contains fields 
+% associated to a single accepted proposal. A description of the fields is
+% given below. 
 %
 % INPUTS:
 %    SMD:      SMD structure with the following fields:
@@ -63,60 +65,41 @@ function [Chain]=BaGoL_RJMCMC(SMD,Xi,SigAlpha,PMove,NChain,NBurnin,DEBUG)
 
 %DEBUG=0;
 
-DX = 1;
 X_min = min(SMD.X-3*SMD.X_SE);
-X_max = max(SMD.X+3*SMD.X_SE);
-X_range = X_min:DX:X_max;
 Y_min = min(SMD.Y-3*SMD.Y_SE);
-Y_max = max(SMD.Y+3*SMD.Y_SE);
-Y_range = Y_min:DX:Y_max;
-
-[Xg,Yg] = meshgrid(X_range,Y_range);
-PDFgrid = zeros(size(Xg));
-for pp = 1:length(SMD.X)
-    PDFgrid = PDFgrid + normpdf(Xg,SMD.X(pp),SMD.X_SE(pp)).*normpdf(Yg,SMD.Y(pp),SMD.Y_SE(pp)); 
-end
 
 CDF = cumsum(PDFgrid(:)/sum(PDFgrid(:)));
 PDFgrid = PDFgrid/sum(PDFgrid(:));
 Area = sum(sum(PDFgrid>max(PDFgrid(:))/1000));
 
-Chain(NChain).N = [];
-Chain(NChain).X = [];
-Chain(NChain).Y = [];
-Chain(NChain).AlphaX = [];
-Chain(NChain).AlphaY = [];
-Chain(NChain).ID = [];
-
-if nargin<3
-    MaxAlpha=0;
-end
-
 if nargin<4
     PMove = [.25 .25 .25 .25]; %PMove = [Theta Z Birth Death]
 end
-
 if nargin<5
-    NChain = 3e3; %Total
+    NSamples = 10;
 end
 
-if nargin<6
-    NBurnin = 2e3;
-end
-
-%Storage of Chain
 N=length(SMD.X);
-
+if nargin<7
 %Intial K Guess
-K=ceil(N/prod(Xi));
-
+    K=ceil(N/prod(Xi));
+else
+    K=length(Mu_X); 
+end
+if nargin<7
 %Initial Locations
-Mu_X =SMD.X(randi(N,[1 K]))';
-Mu_Y =SMD.Y(randi(N,[1 K]))';
-
+    Mu_X =SMD.X(randi(N,[1 K]))';
+    Mu_Y =SMD.Y(randi(N,[1 K]))';
+end
+if nargin<9
 %Initial Alphas
-Alpha_X = zeros([1 K]);
-Alpha_Y = zeros([1 K]);
+    Alpha_X = zeros([1 K]);
+    Alpha_Y = zeros([1 K]);
+end
+
+% Intial Allocation
+Z=Gibbs_Z(SMD,K,Mu_X,Mu_Y,Alpha_X,Alpha_Y);
+
 
 if N < 100
    LengN = 100; 
@@ -133,12 +116,8 @@ else
 end
 Pk = Pk/sum(Pk);
 
-% Intial Allocation
-Z=Gibbs_Z(SMD,K,Mu_X,Mu_Y,Alpha_X,Alpha_Y);
-
-
 % Run Chain
-for nn=1:NChain+NBurnin
+for nn=1:NSamples
     %Get move type:
     JumpType=length(PMove)+1-sum(rand<cumsum(PMove));
     K = length(Mu_X);
@@ -174,35 +153,13 @@ for nn=1:NChain+NBurnin
             Mu_Y = Mu_YTest;
             Alpha_X = Alpha_XTest;
             Alpha_Y = Alpha_YTest;
-            
-            if nn>NBurnin %Then record in chain
-                
-                Chain(nn-NBurnin).N = K;
-                Chain(nn-NBurnin).X = Mu_X';
-                Chain(nn-NBurnin).Y = Mu_Y';
-                Chain(nn-NBurnin).AlphaX = Alpha_X';
-                Chain(nn-NBurnin).AlphaY = Alpha_Y';
-                Chain(nn-NBurnin).ID = Z;
-                
-            end
 
         case 2  %Reallocation of Z
             
             [ZTest]=Gibbs_Z(SMD, K,Mu_X,Mu_Y,Alpha_X,Alpha_Y);
             %Always accepted
             Z = ZTest;
-                        
-            if nn>NBurnin %Then record in chain
-                
-                Chain(nn-NBurnin).N = K;
-                Chain(nn-NBurnin).X = Mu_X';
-                Chain(nn-NBurnin).Y = Mu_Y';
-                Chain(nn-NBurnin).AlphaX = Alpha_X';
-                Chain(nn-NBurnin).AlphaY = Alpha_Y';
-                Chain(nn-NBurnin).ID = Z;
-                
-            end
-            
+                                    
         case 3  %Add
                         
 %           Sample the Emitter location from SR data
@@ -222,7 +179,7 @@ for nn=1:NChain+NBurnin
                 Alpha_YTest = cat(2,Alpha_Y,0);
             end
             
-            %dirrect sampling of allocations
+            %Gibbs allocation
             [ZTest]=Gibbs_Z(SMD,K+1,Mu_XTest,Mu_YTest,Alpha_XTest,Alpha_YTest);
                         
             %Prior Raio
@@ -246,30 +203,9 @@ for nn=1:NChain+NBurnin
                 Alpha_Y=Alpha_YTest;
             end
             
-            if nn>NBurnin %Then record in chain
-                
-                Chain(nn-NBurnin).N = K;
-                Chain(nn-NBurnin).X = Mu_X';
-                Chain(nn-NBurnin).Y = Mu_Y';
-                Chain(nn-NBurnin).AlphaX = Alpha_X';
-                Chain(nn-NBurnin).AlphaY = Alpha_Y';
-                Chain(nn-NBurnin).ID = Z;
-                
-            end
-            
         case 4  %Remove
             
             if K==1 %Then update chain and return
-                if nn>NBurnin %Then record in chain
-                    
-                    Chain(nn-NBurnin).N = K;
-                    Chain(nn-NBurnin).X = Mu_X';
-                    Chain(nn-NBurnin).Y = Mu_Y';
-                    Chain(nn-NBurnin).AlphaX = Alpha_X';
-                    Chain(nn-NBurnin).AlphaY = Alpha_Y';
-                    Chain(nn-NBurnin).ID = Z;
-                    
-                end
                 continue;
             end
             
@@ -309,26 +245,16 @@ for nn=1:NChain+NBurnin
                 Alpha_X=Alpha_XTest;
                 Alpha_Y=Alpha_YTest;
             end
-            
-            if nn>NBurnin %Then record in chain
-                
-                Chain(nn-NBurnin).N = K;
-                Chain(nn-NBurnin).X = Mu_X';
-                Chain(nn-NBurnin).Y = Mu_Y';
-                Chain(nn-NBurnin).AlphaX = Alpha_X';
-                Chain(nn-NBurnin).AlphaY = Alpha_Y';
-                Chain(nn-NBurnin).ID = Z;
-                
-            end
-            
+                        
     end    
     
-    %DEBUG = 0;
+    DEBUG = 0;
     if DEBUG==1 %for testing
         figure(1111)
         scatter(SMD.X,SMD.Y,[],Z)
         hold on
         plot(Mu_X,Mu_Y,'ro','linewidth',4)
+        set(gca,'Ydir','reverse')
         legend(sprintf('Jump: %g',nn))
         xlabel('X(nm)')
         ylabel('Y(nm)')
@@ -390,7 +316,7 @@ function [ZTest]=Gibbs_Z(SMD,K,Mu_X,Mu_Y,Alpha_X,Alpha_Y)
     else 
         ZTest=K+1-sum(repmat(rand(N,1),[1,K])<(cumsum(PNorm,2)+eps),2);
     end
-
+     
 end
 
 function [Mu,Alpha]=Gibbs_MuAlpha(ID,Z,X,T,Sigma,SigAlpha)

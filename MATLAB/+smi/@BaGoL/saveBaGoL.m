@@ -1,21 +1,19 @@
 function saveBaGoL(obj,L,SaveDir,OverlayFlag)
-%Saves plots of NND, precisions, lambda, SR, Filter-SR, MAPN, Posterior, Overlay images
+%Saves plots of NND, precisions, Xi, SR, MAPN, Posterior, Overlay images
 %
 %The first plot is the histogram of the nearest neighbor distances of MAPN
 %coordinates. The second and third plots are, respectively, the histograms
-%of MAPN X-coordinates and MAPN Y-coordinates. The fourth plot is the
-%histogram of the number of combined localizations for each emitter.
+%of MAPN X-precisions and MAPN Y-precisions. The fourth plot is the
+%histogram of the number of localizations allocated to each emitter.
 %The first image is the image reconstructed using the MAPN coordinates. The
-%second and third images are, respectively, reconstructed using the raw
-%input coordinates before and after NND-filter. The fourth image is the
-%landscape image of the posterior. The last image is the ovelay of filtered
-%SR-image and the posterior. Finally, the MAPN-coordinates are saved in a
-%mat-file.
+%second image is reconstructed using the raw input coordinates. 
+%The third image is the landscape image of the posterior. The last image is 
+%the ovelay of SR-image and the posterior. Finally, the 
+% MAPN-coordinates are saved in a mat-file.
 %
 %INPUT:
 %   SaveDir: Save directory of plots and images (optional)
 %   L: Length of scale bars on generated images (nm) (Default=100) (optional)
-%   SaveDir: Saving directory (optional)
 %   OverlayFlag: binary parameter that makes overlay color images (Default=0) 
 %
 %OUTPUT:
@@ -69,86 +67,89 @@ xlabel('Y-SE(nm)','FontSize',18)
 ylabel('Frequency','FontSize',18)
 print(gcf,fullfile(SaveDir,'BaGoL_Y-SE'),'-dpng')
 
-%Saving lambda
-Nmean = obj.MAPN.Nmean;
-P = prctile(Nmean,99);
-figure('Visible','off')
-% 0:* replaced by 0.5:* as histogram can produce funny results otherwise.
-histogram(Nmean(Nmean<P),0.5:max(Nmean)+15,'Normalization','pdf')
-hold;
-if length(obj.Lambda)>1
-    Xp = 0:0.2:max(Nmean)+15;
-    plot(Xp,gampdf(Xp,obj.Lambda(1),obj.Lambda(2)),'r','linewidth',1.5)
+%Saving hierarchical parameters
+if obj.HierarchFlag == 1
+   LChain = floor(obj.N_Trials/obj.NSamples);
+   if length(obj.Xi)==2
+       Lambda = obj.XiChain(end-LChain:end,2).*obj.XiChain(end-LChain:end,1);
+   else
+        Lambda = obj.XiChain(end-LChain:end);
+   end
+   figure('Visible','off')
+   histogram(Lambda,'normalization','pdf')
+   xlabel('\xi');ylabel('pdf')
+   xlim([0 max(Lambda)+20])
+   print(gcf,fullfile(SaveDir,'Xi'),'-dpng')
+   
 else
-    Xp = 0:ceil(max(Nmean)+15);
-    plot(Xp,poisspdf(Xp,obj.Lambda),'r','linewidth',1.5)
+    Nmean = obj.MAPN.Nmean;
+    P = prctile(Nmean,99);
+    figure('Visible','off')
+    histogram(Nmean(Nmean<P),0:max(Nmean)+15,'Normalization','pdf')
+    hold;
+    if length(obj.Xi)>1
+        Xp = 0:0.2:max(Nmean)+15;
+        plot(Xp,gampdf(Xp,obj.Xi(1),obj.Xi(2)),'r','linewidth',1.5)
+    else
+        Xp = 0:ceil(max(Nmean)+15);
+        plot(Xp,poisspdf(Xp,obj.Xi),'r','linewidth',1.5)
+    end
+    legend({'Found \xi','Used dist.'},'FontSize',15)
+    xlabel('\xi','FontSize',18);ylabel('PDF','FontSize',18)
+    print(gcf,fullfile(SaveDir,'Xi'),'-dpng')
 end
-legend({'Found \lambda','Used dist.'},'FontSize',15)
-xlabel('\lambda','FontSize',18);ylabel('PDF','FontSize',18)
-print(gcf,fullfile(SaveDir,'Lambda'),'-dpng')
 
 %Saving MAPN-image
 ImFlag = 1;
 PixelSize = obj.PixelSize;
 [MapIm]=obj.genMAPNIm(ImFlag);
-MapIm = smi.BaGoL.scaleIm(MapIm,98);
+MapIm = BaGoL.scaleIm(MapIm,98);
 tMapIm = MapIm;
-MapIm = smi.BaGoL.scalebar(MapIm,PixelSize,Length);
+MapIm = BaGoL.scalebar(MapIm,PixelSize,Length);
 imwrite(MapIm,hot(256),fullfile(SaveDir,'MAPN-Im.png'));
 
 %Saving SR-image
 ImFlag = 2;
 [SRIm]=obj.genMAPNIm(ImFlag);
-SRIm = smi.BaGoL.scaleIm(SRIm,98);
-SRIm = smi.BaGoL.scalebar(SRIm,PixelSize,Length);
+tSRIm = SRIm;
+SRIm = BaGoL.scaleIm(SRIm,98);
+SRIm = BaGoL.scalebar(SRIm,PixelSize,Length);
 imwrite(SRIm,hot(256),fullfile(SaveDir,'SR-Im.png'));
-
-%Filter SR-image
-[SM,Ind] = obj.NNDfilter(obj.SMD);
-SMD.X = SM(:,1);
-SMD.Y = SM(:,2);
-SMD.X_SE = obj.SMD.X_SE(Ind);
-SMD.Y_SE = obj.SMD.Y_SE(Ind);
-SRImFilt = smi.BaGoL.makeIm(SMD,obj.PImageSize,obj.PixelSize,obj.XStart,obj.YStart);    
-SRImFilt = smi.BaGoL.scaleIm(SRImFilt,98);
-tSRImFilt = SRImFilt;
-SRImFilt = smi.BaGoL.scalebar(SRImFilt,PixelSize,Length);
-imwrite(SRImFilt,hot(256),fullfile(SaveDir,'SR-Im-Filter.png'));
 
 %Saving posterior image
 if obj.PImageFlag == 1
-    PIm = smi.BaGoL.scaleIm(obj.PImage,96);
+    PIm = BaGoL.scaleIm(obj.PImage,98);
     tPIm = PIm;
-    PIm = smi.BaGoL.scalebar(PIm,PixelSize,Length);
+    PIm = BaGoL.scalebar(PIm,PixelSize,Length);
     imwrite(PIm,hot(256),fullfile(SaveDir,'Post-Im.png'));
 end
 
 %Overlay of filtered SR image and posterior image
 if OverlayFlag
     Scale = 255;  
-    overlayIm = zeros([size(tPIm),3]);                  
-    overlayIm(:,:,1) = (tPIm/Scale+1.5*tSRImFilt/Scale)/2.5;                  
-    overlayIm(:,:,2) = 1.5*tSRImFilt/Scale/2.5;
-    overlayIm(:,:,3) = 1.5*tSRImFilt/Scale/2.5;
-    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
-    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
-    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    overlayIm = overlayIm/Scale;
+    overlayIm = zeros([size(SRIm),3]);                  
+    overlayIm(:,:,1) = (2*tPIm/Scale+tSRIm/Scale)/3;                  
+    overlayIm(:,:,2) = tSRIm/Scale/3;
+    overlayIm(:,:,3) = tSRIm/Scale/3;
+    overlayIm(:,:,1) = BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
     imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post.png'), 'PNG');                  
 
     %Overlay of filtered SR image and MAPN image image
     overlayIm = zeros([size(tMapIm),3]);                  
-    overlayIm(:,:,1) = (tMapIm/Scale+1.5*tSRImFilt/Scale)/2.5;                  
-    overlayIm(:,:,2) = 1.5*tSRImFilt/Scale/2.5;
-    overlayIm(:,:,3) = 1.5*tSRImFilt/Scale/2.5;
-    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
-    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
-    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    overlayIm = overlayIm/Scale;
+    overlayIm(:,:,1) = (2*tMapIm/Scale+tSRIm/Scale)/3;                  
+    overlayIm(:,:,2) = tSRIm/Scale/3;
+    overlayIm(:,:,3) = tSRIm/Scale/3;
+    overlayIm(:,:,1) = BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
+    %overlayIm = 10*overlayIm/Scale;
     imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG'); 
 end
 
 MAPN = obj.MAPN;
 save(fullfile(SaveDir,'MAPN'),'MAPN')
+close all;
 
 end
