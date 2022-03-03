@@ -34,12 +34,6 @@ Npts = 1000;
 xy  = SZnm * rand(2*Npts, 2);
 xyz = SZnm * rand(3*Npts, 3);
 
-c = smi_cluster.Clustering(SMF);
-c.PixelSize = PixelSize;
-c.Timing = false;
-ROI = [0, SZnm, 0, SZnm];   % nm
-A_ROI = (ROI(2) - ROI(1)) * (ROI(4) - ROI(3));   % ROI area (nm^2)
-
 % Create arrays of (x, y) or (x, y, z) coordinates (nm).
 XY1 = zeros(Npts, 2);
 XY1(:, 1) = xy(1:2:end, 1);
@@ -75,6 +69,16 @@ fprintf('SMD1 [xmin, xmax, ymin, ymax] = [%5.1f, %5.1f, %5.1f, %5.1f] px\n',...
 fprintf('SMD2 [xmin, xmax, ymin, ymax] = [%5.1f, %5.1f, %5.1f, %5.1f] px\n',...
        min(SMD2.X), max(SMD2.X), min(SMD2.Y), max(SMD2.Y)); 
 
+% ========== Set up the smi_cluster.Clustering class (c) =========
+
+% Note that some of the examples below use (x, y) coordinate arrays and some
+% use SMD structures to indicate that both types of input may be accepted.
+c = smi_cluster.Clustering(SMF);
+c.PixelSize = PixelSize;
+c.Timing = false;
+ROI = [0, SZnm, 0, SZnm];   % nm
+A_ROI = (ROI(2) - ROI(1)) * (ROI(4) - ROI(3));   % ROI area (nm^2)
+
 % Compare each ROI nearest neighbor (nn) distances to a random distribution of
 % points with the same density.
 h = c.nn_ROIrandom(SMD1, A_ROI, 'Random Cover');
@@ -102,7 +106,9 @@ minPts = 3;   % minimum number of points required to form a cluster
 % region to be considered sufficiently dense for clustering purposes.
 c.Alpha = 1.2;
 
-% Call with (x, y) coordinate array (nm).  SMD1 is a random cover.
+% ---[ XY ]---
+
+% Call with (x, y) coordinate array (nm).  XY1 is a random cover.
 algorithm = 'DBSCAN';
 [nC, C, centers, ptsI] = c.cluster(algorithm, XY1, E, minPts);
 fprintf('%s (E = %g, minPts = %d) number of clusters = %d\n', ...
@@ -121,6 +127,8 @@ if Saving
 else
    figure(h)
 end
+
+% ---[ SMD ]---
 
 % Call with SMD structure (pixel).  SMD1 is a random cover.
 for algorithm_range = {'DBSCAN', 'Hierarchal', 'Voronoi'}
@@ -160,6 +168,8 @@ minPts = 3;   % minimum number of points required to form a cluster
 % region to be considered sufficiently dense for clustering purposes.
 c.Alpha = 1.2;
 
+% ---[ XY ]---
+
 % Call with (x, y) coordinate array (nm).
 algorithm = 'DBSCAN';
 [nC, C, centers, ptsI] = c.cluster(algorithm, XY2, E, minPts);
@@ -188,6 +198,8 @@ if Saving
 else
    figure(h)
 end
+
+% ---[ SMD ]---
 
 % Call with SMD structure (pixel).  SMD2 is a scattering of hextets.
 for algorithm_range = {'DBSCAN', 'Hierarchal', 'Voronoi', 'H-SET'}
@@ -230,6 +242,8 @@ minPts = 3;   % minimum number of points required to form a cluster
 % Ratio of local density / overall density for a point's Voronoi
 % region to be considered sufficiently dense for clustering purposes.
 c.Alpha = 1.2;
+
+% ---[ SMD ]---
 
 % Call with SMD structure (pixel).  SMD3 is a random cover.
 for algorithm_range = {'DBSCAN', 'Hierarchal', 'Voronoi'}
