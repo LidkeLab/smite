@@ -36,6 +36,5 @@ else
     SMD.Z_SE = [];
 end
 SMD.FrameNum = SM.frame;
-SMD.Photons = SM.photons;
 
 end

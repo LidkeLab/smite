@@ -46,7 +46,6 @@ end
 % Calculate scale bar width
 barwidth=round(sizein(2)*0.015);
 
-%
 if channels==3
     switch Location
         case 'bottomright'

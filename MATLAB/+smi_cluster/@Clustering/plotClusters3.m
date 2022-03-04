@@ -10,7 +10,8 @@ function clusterFig = plotClusters3(obj, SMD, C, centers, ptsI, txt, options)
 %    centers      coordinates of the center of each cluster [nC x n_dim]
 %    ptsI         indices of points not found in any cluster
 %    txt          descriptive text to add to the plot's title
-%    options      'L': label each cluster
+%    options      [default = 'O'] string containing some of the following:
+%                 'L': label each cluster
 %                 'O': outline each cluster
 %                 'P': print the size of each cluster
 %                 '1': use only one color for all clusters

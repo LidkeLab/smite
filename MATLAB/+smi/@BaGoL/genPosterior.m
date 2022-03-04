@@ -1,5 +1,5 @@
 function [PostIm] = genPosterior(obj,PostIm,SZ,Chain,ROIs,ii)
-%genPosterior Updates Posterior Image using RJMCMC chain for a cluster
+%genPosterior Updates Posterior Image using RJMCMC chain for a subregion (ROI)
 % [PostIm] = obj.genPosterior(PostIm,SZ,Chain,ROIs,ii)
 %
 % genPosterior() updates the Posterior Image with emitters from all the 
@@ -29,8 +29,8 @@ YChain = [];
 
 for nn = 1:length(Chain)
     if ~isempty(Chain(nn).X)
-        XChain = cat(1,XChain,Chain(nn).X);
-        YChain = cat(1,YChain,Chain(nn).Y);
+        XChain = cat(1,XChain,Chain(nn).X(:));
+        YChain = cat(1,YChain,Chain(nn).Y(:));
     end
 end
 Ind = obj.removeOverlap(ROIs,XChain,YChain,ii);

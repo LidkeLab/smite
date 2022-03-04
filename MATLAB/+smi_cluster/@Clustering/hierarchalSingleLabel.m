@@ -83,8 +83,9 @@ function [XY_combined, sigma_combined, nodes_combined] = ...
                % --->
                % cn{j} = cn{j}(~ismember(cn{j}, LN));
                % Optimized version of the line above: 
-               cn{j} = ...
-cn{j}(~smi_cluster.Clustering.my_ismemberBuiltinTypes(cn{j}, LN));
+%              cn{j} = ...
+%cn{j}(~smi_cluster.Clustering.my_ismemberBuiltinTypes(cn{j}, LN));
+               cn{j} = cn{j}(~ismember(cn{j}, LN));
             end
          end
       end

@@ -117,7 +117,6 @@ for nn = 2:NChain
             plot(Points(1,:),Points(2,:),'*')
             title(sprintf('Step:%g',nn))
             xlim(XLim);ylim(YLim)
-            %pause(0.25)
             SP = sprintf('Data: %g',nn);
             legend(SP)
             Frame = getframe(gcf);
