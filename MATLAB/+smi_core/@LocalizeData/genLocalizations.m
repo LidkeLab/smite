@@ -90,7 +90,7 @@ if obj.Verbose >= 3
       writeVideo(v, RGBImageReordered);
       close(v);
       if islinux
-         cmd = sprintf('ffmpeg -i %s.avi %s.mp4', RGBout, RGBout);
+         cmd = sprintf('ffmpeg -y -i %s.avi %s.mp4', RGBout, RGBout);
          [status, result] = system(cmd);
          if status ~= 0
             result
