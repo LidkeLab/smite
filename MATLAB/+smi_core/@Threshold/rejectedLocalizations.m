@@ -30,6 +30,7 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
    end
 
    fprintf('Fits = %d\n', numel(SMD.X));
+   fprintf('Accepted = %d\n', sum(SMD.ThreshFlag == 0));
 
    % Threshold Flag for the fields or groups of fields named below.
    TF = false(numel(SMD.X), numel(obj.Fields) - 2 - 2);
