@@ -21,7 +21,7 @@ function results = pair_correlation_ROIcombined(obj, n_labels, n_ROIs, ...
 %                  should be used for the coordinates contained in ROIs
 %
 % OUTPUTS:
-%    results         structure containing various results from the algorithm
+%    results       structure containing various results from the algorithm
 
    if n_labels == 2
       corr_type = 'C';   % cross-correlation
