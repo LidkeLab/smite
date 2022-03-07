@@ -52,7 +52,7 @@ properties
    LinLog = 'plot';       % Plot type for plotCombined CDF2 plots:
                           %   'plot', 'semilogx', 'semilogy', 'loglog'
    LegendTitle = '';      % Optional legend title
-   showMM = 1;            % Red mean and green median (2 only mean, 3
+   ShowMM = 1;            % Red mean and green median (2 only mean, 3
                           %    only median) for PlotSpread plots
    CSV = false;           % If true, produce a CSV file of the data
 

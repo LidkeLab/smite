@@ -19,7 +19,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
 %                                   'S'   PlotSpread (bars for mean & median)
 %                                   'x'   box
 %                                   'b'   bar
-%       showMM          [1]      red mean and green median (2 only mean, 3 only
+%       ShowMM          [1]      red mean and green median (2 only mean, 3 only
 %                                median) for PlotSpread plots
 %       LinLog          ['plot'] options for CDF2 plots are:
 %                                'plot', 'semilogx', 'semilogy', 'loglog'
