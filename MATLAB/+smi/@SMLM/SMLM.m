@@ -99,7 +99,6 @@ methods
         % fullAnalysis analyzes all data, saves results and plots.
 
         obj.FullvsTest = true;
-        obj.createDirectories();
         if isempty(obj.SMF.Data.DatasetList)
            obj.analyzeAll();
         else
@@ -119,7 +118,6 @@ methods
         % testFit performs detailed analysis and feedback of one dataset.
         
         obj.FullvsTest = false;
-        obj.createDirectories();
         obj.analyzeAll(DatasetIndex);
         obj.saveResults();
         
@@ -150,6 +148,8 @@ methods
         %    end
         %    DriftCorrection (inter-dataset)
         %    Threshold       (rejected localization statistics)
+
+        obj.createDirectories();
 
         % Define the list of datasets to be processed.
         obj.SMF = smi_core.LoadData.setSMFDatasetList(obj.SMF);
