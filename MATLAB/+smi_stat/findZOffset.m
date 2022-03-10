@@ -77,7 +77,7 @@ NImages = size(Stack, 3);
 if (Params.FitOffset > floor(NImages/2))
     warning('FitOffset = %i is too big and was reset to %i', ...
         Params.FitOffset, floor(NImages/2))
-    Params.FitOffset(ii) = floor(NImages / 2);
+    Params.FitOffset = floor(NImages / 2);
 end
 
 % Scale each image in the stack by intensity to reduce linear trends in 
