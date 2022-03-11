@@ -48,8 +48,8 @@ for nn = 1:size(PreSeqImages, 3)
     % Apply and store the shift in SMD.
     CurrentDS = (SMD.DatasetNum == nn);
     FrameNum = SMD.FrameNum(CurrentDS);
-    SMD.Y(CurrentDS) = SMD.Y(CurrentDS) + (Shift(1)/SMD.NFrames)*(FrameNum-1);
-    SMD.X(CurrentDS) = SMD.X(CurrentDS) + (Shift(2)/SMD.NFrames)*(FrameNum-1);
+    SMD.Y(CurrentDS) = SMD.Y(CurrentDS) - (Shift(1)/SMD.NFrames)*(FrameNum-1);
+    SMD.X(CurrentDS) = SMD.X(CurrentDS) - (Shift(2)/SMD.NFrames)*(FrameNum-1);
     SMD.DriftY(:, nn) = (Shift(1)/SMD.NFrames)*(0:(SMD.NFrames-1)).';
     SMD.DriftX(:, nn) = (Shift(2)/SMD.NFrames)*(0:(SMD.NFrames-1)).';
 end
