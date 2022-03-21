@@ -176,8 +176,13 @@ if obj.GeneratePlots(1)
     FigureHandle = figure('Visible', FiguresVisible);
     PDFInputs{5} = obj.DimerSeparation;
     DisplayParams.TitleString = 'Observed dimers';
+    TRArrayDimerTemp = TRArrayDimer;
+    for ii = 1:size(TRArrayDimer, 1)
+        TRArrayDimerTemp(ii, 2).RegError = TRArrayDimerTemp(ii, 2).RegError ...
+            + obj.RegErrorInflation;
+    end
     obj.plotSepDistribs(FigureHandle, ...
-        TRArrayDimer, obj.PDFHandles, PDFInputs, DisplayParams);
+        TRArrayDimerTemp, obj.PDFHandles, PDFInputs, DisplayParams);
     FileName = fullfile(DimerDir, 'DimerSeparationsHistogram');
     saveas(FigureHandle, FileName, 'png');
     close(FigureHandle);
