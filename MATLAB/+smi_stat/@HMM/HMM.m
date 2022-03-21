@@ -36,6 +36,9 @@ classdef HMM < handle
         
         % Max. separation for dimer candidates (pre-processing) (pixels)
         MaxSeparation(1, 1) {mustBeFloat(MaxSeparation)} = 5;
+
+        % Registration error inflation (pixels)
+        RegErrorInflation(1, 1) {mustBeFloat(RegErrorInflation)} = 0.0;
         
         % Identifier for one of the pre-built models. (Default = 'DF')
         % OPTIONS:

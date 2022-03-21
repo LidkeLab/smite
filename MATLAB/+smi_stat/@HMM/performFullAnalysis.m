@@ -121,7 +121,7 @@ for ii = 1:NCandidates
     EmissionPDFInputs{2} = [TRArrayTrunc(ii, 1).AverageSE, ...
         TRArrayTrunc(ii, 2).AverageSE];
     EmissionPDFInputs{3} = double(diff(TRArrayTrunc(ii, 1).FrameNum));
-    EmissionPDFInputs{4} = TRArrayTrunc(ii, 2).RegError;
+    EmissionPDFInputs{4} = TRArrayTrunc(ii, 2).RegError + obj.RegErrorInflation;
     EmissionPDFInputs{6} = [TRArrayTrunc(ii, 1).DiffusionCoefficient, ...
         TRArrayTrunc(ii, 2).DiffusionCoefficient];
     DeltaT{ii} = EmissionPDFInputs{3};
