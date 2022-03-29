@@ -96,7 +96,7 @@ clustering and statistical analyses (e.g., diffusion analysis and hidden Markov
 models for characterizing dimers in SPT results), a variety of visualizations,
 experimental point spread function creation and characterization, all sprinkled
 with various examples of usage.  Interaction with these tools is via GUIs or
-scripting.
+scripting.  See \autoref{fig:smite_overview} for several examples of GUIs.
 
 SMITE is a tool designed to be used by researchers and upper level students
 interested in fluorescence single molecule imaging and applications.  Parts of
@@ -105,6 +105,10 @@ connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
 Bayesian grouping of localizations [@Fazel_unpub:2019].  Applications are
 described in [@Mazloom-Farsibaf_article:2021; @Bailey_article:2021].
 Typical raw image data can be found in [@Pallikkuth_data:2018].
+
+![SMITE GUIs for making movies from SPT trajectories, SMLM analysis, channel
+registration, and inspection of results contained in SMD
+structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
 
 # Acknowledgements
 
