@@ -73,29 +73,34 @@ if obj.Verbose >= 3
    if isempty(obj.ResultsDir)
       obj.colorOverlay();
    else
-      islinux = isunix && ~ismac;
-      RGBout = fullfile(obj.ResultsDir, 'LocalizeDataRGBImage');
+      ResultsDir = obj.ResultsDir;
+      FileBaseName = 'LocalizeDataRGBImage';
       RGBImage = obj.colorOverlay();
-      RGBImageReordered = permute(RGBImage, [1, 2, 4, 3]);
-      % VideoWriter in Linux cannot generate .mp4 files, so it necessary to
-      % save in a different format and convert to .mp4 via external software
-      % (ffmpeg), which, of course, must be installed.  ffmpeg can convert
-      % between a variety of video formats.
-      if ~islinux
-         v = VideoWriter(RGBout, 'MPEG-4');
-      else
-         v = VideoWriter(RGBout, 'Motion JPEG AVI');
-      end
-      open(v);
-      writeVideo(v, RGBImageReordered);
-      close(v);
-      if islinux
-         cmd = sprintf('ffmpeg -y -i %s.avi %s.mp4', RGBout, RGBout);
-         [status, result] = system(cmd);
-         if status ~= 0
-            result
-         end
-      end
+      smi_helpers.writeMPEG4(ResultsDir, FileBaseName, RGBImage);
+
+%     islinux = isunix && ~ismac;
+%     RGBout = fullfile(obj.ResultsDir, 'LocalizeDataRGBImage');
+%     RGBImage = obj.colorOverlay();
+%     RGBImageReordered = permute(RGBImage, [1, 2, 4, 3]);
+%     % VideoWriter in Linux cannot generate .mp4 files, so it necessary to
+%     % save in a different format and convert to .mp4 via external software
+%     % (ffmpeg), which, of course, must be installed.  ffmpeg can convert
+%     % between a variety of video formats.
+%     if ~islinux
+%        v = VideoWriter(RGBout, 'MPEG-4');
+%     else
+%        v = VideoWriter(RGBout, 'Motion JPEG AVI');
+%     end
+%     open(v);
+%     writeVideo(v, RGBImageReordered);
+%     close(v);
+%     if islinux
+%        cmd = sprintf('ffmpeg -y -i %s.avi %s.mp4', RGBout, RGBout);
+%        [status, result] = system(cmd);
+%        if status ~= 0
+%           result
+%        end
+%     end
    end
 end
 
