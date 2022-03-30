@@ -14,8 +14,12 @@ function writeMPEG4(ResultsDir, FileBaseName, RGBImage)
 %
 % OUTPUT:
 %    ResultsDir/FileBaseName.mp4 video file
+%
+% REQUIREMENTS:
+%    ffmpeg installed on Linux systems (https://ffmpeg.org)
 
-% Created by Michael J. Wester (Lidke Lab, 2022)
+% Created by
+%    Michael J. Wester (Lidke Lab, 2022)
 
    islinux = isunix && ~ismac;
    RGBout = fullfile(ResultsDir, FileBaseName);
