@@ -212,8 +212,10 @@ if n_Ind == 0
    error('No localizations kept!');
 end
 
-figure; hold on; plot(SMD.X, SMD.Y, 'k.'); title(FileName); hold off;
-saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
+% FULL plot.
+figure; hold on; plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
+title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
+
 SMD.X = PixelSize*SMD.X(Ind);
 SMD.Y = PixelSize*SMD.Y(Ind);
 SMD.Z = [];
@@ -247,8 +249,10 @@ if N_NN > 0
    end
 end
 
-figure; hold on; plot(SMD.X/PixelSize, SMD.Y/PixelSize, 'k.'); title(FileName); hold off;
-saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
+% ROI plot.
+figure; hold on; plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
+title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
+
 % Setting the class properties
 BGL = smi.BaGoL;
 BGL.SMD = SMD;
@@ -297,20 +301,40 @@ fprintf('Saving BGL ...\n');
 try
    save(fullfile(SaveDir, ...
                  sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
+catch ME
+   fprintf('### PROBLEM with saving BGL ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
 end
-ScaleBarLength = 1000;   % nm
+
 fprintf('saveBaGoL ...\n');
+ScaleBarLength = 1000;   % nm
 try
    BGL.saveBaGoL(ScaleBarLength, SaveDirLong, 1);
+catch ME
+   fprintf('### PROBLEM with saveBaGoL ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
 end
+
 fprintf('plotMAPN ...\n');
 try
    BGL.plotMAPN(SaveDirLong, 'on');
+catch ME
+   fprintf('### PROBLEM with plotMAPN ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
 end
+
 fprintf('plotNND_PDF ...\n');
 try
    BGL.plotNND_PDF(SaveDirLong)
+catch ME
+   fprintf('### PROBLEM with plotNND_PDF ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
 end
+
 fprintf('genSRMAPNOverlay ...\n');
 try
    MAPN = BGL.MAPN;
@@ -330,8 +354,11 @@ catch ME
    fprintf('%s\n', ME.identifier);
    fprintf('%s\n', ME.message);
 end
+
 %BGL.errPlot(BGL.MAPN);
 %saveas(gcf, fullfile(SaveDirLong, 'MAPN_SE'), 'fig');
+
+fprintf('XiChain ...\n');
 try
    if numel(Xi) == 1
       plot(BGL.XiChain(:, 1), 'k.');
@@ -339,17 +366,30 @@ try
       plot(BGL.XiChain(:, 1) .* BGL.XiChain(:, 2), 'k.');
    end
    saveas(gcf, fullfile(SaveDirLong, 'XiChain'), 'png');
+catch ME
+   fprintf('### PROBLEM with XiChain ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
 end
+
 close all
-L = BGL.XiChain;
-L = L(N_Burnin/NSamples + 1 : end, :);
-l = L(:, 1) .* L(:, 2);
-m = mean(l);
-v = var(l);
-theta = v / m;
-k = m / theta;
-fid = fopen(fullfile(SaveDir, 'prior.txt'), 'w');
-fprintf(fid, '(k, theta) = (%f, %f)\n', k, theta);
-fclose(fid);
+
+fprintf('Producing prior.txt ...\n');
+try
+   L = BGL.XiChain;
+   L = L(N_Burnin/NSamples + 1 : end, :);
+   l = L(:, 1) .* L(:, 2);
+   m = mean(l);
+   v = var(l);
+   theta = v / m;
+   k = m / theta;
+   fid = fopen(fullfile(SaveDir, 'prior.txt'), 'w');
+   fprintf(fid, '(k, theta) = (%f, %f)\n', k, theta);
+   fclose(fid);
+catch ME
+   fprintf('### PROBLEM with producing prior.txt ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
+end
 
 end

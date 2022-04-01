@@ -39,8 +39,8 @@ BaGoLParams.PixelSize = 97.8;       % (nm) [sequential]
 BaGoLParams.OutputPixelSize = 4;    %2; % pixel size for posterior images (nm)
 BaGoLParams.N_Burnin = 8000;        % Length of Burn-in chain
 BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
-%BaGoLParams.N_Burnin = 20000;        % Length of Burn-in chain
-%BaGoLParams.N_Trials = 10000;        % Length of post-burn-in chain
+%BaGoLParams.N_Burnin = 20000;       % Length of Burn-in chain
+%BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
 BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
                                     % required in filtering step
@@ -82,7 +82,7 @@ BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 %BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
-BaGoLParams.Xi = [1, 5];            % [k, theta] parameters for gamma prior
+BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 
 % File names and parameters per file.  If the parameters per file (Xi,
@@ -95,15 +95,17 @@ BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 % ### Comment out the 3 lines above and use the commented out lines below when
 % ### making batch runs, for example, on CARC.  Here, the files to process are
 % ### defined relative to the directory where BaGoLHier_wrapper is run.
+% ### Absolute pathnames are also fine, especially when used in conjunction
+% ### with fullfile.
 %'BaGoLHier/Data_2020-10-8-17-58-54_Results.mat'
 %'BaGoLHier/SMD_DNA-Origami_MPI.mat'
 %'BaGoLHier/SMR_dSTORM_EGFR.mat'
 Files = {
 'Data_2021-11-3-11-10-11_Results.mat'
 };
-Xi = {
-[50, 1]
-};
+%Xi = {
+%[50, 1]
+%};
 % Define a single region of interest for each dataset (units are pixels).
 % [YStart, XStart, YEnd, XEnd] = [163, 385, 233, 455]
 % [Xmin, Xmax, Ymin, Ymax] (pixel)
@@ -147,18 +149,33 @@ if n_files > 0
    NumWorkers = MachineInfo.NumWorkers;
    parpool('local', min(NumWorkers, n_files));
 
+   % For debugging, it can be helpful to use the "for" rather than the
+   % "parfor", and comment out the "try" line + "catch ... end" section below.
 %  for i = 1 : n_files
    parfor i = 1 : n_files
       fprintf('(%d) %s ...\n', i, Files{i});
       [DataDir, File, Ext] = fileparts(Files{i});
       SaveDir = fullfile(DataDir, Results_BaGoL);
+
+      % Set up Xi and DataROI for BGLParams.
       BGLParams = BaGoLParams;
-      %if nXi > 0
-         BGLParams.Xi = Xi{i};
-      %end
+
+      % Xi.
+      BGLParams.Xi = Xi{i};
+      if numel(BGLParams.Xi) == 1
+         fprintf('Xi = %g\n', BGLParams.Xi);
+      else
+         fprintf('Xi = [%g, %g]\n', BGLParams.Xi);
+      end
+
+      % If DataROI is defined, override the default value given in BaGoLParams.
       if ~isempty(DataROI)
          BGLParams.DataROI = DataROI(i, :);
+         fprintf('DataROI: [Xmin, Xmax, Ymin, Ymax] = [%g, %g, %g, %g]\n', ...
+                 BGLParams.DataROI);
       end
+
+      % Run BaGoLHier_analysis.
       try
          warning('OFF', 'stats:kmeans:FailedToConvergeRep');
          BaGoLHier_analysis(File, DataDir, SaveDir, BGLParams);
