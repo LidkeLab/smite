@@ -53,7 +53,7 @@ BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
 %BaGoLParams.Y_Adjust = BaGoLParams.ImageSize;
 BaGoLParams.Y_Adjust = [];
 
-% If Xi is a non-empty cell array, override the BaGoL.Xi value defined
+% If Xi is a non-empty cell array, override the BaGoLParams.Xi value defined
 % below, passing the corresponding (indexed by dataset) value to
 % BaGoL_analysis.  This is useful for batch analysis when trying to make use of
 % as many computer cores as possible in a single run.
@@ -69,11 +69,11 @@ DataROI = [];
 % probability distribution function.  If just one parameter is provided,
 % a Poisson distribution is used.
 %
-% DataROI is defined when running BaGoL's over only part of the
-% image.  If DataROI is empty, use the whole image.
+% DataROI is defined when running BaGoL over only part of the image.
+% If DataROI is empty, use the whole image.
 % 
-% Note for batch runs, in which Files and Xi are input by hand, please see
-% ### comments below.
+% Note for batch runs, in which Files, Xi and DataROI are input by hand,
+% please see ### comments below.
 % 
 BaGoLParams.IntensityCutoff = 5000; % Intensity cutoff [DEPRECATED]
 BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
