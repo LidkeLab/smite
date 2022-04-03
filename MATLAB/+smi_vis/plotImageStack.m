@@ -51,7 +51,7 @@ if (~exist('ImageScaling', 'var') || isempty(ImageScaling))
 end
 
 % Reshape 'ColorMap' if needed.
-StackSize = size(ImageStack);
+StackSize = size(ImageStack, 1:3);
 if (size(ColorMap, 1) ~= StackSize(3))
     ColorMap = repmat(ColorMap(1, 1:size(ColorMap, 2)), StackSize(3), 1);
 end
