@@ -30,15 +30,15 @@ function [TRArray] = computePairSeparation(TRArray)
 
 % Loop through the TRArray and update it to contain the Separation and
 % AverageSE fields.
-for ii = 1:size(TRArray, 2)
-    XTraj1 = double(TRArray(1, ii).X);
-    XSETraj1 = double(TRArray(1, ii).X_SE);
-    YTraj1 = double(TRArray(1, ii).Y);
-    YSETraj1 = double(TRArray(1, ii).Y_SE);
-    XTraj2 = double(TRArray(2, ii).X);
-    XSETraj2 = double(TRArray(2, ii).X_SE);
-    YTraj2 = double(TRArray(2, ii).Y);
-    YSETraj2 = double(TRArray(2, ii).Y_SE);
+for ii = 1:size(TRArray, 1)
+    XTraj1 = double(TRArray(ii, 1).X);
+    XSETraj1 = double(TRArray(ii, 1).X_SE);
+    YTraj1 = double(TRArray(ii, 1).Y);
+    YSETraj1 = double(TRArray(ii, 1).Y_SE);
+    XTraj2 = double(TRArray(ii, 2).X);
+    XSETraj2 = double(TRArray(ii, 2).X_SE);
+    YTraj2 = double(TRArray(ii, 2).Y);
+    YSETraj2 = double(TRArray(ii, 2).Y_SE);
     Separation = sqrt((XTraj1-XTraj2).^2 + (YTraj1-YTraj2).^2);
     AverageSETraj1 = mean([XSETraj1, YSETraj1], 2);
     AverageSETraj2 = mean([XSETraj2, YSETraj2], 2);
