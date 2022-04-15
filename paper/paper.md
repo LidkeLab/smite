@@ -111,8 +111,8 @@ Typical raw image data can be found in [@Pallikkuth_data:2018].
 registration, and inspection of results contained in SMD
 structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
 
-# Acknowledgements
-
-We acknowledge contributions from ...
+## Acknowledgements
+#
+#We acknowledge contributions from ...
 
 # References
