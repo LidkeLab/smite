@@ -107,7 +107,9 @@ classdef SingleMoleculeData
             NEmitters, TimeSeries, FastGauss);
         [SMD] = isolateSubSMD(SMD, SubIndices);
         [SMD] = isolateSubROI(SMD, ROI);
+        [KeepBool] = defineSMDMask(SMD, Mask);
+        [SMD, SMDMasked, KeepBool] = maskSMD(SMD, Mask);
         [SMD, KeepBool] = extractDatasets(SMD, Datasets, Compress);
-        
+
     end
 end

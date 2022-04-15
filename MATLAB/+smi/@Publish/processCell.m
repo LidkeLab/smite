@@ -30,7 +30,7 @@ end
 % Loop through each of the label directories and process the data.  If the
 % processing fails on a given label ii, proceed with the next label anyways
 % (these results might still be useful).
-obj.SMLM = smi.SMLM(obj.SMF);
+obj.SMLM = smi.SMLM(copy(obj.SMF));
 obj.SMLM.Verbose = obj.Verbose;
 obj.SMLM.SRImageZoom = obj.SRImageZoom;
 obj.SMLM.SRCircImZoom = obj.SRCircleImageZoom;
@@ -41,7 +41,7 @@ for ii = 1:NLabels
     if ~(ismember(ii, obj.LabelID) || isempty(obj.LabelID))
         continue
     end
-    
+
     % Attempt to process the data for label ii.
     try
         obj.processLabel(CellName, LabelNames{ii});
@@ -52,7 +52,7 @@ for ii = 1:NLabels
                 fullfile(CellName, LabelNames{ii}), ...
                 MException.identifier, MException.message)
         end
-        
+
         % Store the error information in the log file.
         obj.ErrorLog = [obj.ErrorLog; ...
             {CellName, LabelNames{ii}, MException}];
@@ -65,10 +65,22 @@ end
 % overlay image of the multiple labels, storing the overlay in the top
 % level directory for easy access.
 if (obj.GenerateSR && (NLabels>1))
+    % Prepare overlay masks.
+    CellNumber = regexp(CellName, '\d*', 'match');
+    CellNumber = str2double(CellNumber{1});
+    Mask = obj.genBFMask(obj.FocusImageStructs(CellNumber, :), ...
+        obj.MaxBrightfieldShift);
+    MaskName = sprintf('%inm', ...
+        round(obj.MaxBrightfieldShift * obj.SMF.Data.PixelSize * 1e3));
+    save(fullfile(obj.SaveBaseDir, ...
+        sprintf('%s_%s_Mask.mat', CellName, MaskName)), 'Mask')
+
+    % Prepare the overlays.
     try
         obj.genSROverlays(...
             fullfile(obj.SaveBaseDir, CellName), ...
-            obj.SaveBaseDir, obj.SMF.Data.AnalysisID);
+            obj.SaveBaseDir, obj.SMF.Data.AnalysisID, ...
+            Mask, MaskName);
     catch MException
         if obj.Verbose
             warning(['Publish.processCell(): Overlay image ', ...
