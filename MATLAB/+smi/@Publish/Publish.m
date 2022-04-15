@@ -59,6 +59,16 @@ classdef Publish < handle
         % Flag to perform analysis on bleaching results (Default = false)
         AnalyzeBleaching = false;
 
+        % Apply brightfield drift correction (Default = false)
+        % NOTE: If SMF.DriftCorrection.On=true, brightfield DC is still
+        %       applied just before the post-processing DC.
+        UseBrightfieldDC = false
+
+        % Max. brightfield shift used to define overlay masks (pixels)
+        % NOTE: This is defined in terms of brightfield pixels, e.g., units
+        %       of obj.SMF.Data.PixelSize.
+        MaxBrightfieldShift = inf
+
         % Shift localizations based on brightfield results (Default = false)
         ShiftToReg = false;
 
@@ -75,6 +85,12 @@ classdef Publish < handle
 
         % Log of errors encountered during analysis.
         ErrorLog = {};
+
+        % Data related to brightfield registration loaded from data files.
+        AlignRegStructs = {};
+
+        % Set of brightfield focus images loaded from data files.
+        FocusImageStructs = {};
     end
 
     methods
@@ -116,7 +132,7 @@ classdef Publish < handle
     end
 
     methods (Static)
-        genSROverlays(ResultsCellDir, SaveDir, AnalysisID)
+        genSROverlays(ResultsCellDir, SaveDir, AnalysisID, Mask, MaskName)
         [OverlayImage, ColorOrderTag] = overlayNImages(ImageStack);
         genOverlayPlots(ImageShift, RegError, MaxCorr, BPPixelSize, SaveDir)
         [ImagesStruct] = genAlignMovies(AlignRegData, SaveDir);
@@ -133,7 +149,10 @@ classdef Publish < handle
         [RegCorrection] = computeRegCorrection(SMF);
         [SMD, BestRegInd] = shiftToBestReg(SMD, RefImage, FocusImages);
         [Mask] = ...
-            generateShiftMask(LocalImShifts, ImageROIs, MaxShift, ImSize);
+            defineShiftMask(LocalImShifts, ImageROIs, MaxShift, ImSize);
+        [Mask] = genBFMask(FocusImageStructs, MaxBrightfieldShift)
+        [LocalShiftMag, LocalShift1To2, ImageROIs] = ...
+            computeBFShifts(FocusImStruct1, FocusImStruct2, SubROISize);
     end
 
 

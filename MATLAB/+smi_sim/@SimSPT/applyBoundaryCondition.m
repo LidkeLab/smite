@@ -39,6 +39,7 @@ function [Trajectories, PeriodicityMap, ConnectionMap] = ...
 
 
 % Apply the boundary condition.
+PeriodicityMap = zeros(size(ConnectionMap), 'logical');
 switch lower(BoundaryCondition)
     case 'periodic'
         TrajModFrameSize = ...

@@ -119,7 +119,7 @@ methods(Static)
       calcDCRMSE(SMD, X_True, Y_True, Z_True, ...
                  DriftX_True, DriftY_True, DriftZ_True)
    [SMD] = changeInterRef(SMD, RefDatasetNum);
-   [SMD] = driftCorrectBF(SMD, SMF, RefImage, ParamStruct);
+   [SMD, BFStruct] = driftCorrectBF(SMD, SMF, RefImage, BFStruct, ParamStruct);
    [SMD] = driftCorrectBFIntra(SMD, PreSeqImages, PostSeqImages, ParamStruct)  
    [SMD] = driftCorrectBFInter(SMD, RefImage, PreSeqImages, ParamStruct) 
    [sumNND, X] = minD(Theta, X, T, Ndims, L, NS)

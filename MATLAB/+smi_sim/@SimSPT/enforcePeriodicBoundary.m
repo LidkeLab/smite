@@ -56,13 +56,18 @@ for dd = 1:NTrajInitial
     % Loop through any periodic boundary encounters and turn trajectories 
     % off in the appropriate frames.
     if any(PeriodicityMapT(dd, :))
+        % Determine when this emitter hit the boundary and turn it off from
+        % that point forward.
         EventIndices = find(PeriodicityMapT(dd, :));
         NNewTraj = numel(EventIndices);
+        IsOn(dd, (EventIndices(1):NFrames)) = false;
+
+        % Continue looping throught the boundary interactions and create a
+        % new trajectory each time.
         NewTrajectories = repmat(Trajectories(dd, :, :), [NNewTraj, 1]);
         NewConnections = repmat(ConnectionMapT(dd, :), [NNewTraj, 1]);
-        IsOn(dd, (EventIndices(1):NFrames)) = false;
         Trajectories(dd, (EventIndices(1):NFrames), :) = NaN;
-        ConnectionMapT(dd, (EventIndices(1):NFrames)) = 0;
+        ConnectionMapT(dd, (EventIndices(1):NFrames)) = NaN;
         for nn = 1:(NNewTraj-1)
             % Update the trajectory ID counter.
             CurrentTrajID = CurrentTrajID + 1;
@@ -72,12 +77,21 @@ for dd = 1:NTrajInitial
             IsOn(CurrentTrajID, 1:(EventIndices(nn)-1)) = false;
             IsOn(CurrentTrajID, EventIndices(nn+1):NFrames) = false;
             
-            % Revise the trajectory positions and connections to
-            % reflect the birth.
+            % Set positions and connections to NaN before and after the
+            % birth of this new trajectory.
             NewTrajectories(nn, 1:(EventIndices(nn)-1), :) = NaN;
             NewTrajectories(nn, EventIndices(nn+1):NFrames, :) = NaN;
             NewConnections(nn, 1:(EventIndices(nn)-1)) = NaN;
             NewConnections(nn, EventIndices(nn+1):NFrames) = NaN;
+
+            % Update ConnectionMapT to reflect the new trajectory ID.
+            CurrentInds = EventIndices(nn):(EventIndices(nn+1)-1);
+            ConnectedIDs = NewConnections(nn, CurrentInds);
+            for ii = unique(ConnectedIDs(ConnectedIDs ~= 0))
+                UpdateInd = find(ConnectionMapT(ii, CurrentInds) == dd);
+                ConnectionMapT(ii, EventIndices(nn) + UpdateInd - 1) = ...
+                    CurrentTrajID;
+            end
         end
         CurrentTrajID = CurrentTrajID + 1;
         IsOn(CurrentTrajID, 1:(EventIndices(NNewTraj)-1)) = false;

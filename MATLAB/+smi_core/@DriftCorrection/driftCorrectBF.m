@@ -1,7 +1,8 @@
-function [SMD] = driftCorrectBF(SMD, SMF, RefImage, ParamStruct)
+function [SMD, BFStruct] = ...
+    driftCorrectBF(SMD, SMF, RefImage, BFStruct, ParamStruct)
 %driftCorrectBF performs drift correction from brightfield images.
 % This method performs drift correction using brightfield images stored in
-% an h5 file.  This is done by estimating shifts between brightfield images 
+% an h5 file.  This is done by estimating shifts between brightfield images
 % taken before and after each dataset in SMD, making the drift model a 1D
 % polynomial for inter- and intra-dataset drift correction.
 %
@@ -11,6 +12,7 @@ function [SMD] = driftCorrectBF(SMD, SMF, RefImage, ParamStruct)
 %        data file.
 %   RefImage: Reference image to which all datasets will be corrected to.
 %             (Default = pre dataset 1 focus image).
+%   BFStruct: Structure of brightfield images (see default setting below).
 %   ParamStruct: Structure of parameters sent to smi_stat.findOffsetIter().
 %                (fields NIterMax, Tolerance, CorrParams, ShiftParams are
 %                passed as inputs to smi_stat.findOffsetIter())
@@ -18,14 +20,17 @@ function [SMD] = driftCorrectBF(SMD, SMF, RefImage, ParamStruct)
 % OUTPUTS:
 %   SMD: Input SMD with applied shifts and updated fields SMD.DriftX and
 %        SMD.DriftY.
+%   BFStruct: Structure of brightfield images loaded from the data file.
 
 % Created by:
 %   David J. Schodt (Lidke Lab 2021)
 
 
-% Attempt to load the brightfield data.
-BFStruct = smi_core.LoadData.readH5File(...
-    fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}), 'FocusImages');
+% Attempt to load the brightfield data (if needed).
+if (~exist('BFStruct', 'var') || isempty(BFStruct))
+    BFStruct = smi_core.LoadData.readH5File(...
+        fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}), 'FocusImages');
+end
 
 % Set a defaults if needed.
 if (~exist('RefImage', 'var') || isempty(RefImage))

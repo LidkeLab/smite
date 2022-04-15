@@ -1,5 +1,6 @@
-function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
-    estimateLocalImShifts(Image1, Image2, SubROISize, CorrParams)
+function [Shift, IntShift, ImageROIs, ImageStats] = ...
+    estimateLocalImShifts(Image1, Image2, SubROISize, ...
+    CorrParams, ShiftParams)
 %estimateLocalImShifts estimates local shifts between two images.
 %
 % INPUT:
@@ -11,14 +12,11 @@ function [PixelOffsets, SubPixelOffsets, ImageROIs, ImageStats] = ...
 %               computed, ideally evenly divides [m, n].
 %               (Pixels)(2x1 array)(Default = size(Image1))
 %   CorrParams: Structure of parameters passed to smi_stat.findOffset().
+%   ShiftParams: Structure of parameters passed to smi_stat.shiftImage()
 %
 % OUTPUT:
-%   PixelOffset: The integer pixel offset of Image2 relative to Image1,
-%                determined based on the location of the peak of the xcorr
-%                coefficient between the two images. (NROIsx2 array)
-%   SubPixelOffset: The sub-pixel offset of Image2 relative to Image1, 
-%                   approximated based on a 2nd order polynomial fit(s) to 
-%                   the cross-correlation. (NROIsx2 float)
+%   Shift: Sub-pixel offset of Image2 relative to Image1. (NROIsx2 array)
+%   IntShift: Integer shift of Image2 relative to Image1. (NROIsx2 float)
 %   ImageROIs: ROIs of the regions corresponding to the pixel offsets.
 %              (NROIsx4 array)([YStart, XStart, YEnd, XEnd])
 %   ImageStats: Structure containing some stats about the ImageROIs.
@@ -37,6 +35,9 @@ end
 if (~exist('CorrParams', 'var') || isempty(CorrParams))
     CorrParams = struct([]);
 end
+if (~exist('ShiftParams', 'var') || isempty(ShiftParams))
+    ShiftParams = struct([]);
+end
 
 % Split the images up into the sub-ROIs.
 [DividedImages1, ImageROIs] = ...
@@ -45,14 +46,14 @@ DividedImages2 = smi_helpers.subdivideImage(Image2, SubROISize);
 
 % Loop through each ROI and compute the local shift.
 NROIs = size(ImageROIs, 1);
-PixelOffsets = zeros(NROIs, 2);
-SubPixelOffsets = PixelOffsets;
+Shift = zeros(NROIs, 2);
+IntShift = zeros(NROIs, 2);
 for nn = 1:NROIs
-    [Offset, SubOffset] = smi_stat.findOffset(...
-        DividedImages1{nn}, DividedImages2{nn}, ...
-        CorrParams);
-    PixelOffsets(nn, :) = Offset(1:2);
-    SubPixelOffsets(nn, :) = SubOffset(1:2);
+    [ShiftCurrent, IntShiftCurrent] = smi_stat.findOffsetIter(...
+        DividedImages1{nn}, DividedImages2{nn}, [], [], ...
+        CorrParams, ShiftParams);
+    Shift(nn, :) = ShiftCurrent(1:2);
+    IntShift(nn, :) = IntShiftCurrent(1:2);
 end
 
 % If needed, compute some imaging stats. which might be useful to return.
