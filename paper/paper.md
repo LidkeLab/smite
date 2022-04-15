@@ -30,10 +30,10 @@ authors:
   - name: Farzin Farzam
 #   orcid: 
     affiliation: 1
-  - name: Will Kanagy
+  - name: Will K. Kanagy
 #   orcid: 
     affiliation: 1
-  - name: Derek Rinaldi
+  - name: Derek A. Rinaldi
 #   orcid: 
     affiliation: 1
   - name: Elton Jhamba
@@ -110,9 +110,5 @@ Typical raw image data can be found in [@Pallikkuth_data:2018].
 ![SMITE GUIs for making movies from SPT trajectories, SMLM analysis, channel
 registration, and inspection of results contained in SMD
 structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
-
-## Acknowledgements
-#
-#We acknowledge contributions from ...
 
 # References
