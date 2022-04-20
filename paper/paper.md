@@ -13,28 +13,21 @@ authors:
     orcid: 0000-0002-3520-7605
     affiliation: "1, 2"
   - name: Mohamadreza Fazel
-#   orcid: 
     affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
     orcid: 0000-0002-2571-0418
     affiliation: 1
   - name: Sandeep Pallikkuth
-#   orcid: 
     affiliation: 1
   - name: Sajjad Khan
-#   orcid: 
     affiliation: 1
   - name: Marjolein B. M. Meddens
-#   orcid: 
     affiliation: 1
   - name: Farzin Farzam
-#   orcid: 
     affiliation: 1
   - name: Will K. Kanagy
-#   orcid: 
     affiliation: 1
   - name: Derek A. Rinaldi
-#   orcid: 
     affiliation: 1
   - name: Elton Jhamba
     orcid: 0000-0002-5272-6466
@@ -47,7 +40,7 @@ affiliations:
    index: 1
  - name: Department of Mathematics and Statistics, University of New Mexico
    index: 2
-date: 3 March 2022
+date: 20 April 2022
 bibliography: paper.bib
 
 ---
