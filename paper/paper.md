@@ -11,7 +11,7 @@ authors:
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Michael J. Wester^[co-first author] # note this makes a footnote saying 'co-first author'
     orcid: 0000-0002-3520-7605
-    affiliation: 1
+    affiliation: "1, 2"
   - name: Mohamadreza Fazel
     affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
@@ -38,6 +38,8 @@ authors:
 affiliations:
  - name: Department of Physics and Astronomy, University of New Mexico
    index: 1
+ - name: Department of Mathematics and Statistics, University of New Mexico
+   index: 2
 date: 20 April 2022
 bibliography: paper.bib
 
