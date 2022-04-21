@@ -18,7 +18,9 @@ end
 % Create the filename for the saved results.
 % NOTE: For now, this is only setup for a single file (hence the {1}).
 [~, FileName] = fileparts(obj.SMF.Data.FileName{1});
-BaseName = [FileName, '_', obj.SMF.Data.AnalysisID];
+BaseName = [FileName, ...
+    smi_helpers.arrayMUX({'_', ''}, isempty(obj.SMF.Data.AnalysisID)), ...
+    obj.SMF.Data.AnalysisID];
 ResultsFileName = [BaseName, '_Results.mat'];
 
 % Move the data structures of interest into the workspace with appropriate
