@@ -149,6 +149,7 @@ classdef GenerateMovies < handle
     methods (Static)
         playMovie(PlotAxes, TR, ScaledData, Params, SMF, SMD, VideoObject)
         [Params] = prepDefaults();
+        saveRawDataMovie(RawData, FilePath, Params, FrameRate)
     end
     
     methods (Static, Hidden)
