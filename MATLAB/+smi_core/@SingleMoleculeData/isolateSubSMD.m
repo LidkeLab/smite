@@ -45,8 +45,8 @@ for ff = 1:numel(SMDFields)
     if (numel(SMDIn.(SMDFields{ff})) == ArrayLength)
         if VectorCopy
             SMD.(SMDFields{ff}) = SMDIn.(SMDFields{ff})(SubIndices);
-        else
-            SMD.(SMDFields{ff}) = [];
+        %else
+        %    SMD.(SMDFields{ff}) = [];
         end
     end
 end
