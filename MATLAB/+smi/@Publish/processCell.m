@@ -89,6 +89,12 @@ if (obj.GenerateSR && (NLabels>1))
                 'generation failed for %s\n%s, %s'], ...
                 CellName, MException.identifier, MException.message)
         end
+
+        % Store the error information in the log file.
+        obj.ErrorLog = [obj.ErrorLog; ...
+            {CellName, LabelNames{1}, MException}];
+        ErrorLog = obj.ErrorLog;
+        save(obj.LogFilePath, 'ErrorLog', '-append')
     end
 end
 
