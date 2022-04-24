@@ -110,7 +110,7 @@ OverlayImageCircleName = sprintf('%s%s_CircleOverlay_%s.png', ...
 imwrite(OverlayImageCircle, fullfile(SaveDir, OverlayImageCircleName));
 
 % Prepare and save masked overlays.
-if ~all(Mask)
+if ~all(Mask(:))
     Mask = imresize(Mask, size(OverlayImageGaussian, 1:2));
     MaskedGaussian = Mask .* OverlayImageGaussian;
     MaskedGaussianName = sprintf('%s%s%sMask_GaussianOverlay_%s.png', ...
