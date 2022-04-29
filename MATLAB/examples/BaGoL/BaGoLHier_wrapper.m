@@ -42,8 +42,9 @@ BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 %BaGoLParams.N_Burnin = 20000;       % Length of Burn-in chain
 %BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
-BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
+%BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
                                     % required in filtering step
+BaGoLParams.N_NN =  0;
 
 % Y_Adjust is sometimes needed to deal with lower left versus upper left
 % y-origin issues.  Lower left with y increasing upwards is the default,
@@ -75,7 +76,8 @@ DataROI = [];
 % Note for batch runs, in which Files, Xi and DataROI are input by hand,
 % please see ### comments below.
 % 
-BaGoLParams.IntensityCutoff = 5000; % Intensity cutoff [DEPRECATED]
+%BaGoLParams.IntensityCutoff = Inf;  % Intensity cutoff [prefilter applied]
+BaGoLParams.IntensityCutoff = 5000; % Intensity cutoff [no prefilter]
 BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 %BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)

@@ -181,12 +181,16 @@ if ~isfolder(SaveDirLong)
 end
 
 % Remove bright localizations that are likely to be more than one emitters 
-% This should now be done earlier in preparing the dataset.
-%if isfield('SMD', 'Photons')
-%   IndP = SMD.Photons < IntensityCutoff;
-%else
-    IndP = SMD.FrameNum > 0;   % This should be all the localizations
-%end
+% This should now be done earlier in preparing the dataset, but retained
+% when pre-filtering is not done.
+if isfield('SMD', 'Photons')
+   IndP = SMD.Photons < IntensityCutoff;
+else
+   IndP = SMD.FrameNum > 0;   % This should be all the localizations
+end
+n_IndP = sum(IndP);
+%fprintf('IntensityCutoff localizations kept = %d out of %d\n', ...
+%        n_IndP, numel(IndP));
 
 Xi = BaGoLParams.Xi; %[k, theta] parameters for gamma prior.
 % Make the run on a smaller subregion.
@@ -228,14 +232,22 @@ if isfield('SMD', 'NFrames')
    SMD.FrameNum = SMD.NFrames*single((SMD.DatasetNum(Ind)-1))+single(SMD.FrameNum(Ind));
 end
 
-%% Localizations are filtered based on NND within 3 median of localization sigma
+%% Localizations are filtered based on the NND within 3 times the median of
+%  the localization sigma, that is, localizations are eliminated if they do not
+%  have N_NN nearest neighbors that are within 3 times the localization sigma
+%  median.
 if N_NN > 0
    Prec_Median = median([SMD.X_SE;SMD.Y_SE]);
-   [~,D]=knnsearch([SMD.X,SMD.Y],[SMD.X,SMD.Y],'K',length(SMD.X));
-   D(:,1)=[];
 
-   ID = D < 3*Prec_Median;
-   N = sum(ID,2);
+%  [~,D]=knnsearch([SMD.X,SMD.Y],[SMD.X,SMD.Y],'K',length(SMD.X));
+%  D(:,1)=[];
+%  ID = D < 3*Prec_Median;
+%  N = sum(ID,2);
+%  Ind = N >= N_NN;
+
+   % Less memory intensive and faster implementation.
+   ID = rangesearch([SMD.X, SMD.Y], [SMD.X, SMD.Y], 3*Prec_Median);
+   N = cellfun(@numel, ID);
    Ind = N >= N_NN;
 
    SMD.X = SMD.X(Ind);
