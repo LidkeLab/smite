@@ -43,9 +43,9 @@ switch FitMethod
         %       proportional to the reciprocal of the CRLB of each
         %       point in an MSD plot. The proportionality constant is
         %       dropped because it doesn't affect the weighted fit.
-        MSDVariance = NPoints ./ (FrameLags.^2);
+        MSDVariance =  (FrameLags.^2) ./ NPoints;
         Weights = strcmpi(FitMethod, 'LS')*ones(numel(FrameLags), 1) ...
-            + strcmpi(FitMethod, 'WeightedLS')*MSDVariance;
+            + strcmpi(FitMethod, 'WeightedLS')./MSDVariance;
         
         % Perform the least squares fit.
         [BetaHat, BetaHatSE] = ...
