@@ -33,9 +33,11 @@ if (~exist('PercentileCeiling', 'var') || isempty(PercentileCeiling))
     PercentileCeiling = 100;
 end
 
-% If the image is identically zero, return.
+% If the image is identically zero or scalar, return.
 if ~any(Image(:))
     Image = Image + MinMax(1);
+    return
+elseif isscalar(Image)
     return
 end
 
