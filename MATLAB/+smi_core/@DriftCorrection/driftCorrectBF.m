@@ -42,6 +42,7 @@ end
 DefaultParams.NIterMax = 3;
 DefaultParams.Tolerance = [];
 DefaultParams.CorrParams = struct();
+DefaultParams.CorrParams.SuppressWarnings = true;
 DefaultParams.ShiftParams = struct();
 ParamStruct = smi_helpers.padStruct(ParamStruct, DefaultParams);
 
