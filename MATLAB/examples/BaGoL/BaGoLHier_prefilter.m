@@ -63,10 +63,6 @@ N = numel(SMD.X);
 %SMD.XSize = 2 ^ nextpow2(max([SMD.X; SMD.Y]));
 %SMD.YSize = SMD.XSize;
 SMF = smi_core.SingleMoleculeFitting;
-SMF.FrameConnection.Method = 'Hypothesis test';
-SMF.FrameConnection.LoS = 0.01;
-SMF.FrameConnection.MaxSeparation = 1; % pixels
-SMF.FrameConnection.MaxFrameGap = 5; % frames
 FC = smi_core.FrameConnection(SMD, SMF);
 FC.performFrameConnection();
 SMD = FC.SMDCombined;
