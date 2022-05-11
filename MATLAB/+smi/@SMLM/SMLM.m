@@ -211,7 +211,7 @@ methods
 
         % Perform the gain and offset correction.
         DTP = smi_core.DataToPhotons(obj.SMF, Dataset, [], [], obj.Verbose);
-        ScaledDataset = DTP.convertData();
+        [ScaledDataset, obj.SMF.Data.CameraReadNoise] = DTP.convertData();
         
         % Generate localizations from the current Dataset.
         if obj.FullvsTest
