@@ -21,5 +21,6 @@ function MinMax = setMinMax(SMF)
    MinMax.Y_SE     = [0, SMF.Thresholding.MaxXY_SE];
    MinMax.Z_SE     = [0, SMF.Thresholding.MaxZ_SE];
    MinMax.PValue   = [SMF.Thresholding.MinPValue, 1];
+   MinMax.LogLikelihood = [-inf, inf];
 
 end
