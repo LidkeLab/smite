@@ -155,10 +155,8 @@ classdef FindROI < handle
                         [D_A] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaSmall);
                         [D_B] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaLarge);
                     case 1
-                        D_A=gpuArray(zeros(size(SubStack,'single')));
-                        D_B=gpuArray(zeros(size(SubStack,'single')));
-                        [D_A] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, D_A, obj.SigmaSmall);
-                        [D_B] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, D_B, obj.SigmaLarge);    
+                        [D_A] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, obj.SigmaSmall);
+                        [D_B] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, obj.SigmaLarge);    
                 end
                 D_A=D_A-D_B;
                 [SubLocalMax]=smi_core.FindROI.localMax(D_A,LMKernelSize,MinVal);
@@ -326,18 +324,19 @@ classdef FindROI < handle
         %   smi_cuda_FindROI.cu
         %
         
-        v = gpuArray(Varim);
         Out1=gpuArray(zeros(size(Stack),'single'));
         
         %Creating GPU CUDA kernel objects from PTX and CU code
         K_Gauss = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_gaussMajor_sCMOS');
+        K_Gauss.GridSize(1) = size(Stack,3);
+        K_Gauss.ThreadBlockSize(1) = size(Stack,2);
         
         %Calling the gpu code to apply Gaussian filter along major
-        Out1 = feval(K_Gauss,d,v,Out1,size(Stack,1),Sigma);
+        Out1 = feval(K_Gauss,gpuArray(Stack),Varim,Out1,size(Stack,1),Sigma);
         
         %Permuting and doing the other dimension
         Out = gpuArray(zeros(size(Stack),'single'));
-        Out = feval(K_Gauss,permute(Out1,[2 1 3]),permute(v,[2 1]),Out,size(Stack,1),Sigma);
+        Out = feval(K_Gauss,permute(Out1,[2 1 3]),permute(Varim,[2 1]),Out,size(Stack,1),Sigma);
         
         %Permute back
         Out = permute(Out,[2 1 3]);

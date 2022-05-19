@@ -80,9 +80,9 @@ __global__ void kernel_gaussMajor_sCMOS(const float * d, const float * v, float 
         weightsum = 0;
         for (int jj = st; jj < en; jj++){
             var=kernel_norm(ii-jj,Sigma)/v[basev+jj];
-            weight=kernel_norm(ii-jj,Sigma)*d[base+jj];
+            weight=var*d[base+jj];
             varsum += var;
-            weightsum += weight*var;      
+            weightsum += weight;      
         }
         d_out[base+ii]=weightsum/varsum;
     }
