@@ -155,8 +155,8 @@ classdef FindROI < handle
                         [D_A] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaSmall);
                         [D_B] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaLarge);
                     case 1
-                        D_A=gpuArray(zeros(size(SubStack,'single')));
-                        D_B=gpuArray(zeros(size(SubStack,'single')));
+                        D_A=gpuArray(zeros(size(SubStack),'single'));
+                        D_B=gpuArray(zeros(size(SubStack),'single'));
                         [D_A] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, D_A, obj.SigmaSmall);
                         [D_B] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, D_B, obj.SigmaLarge);    
                 end
