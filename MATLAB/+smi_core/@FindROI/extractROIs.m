@@ -34,10 +34,10 @@ if (~exist('CorrectData', 'var') || isempty(CorrectData))
 end
 
 % Load the calibration data.
-DTP = smi_core.DataToPhotons(SMF);
-if ~CorrectData
-    % If we don't want to correct the data, we'll just overwrite
-    % DTP.CameraGain and DTP.CameraOffset so it doesn't affect the data.
+if CorrectData
+    DTP = smi_core.DataToPhotons(SMF);
+else
+    DTP = smi_core.DataToPhotons();
     DTP.CameraGain = 1;
     DTP.CameraOffset = 0;
 end
