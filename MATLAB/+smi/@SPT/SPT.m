@@ -105,6 +105,9 @@ classdef SPT < handle
         
         % Density of dark emitters. (see obj.estimateDensities() for usage)
         RhoOff
+
+        % Internally used smi.SMLM instance.
+        SMLM = smi.SMLM;
     end
     
     properties (Hidden)       
