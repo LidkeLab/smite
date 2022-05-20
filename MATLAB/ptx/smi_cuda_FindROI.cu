@@ -7,6 +7,8 @@
 //#include <stdlib.h>
 //#include <string.h>
 
+        
+        
 __global__ void kernel_gaussMajor(float * d, int MajorSize, float b0, float b1, float b2, float b3, float B)
 {
 	//Gaussian filter along the Major dimension.  
@@ -42,6 +44,48 @@ __global__ void kernel_gaussMajor(float * d, int MajorSize, float b0, float b1, 
 		w2 = w1;
 		w1 = temp;
 	}
+}
+
+
+__device__ float kernel_norm(int x, float s1)
+{
+    return 1/sqrt(2*pi)/s1*exp( - x*x/(2*s1*s1));
+}
+
+__global__ void kernel_gaussMajor_sCMOS(const float * d, const float * v, float * d_out, int MajorSize, float Sigma)
+{
+	//Gaussian filter along the Major dimension.  
+    // Noise-Weighted convolution by Gaussians, seperable
+    // *d is the data
+    // *v is a variance image
+    // Sigma is the small kernel
+         
+    int MinorSize = blockDim.x;
+	int idx = threadIdx.x;
+	int idz = blockIdx.x;
+    
+    int st,en; 
+	float weight, var, weightsum, varsum;
+	int ii = 0;
+	const int base = idz*MinorSize*MajorSize + idx*MajorSize;
+    const int basev = idx*MajorSize;
+    float winsize = 3* Sigma;
+
+    // Each thread does one row.  
+    // variance weighted  x =         
+    for (ii = 0; ii< MajorSize; ii++){
+        st = max(0,floor(ii-winsize));
+        en = min(MajorSize-1,ii+winsize) ;
+        varsum = 0;
+        weightsum = 0;
+        for (int jj = st; jj < en; jj++){
+            var=kernel_norm(ii-jj,Sigma)/v[basev+jj];
+            weight=var*d[base+jj];
+            varsum += var;
+            weightsum += weight;      
+        }
+        d_out[base+ii]=weightsum/varsum;
+    }
 }
 
 __global__ void kernel_gaussMinor(float * d, int MinorSize, float b0, float b1, float b2, float b3, float B)

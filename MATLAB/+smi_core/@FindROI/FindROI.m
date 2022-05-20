@@ -36,6 +36,8 @@ classdef FindROI < handle
         LocalMaxIm      %Binary Image showing local maxima above the threshold
         PlotBoxFrame=1  %If Verbose >= 3, plot boxes for this frame (Default=1)
         Verbose=1       %Verbosity level
+        IsSCMOS         %Is a SCMOS Camera and will use Variance image 
+        Varim           %Variance Image (photons^2)
     end
     
     properties (Access = protected)
@@ -77,6 +79,14 @@ classdef FindROI < handle
                 obj.PSFSigma=mean(SMF.Fitting.PSFSigma);
                 obj.SigmaSmall=obj.PSFSigma;
                 obj.SigmaLarge=2*obj.PSFSigma;
+                switch SMF.Data.CameraType
+                    case 'SCMOS'
+                        obj.IsSCMOS = 1;
+                        obj.Varim = gpuArray(single(SMF.Data.CameraReadNoise./SMF.Data.CameraGain.^2)); 
+                    otherwise
+                        obj.IsSCMOS = 0;
+                end
+                
             end
             
             if nargin > 1
@@ -116,7 +126,7 @@ classdef FindROI < handle
             LMKernelSize=obj.BoxSize-obj.BoxOverlap;
             
             %Break data into chunks that fit in GPU memory
-            NCopies=6; %for out of place operations
+            NCopies=8; %for out of place operations
             NBytesPerPixel=4; %single float
             NElem = numel(obj.Data);
             g = gpuDevice;
@@ -140,8 +150,14 @@ classdef FindROI < handle
                 SubStack = obj.Data(:,:,ZStart:ZEnd);
                 
                 %Call static methods
-                [D_A] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaSmall);
-                [D_B] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaLarge);
+                switch obj.IsSCMOS
+                    case 0
+                        [D_A] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaSmall);
+                        [D_B] = smi_core.FindROI.gaussInPlace(SubStack,obj.SigmaLarge);
+                    case 1
+                        [D_A] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, obj.SigmaSmall);
+                        [D_B] = smi_core.FindROI.gauss_sCMOS(SubStack,obj.Varim, obj.SigmaLarge);    
+                end
                 D_A=D_A-D_B;
                 [SubLocalMax]=smi_core.FindROI.localMax(D_A,LMKernelSize,MinVal);
                 
@@ -280,6 +296,53 @@ classdef FindROI < handle
         
         %Permute back.  
         Stack=permute(Stack,[2 1 3]);
+        end
+        
+        function [Out] = gauss_sCMOS(Stack, Varim, Sigma)
+        %gauss_sCMOS() Out of place, weighted Gaussian filter
+        % [SubStack] = gauss_sCMOS(SubStack, Varim, Sigma)
+        %
+        % Filtering is applied using direct, weighted calcualtion, but done
+        % separably along x and y. 
+        %
+        % This is an out of place filter, meaning that inputs are not
+        % modified. 
+        %
+        % If the input is not gpuArray, it is copied to the GPU
+        % 
+        % INPUTS:
+        %   Stack:      Stack of 2D images to be filtered
+        %   Varim:      A gain-corrected variance image 
+        %   Sigma:      Gaussian Kernel (Pixels)
+        %
+        % OUTPUTS:
+        %   Out:        2D stack of images (gpuArray) 
+        %
+        % REQUIRES:
+        %   MATLAB 2014a or later versions
+        %   Parallel Procesing Toolbox
+        %   NVidia GPU
+        %   smi_cuda_FindROI.ptx
+        %   smi_cuda_FindROI.cu
+        %
+        
+        Out1=gpuArray(zeros(size(Stack),'single'));
+        
+        %Creating GPU CUDA kernel objects from PTX and CU code
+        K_Gauss = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_gaussMajor_sCMOS');
+        K_Gauss.GridSize(1) = size(Stack,3);
+        K_Gauss.ThreadBlockSize(1) = size(Stack,2);
+        
+        %Calling the gpu code to apply Gaussian filter along major
+        Out1 = feval(K_Gauss,gpuArray(Stack),Varim,Out1,size(Stack,1),Sigma);
+        
+        %Permuting and doing the other dimension
+        Out = gpuArray(zeros(size(Stack),'single'));
+        Out = feval(K_Gauss,permute(Out1,[2 1 3]),permute(Varim,[2 1]),Out,size(Stack,1),Sigma);
+        
+        %Permute back
+        Out = permute(Out,[2 1 3]);
+
         end
         
         function [LocalMaxIm]=localMax(Stack,KernelSize,MinVal)
