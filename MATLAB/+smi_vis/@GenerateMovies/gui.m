@@ -322,6 +322,8 @@ end
     function saveMovieButtonClicked(~, ~)
         % This is a callback function to respond to clicks of the save
         % movie button.
+        obj.DataIsPrepped = false;
+        obj.AxesPrepped = false;
         obj.saveMovie()
     end
 
