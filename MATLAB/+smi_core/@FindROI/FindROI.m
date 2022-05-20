@@ -195,7 +195,9 @@ classdef FindROI < handle
             SMD.NDims = 2;
 
             if obj.Verbose >= 3
-                obj.plotBox(SMD, obj.Data, obj.PlotBoxFrame, obj.BoxSize);
+                Params.PercentileFloor = 1;
+                Params.PercentileCeiling = 99;
+                obj.plotBoxStack(SMD, obj.Data, obj.BoxSize, Params)
             end
         end
         
@@ -331,6 +333,7 @@ classdef FindROI < handle
         end
 
         plotBox(SMD, Data, Frame, BoxSize)
+        plotBoxStack(SMD, Data, BoxSize, Params)
         [ROIStack, CameraGain, CameraOffset, CameraReadNoise] = ...
             extractROIs(SMD, SMF, CorrectData);
     end
