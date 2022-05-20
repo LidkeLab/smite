@@ -36,8 +36,7 @@ else
     % match indices of obj.SMD.
     obj.DiffusionEstimator.FitIndividualTrajectories = ...
         obj.SMF.Tracking.TrajwiseD;
-    DiffusionStruct = obj.estimateDiffCoeffs(obj.TR, ...
-        obj.DiffusionEstimator, median(obj.SMF.Tracking.D));
+    DiffusionStruct = obj.estimateDiffCoeffs(obj.TR, obj.DiffusionEstimator);
     obj.SMF.Tracking.D = ...
         DiffusionStruct(2).DiffusionConstant * ones(size(obj.SMD.FrameNum));
     if obj.SMF.Tracking.TrajwiseD

@@ -10,7 +10,9 @@ function [DiffusionStruct] = ...
 %                       (Default = smi_stat.DiffusionEstimator)
 %   DReset: If 2 elements: Min. and max. diffusion coefficients.
 %           If 1 element: Value used to reset all "bad" values.
-%           (Default = [1e-5; inf])
+%           If empty: A bad ensemble diffusion coefficient is reset to a
+%                     value of 0.01.  Individual trajectory values are
+%                     reset to the ensemble value. (Default = [])
 %
 % OUTPUTS:
 %   DiffusionStruct: DiffusionEstimator.DiffusionStruct with DReset
@@ -24,8 +26,8 @@ function [DiffusionStruct] = ...
 if (~exist('DiffusionEstimator', 'var') || isempty(DiffusionEstimator))
     DiffusionEstimator = smi_stat.DiffusionEstimator;
 end
-if (~exist('DReset', 'var') || isempty(DReset))
-    DReset = [1e-5; inf];
+if ~exist('DReset', 'var')
+    DReset = [];
 end
 
 % Estimate the diffusion coefficients.
@@ -36,7 +38,21 @@ DiffusionEstimator.estimateDiffusionConstant();
 DiffusionStruct = DiffusionEstimator.DiffusionStruct;
 
 % Filter the diffusion coefficients.
-if (numel(DReset) > 1)
+if isempty(DReset)
+    % An empty DReset means we'll set a bad ensemble value to 1e-5 and bad
+    % individual values to the ensemble value.
+    ResetBool = ((DiffusionStruct(2).DiffusionConstant<=0) ...
+        || isnan(DiffusionStruct(2).DiffusionConstant) ...
+        || isinf(DiffusionStruct(2).DiffusionConstant));
+    DiffusionStruct(2).DiffusionConstant(ResetBool) = 0.01;
+    DiffusionStruct(2).DiffusionConstantSE(ResetBool) = inf;
+    ResetBool = ((DiffusionStruct(1).DiffusionConstant<=0) ...
+        | isnan(DiffusionStruct(1).DiffusionConstant) ...
+        | isinf(DiffusionStruct(1).DiffusionConstant));
+    DiffusionStruct(1).DiffusionConstant(ResetBool) = ...
+        DiffusionStruct(2).DiffusionConstant;
+    DiffusionStruct(1).DiffusionConstantSE(ResetBool) = inf;
+elseif (numel(DReset) > 1)
     % DReset represents a minimum and maximum allowed value.
     SetToMin = ((DiffusionStruct(1).DiffusionConstant<DReset(1)) ...
         | isnan(DiffusionStruct(1).DiffusionConstant));
@@ -51,7 +67,7 @@ if (numel(DReset) > 1)
     DiffusionStruct(2).DiffusionConstant(SetToMax) = DReset(2);
     DiffusionStruct(2).DiffusionConstant(SetToMin || SetToMax) = inf;
 else
-    % DReset is a scalar that we'll use to set all bad values.
+    % DReset is a scalar (assumed) that we'll use to set all bad values.
     ResetBool = ((DiffusionStruct(1).DiffusionConstant<=0) ...
         | isnan(DiffusionStruct(1).DiffusionConstant) ...
         | isinf(DiffusionStruct(1).DiffusionConstant));
