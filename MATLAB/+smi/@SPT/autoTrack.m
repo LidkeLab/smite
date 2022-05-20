@@ -24,6 +24,9 @@ for ii = 1:obj.SMF.Tracking.NIterMax
     % Track the data.
     obj.SMD.ConnectID = [];
     obj.generateTrajectories();
+    if (obj.SMF.Tracking.NIterMax == 1)
+        return
+    end
     
     % Update the tracking parameters based only on the current file.
     obj.updateTrackingParams(false)

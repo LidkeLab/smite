@@ -46,7 +46,7 @@ TrajClusters = smi_cluster.clusterSTDist(SMD, ...
 
 % Solve the gap-closing LAP(s).
 UniqueClusters = unique(TrajClusters);
-SMDOut = smi_core.SingleMoleculeData.isolateSubSMD(SMD);
+SMDOut = smi_core.SingleMoleculeData.createSMD();
 for nn = UniqueClusters.'
     SMDSub = smi_core.SingleMoleculeData.isolateSubSMD(SMD, ...
         TrajClusters == nn);

@@ -67,7 +67,8 @@ for nn = unique(SMD.DatasetNum.')
     for rr = 1:numel(SMDSub.XBoxCorner)
         ROIStack(:, :, ROIStackInd) = CorrectedData(...
             SMDSub.YBoxCorner(rr):(SMDSub.YBoxCorner(rr)+BoxSize-1), ...
-            SMDSub.XBoxCorner(rr):(SMDSub.XBoxCorner(rr)+BoxSize-1));
+            SMDSub.XBoxCorner(rr):(SMDSub.XBoxCorner(rr)+BoxSize-1), ...
+            SMDSub.FrameNum(rr));
         ROIStackInd = ROIStackInd + 1;
     end
 end

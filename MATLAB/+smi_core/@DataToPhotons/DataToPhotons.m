@@ -35,10 +35,7 @@ classdef DataToPhotons < handle
         
         % Data that is to be gain/offset corrected (float array)
         RawData {mustBeNumeric(RawData)}
-        
-        % Read noise that is to be gain/offset corrected (float array)
-        ReadNoise {mustBeNumeric(ReadNoise)}
-        
+
         % Region of interest of the raw data (float array)
         % (see obj.convertToPhotons() for details/usage)
         RawDataROI {mustBeNumeric(RawDataROI)}
