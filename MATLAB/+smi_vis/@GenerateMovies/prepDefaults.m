@@ -34,6 +34,9 @@ function [Params] = prepDefaults()
 %           PercentileCeiling: Percentile ceiling of pixel values in the 
 %                              raw data above which values are clipped.
 %                               (percentage)(Default = 100)
+%           PercentileFloor: Percentile floor of pixel values in the raw
+%                            data below which values are clipped.
+%                            (percentage)(Default = 0)
 %           PlotMarker: Marker to be placed on top of each localization. 
 %                       Options: MATLAB markers, e.g., 'x' (see Line 
 %                       Properties in MATLAB documentation) or 'none'.
@@ -85,6 +88,7 @@ Params.XPixels = [];
 Params.YPixels = [];
 Params.MinScaleIntensity = 1;
 Params.PercentileCeiling = 100;
+Params.PercentileFloor = 0;
 Params.PlotMarker = 'none';
 Params.SMDMarker = 'none';
 Params.SMDColor = [1, 0, 0];

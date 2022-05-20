@@ -1,5 +1,5 @@
 function [Image] = contrastStretch(Image, MinMax, ...
-    PercentileCeiling, MinScaleIntensity)
+    PercentileCeiling, PercentileFloor, MinScaleIntensity)
 %contrastStretch scales images to the range MinMax.
 % This method performs a full scale histogram stretch of 'Image' such that
 % the stretched pixel values lie in the range [MinMax(1), MinMax(2)].
@@ -13,6 +13,8 @@ function [Image] = contrastStretch(Image, MinMax, ...
 %                      (Default = 1)
 %   PercentileCeiling: Percentile ceiling of pixel values in the raw data
 %                      above which values are clipped. (Default = 100)
+%   PercentileFloor: Percentile floor of pixel values in the raw data below
+%                    which values are clipped. (Default = 0)
 %
 % OUTPUTS:
 %   Image: Input array 'Image' scaled to the range 'MinMax'.
@@ -32,6 +34,9 @@ end
 if (~exist('PercentileCeiling', 'var') || isempty(PercentileCeiling))
     PercentileCeiling = 100;
 end
+if (~exist('PercentileFloor', 'var') || isempty(PercentileFloor))
+    PercentileFloor = 0;
+end
 
 % If the image is identically zero or scalar, return.
 if ~any(Image(:))
@@ -46,6 +51,10 @@ if (PercentileCeiling ~= 100)
     MaxIntensity = ...
         max(prctile(Image(:), PercentileCeiling), MinScaleIntensity);
     Image(Image > MaxIntensity) = MaxIntensity;
+end
+if (PercentileFloor ~= 0)
+    MinIntensity = prctile(Image(:), PercentileFloor);
+    Image(Image < MinIntensity) = MinIntensity;
 end
 Image = (Image-min(Image(:))) ...
     * (MinMax(2)-MinMax(1))/(max(Image(:))-min(Image(:))) ...
