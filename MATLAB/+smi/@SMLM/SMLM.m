@@ -209,8 +209,13 @@ methods
         LD = smi_core.LoadData;
         [~, Dataset, obj.SMF]=LD.loadRawData(obj.SMF,DatasetIndex);
 
-        % Perform the gain and offset correction.
+        % Perform the gain and offset correction and update SMF
+        % (internally, for an sCMOS, smi_core.DataToPhotons will load the
+        % calibration data, which we'd like to store in obj.SMF.Data).
         DTP = smi_core.DataToPhotons(obj.SMF, Dataset, [], [], obj.Verbose);
+        obj.SMF.Data.CameraGain = DTP.CameraGain;
+        obj.SMF.Data.CameraOffset = DTP.CameraOffset;
+        obj.SMF.Data.CameraReadNoise = DTP.CameraReadNoise;
         ScaledDataset = DTP.convertData();
         
         % Generate localizations from the current Dataset.

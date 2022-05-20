@@ -331,6 +331,8 @@ classdef FindROI < handle
         end
 
         plotBox(SMD, Data, Frame, BoxSize)
+        [ROIStack, CameraGain, CameraOffset, CameraReadNoise] = ...
+            extractROIs(SMD, SMF, CorrectData);
     end
 end
 

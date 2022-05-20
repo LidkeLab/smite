@@ -23,7 +23,7 @@ end
 LD = smi_core.LoadData;
 [~, RawData] = LD.loadRawData(obj.SMF, 1);
 DTP = smi_core.DataToPhotons(obj.SMF, RawData, [], [], obj.Verbose);
-obj.ScaledData = DTP.convertData();
+[obj.ScaledData, obj.SMF.Data.CameraReadNoise] = DTP.convertData();
 LD = smi_core.LocalizeData(obj.ScaledData, obj.SMF, obj.Verbose);
 [obj.SMD, obj.SMDPreThresh] = LD.genLocalizations();
 obj.SMD.NDatasets = 1;

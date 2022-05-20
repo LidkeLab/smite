@@ -35,21 +35,18 @@ classdef DataToPhotons < handle
         
         % Data that is to be gain/offset corrected (float array)
         RawData {mustBeNumeric(RawData)}
-        
-        % Read noise that is to be gain/offset corrected (float array)
-        ReadNoise {mustBeNumeric(ReadNoise)}
-        
+
         % Region of interest of the raw data (float array)
         % (see obj.convertToPhotons() for details/usage)
         RawDataROI {mustBeNumeric(RawDataROI)}
         
-        % Gain of the camera used to collect RawData (float array)
+        % Gain of the camera used to collect RawData (float array)(ADU/e-)
         CameraGain {mustBeNumeric(CameraGain)}
         
-        % Offset of the camera used to collect RawData (float array)
+        % Offset of the camera used to collect RawData (float array)(ADU)
         CameraOffset {mustBeNumeric(CameraOffset)}
         
-        % Read noise of the camera used to collect Raw Data (float array)
+        % Read noise of the camera used to collect Raw Data (float array)(ADU^2)
         CameraReadNoise {mustBeNumeric(CameraReadNoise)}
         
         % Region of interest of the gain/offset arrays (float array)
