@@ -19,26 +19,9 @@ function [TR] = threshTrajLength(TR, MinTrackLength)
 %   David J. Schodt (Lidke Lab, 2018)
 
 
-% Loop through each trajectory in the TR structure. 
-% NOTE: It's shorter to do this with cellfun() (find TrackLength for all 
-%       trajectories at once then threshold), but that's several times
-%       slower than doing this loop below.
-IndicesToKeep = []; % initialize our array of traj. indices we wish to keep
-NTraj = numel(TR); % number of trajectories in the TR structure
-for ii = 1:NTraj 
-    % Determine the length of the ii-th trajectory in TR (number of frames
-    % it exists in).
-    TrackLength = numel(TR(ii).FrameNum); 
-    
-    % If the trajectory is sufficiently long, save it's index for later.
-    % Otherwise, do nothing.
-    if (TrackLength >= MinTrackLength)
-    	IndicesToKeep = [IndicesToKeep; ii];
-    end
-end
-
-% Isolate the trajectories that we wish to keep from the TR structure.
-TR = TR(IndicesToKeep);
+% Remove trajectories with too few observations.
+TrajLengths = smi_core.TrackingResults.computeTrajLengths(TR);
+TR(TrajLengths < MinTrackLength) = [];
 
 
 end

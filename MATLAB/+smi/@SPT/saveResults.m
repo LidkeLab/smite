@@ -100,5 +100,9 @@ if obj.GeneratePlots
     end
 end
 
+% Create and save some histograms related to track lengths/track fidelity.
+if obj.GeneratePlots
+end
+
 
 end
