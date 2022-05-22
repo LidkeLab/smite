@@ -107,7 +107,7 @@ classdef SPT < handle
         RhoOff
 
         % Internally used smi.SMLM instance.
-        SMLM = smi.SMLM;
+        SMLM = smi.SMLM(smi_core.SingleMoleculeFitting, false);
     end
     
     properties (Hidden)       
