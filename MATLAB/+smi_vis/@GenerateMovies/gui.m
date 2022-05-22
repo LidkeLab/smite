@@ -75,6 +75,7 @@ MoviePanel = uipanel(obj.GUIFigure, ...
 obj.MovieAxes = axes(MoviePanel);
 obj.MovieAxes.ActivePositionProperty = 'position';
 axtoolbar(obj.MovieAxes, 'default');
+set(zoom(obj.MovieAxes), 'ActionPostCallback', @postZoomCallback);
 
 % Add controls to allow for saving a movie.
 SaveMoviePanelPos = [MoviePanelPos(1)+MoviePanelPos(3), 0, ...
@@ -147,7 +148,7 @@ end
         % uicontrol.
         CurrentField = obj.Params.(Source.Tag);
         if islogical(CurrentField)
-            obj.Params.(Source.Tag) = Source.Value;
+            obj.Params.(Source.Tag) = logical(Source.Value);
         elseif (ischar(CurrentField) || isstring(CurrentField))
             obj.Params.(Source.Tag) = Source.String;
         elseif isnumeric(CurrentField)
@@ -429,6 +430,11 @@ end
             Source.Enable = 'on';
             rethrow(MException)
         end
+    end
+
+    function postZoomCallback(~, ~)
+        % Custom post-zooming callback for movie axes.
+        obj.addAxesTicks(obj.MovieAxes)
     end
 
 
