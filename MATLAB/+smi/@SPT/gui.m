@@ -83,6 +83,14 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
             obj.FindFiles = FindFilesInit;
             rethrow(MException)
         end
+
+        % Restore the SMF GUI in the panel.
+        % NOTE: This is a workaround for a bug which causes detachment of
+        %       the SMF GUI from the SPT class.  I haven't found the
+        %       underlying cause of this bug, but this workaround seems to
+        %       work okay. DJS 22/05/23
+        obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(obj.SMF);
+        obj.SMF.gui(SMFPanel);
     end
 
     function testTrack(Source, ~)
@@ -112,6 +120,14 @@ ControlHandles.MakeMovie = uicontrol(ControlPanel, ...
         obj.IsTestRun = TestFlagInit;
         obj.Verbose = VerboseInit;
         obj.FindFiles = FindFilesInit;
+
+        % Restore the SMF GUI in the panel.
+        % NOTE: This is a workaround for a bug which causes detachment of
+        %       the SMF GUI from the SPT class.  I haven't found the
+        %       underlying cause of this bug, but this workaround seems to
+        %       work okay. DJS 22/05/23
+        obj.SMF = smi_core.SingleMoleculeFitting.reloadSMF(obj.SMF);
+        obj.SMF.gui(SMFPanel);
     end
 
     function testFit(~, ~)
