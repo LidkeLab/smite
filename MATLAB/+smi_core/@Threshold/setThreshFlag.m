@@ -8,6 +8,7 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
 % structure, the corresponding bit in ThreshFlag will be set to '0'.
 %
 % Format for the bits (flags) in the binary number (starting from left) is:
+%     bit 11   'LogL'
 %     bit 10   'PValue'
 %     bit  9   'Z_SE'
 %     bit  8   'Y_SE'
@@ -182,6 +183,16 @@ function [SMD, TFlag] = setThreshFlag(obj, SMD, MinMax)
                 |isnan(SMD.PValue);
             k=find(tflagPValue); % find the position of failures in the array
             xx=strmatch('PValue',obj.Fields,'exact');
+            TFlag(k)=bitset(TFlag(k),xx);
+        end
+    end
+    if sum(strcmp(fieldnames(MinMax), 'LogLikelihood')) == 1
+        if ~isempty(MinMax.LogLikelihood)==1 && ~isempty(SMD.LogLikelihood)
+            tflagLogL=SMD.LogLikelihood<MinMax.LogLikelihood(1)|...
+                SMD.LogLikelihood>MinMax.LogLikelihood(2)|~isreal(SMD.LogLikelihood)...
+                |isnan(SMD.LogLikelihood);
+            k=find(tflagLogL); % find the position of failures in the array
+            xx=strmatch('LogLikelihood',obj.Fields,'exact');
             TFlag(k)=bitset(TFlag(k),xx);
         end
     end
