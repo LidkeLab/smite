@@ -102,6 +102,75 @@ end
 
 % Create and save some histograms related to track lengths/track fidelity.
 if obj.GeneratePlots
+    % Generate a histogram of trajectory durations.
+    TrajDurations = smi_core.TrackingResults.computeTrajDurations(obj.TR);
+    TrajDurationsUF = obj.UnitFlag*(TrajDurations-1)/obj.SMF.Data.FrameRate ...
+        + ~obj.UnitFlag*TrajDurations;
+    PlotFigure = figure();
+    PlotAxes = axes(PlotFigure);
+    histogram(PlotAxes, TrajDurationsUF)
+    xlabel(PlotAxes, ['Trajectory duration ', ...
+        smi_helpers.arrayMUX({'(frames)'; '(seconds)'}, obj.UnitFlag)])
+    PlotAxes.FontWeight = 'bold';
+    PlotAxes.FontSize = 14;
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_durations.fig']))
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_durations.png']))
+    close(PlotFigure)
+
+    % Generate a histogram of trajectory lengths (number of observations).
+    NObservations = smi_core.TrackingResults.computeTrajLengths(obj.TR);
+    PlotFigure = figure();
+    PlotAxes = axes(PlotFigure);
+    histogram(PlotAxes, NObservations)
+    xlabel(PlotAxes, 'Num. of points in trajectory')
+    PlotAxes.FontWeight = 'bold';
+    PlotAxes.FontSize = 14;
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_lengths.fig']))
+        saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_lengths.png']))
+    close(PlotFigure)
+
+    % Generate a histogram of trajectory fidelity (number of observations
+    % divided by the duration in frames).
+    PlotFigure = figure();
+    PlotAxes = axes(PlotFigure);
+    histogram(PlotAxes, NObservations ./ TrajDurations)
+    title(PlotAxes, 'Num. observations / duration of trajectory')
+    xlabel(PlotAxes, 'Trajectory fidelity')
+    PlotAxes.XLim = [0, 1];
+    PlotAxes.FontWeight = 'bold';
+    PlotAxes.FontSize = 14;
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_fidelity.fig']))
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_fidelity.png']))
+    close(PlotFigure)
+
+    % Generate a scatterplot of the durations vs. obvservations (this can
+    % be helpful to put the histograms in perspective, e.g., if there are a
+    % lot of short trajectories with large gaps relative to their length).
+    PlotFigure = figure();
+    PlotAxes = axes(PlotFigure);
+    scatter(PlotAxes, NObservations, TrajDurations, '.')
+    hold(PlotAxes, 'on')
+    axis(PlotAxes, 'equal')
+    SquareLims = [0, max([NObservations; TrajDurations])];
+    PlotAxes.XLim = SquareLims;
+    PlotAxes.YLim = SquareLims;
+    line(PlotAxes, PlotAxes.XLim, PlotAxes.XLim, ...
+        'LineStyle', ':', 'LineWidth', 2, 'Color', [0, 0, 0])
+    xlabel(PlotAxes, 'Num. of points in trajectory')
+    ylabel(PlotAxes, 'Trajectory duration (frames)')
+    PlotAxes.FontWeight = 'bold';
+    PlotAxes.FontSize = 14;
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_durations_vs_lengths.fig']))
+    saveas(PlotFigure, fullfile(obj.SMF.Data.ResultsDir, ...
+        [BaseName, '_trajectory_durations_vs_lengths.png']))
+    close(PlotFigure)
 end
 
 
