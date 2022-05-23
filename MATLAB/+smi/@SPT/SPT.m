@@ -160,6 +160,7 @@ classdef SPT < handle
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
             obj.DiffusionEstimator.FitTarget = 'LikelihoodOfJumps';
             obj.DiffusionEstimator.FitIndividualTrajectories = true;
+            obj.DiffusionEstimator.FrameLagRange = [2, 2];
             obj.DiffusionEstimator.UnitFlag = false;
             
             % Set some default movie parameters.
