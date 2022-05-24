@@ -170,7 +170,6 @@ classdef SPT < handle
             if StartGUI
                 obj.gui();
             end
-            
         end
         
         function set.SMF(obj, SMFInput)
