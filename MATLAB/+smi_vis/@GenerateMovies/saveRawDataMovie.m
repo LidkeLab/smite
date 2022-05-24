@@ -37,7 +37,8 @@ end
 assert(ismember(size(RawData, 3), [1; 3]), ...
     'Raw data must be provided as a YxXx1xFrames or YxXx3xFrames array.')
 RawData = smi_vis.contrastStretch(single(RawData), [0; 1], ...
-    Params.PercentileCeiling, Params.MinScaleIntensity);
+    Params.PercentileCeiling, Params.PercentileFloor, ...
+    Params.MinScaleIntensity);
 
 % Create the video writer.
 [Path, File, FileExtension] = fileparts(FilePath);

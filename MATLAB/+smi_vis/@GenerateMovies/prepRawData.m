@@ -78,7 +78,8 @@ obj.ScaledData = zeros(size(RawData));
 for cc = 1:NColorChannels
     obj.ScaledData(:, :, cc, :) = ...
         smi_vis.contrastStretch(RawData(:, :, cc, :), [0; 1], ...
-        obj.Params.PercentileCeiling, obj.Params.MinScaleIntensity);
+        obj.Params.PercentileCeiling, obj.Params.PercentileFloor, ...
+        obj.Params.MinScaleIntensity);
 end
 obj.DataIsPrepped = true;
 

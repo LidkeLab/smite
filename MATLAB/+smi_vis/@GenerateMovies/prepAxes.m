@@ -36,30 +36,7 @@ view(PlotAxes, obj.Params.LineOfSite(1, :));
 colormap(PlotAxes, 'gray')
 
 % Revise axes ticks based on the unit flag.
-PlotAxes.XTickMode = 'manual';
-PlotAxes.YTickMode = 'manual';
-PlotAxes.ZTickMode = 'manual';
-PlotAxes.XTick = linspace(PlotAxes.XLim(1), PlotAxes.XLim(2), 5);
-PlotAxes.YTick = linspace(PlotAxes.YLim(1), PlotAxes.YLim(2), 5);
-PlotAxes.ZTick = linspace(PlotAxes.ZLim(1), PlotAxes.ZLim(2), 5);
-if obj.Params.UnitFlag
-    PlotAxes.XTickLabelMode = 'manual';
-    PlotAxes.YTickLabelMode = 'manual';
-    PlotAxes.ZTickLabelMode = 'manual';
-    xtickformat(PlotAxes, '%.1f')
-    ytickformat(PlotAxes, '%.1f')
-    ztickformat(PlotAxes, '%.1f')
-    XTicks = (PlotAxes.XTick-1) * obj.SMF.Data.PixelSize;
-    YTicks = (PlotAxes.YTick-1) * obj.SMF.Data.PixelSize;
-    ZTicks = (PlotAxes.ZTick-1) / obj.SMF.Data.FrameRate;
-    PlotAxes.XTickLabel = num2str(XTicks.', '%.1f');
-    PlotAxes.YTickLabel = num2str(YTicks.', '%.1f');
-    PlotAxes.ZTickLabel = num2str(ZTicks.', '%.1f');
-else
-    xtickformat(PlotAxes, '%i')
-    ytickformat(PlotAxes, '%i')
-    ztickformat(PlotAxes, '%i')
-end
+obj.addAxesTicks(PlotAxes, 5, '%.1f')
 
 % Add some decorations to the movie axes.
 xlabel(PlotAxes, sprintf('X (%s)', obj.LengthUnitString), ...

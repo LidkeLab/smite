@@ -8,6 +8,8 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+#define pi 3.141592f	//!< ensure a consistent value for pi
+
 //pi is defined in <mex.h>
 //#ifndef pi
 //#define pi 3.141592f;

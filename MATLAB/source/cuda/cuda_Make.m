@@ -9,6 +9,8 @@
 % REQUIREMENTS:
 %    Need to have a CUDA toolkit and VS2013 installed (Windows).
 
+clc
+
 if ispc
    % Adding system path for nvcc to compile with nvcc
    setenv('PATH', [getenv('PATH') ';C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin']);

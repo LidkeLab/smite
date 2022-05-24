@@ -28,6 +28,7 @@ classdef TrackingResults
         end
         
         [Durations] = computeTrajDurations(TR);
+        [NObservations] = computeTrajLengths(TR);
         [TR] = convertSMDToTR(SMD);
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);

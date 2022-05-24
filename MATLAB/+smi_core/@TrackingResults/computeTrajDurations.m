@@ -18,7 +18,7 @@ function [Durations] = computeTrajDurations(TR)
 
 
 % Compute the trajectory durations.
-Durations = cellfun(@(X) max(X) - min(X) + 1, {TR.FrameNum});
+Durations = cellfun(@(X) max(X) - min(X) + 1, {TR.FrameNum}.');
 
 
 end

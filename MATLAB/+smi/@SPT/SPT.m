@@ -105,6 +105,9 @@ classdef SPT < handle
         
         % Density of dark emitters. (see obj.estimateDensities() for usage)
         RhoOff
+
+        % Internally used smi.SMLM instance.
+        SMLM = smi.SMLM(smi_core.SingleMoleculeFitting, false);
     end
     
     properties (Hidden)       
@@ -157,6 +160,7 @@ classdef SPT < handle
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
             obj.DiffusionEstimator.FitTarget = 'LikelihoodOfJumps';
             obj.DiffusionEstimator.FitIndividualTrajectories = true;
+            obj.DiffusionEstimator.FrameLagRange = [2, 2];
             obj.DiffusionEstimator.UnitFlag = false;
             
             % Set some default movie parameters.
