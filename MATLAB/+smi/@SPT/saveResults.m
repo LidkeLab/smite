@@ -32,7 +32,7 @@ SMF = obj.SMF;
 
 % Save the data in a .mat file.
 save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileName), ...
-    'SMD', 'SMDPreThresh', 'TR', 'SMF');
+    'SMD', 'SMDPreThresh', 'TR', 'SMF', '-v7.3');
 
 % If pre-channel registration results were stored, we'll save those too.
 if ~(isempty(obj.SMDPreCR) || isempty(obj.SMDPreThreshPreCR) ...
