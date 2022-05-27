@@ -208,9 +208,7 @@ classdef BaGoL < handle
                     obj.Chain = cell(length(obj.ClusterSMD),1);
                 end
                 for nn = 1:ClustNumHeirar
-                    if nn/50 == ceil(nn/50)
-                        fprintf('Cluster: %g out of %g \n',nn,ClustNumHeirar);
-                    end
+                    fprintf('Subregion: %g out of %g \n',nn,ClustNumHeirar);
 
                     AnimFlag = 0;
                     [TChain]=smi.BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Xi,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
@@ -278,6 +276,9 @@ classdef BaGoL < handle
                 end
                 
                 for mm = 1:NIter
+                    if mm/100 == floor(mm/100)
+                        fprintf('Iteration %g out of %g over all subregions\n',mm,NIter);
+                    end
                     for nn=1:ClustNumHeirar
                         if mm == 1
                             %For the first sample, the locations are intitialized to random values
