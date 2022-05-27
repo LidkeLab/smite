@@ -78,7 +78,6 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %       ImageSize         Image size (pixel)
 %       PixelSize         Pixel size (nm)
 %       OutputPixelSize   Pixel size for posterior images (nm)
-%       IntensityCutoff   Intensity cutoff
 %       SE_Adjust         Precision inflation applied to SE (nm)
 %       ClusterDrift      Expected magnitude of drift (nm/frame)
 %       ROIsz             ROI size for RJMCMC (nm)
@@ -92,7 +91,14 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %                         sampling Xi
 %       Y_Adjust          Apply coordinate transform for y-coordinates if
 %                         non-empty in the form Y = Y_Adjust - Y (pixels)
+%       InMeanMultiplier  Localizations for which
+%                             intensity > InMeanMultiplier*mean(intensity)
+%                         are removed.
+%                         
+%       N_FC              Filter out localizations representing this number of
+%                         frame connections or less
 %       N_NN              Minimum # of nearest neighbors to survive filtering
+%       
 %
 %    SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
 %    data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
@@ -112,21 +118,11 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %    Mohamadreza Fazel (2019) and Michael J. Wester (2022), Lidke Lab
 
 %% Important Parameters
-PixelSize = BaGoLParams.PixelSize;       %Pixel size (nm)
-OutputPixelSize = BaGoLParams.OutputPixelSize;
-IntensityCutoff = BaGoLParams.IntensityCutoff; %Intensity cutoff
-SE_Adjust = BaGoLParams.SE_Adjust;       %Precision inflation (nm)
-ClusterDrift = BaGoLParams.ClusterDrift; %Emitter drift velocities (nm/frame)
-ROIsz = BaGoLParams.ROIsz;               %ROI size (nm)
-OverLap = BaGoLParams.OverLap;           %Size of overlapping region (nm)
-SZ = BaGoLParams.ImageSize;              %Image size (pixel)
-N_Burnin = BaGoLParams.N_Burnin;         %Length of Burn-in chain
-N_Trials = BaGoLParams.N_Trials;         %Length of post-burn-in chain
-NSamples = BaGoLParams.NSamples;         %Number of samples before sampling Xi
-DataROI  = BaGoLParams.DataROI;          %Optional analysis ROI (nm)
-Y_Adjust = BaGoLParams.Y_Adjust;         %LL vs UL origin transform
-ImSize = SZ*PixelSize;                   %Image size (nm)
-N_NN = BaGoLParams.N_NN;                 %Min # for nearest neighbor filter
+SZ        = BaGoLParams.ImageSize;       % Image size (pixel)
+PixelSize = BaGoLParams.PixelSize;       % Pixel size (nm)
+DataROI   = BaGoLParams.DataROI;         % Optional analysis ROI (nm)
+Y_Adjust  = BaGoLParams.Y_Adjust;        % LL vs UL origin transform
+ImSize    = SZ*PixelSize;                % Image size (nm)
 
 % --------- Initialize BaGoL
 
@@ -148,21 +144,6 @@ end
 %if ~isempty(Y_Adjust)
 %   SMD.Y = Y_Adjust - SMD.Y; 
 %end
-% BaGoL seems to work better with non-negative coordinates.
-minX = min(SMD.X);   % pixels
-minY = min(SMD.Y);   % pixels
-if minX < 0
-   SMD.X = SMD.X - minX;
-   %if ~isempty(DataROI)
-   %   DataROI(1 : 2) = DataROI(1 : 2) - minX;
-   %end
-end
-if minY < 0
-   SMD.Y = SMD.Y - minY;
-   %if ~isempty(DataROI)
-   %   DataROI(3 : 4) = DataROI(3 : 4) - minY;
-   %end
-end
 
 % Eliminate trailing _Results* from the FileName for saving results.
 FileName = regexprep(FileNameIn, '_Results.*$', '');
@@ -180,17 +161,51 @@ if ~isfolder(SaveDirLong)
    mkdir(SaveDirLong);
 end
 
-% Remove bright localizations that are likely to be more than one emitters 
-% This should now be done earlier in preparing the dataset, but retained
-% when pre-filtering is not done.
-if isfield('SMD', 'Photons')
-   IndP = SMD.Photons < IntensityCutoff;
-else
-   IndP = SMD.FrameNum > 0;   % This should be all the localizations
+%% Filter localizations
+% BaGoL works better with non-negative coordinates.
+n_prefilter = numel(SMD.X);
+SMD = smi_helpers.Filters.filterNonNeg(SMD);
+fprintf('Nonnegative localizations kept = %d out of %d\n', ...
+        numel(SMD.X), n_prefilter);
+
+% Remove bright localizations that are likely to be more than one emitter,
+% that is, localizations satisfying
+%    intensity > InMeanMultiplier * mean(intensity)
+% are removed.
+if BaGoLParams.InMeanMultiplier > 0
+   n_prefilter = numel(SMD.X);
+   SMD = ...
+      smi_helpers.Filters.filterIntensity(SMD, BaGoLParams.InMeanMultiplier);
+   fprintf('Intensity filtered localizations kept = %d out of %d\n', ...
+           numel(SMD.X), n_prefilter);
 end
-n_IndP = sum(IndP);
-%fprintf('IntensityCutoff localizations kept = %d out of %d\n', ...
-%        n_IndP, numel(IndP));
+
+% Inflate standard errors.  Note that inflateSE is expecting pixels (as SMD is
+% in pixels), while SE_Adjust is given in nm, so need to convert units.
+if BaGoLParams.SE_Adjust > 0
+   SMD = smi_helpers.Filters.inflateSE(SMD, BaGoLParams.SE_Adjust/PixelSize);
+   fprintf('Inflate standard errors.\n');
+end
+
+% Filter out localizations representing N_FC or fewer frame connections.
+if BaGoLParams.N_FC > 0
+   n_prefilter = numel(SMD.X);
+   SMD = smi_helpers.Filters.filterFC(SMD, BaGoLParams.N_FC);
+   fprintf('Frame connected filtered localizations kept = %d out of %d\n', ...
+           numel(SMD.X), n_prefilter);
+end
+
+% Localizations are filtered based on the NND within 3 times the median of
+% the localization sigma, that is, localizations are eliminated if they do not
+% have N_NN nearest neighbors that are within 3 times the localization sigma
+% median.  Do not use on dSTORM data (set N_NN == 0).
+if BaGoLParams.N_NN > 0
+   n_prefilter = numel(SMD.X);
+   MedianMultiplier = 3;
+   SMD = smi_helpers.Filters.filterNN(SMD, BaGoLParams.N_NN, MedianMultiplier);
+   fprintf('Frame connected filtered localizations kept = %d out of %d\n', ...
+           numel(SMD.X), n_prefilter);
+end
 
 Xi = BaGoLParams.Xi; %[k, theta] parameters for gamma prior.
 % Make the run on a smaller subregion.
@@ -200,87 +215,74 @@ if ~isempty(DataROI)
       SMD.Y = Y_Adjust - SMD.Y;
    end
    Ind = SMD.X >= DataROI(1) & SMD.X <= DataROI(2) & ...
-         SMD.Y >= DataROI(3) & SMD.Y <= DataROI(4) & IndP;
+         SMD.Y >= DataROI(3) & SMD.Y <= DataROI(4);
    if ~isempty(Y_Adjust)
       SMD.Y = Y_Adjust - SMD.Y;
    end
+   % Convert to nm as BaGoL is expecting nm.
    ImSize = (DataROI(2) - DataROI(1))*PixelSize; 
    XStart = DataROI(1)*PixelSize;
    YStart = DataROI(3)*PixelSize;
+
+   n_Ind = sum(Ind);
+   fprintf('DataROI localizations kept = %d out of %d\n', n_Ind, numel(Ind));
+   if n_Ind == 0
+      error('No localizations kept!');
+   end
 else
-   Ind = IndP;
-end
-n_Ind = sum(Ind);
-fprintf('DataROI localizations kept = %d out of %d\n', n_Ind, numel(Ind));
-if n_Ind == 0
-   error('No localizations kept!');
+   % This should be all the localizations not previously filtered out.
+   Ind = SMD.FrameNum > 0;
 end
 
 % FULL plot.
-figure; hold on; plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
+figure; hold on; plot(SMD.X, SZ - SMD.Y, 'k.');
 title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
 
+% Convert from pixels to nm.
 SMD.X = PixelSize*SMD.X(Ind);
 SMD.Y = PixelSize*SMD.Y(Ind);
 SMD.Z = [];
-%SMD.X_SE = PixelSize*SMD.X_SE(Ind)+SE_Adjust;
-%SMD.Y_SE = PixelSize*SMD.Y_SE(Ind)+SE_Adjust;
 SMD.X_SE = PixelSize*SMD.X_SE(Ind);
 SMD.Y_SE = PixelSize*SMD.Y_SE(Ind);
 SMD.Z_SE = [];
 if isfield('SMD', 'NFrames')
-   SMD.FrameNum = SMD.NFrames*single((SMD.DatasetNum(Ind)-1))+single(SMD.FrameNum(Ind));
-end
-
-%% Localizations are filtered based on the NND within 3 times the median of
-%  the localization sigma, that is, localizations are eliminated if they do not
-%  have N_NN nearest neighbors that are within 3 times the localization sigma
-%  median.
-if N_NN > 0
-   Prec_Median = median([SMD.X_SE;SMD.Y_SE]);
-
-%  [~,D]=knnsearch([SMD.X,SMD.Y],[SMD.X,SMD.Y],'K',length(SMD.X));
-%  D(:,1)=[];
-%  ID = D < 3*Prec_Median;
-%  N = sum(ID,2);
-%  Ind = N >= N_NN;
-
-   % Less memory intensive and faster implementation.
-   ID = rangesearch([SMD.X, SMD.Y], [SMD.X, SMD.Y], 3*Prec_Median);
-   N = cellfun(@numel, ID);
-   Ind = N >= N_NN;
-
-   SMD.X = SMD.X(Ind);
-   SMD.Y = SMD.Y(Ind);
-   SMD.X_SE = SMD.X_SE(Ind);
-   SMD.Y_SE = SMD.Y_SE(Ind);
-   SMD.FrameNum = SMD.FrameNum(Ind);
-   fprintf('NN localizations kept = %d out of %d\n', sum(Ind), numel(Ind));
-   if n_Ind == 0
-      error('No localizations kept!');
-   end
+   SMD.FrameNum = ...
+      SMD.NFrames*single((SMD.DatasetNum(Ind)-1))+single(SMD.FrameNum(Ind));
 end
 
 % ROI plot.
 figure; hold on; plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
 title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
 
-% Setting the class properties
+%% Set the class properties
 BGL = smi.BaGoL;
 BGL.SMD = SMD;
-BGL.HierarchFlag = 1;      %Use a Hierarchial Prior to learn Xi if 1
-BGL.NSamples = NSamples;   %Number of samples before sampling Xi
-BGL.SE_Adjust = SE_Adjust; %Localization precision adjustment (nm)
-BGL.PImageFlag = 1;        %Generate Posterior image if 1
-BGL.PImageSize = ImSize;   %Size of the output posterior images
-BGL.ROIsize = ROIsz;       %Size of the subregions to be processed
-BGL.Overlap = OverLap;     %Overlapping region size between adjacent regions
-BGL.Xi = Xi;   %Parameters for prior distribution (gamma in this case)
-BGL.N_Burnin = N_Burnin;   %Length of Burn-in chain
-BGL.N_Trials = N_Trials;   %Length of post-burn-in chain
-BGL.ChainFlag = 0;         %Save the chain if 1
-BGL.Drift = ClusterDrift;  %Expected magnitude of drift (nm/frame)
-BGL.PixelSize = OutputPixelSize; %Pixel size for the posterior image
+   % Use a Hierarchial Prior to learn Xi if 1
+BGL.HierarchFlag = 1;
+   % Save the chain if 1
+BGL.ChainFlag = 0;
+   % Number of samples before sampling Xi
+BGL.NSamples = BaGoLParams.NSamples;
+   % Generate Posterior image if 1
+BGL.PImageFlag = 1;
+   % Size of the output posterior images
+BGL.PImageSize = ImSize;
+   % Size of the subregions to be processed
+BGL.ROIsize = BaGoLParams.ROIsz;
+   % Overlapping region size between adjacent regions
+BGL.Overlap = BaGoLParams.OverLap;
+   % Parameters for prior distribution (gamma in this case)
+BGL.Xi = Xi;
+   % Length of Burn-in chain
+BGL.N_Burnin = BaGoLParams.N_Burnin;
+   % Length of post-burn-in chain
+BGL.N_Trials = BaGoLParams.N_Trials;
+   % Expected magnitude of drift (nm/frame)
+BGL.Drift = BaGoLParams.ClusterDrift;
+   % Pixel size for the posterior image
+BGL.PixelSize = BaGoLParams.OutputPixelSize;
+   % Localization precision adjustment (nm)
+%BGL.SE_Adjust = BaGoLParams.SE_Adjust;
 if ~isempty(DataROI)
    BGL.XStart = XStart;
    BGL.YStart = YStart;
@@ -288,26 +290,10 @@ end
 
 % ---------- Run BaGoL
 
-%Analyzing the data
+% Analyzing the data
 BGL.analyze_all()
 
 % ---------- Save Results and Plots
-
-% Restore original displacements.
-if minX < 0
-   BGL.SMD.X  = BGL.SMD.X  + minX * PixelSize;
-   BGL.MAPN.X = BGL.MAPN.X + minX * PixelSize;
-   for i = 1 : numel(BGL.ClusterSMD)
-      BGL.ClusterSMD(i).X = BGL.ClusterSMD(i).X + minX * PixelSize;
-   end
-end
-if minY < 0
-   BGL.SMD.Y  = BGL.SMD.Y  + minY * PixelSize;
-   BGL.MAPN.Y = BGL.MAPN.Y + minY * PixelSize;
-   for i = 1 : numel(BGL.ClusterSMD)
-      BGL.ClusterSMD(i).Y = BGL.ClusterSMD(i).Y + minY * PixelSize;
-   end
-end
 
 fprintf('Saving BGL ...\n');
 try
@@ -389,7 +375,7 @@ close all
 fprintf('Producing prior.txt ...\n');
 try
    L = BGL.XiChain;
-   L = L(N_Burnin/NSamples + 1 : end, :);
+   L = L(BaGoLParams.N_Burnin/BaGoLParams.NSamples + 1 : end, :);
    l = L(:, 1) .* L(:, 2);
    m = mean(l);
    v = var(l);

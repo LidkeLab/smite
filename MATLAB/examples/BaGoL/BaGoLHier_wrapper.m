@@ -42,9 +42,19 @@ BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 %BaGoLParams.N_Burnin = 20000;       % Length of Burn-in chain
 %BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
+
+% Eliminate localizations whose intensity > InMeanMultiplier*mean(intensity).
+BaGoLParams.InMeanMultiplier = 2;
+
+% Determine the minimum number of nearest neighbors needed for a localization
+% to survive if it is located within 3 times the median of the localization
+% sigma.  Do not use this filter for dSTORM data (set N_NN = 0)..
 %BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
-                                    % required in filtering step
 BaGoLParams.N_NN =  0;
+
+% Filter out localizations with N_FC or fewer connected frames, that is,
+% localizations represented by a very few frames.
+BaGoLParams.N_FC = 1;
 
 % Y_Adjust is sometimes needed to deal with lower left versus upper left
 % y-origin issues.  Lower left with y increasing upwards is the default,
@@ -76,14 +86,16 @@ DataROI = [];
 % Note for batch runs, in which Files, Xi and DataROI are input by hand,
 % please see ### comments below.
 % 
-%BaGoLParams.IntensityCutoff = Inf;  % Intensity cutoff [prefilter applied]
-BaGoLParams.IntensityCutoff = 5000; % Intensity cutoff [no prefilter]
 BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
-%BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
-%BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
-BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
-BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
+% The values for ROIsz and OverLap directly below are good for denser data as
+% less computational effort is required, so the code runs faster.  The second
+% set of values can be used for sparser data to generate larger ROIs, but may
+% produce artifacts with dense data.
+BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
+BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
+%BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
+%BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 
@@ -113,9 +125,9 @@ Files = {
 % [Xmin, Xmax, Ymin, Ymax] (pixel)
 % [385, 455, 163, 233]
 % [412, 428, 190, 206]
-DataROI = [
-[120, 135, 120, 135]
-];
+%DataROI = [
+%[120, 135, 120, 135]
+%];
 
 % ----------------------------------------------------------------------
 
