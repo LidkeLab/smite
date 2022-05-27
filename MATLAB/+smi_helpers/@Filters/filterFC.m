@@ -17,6 +17,17 @@ if ~exist('nFC', 'var')
 end
 
 % Perform frame connection
+%SMD.DatasetNum = ones(size(SMD.FrameNum), 'uint32');
+SMD.ThreshFlag = zeros(size(SMD.FrameNum));
+%SMD.Photons = zeros(size(SMD.FrameNum));
+%SMD.Bg = zeros(size(SMD.FrameNum));
+%SMD.LogLikelihood = zeros(size(SMD.FrameNum));
+%SMD.NDims = 2;
+%SMD.NDatasets = 10;
+%SMD.NFrames = max(SMD.FrameNum);
+%SMD.XSize = 2 ^ nextpow2(max([SMD.X; SMD.Y]));
+%SMD.YSize = SMD.XSize;
+
 SMF = smi_core.SingleMoleculeFitting();
 SMF.FrameConnection.Method = 'Hypothesis test';
 SMF.FrameConnection.LoS = 0.01;
