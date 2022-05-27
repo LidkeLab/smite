@@ -144,6 +144,7 @@ classdef GenerateMovies < handle
         % unrestricted.
         setVitalParams(obj)
         prepAxes(obj, PlotAxes)
+        addAxesTicks(obj, PlotAxes, NTicks, FormatSpec)
     end
     
     methods (Static)

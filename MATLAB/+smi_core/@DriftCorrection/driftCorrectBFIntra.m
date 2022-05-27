@@ -38,6 +38,8 @@ if (~isfield(SMD, 'DriftX') || ~isfield(SMD, 'DriftY') ...
     SMD.DriftY = NaN(SMD.NFrames, SMD.NDatasets);
     SMD.DriftX = NaN(SMD.NFrames, SMD.NDatasets);
 end
+FrameNum = single(SMD.FrameNum);
+NFrames = single(SMD.NFrames);
 for nn = 1:size(PreSeqImages, 3)
     % Compute the shift between the pre- and post-sequence images.
     Shift = smi_stat.findOffsetIter(...
@@ -47,11 +49,11 @@ for nn = 1:size(PreSeqImages, 3)
 
     % Apply and store the shift in SMD.
     CurrentDS = (SMD.DatasetNum == nn);
-    FrameNum = SMD.FrameNum(CurrentDS);
-    SMD.Y(CurrentDS) = SMD.Y(CurrentDS) - (Shift(1)/SMD.NFrames)*(FrameNum-1);
-    SMD.X(CurrentDS) = SMD.X(CurrentDS) - (Shift(2)/SMD.NFrames)*(FrameNum-1);
-    SMD.DriftY(:, nn) = (Shift(1)/SMD.NFrames)*(0:(SMD.NFrames-1)).';
-    SMD.DriftX(:, nn) = (Shift(2)/SMD.NFrames)*(0:(SMD.NFrames-1)).';
+    CurrentFrameNum = FrameNum(CurrentDS);
+    SMD.Y(CurrentDS) = SMD.Y(CurrentDS) - (Shift(1)/NFrames)*(CurrentFrameNum-1);
+    SMD.X(CurrentDS) = SMD.X(CurrentDS) - (Shift(2)/NFrames)*(CurrentFrameNum-1);
+    SMD.DriftY(:, nn) = (Shift(1)/NFrames)*(0:(NFrames-1)).';
+    SMD.DriftX(:, nn) = (Shift(2)/NFrames)*(0:(NFrames-1)).';
 end
 
 

@@ -697,7 +697,7 @@ propertiesToGUI()
         [SMF] = obj.packageSMF();
         
         % Save the SMF in the desired location.
-        save(fullfile(FilePath, FileName), 'SMF')
+        save(fullfile(FilePath, FileName), 'SMF', '-v7.3')
     end
 
     function resetSMF(~, ~)

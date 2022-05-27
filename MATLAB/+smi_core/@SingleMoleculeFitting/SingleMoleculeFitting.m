@@ -80,6 +80,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   MaxXY_SE:       Maximum allowed precision in x,y (Pixels)(Default=.2)
     %   MaxZ_SE:        Maximum allowed precision in z (Microns)(Default=.5)
     %   MinPValue:      Minimum accepted p-value from fit (Default=.01)
+    %   AutoThreshLogL: Automatically threshold on LogL and ignore MinPValue (Default = false)
+    %   AutoThreshPrctile: Extrema percentile thrown out when computing LogL auto-threshold (Default = 1e-4)
     %   MinPSFSigma:    Minimum PSF Sigma from fit (Pixels)(Default=.5);
     %   MaxPSFSigma:    Maximum PSF Sigma from fit (Pixels)(Default=2);
     %   MinPhotons:     Minimum accepted photons from fit (Default=100)
@@ -198,6 +200,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Thresholding.MaxXY_SE=.2;
             obj.Thresholding.MaxZ_SE=.05;
             obj.Thresholding.MinPValue=.01;
+            obj.Thresholding.AutoThreshLogL=false;
+            obj.Thresholding.AutoThreshPrctile=1e-4;
             obj.Thresholding.MinPSFSigma=0.5;
             obj.Thresholding.MaxPSFSigma=2;
             obj.Thresholding.MinPhotons=100;
@@ -277,6 +281,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Thresholding.MaxZ_SE.Units = 'pixels';
             obj.SMFFieldNotes.Thresholding.MinPValue.Units = ...
                 'number between 0 and 1';
+            obj.SMFFieldNotes.Thresholding.AutoThreshLogL.Units = 'logical';
+            obj.SMFFieldNotes.Thresholding.AutoThreshPrctile.Units = ...
+                'number between 0 and 100';
             obj.SMFFieldNotes.Thresholding.MinPSFSigma.Units = 'pixels';
             obj.SMFFieldNotes.Thresholding.MaxPSFSigma.Units = 'pixels';
             obj.SMFFieldNotes.Thresholding.MinPhotons.Units = 'photons';
@@ -414,6 +421,15 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 'localizations retained after thresholding. In this\n', ...
                 'context, the p-value is bigger for good\n', ...
                 'localizations and smaller for bad localizations']);
+            obj.SMFFieldNotes.Thresholding.AutoThreshLogL.Tip = ...
+                sprintf(['Automatically select a threshold for the ', ...
+                'log-likelihood \n using the triangle method and use ', ...
+                'it in place of the \nMinPValue threshold.']);
+            obj.SMFFieldNotes.Thresholding.AutoThreshPrctile.Tip = ...
+                sprintf(['Percentile of extrema of log-likelihood ', ...
+                'thrown out\nbefore computing the auto-threshold when ', ...
+                'using\nAutoThreshLogL. ' ...
+                '(see smi_helpers.triangle_threshold())']);
             obj.SMFFieldNotes.Thresholding.MinPSFSigma.Tip = ...
                 sprintf(['Minimum value of PSF sigma of\n', ...
                 'localizations retained after thresholding']);
@@ -846,6 +862,24 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                         && (ThresholdingInput.MinPValue>=0))
                     error(['''SMF.Thresholding.MinPValue'' ', ...
                         'must be a number in the interval [0, 1].'])
+                end
+            end
+            if isfield(ThresholdingInput, 'AutoThreshLogL')
+                if ~(islogical(ThresholdingInput.AutoThreshLogL) ...
+                        || isnumeric(ThresholdingInput.AutoThreshLogL))
+                    error(['''SMF.Thresholding.AutoThreshLogL'' must be logical ', ...
+                        'or interpretable as logical (numeric).'])
+                elseif isnumeric(ThresholdingInput.AutoThreshLogL)
+                    ThresholdingInput.AutoThreshLogL = ...
+                        logical(ThresholdingInput.AutoThreshLogL);
+                end
+            end
+            if isfield(ThresholdingInput, 'AutoThreshPrctile')
+                if ~(isnumeric(ThresholdingInput.AutoThreshPrctile) ...
+                        && (ThresholdingInput.AutoThreshPrctile<=100) ...
+                        && (ThresholdingInput.AutoThreshPrctile>=0))
+                    error(['''SMF.Thresholding.AutoThreshPrctile'' ', ...
+                        'must be a number in the interval [0, 100].'])
                 end
             end
             if isfield(ThresholdingInput, 'MinPSFSigma')

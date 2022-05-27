@@ -107,7 +107,7 @@ classdef SPT < handle
         RhoOff
 
         % Internally used smi.SMLM instance.
-        SMLM = smi.SMLM;
+        SMLM = smi.SMLM(smi_core.SingleMoleculeFitting, false);
     end
     
     properties (Hidden)       
@@ -160,6 +160,7 @@ classdef SPT < handle
             obj.DiffusionEstimator = smi_stat.DiffusionEstimator;
             obj.DiffusionEstimator.FitTarget = 'LikelihoodOfJumps';
             obj.DiffusionEstimator.FitIndividualTrajectories = true;
+            obj.DiffusionEstimator.FrameLagRange = [2, 2];
             obj.DiffusionEstimator.UnitFlag = false;
             
             % Set some default movie parameters.
@@ -169,7 +170,6 @@ classdef SPT < handle
             if StartGUI
                 obj.gui();
             end
-            
         end
         
         function set.SMF(obj, SMFInput)

@@ -47,6 +47,14 @@ SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 
 % Threshold localizations.
 MinMax = smi_core.Threshold.setMinMax(obj.SMF);
+if obj.SMF.Thresholding.AutoThreshLogL
+    % If using the automatic LogL threshold, we'll ignore the PValue
+    % threshold and choose a LogL threshold using the triangle method.
+    MinLogL = smi_helpers.triangle_threshold(...
+        SMDCandidates.LogLikelihood, obj.SMF.Thresholding.AutoThreshPrctile);
+    MinMax.LogLikelihood = [MinLogL, inf];
+    MinMax.PValue = [0, 1];
+end
 Threshold = smi_core.Threshold;
 Threshold.Verbose = obj.Verbose;
 [SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, MinMax);
