@@ -19,3 +19,5 @@ methods(Static)
    SMD = filterNN(SMD, n_NN, MedianMultiplier)
 
 end % methods(Static)
+
+end % classdef Filters
