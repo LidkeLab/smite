@@ -89,7 +89,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %
     % FrameConnection:  {FrameConnect,SRA}
     %   On              Perform frame connection? (Default=true)
-    %   Method:         Frame connection method being used (Default='Hypothesis test')
+    %   Method:         Frame connection method being used (Default='LAP-FC')
     %   MaxSeparation:  Maximum separation for connection (Pixels)(Default=1)
     %   LoS:            Minimum accepted p-value for connection (Default=.01)
     %   MaxFrameGap:    Maximum frame gap for connection (Frames)(Default=5)
