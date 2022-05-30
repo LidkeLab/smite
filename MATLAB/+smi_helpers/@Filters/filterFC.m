@@ -17,7 +17,7 @@ if ~exist('nFC', 'var')
 end
 
 % Perform frame connection
-N = numel(FrameNum);
+N = numel(SMD.FrameNum);
 %SMD.DatasetNum = ones(size(SMD.FrameNum), 'uint32');
 if numel(SMD.ThreshFlag) ~= N
    SMD.ThreshFlag = zeros(size(SMD.FrameNum));
