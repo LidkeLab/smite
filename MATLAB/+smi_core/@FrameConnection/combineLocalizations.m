@@ -136,6 +136,20 @@ if ~isempty(SMD.LogLikelihood)
         SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
     end
 end
+if ~isempty(SMD.PSFSigma)
+    PSFSigma = SMD.PSFSigma(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.PSFSigma(ii, 1) = sum(PSFSigma(IndexArray));
+    end
+end
+if ~isempty(SMD.PValue)
+    PValue = SMD.PValue(SortIndices);
+    for ii = 1:NUnique
+        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
+        SMDCombined.PValue(ii, 1) = sum(PValue(IndexArray));
+    end
+end
 if ~isempty(SMD.ThreshFlag)
     ThreshFlag = SMD.ThreshFlag(SortIndices);
     for ii = 1:NUnique
