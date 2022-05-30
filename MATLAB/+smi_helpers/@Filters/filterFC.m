@@ -19,6 +19,9 @@ end
 % Perform frame connection
 N = numel(SMD.FrameNum);
 %SMD.DatasetNum = ones(size(SMD.FrameNum), 'uint32');
+if numel(SMD.PValue) ~= N
+   SMD.PValue = zeros(size(SMD.FrameNum));
+end
 if numel(SMD.ThreshFlag) ~= N
    SMD.ThreshFlag = zeros(size(SMD.FrameNum));
 end
