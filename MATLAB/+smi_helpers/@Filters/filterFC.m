@@ -29,7 +29,10 @@ SMD.ThreshFlag = zeros(size(SMD.FrameNum));
 %SMD.YSize = SMD.XSize;
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.FrameConnection.Method = 'Hypothesis test';
+% Method is 'Hypothesis test' for the BaGoL paper calculations only, otherwise
+% use 'LAP-FC' for new results.
+%SMF.FrameConnection.Method = 'Hypothesis test';
+SMF.FrameConnection.Method = 'LAP-FC';
 SMF.FrameConnection.LoS = 0.01;
 SMF.FrameConnection.MaxSeparation = 1; % pixels
 SMF.FrameConnection.MaxFrameGap = 5; % frames
