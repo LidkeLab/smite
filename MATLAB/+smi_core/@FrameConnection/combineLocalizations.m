@@ -75,6 +75,10 @@ SMDCombined.NCombined = NLocPerID;
 % (I'm doing this in a separate loop down here for speed purposes, since we
 % usually won't need to do this).
 switch SMF.Fitting.FitType
+    case 'XYNB'
+        % For fit type 'XYNB', every value of PSFSigma should be the same.
+        SMDCombined.PSFSigma = ...
+            SMD.PSFSigma(1) * ones(size(SMDCombined.FrameNum));
     case 'XYNBS'
         for ii = 1:NUnique
             IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
@@ -136,19 +140,10 @@ if ~isempty(SMD.LogLikelihood)
         SMDCombined.LogLikelihood(ii, 1) = sum(LogLikelihood(IndexArray));
     end
 end
-if ~isempty(SMD.PSFSigma)
-    PSFSigma = SMD.PSFSigma(SortIndices);
-    for ii = 1:NUnique
-        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
-        SMDCombined.PSFSigma(ii, 1) = sum(PSFSigma(IndexArray));
-    end
-end
 if ~isempty(SMD.PValue)
-    PValue = SMD.PValue(SortIndices);
-    for ii = 1:NUnique
-        IndexArray = (1:NLocPerID(ii)).' + NLocCumulative(ii);
-        SMDCombined.PValue(ii, 1) = sum(PValue(IndexArray));
-    end
+    SMDCombined.PValue = smi_core.GaussMLE.pValue(SMF.Fitting.NParams, ...
+        SMF.BoxFinding.BoxSize, ...
+        SMDCombined.LogLikelihood);
 end
 if ~isempty(SMD.ThreshFlag)
     ThreshFlag = SMD.ThreshFlag(SortIndices);
