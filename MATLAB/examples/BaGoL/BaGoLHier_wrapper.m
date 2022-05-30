@@ -28,6 +28,14 @@
 
 % ----------------------------------------------------------------------
 
+% SR data -> remove localizations with negative coordinates
+%         -> intensity filter (InMeanMultiplier)
+%         -> inflate standard errors (SE_Adjust)
+%         -> frame connection, removing connections which involve only N_FC
+%            frames
+%         -> Nearest Neighbor filter (N_NN) --- Do not use on dSTORM data!
+%         -> BaGoL (via parfor calling BaGoLHier_analysis on each dataset)
+
 % Output directory name.
 %Results_BaGoL = 'Results_BaGoLHier';
 Results_BaGoL = 'Xi=50_1';
