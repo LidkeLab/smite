@@ -17,8 +17,15 @@ if ~exist('nFC', 'var')
 end
 
 % Perform frame connection
+N = numel(FrameNum);
 %SMD.DatasetNum = ones(size(SMD.FrameNum), 'uint32');
-SMD.ThreshFlag = zeros(size(SMD.FrameNum));
+if numel(SMD.ThreshFlag) ~= N
+   SMD.ThreshFlag = zeros(size(SMD.FrameNum));
+end
+if numel(SMD.XBoxCorner) ~= N || numel(SMD.YBoxCorner ~= N
+   SMD.XBoxCorner = zeros(size(SMD.FrameNum));
+   SMD.YBoxCorner = zeros(size(SMD.FrameNum));
+end
 %SMD.Photons = zeros(size(SMD.FrameNum));
 %SMD.Bg = zeros(size(SMD.FrameNum));
 %SMD.LogLikelihood = zeros(size(SMD.FrameNum));
