@@ -22,7 +22,7 @@ N = numel(FrameNum);
 if numel(SMD.ThreshFlag) ~= N
    SMD.ThreshFlag = zeros(size(SMD.FrameNum));
 end
-if numel(SMD.XBoxCorner) ~= N || numel(SMD.YBoxCorner ~= N
+if numel(SMD.XBoxCorner) ~= N || numel(SMD.YBoxCorner) ~= N
    SMD.XBoxCorner = zeros(size(SMD.FrameNum));
    SMD.YBoxCorner = zeros(size(SMD.FrameNum));
 end
