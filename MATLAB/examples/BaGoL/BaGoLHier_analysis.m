@@ -187,7 +187,8 @@ if BaGoLParams.SE_Adjust > 0
    fprintf('Inflate standard errors.\n');
 end
 
-% Filter out localizations representing N_FC or fewer frame connections.
+% Filter out localizations representing N_FC or fewer frame connections.  This
+% filter should not be used for dSTORM data (set N_FC  = 0).
 if BaGoLParams.N_FC > 0
    n_prefilter = numel(SMD.X);
    SMD = smi_helpers.Filters.filterFC(SMD, BaGoLParams.N_FC);
