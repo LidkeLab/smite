@@ -296,14 +296,18 @@ BGL.analyze_all()
 
 % ---------- Save Results and Plots
 
-fprintf('Saving BGL ...\n');
-try
-   save(fullfile(SaveDir, ...
+% This file can be huge for many localizations, so only produce it if the
+% number of input localizations is not too large.
+if numel(SMD.X) <= 10000
+   fprintf('Saving BGL ...\n');
+   try
+      save(fullfile(SaveDir, ...
                  sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
-catch ME
-   fprintf('### PROBLEM with saving BGL ###\n');
-   fprintf('%s\n', ME.identifier);
-   fprintf('%s\n', ME.message);
+   catch ME
+      fprintf('### PROBLEM with saving BGL ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
 end
 
 fprintf('saveBaGoL ...\n');
@@ -382,7 +386,7 @@ try
    v = var(l);
    theta = v / m;
    k = m / theta;
-   fid = fopen(fullfile(SaveDir, 'prior.txt'), 'w');
+   fid = fopen(fullfile(SaveDirLong, 'prior.txt'), 'w');
    fprintf(fid, '(k, theta) = (%f, %f)\n', k, theta);
    fclose(fid);
 catch ME
