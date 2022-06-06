@@ -49,6 +49,7 @@ if isempty(obj.SMD.FrameNum)
     if nargout
         TR = obj.TR;
         SMD = obj.SMD;
+        SMDPreThresh = obj.SMDPreThresh;
     end
     return
 end
