@@ -310,6 +310,16 @@ if numel(SMD.X) <= 10000
    end
 end
 
+fprintf('saveMAPN ...\n');
+try
+   MAPN = BGL.MAPN;
+   save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN');
+catch ME
+   fprintf('### PROBLEM with saveBaGoL ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
+end
+
 fprintf('saveBaGoL ...\n');
 ScaleBarLength = 1000;   % nm
 try
