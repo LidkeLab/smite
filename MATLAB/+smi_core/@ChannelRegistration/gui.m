@@ -435,6 +435,7 @@ method.
         if isequal(FileName, 0)
             return
         else
+            % Update filename and filepath.
             obj.SMF.Data.FileDir = FileDir;
             if ~iscell(FileName)
                 FileName = {FileName};
@@ -445,6 +446,10 @@ method.
             else
                 obj.SMF.Data.FileName = [obj.SMF.Data.FileName; FileName];
             end
+
+            % Reset a class property to reflect that the GUI loaded a
+            % fiducial.
+            obj.ManualSetFiducials = false;
         end
         
         % Update the file list.
@@ -640,7 +645,7 @@ method.
                 FigureName = sprintf('Transform %i', ii);
                 TempFigureHandle = figure('Name', FigureName);
                 obj.visualizeRegistrationResults(...
-                    axes(TempFigureHandle), ...
+                    TempFigureHandle, ...
                     obj.RegistrationTransform{ii}, ...
                     obj.Coordinates{ii}(:, :, 2), ...
                     obj.Coordinates{ii}(:, :, 1), ...
