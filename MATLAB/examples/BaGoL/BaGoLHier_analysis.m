@@ -187,7 +187,8 @@ if BaGoLParams.SE_Adjust > 0
    fprintf('Inflate standard errors.\n');
 end
 
-% Filter out localizations representing N_FC or fewer frame connections.
+% Filter out localizations representing N_FC or fewer frame connections.  This
+% filter should not be used for dSTORM data (set N_FC  = 0).
 if BaGoLParams.N_FC > 0
    n_prefilter = numel(SMD.X);
    SMD = smi_helpers.Filters.filterFC(SMD, BaGoLParams.N_FC);
@@ -295,12 +296,26 @@ BGL.analyze_all()
 
 % ---------- Save Results and Plots
 
-fprintf('Saving BGL ...\n');
-try
-   save(fullfile(SaveDir, ...
+% This file can be huge for many localizations, so only produce it if the
+% number of input localizations is not too large.
+if numel(SMD.X) <= 10000
+   fprintf('Saving BGL ...\n');
+   try
+      save(fullfile(SaveDir, ...
                  sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
+   catch ME
+      fprintf('### PROBLEM with saving BGL ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
+end
+
+fprintf('saveMAPN ...\n');
+try
+   MAPN = BGL.MAPN;
+   save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN');
 catch ME
-   fprintf('### PROBLEM with saving BGL ###\n');
+   fprintf('### PROBLEM with saveBaGoL ###\n');
    fprintf('%s\n', ME.identifier);
    fprintf('%s\n', ME.message);
 end
@@ -381,7 +396,7 @@ try
    v = var(l);
    theta = v / m;
    k = m / theta;
-   fid = fopen(fullfile(SaveDir, 'prior.txt'), 'w');
+   fid = fopen(fullfile(SaveDirLong, 'prior.txt'), 'w');
    fprintf(fid, '(k, theta) = (%f, %f)\n', k, theta);
    fclose(fid);
 catch ME

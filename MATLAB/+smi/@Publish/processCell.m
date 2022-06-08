@@ -72,7 +72,7 @@ if (obj.GenerateSR && (NLabels>1))
         obj.MaxBrightfieldShift);
     MaskName = sprintf('%inm', ...
         round(obj.MaxBrightfieldShift * obj.SMF.Data.PixelSize * 1e3));
-    if (obj.MaxBrightfieldShift > 0)
+    if (~isinf(obj.MaxBrightfieldShift) && (obj.MaxBrightfieldShift>0))
         save(fullfile(obj.SaveBaseDir, ...
             sprintf('%s_%s_Mask.mat', CellName, MaskName)), 'Mask')
     end

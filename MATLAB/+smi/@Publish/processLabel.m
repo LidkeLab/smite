@@ -153,7 +153,8 @@ for ii = 1:NDataFiles
                     obj.SMLM.SMD = DC.driftCorrectKNN(obj.SMLM.SMD);
                 end
             else
-                if ((obj.Verbose>0) && ~FocusImagesPresent)
+                if ((obj.Verbose>0) && obj.UseBrightfieldDC ...
+                        && ~FocusImagesPresent)
                     warning(['Brightfield drift-correction cannot be ', ...
                         'applied: FocusImages not present in .h5 file'])
                 end

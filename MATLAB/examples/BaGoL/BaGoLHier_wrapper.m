@@ -28,6 +28,8 @@
 
 % ----------------------------------------------------------------------
 
+% Pre-filtering actions (frame connection and NN not used for dSTORM data):
+%
 % SR data -> remove localizations with negative coordinates
 %         -> intensity filter (InMeanMultiplier)
 %         -> inflate standard errors (SE_Adjust)
@@ -61,8 +63,10 @@ BaGoLParams.InMeanMultiplier = 2;
 BaGoLParams.N_NN =  0;
 
 % Filter out localizations with N_FC or fewer connected frames, that is,
-% localizations represented by a very few frames.
-BaGoLParams.N_FC = 1;
+% localizations represented by a very few frames.  Do not use for dSTORM data
+% (set N_FC = 0).
+BaGoLParams.N_FC = 1;   % DNA-PAINT
+%BaGoLParams.N_FC = 0;   % dSTORM
 
 % Y_Adjust is sometimes needed to deal with lower left versus upper left
 % y-origin issues.  Lower left with y increasing upwards is the default,

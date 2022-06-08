@@ -39,6 +39,9 @@ else
    Length = 100; %nm 
 end
 
+MAPN = obj.MAPN;
+save(fullfile(SaveDir,'MAPN'),'MAPN')
+
 %Saving NND-plot
 NBins=30;
 [~,Dis]=knnsearch([obj.MAPN.X,obj.MAPN.Y],[obj.MAPN.X,obj.MAPN.Y],'k',2);
@@ -148,8 +151,8 @@ if OverlayFlag
     imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG'); 
 end
 
-MAPN = obj.MAPN;
-save(fullfile(SaveDir,'MAPN'),'MAPN')
+%MAPN = obj.MAPN;
+%save(fullfile(SaveDir,'MAPN'),'MAPN')
 close all;
 
 end
