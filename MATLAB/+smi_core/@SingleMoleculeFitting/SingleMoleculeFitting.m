@@ -99,6 +99,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %
     % DriftCorrection   {DriftCorrection,SRA}
     %  On               Perform drift correction? (Default=true)
+    %  Method:          Drift correction method being used (Default='DC-KNN')
     %  BFRegistration   Was brightfield registration performed? (Default=true)
     %  L_intra          Intra-dataset threshold (Pixel)(Default=1)
     %  L_inter          Inter-dataset threshold (Pixel)(Default=2)
@@ -219,6 +220,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             
             %DriftCorrection
             obj.DriftCorrection.On = true;
+            obj.DriftCorrection.Method = 'DC-KNN';
             obj.DriftCorrection.BFRegistration = true;
             obj.DriftCorrection.L_intra = 1; % pixel
             obj.DriftCorrection.L_inter = 2; % pixel
@@ -302,6 +304,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.FrameConnection.NIterations.Units = ...
                 'positive integer';
             obj.SMFFieldNotes.DriftCorrection.On.Units = 'logical';
+            obj.SMFFieldNotes.DriftCorrection.Method.Units = '';
             obj.SMFFieldNotes.DriftCorrection.BFRegistration.Units = ...
                 'logical';
             obj.SMFFieldNotes.DriftCorrection.L_intra.Units = 'pixels';
@@ -477,6 +480,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.DriftCorrection.On.Tip = ...
                 sprintf(['Indicates whether or not drift correction\n', ...
                 'will be performed']);
+            obj.SMFFieldNotes.DriftCorrection.Method.Tip = ...
+                sprintf(['Method used to correct for emitter drift']);
             obj.SMFFieldNotes.DriftCorrection.BFRegistration.Tip = ...
                 sprintf(['Indicates whether or not brightfield\n', ...
                 'registration was performed during data collection']);
@@ -994,6 +999,13 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                         'logical or interpretable as logical (numeric).'])
                 elseif isnumeric(DCInput.On)
                     DCInput.On = logical(DCInput.On);
+                end
+            end
+            if isfield(DCInput, 'Method')
+                if ~ismember(lower(DCInput.Method), ...
+                        {'dc-knn', 'dc-bf'})
+                    error(['''SMF.DriftCorrection.Method'' must be ', ...
+                        '''DC-KNN'' or ''DC-BF''.'])
                 end
             end
             if isfield(DCInput, 'L_intra')
