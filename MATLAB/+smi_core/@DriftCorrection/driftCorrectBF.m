@@ -28,8 +28,13 @@ function [SMD, BFStruct] = ...
 
 % Attempt to load the brightfield data (if needed).
 if (~exist('BFStruct', 'var') || isempty(BFStruct))
-    BFStruct = smi_core.LoadData.readH5File(...
-        fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}), 'FocusImages');
+    try
+        BFStruct = smi_core.LoadData.readH5File(...
+            fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}), 'FocusImages');
+    catch ME
+        error(sprintf('Cannot extract group ''FocusImages'' from %s', ...
+            fullfile(SMF.Data.FileDir, SMF.Data.FileName{1})));
+    end
 end
 
 % Set a defaults if needed.
