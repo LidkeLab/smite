@@ -62,6 +62,9 @@ if any(DSub > 0)
                 Trajectories(:, ff-1, :), TrajectoryUpdates, NTraj, ...
                 ConnectionMap, InteractionDistance, InteractionProb, ...
                 KDisconnectSub, RestrictToDimers);
+        else
+            Trajectories(:, ff, :) = Trajectories(:, ff-1, :) ...
+                + TrajectoryUpdates;
         end
         
         % Apply the boundary conditions.
