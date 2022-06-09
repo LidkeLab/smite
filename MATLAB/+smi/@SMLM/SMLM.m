@@ -257,10 +257,10 @@ methods
 
         % Intra-dataset drift correction.
         if obj.SMF.DriftCorrection.On
-            if obj.Verbose >= 1
-                fprintf('Drift correcting (intra-dataset) ...\n');
-            end
             if strcmp(obj.DCMethod, 'DC-KNN')
+                if obj.Verbose >= 1
+                    fprintf('Drift correcting (intra-dataset) ...\n');
+                end
                 SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount, ...
                                                        DatasetIndex);
             end
