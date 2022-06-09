@@ -19,12 +19,13 @@ function [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
 %                passed as inputs to smi_stat.findOffsetIter())
 %
 % OUTPUTS:
-%   SMD: Input SMD with applied shifts and updated fields SMD.DriftX and
-%        SMD.DriftY.
-%   BFStruct: Structure of brightfield images loaded from the data file.
+%   RefImage: Reference image to which all datasets will be corrected to.
+%   PreSeqImages: 
+%   PostSeqImages: 
+%   ParamStruct: Structure of parameters sent to smi_stat.findOffsetIter().
 
 % Created by:
-%   David J. Schodt (Lidke Lab 2021)
+%   David J. Schodt (Lidke Lab 2021) and Michael J. Wester (2022)
 
 
 % Attempt to load the brightfield data (if needed).
@@ -59,10 +60,13 @@ for nn = 1:NDatasets
     PreSeqImages(:, :, nn) = median(BFStruct(nn).Data.PreSeqImages, 3);
     PostSeqImages(:, :, nn) = median(BFStruct(nn).Data.PostSeqImages, 3);
 end
+
+% Moved to SMLM.
+% Perform intra-dataset drift correction.
 %SMD = smi_core.DriftCorrection.driftCorrectBFIntra(...
 %    SMD, PreSeqImages, PostSeqImages, ParamStruct);
 %
-%% Perform inter-dataset drift correction.
+% Perform inter-dataset drift correction.
 %SMD = smi_core.DriftCorrection.driftCorrectBFInter(...
 %    SMD, RefImage, PreSeqImages, ParamStruct);
 

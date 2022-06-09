@@ -34,6 +34,12 @@ end
 properties (Hidden)
     DC                % DriftCorrection class object used internally
     DCMethod          % Drift correction method (DC-KNN or DC-BF)
+    % NOTE: DC-BF should only be used for the sequential microscope!
+    % The below are used by brightfield drift correction:
+    RefImage          % Ref image to which all datasets will be corrected to
+    PreSeqImages
+    PostSeqImages
+    ParamStruct       % Structure of parameters sent to smi_stat.findOffsetIter
 
     % Top level results directory: A few special results/plots (like GaussIm)
     % are saved here.  Default value is obj.SMF.Data.ResultsDir set in
@@ -173,8 +179,16 @@ methods
         obj.DC.Verbose = obj.Verbose;
         obj.SMD=[];
         obj.SMDPreThresh=[];
+        if strcmp(obj.DCMethod, 'DC-BF')
+            % Initialize DC-BF.
+            NDatasets = numel(DatasetList);
+            [obj.RefImage, obj.PreSeqImages, obj.PostSeqImages, ...
+             obj.ParamStruct] = obj.DC.driftCorrectBFInit(NDatasets, obj.SMF);
+        end
         if obj.Verbose >= 1
             fprintf('Processing %d datasets ...\n', numel(DatasetList));
+            fprintf('Frame Connection/Drift Correction methods: %s, %s\n', ...
+                    obj.SMF.FrameConnection.Method, obj.DCMethod);
         end
         for nn=1:numel(DatasetList)
             SMDnn = obj.analyzeDataset(DatasetList(nn), nn);
@@ -189,7 +203,9 @@ methods
             if strcmp(obj.DCMethod, 'DC-KNN')
                 obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
             elseif strcmp(obj.DCMethod, 'DC-BF')
-                obj.SMD = obj.DC.driftCorrectBF(obj.SMD, obj.SMF);
+                %obj.SMD = obj.DC.driftCorrectBF(obj.SMD, obj.SMF);
+                obj.SMD = obj.DC.driftCorrectBFInter(obj.SMD, obj.RefImage, ...
+                             obj.PreSeqImages, obj.ParamStruct);
             end
         end
 
@@ -257,12 +273,15 @@ methods
 
         % Intra-dataset drift correction.
         if obj.SMF.DriftCorrection.On
+            if obj.Verbose >= 1
+                fprintf('Drift correcting (intra-dataset) ...\n');
+            end
             if strcmp(obj.DCMethod, 'DC-KNN')
-                if obj.Verbose >= 1
-                    fprintf('Drift correcting (intra-dataset) ...\n');
-                end
                 SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount, ...
                                                        DatasetIndex);
+            elseif strcmp(obj.DCMethod, 'DC-BF')
+                SMD = obj.DC.driftCorrectBFIntra(SMD, obj.PreSeqImages, ...
+                         obj.PostSeqImages, obj.ParamStruct);
             end
         end
     end
