@@ -51,7 +51,7 @@ for ii = numel(UniqueTrajIDs):-1:1
     
     % Store some other fields in the TR.
     TR(ii, 1).ConnectID = SMD.ConnectID(CurrentTrajIndices(1));
-    TR(ii, 1).IndSMD = {CurrentTrajIndices};
+    TR(ii, 1).IndSMD = CurrentTrajIndices;
 end
 
 

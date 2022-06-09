@@ -29,6 +29,7 @@ end
 % Loop through each trajectory in TR and place its localizations in the
 % output SMD.
 for ii = 1:length(TR)
+    TR(ii).IndSMD = {TR(ii).IndSMD};
     SMD = smi_core.SingleMoleculeData.catSMD(SMD, TR(ii), false, false);
 end
 
