@@ -1,5 +1,5 @@
 function [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
-    driftCorrectBFInit(SMD, SMF, RefImage, BFStruct, ParamStruct)
+    driftCorrectBFInit(NDatasets, SMF, RefImage, BFStruct, ParamStruct)
 %driftCorrectBF initializes drift correction from brightfield images
 % This method performs drift correction using brightfield images stored in
 % an h5 file.  This is done by estimating shifts between brightfield images
@@ -8,6 +8,7 @@ function [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
 %
 % INPUTS:
 %   SMD: Single Molecule Data structure containing the localizations.
+%   NDatasets: Total number of datasets to be processed.
 %   SMF: Single Molecule Fitting structure defining the path to the raw
 %        data file.
 %   RefImage: Reference image to which all datasets will be corrected to.
@@ -52,9 +53,9 @@ DefaultParams.ShiftParams = struct();
 ParamStruct = smi_helpers.padStruct(ParamStruct, DefaultParams);
 
 % Perform intra-dataset drift correction.
-PreSeqImages = zeros([size(RefImage), SMD.NDatasets]);
-PostSeqImages = zeros([size(RefImage), SMD.NDatasets]);
-for nn = 1:SMD.NDatasets
+PreSeqImages = zeros([size(RefImage), NDatasets]);
+PostSeqImages = zeros([size(RefImage), NDatasets]);
+for nn = 1:NDatasets
     PreSeqImages(:, :, nn) = median(BFStruct(nn).Data.PreSeqImages, 3);
     PostSeqImages(:, :, nn) = median(BFStruct(nn).Data.PostSeqImages, 3);
 end

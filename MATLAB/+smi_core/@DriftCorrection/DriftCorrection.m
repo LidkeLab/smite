@@ -123,7 +123,7 @@ methods(Static)
    [SMD] = driftCorrectBFIntra(SMD, PreSeqImages, PostSeqImages, ParamStruct)  
    [SMD] = driftCorrectBFInter(SMD, RefImage, PreSeqImages, ParamStruct) 
    [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
-      driftCorrectBFInit(SMD, SMF, RefImage, BFStruct, ParamStruct)
+      driftCorrectBFInit(NDatasets, SMF, RefImage, BFStruct, ParamStruct)
    [sumNND, X] = minD(Theta, X, T, Ndims, L, NS)
    [FigHandle] = plotCumDrift(SMD, FieldName)
    [FigHandle] = plotXYDriftParametric(SMD)
