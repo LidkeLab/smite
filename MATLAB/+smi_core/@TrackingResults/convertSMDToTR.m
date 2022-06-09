@@ -24,8 +24,7 @@ function [TR] = convertSMDToTR(SMD)
 % was input (it might sometimes be useful to produce an empty TR
 % structure).
 TR = smi_core.TrackingResults.createTR();
-SMDFields = fieldnames(SMD);
-if (~exist('SMD', 'var') || isempty(SMD) || isempty(SMDFields))
+if (~exist('SMD', 'var') || isempty(SMD))
     return
 end
 
@@ -34,6 +33,7 @@ end
 %       outside of the loop.
 UniqueTrajIDs = unique(SMD.ConnectID);
 NLocalizations = numel(SMD.FrameNum);
+SMDFields = fieldnames(SMD);
 NSMDFields = numel(SMDFields);
 for ii = numel(UniqueTrajIDs):-1:1
     % Create an index array corresponding only to the current trajectory.
@@ -51,7 +51,7 @@ for ii = numel(UniqueTrajIDs):-1:1
     
     % Store some other fields in the TR.
     TR(ii, 1).ConnectID = SMD.ConnectID(CurrentTrajIndices(1));
-    TR(ii, 1).IndSMD = CurrentTrajIndices;
+    TR(ii, 1).IndSMD = {CurrentTrajIndices};
 end
 
 

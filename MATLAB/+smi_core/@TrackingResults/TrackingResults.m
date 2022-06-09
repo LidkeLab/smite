@@ -31,6 +31,7 @@ classdef TrackingResults
         [NObservations] = computeTrajLengths(TR);
         [Fidelity] = computeTrajFidelity(TR);
         [TR] = convertSMDToTR(SMD);
+        [SMD] = convertTRToSMD(TR);
         [TRIndex] = getTRIndex(TR, TrajectoryIDs);
         [TR] = joinTraj(TR, TrajectoryIDs, Verbose);
         [TR] = threshTrajLength(TR, MinTrackLength);
@@ -38,4 +39,6 @@ classdef TrackingResults
         [TR] = catTR(TR1, TR2, CheckDims);
         
     end
+
+
 end
