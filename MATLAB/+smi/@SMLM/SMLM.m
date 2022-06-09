@@ -33,6 +33,7 @@ end
 % =========================================================================
 properties (Hidden)
     DC                % DriftCorrection class object used internally
+    DCMethod          % Drift correction method (DC-KNN or DC-BF)
 
     % Top level results directory: A few special results/plots (like GaussIm)
     % are saved here.  Default value is obj.SMF.Data.ResultsDir set in
@@ -163,6 +164,10 @@ methods
         % Initialize FitFramePreFC for this invocation of analyzeAll.
         obj.FitFramePreFC = cell(max(DatasetList), 1);
 
+        % Abbreviation useful for dealing with multiple drift correction
+        % methods.
+        obj.DCMethod = obj.SMF.DriftCorrection.Method;
+
         % DriftCorrection class object is also used in analyzeDataset.
         obj.DC = smi_core.DriftCorrection(obj.SMF);
         obj.DC.Verbose = obj.Verbose;
@@ -181,7 +186,11 @@ methods
             if obj.Verbose >= 1
                 fprintf('Drift correcting (inter-dataset) ...\n');
             end
-            obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
+            if strcmp(obj.DCMethod, 'DC-KNN')
+                obj.SMD = obj.DC.driftCorrectKNNInter(obj.SMD);
+            elseif strcmp(obj.DCMethod, 'DC-BF')
+                obj.SMD = obj.DC.driftCorrectBF(obj.SMD, obj.SMF);
+            end
         end
 
         % Copy PixelSize from SMF to SMD.
@@ -251,7 +260,10 @@ methods
             if obj.Verbose >= 1
                 fprintf('Drift correcting (intra-dataset) ...\n');
             end
-            SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount, DatasetIndex);
+            if strcmp(obj.DCMethod, 'DC-KNN')
+                SMD = obj.DC.driftCorrectKNNIntra(SMD, DatasetCount, ...
+                                                       DatasetIndex);
+            end
         end
     end
 
