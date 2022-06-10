@@ -352,7 +352,7 @@ methods
         obj.CalledByGUI = false;
 
         SMD = obj.SMD;
-        SMF = obj.SMF;
+        SMF = obj.SMF.packageSMF();
         if obj.Verbose >= 1
             fprintf('Saving SMD and SMF structures ...\n');
         end
