@@ -28,7 +28,7 @@ ResultsFileName = [BaseName, '_Results.mat'];
 SMD = obj.SMD;
 SMDPreThresh = obj.SMDPreThresh;
 TR = obj.TR;
-SMF = obj.SMF;
+SMF = obj.SMF.packageSMF();
 
 % Save the data in a .mat file.
 save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileName), ...
@@ -42,7 +42,7 @@ if ~(isempty(obj.SMDPreCR) || isempty(obj.SMDPreThreshPreCR) ...
     SMDPreThresh = obj.SMDPreThreshPreCR;
     TR = obj.TRPreCR;
     save(fullfile(obj.SMF.Data.ResultsDir, ResultsFileNamePreCR), ...
-        'SMD', 'SMDPreThresh', 'TR', 'SMF');
+        'SMD', 'SMDPreThresh', 'TR', 'SMF', '-v7.3');
 end
 
 % Create a movie of the tracks and save the resulting movie.
