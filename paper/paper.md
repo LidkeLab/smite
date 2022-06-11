@@ -26,12 +26,12 @@ authors:
   - name: Farzin Farzam
     affiliation: 1
   - name: Will K. Kanagy
-    affiliation: 1
+    affiliation: 3
   - name: Derek A. Rinaldi
-    affiliation: 1
+    affiliation: 3
   - name: Elton Jhamba
     orcid: 0000-0002-5272-6466
-    affiliation: 1
+    affiliation: 3
   - name: Keith A. Lidke^[corresponding author]
     orcid: 0000-0002-9328-4318
     affiliation: 1
@@ -39,6 +39,8 @@ affiliations:
  - name: Department of Physics and Astronomy, University of New Mexico
    index: 1
  - name: Department of Mathematics and Statistics, University of New Mexico
+   index: 2
+ - name: Department of Pathology, University of New Mexico Health Sciences Center
    index: 2
 date: 20 April 2022
 bibliography: paper.bib
