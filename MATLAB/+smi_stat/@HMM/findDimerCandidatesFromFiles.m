@@ -102,9 +102,12 @@ TRArray = struct([]);
 for ff = 1:numel(FileList1)
     % Load the TR structures and add the filename.
     try
-        load(FileList1{ff}, 'TR')
+        load(FileList1{ff}, 'TR', 'SMF')
         TR1 = TR;
+        [TR1.FileDir] = deal(FileDir);
         [TR1.FileName] = deal(FilesCh1{ff});
+        [TR1.RawDataPath] = ...
+            deal(fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}));
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...
@@ -113,9 +116,12 @@ for ff = 1:numel(FileList1)
         continue
     end
     try
-        load(FileList2{ff}, 'TR')
+        load(FileList2{ff}, 'TR', 'SMF')
         TR2 = TR;
+        [TR2.FileDir] = deal(FileDir);
         [TR2.FileName] = deal(FilesCh2{ff});
+        [TR2.RawDataPath] = ...
+            deal(fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}));
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...

@@ -59,9 +59,6 @@ function [Params] = prepDefaults()
 %                      a movie (i.e., if the movie is being displayed but
 %                      not saved, an additional pause(1/FrameRate) is added
 %                      between each frame). (Default = 10 fps)
-%           TrajColor: Color of each trajectory in TR.
-%                      (NTrajx3 numeric array)
-%                      (Default = [])
 %           AutoCrop: Flag to request cropping to data present in TR.  This
 %                     is enforced in GenerateMovies.prepRawData() and 
 %                     nowhere else as of this writing. (Default = false)
@@ -75,9 +72,32 @@ function [Params] = prepDefaults()
 %                       this is not used. (pixels)(Default = 10)
 %           AddTimeStamp: Add a frame/time stamp in a corner of the movie.
 %                         (Default = false)
+%           ChannelNames: Label names for each channel. 
+%                         (Default = {'Channel 1'; 'Channel 2'})
+%           RawDataColors: Color of raw data in each channel.
+%                          (NChannelsx3 numeric array, [RGB])
+%                          (Default = [0, 1, 0; 1, 0, 1])
+%           TrajColor: Color of each trajectory in TR.
+%                      (NTrajx3 numeric array)
+%                      (Default = [0, 1, 0; 1, 0, 1])
+%           IndicateDimer: 0 if you don't want special dimer marker
+%                          1 if you want to indicate dimer events
+%                          If the field TR.StateSequence doesn't exist/is
+%                          empty, this property doesn't do anything.
+%                          (Default = 0)
+%           IndicateDimerCandidate: 0 if you don't want to indicate the 
+%                                       section of data considered as a
+%                                       dimer candidate.
+%                                   1 if you want to indicate the section
+%                                     of data considered as a dimer
+%                                     candidate.
+%                                   If the field TR.DimerCandidateBool 
+%                                   doesn't exist/is empty, this property 
+%                                   doesn't do anything.
+%                                   (Default = 0)
 
 % Created by:
-%   David J. Schodt (Lidke Lab, 2021)
+%   David J. Schodt (Lidke Lab, 2022)
 
 
 % Set some default parameters.
@@ -95,12 +115,16 @@ Params.SMDColor = [1, 0, 0];
 Params.LineOfSite = [0, 90];
 Params.Resolution = 0;
 Params.FrameRate = 10;
-Params.TrajColor = [];
 Params.AutoCrop = false;
 Params.MinXYRange = 20;
 Params.NPadPixels = 5;
 Params.NPadFrames = 10;
 Params.AddTimeStamp = false;
+Params.RawDataColors = [0, 1, 0; 1, 0, 1];
+Params.TrajColor = [0, 1, 0; 1, 0, 1];
+Params.ChannelNames = {'Channel 1'; 'Channel 2'};
+Params.IndicateDimer = false;
+Params.IndicateDimerCandidate = false;
 
 
 end

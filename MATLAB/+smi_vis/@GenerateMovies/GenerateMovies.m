@@ -158,7 +158,7 @@ classdef GenerateMovies < handle
         % access these directly, however there's no harm in leaving them
         % unrestricted.
         [LineHandles] = plotTrajectories(PlotAxes, ...
-            TR, FrameRange, Color, varargin);
+            Params, TR, FrameRange, Color, varargin);
         [LineHandles] = makeFrame(PlotAxes, TR, ScaledData, ...
             Params, SMF, SMD, Frame);
         [Params] = defineCropROI(TR, Params);

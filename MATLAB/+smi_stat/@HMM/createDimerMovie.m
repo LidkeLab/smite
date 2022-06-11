@@ -4,6 +4,11 @@ function [MovieParams] = createDimerMovie(MovieAxes, ...
 % This method will create a movie of a dimer event contained in TRArray
 % superimposed on the images present in RawData.
 %
+% NOTE: This movie generator can create some weird looking overlaps between
+%       the normal trajectory and the dimer portion of the trajectory.  The
+%       usage inside of obj.createAllMovies() might result in a better
+%       movie!
+%
 % INPUTS:
 %   MovieAxes: Axes object in which we've plotted stuff.
 %              (Default = axes(figure()))

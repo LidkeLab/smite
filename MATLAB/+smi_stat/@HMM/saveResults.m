@@ -144,6 +144,11 @@ save(fullfile(DimerDir, 'TRArrayDimer.mat'), 'TRArrayDimer', '-v7.3');
 save(fullfile(NotDimerDir, 'TRArrayNotDimer.mat'), 'TRArrayNotDimer', ...
     '-v7.3');
 
+% Exit now if no dimers were identified.
+if isempty(TRArrayDimer)
+    return
+end
+
 % Generate some interesting plots (if desired).
 FiguresVisible = smi_helpers.arrayMUX({'off', 'on'}, (obj.Verbose > 1));
 if obj.GeneratePlots(1)
@@ -216,9 +221,11 @@ if obj.GeneratePlots(2)
 end
 
 % Generate dimer movies (if requested).
-% if obj.GenerateMovies
-%     obj.createAllMovies(TRArrayDimer, DimerDir, '', obj.MovieParams);
-% end
+if obj.GenerateMovies
+    obj.MovieParams.UnitFlag = true;
+    obj.MovieParams = obj.createAllMovies(TRArrayDimer, ...
+        obj.MovieParams, DimerDir);
+end
 
 
 end

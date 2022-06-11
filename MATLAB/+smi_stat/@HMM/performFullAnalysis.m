@@ -74,7 +74,7 @@ else
 end
 
 % Ensure that the registration error is available for each trajectory.
-if isfield(TRArrayTrunc, 'RegError')
+if (isfield(TRArrayTrunc, 'RegError') && ~isempty(TRArrayTrunc(1).RegError))
     % Make sure the length of each RegError array matches the number of
     % frames.  If the sizes don't match, we'll pad with median(RegError) 
     % for all values.
@@ -95,6 +95,10 @@ if isfield(TRArrayTrunc, 'RegError')
 else
     % If no registration error was provided, we'll assume it's 0.
     for nn = 1:NCandidates
+        TRArray(nn, 1).RegError = ...
+            zeros(size(TRArray(nn, 1).FrameNum));
+        TRArray(nn, 2).RegError = ...
+            zeros(size(TRArray(nn, 2).FrameNum));
         TRArrayTrunc(nn, 1).RegError = ...
             zeros(size(TRArrayTrunc(nn, 1).FrameNum));
         TRArrayTrunc(nn, 2).RegError = ...

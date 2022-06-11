@@ -78,8 +78,8 @@ classdef HMM < handle
         % NOTE: This is used when running obj.performFullAnalysis().
         GenerateMovies logical = false;
         
-        % Set of movie parameters (see createDimerMovie())
-        MovieParams struct = struct();
+        % Set of movie parameters (see GenerateMovies)
+        MovieParams struct = smi_vis.GenerateMovies.prepDefaults();
         
         % Set of plot parameters (see DisplayParams in plotDimerPairInfo())
         PlotParams struct = struct();
@@ -141,6 +141,11 @@ classdef HMM < handle
             if exist('SMF', 'var')
                 obj.SMF = SMF;
             end
+
+            % Revise some default movie parameters.
+            obj.MovieParams.AutoCrop = true;
+            obj.MovieParams.IndicateDimer = true;
+            obj.MovieParams.IndicateDimerCandidate = true;
         end
         
         function set.ConditionLabel(obj, InputValue)
@@ -190,7 +195,7 @@ classdef HMM < handle
             TRArray, RawDataChannel1, RawDataChannel2, ...
             FilePath, MovieParams, SMF, VideoObject)
         [MovieParams] = createAllMovies(TRArray, ...
-            SaveDir, RawDataBaseDir, MovieParams);
+            MovieParams, SaveDir, RawDataBaseDir);
         [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
             TRArray, SMF, DisplayParams, UnitFlag);
     end
