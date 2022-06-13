@@ -27,15 +27,22 @@ function [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
 % Created by:
 %   David J. Schodt (Lidke Lab 2021) and Michael J. Wester (2022)
 
-
 % Attempt to load the brightfield data (if needed).
 if (~exist('BFStruct', 'var') || isempty(BFStruct))
     try
-        BFStruct = smi_core.LoadData.readH5File(...
-            fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}), 'FocusImages');
+        FilePath = fullfile(SMF.Data.FileDir, SMF.Data.FileName{1});
+        H5FileStruct = h5info(FilePath);
+        FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        FocusImagesPresent = any(contains(FileGroupList, 'FocusImages'));
+        if FocusImagesPresent
+           BFStruct = smi_core.LoadData.readH5File(FilePath, 'FocusImages');
+        else
+           error(sprintf('Cannot extract group ''FocusImages'' from %s', ...
+                 FilePath));
+        end
     catch ME
         error(sprintf('Cannot extract group ''FocusImages'' from %s', ...
-            fullfile(SMF.Data.FileDir, SMF.Data.FileName{1})));
+              FilePath));
     end
 end
 
