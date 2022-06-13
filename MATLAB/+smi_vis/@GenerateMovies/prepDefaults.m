@@ -79,7 +79,7 @@ function [Params] = prepDefaults()
 %                          (Default = [0, 1, 0; 1, 0, 1])
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
-%                      (Default = [0, 1, 0; 1, 0, 1])
+%                      (Default = [], values set automatically elsewhere)
 %           IndicateDimer: 0 if you don't want special dimer marker
 %                          1 if you want to indicate dimer events
 %                          If the field TR.StateSequence doesn't exist/is
@@ -121,7 +121,7 @@ Params.NPadPixels = 5;
 Params.NPadFrames = 10;
 Params.AddTimeStamp = false;
 Params.RawDataColors = [0, 1, 0; 1, 0, 1];
-Params.TrajColor = [0, 1, 0; 1, 0, 1];
+Params.TrajColor = [];
 Params.ChannelNames = {'Channel 1'; 'Channel 2'};
 Params.IndicateDimer = false;
 Params.IndicateDimerCandidate = false;
