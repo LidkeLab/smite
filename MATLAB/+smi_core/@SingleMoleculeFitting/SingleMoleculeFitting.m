@@ -56,6 +56,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   DataROI:        Region of interest of data file to be used (Default=[])
     %   FrameRate:      Data Collection Frame Rate (1/s)
     %   PixelSize:      Camera back-projected pixel size (micrometers)
+    %   SEAdjust:       Standard error inflation per localization (Pixels)(Default=0)
     %
     % BoxFinding:       {FindROI}
     %   BoxSize:        Linear box size for fitting (Pixels)(Default=7)
@@ -86,6 +87,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   MaxPSFSigma:    Maximum PSF Sigma from fit (Pixels)(Default=2);
     %   MinPhotons:     Minimum accepted photons from fit (Default=100)
     %   MaxBg:          Maximum background accepted from fit (Default=Inf)
+    %   InMeanMultiplier:   Determines maximum intensity accepted (Default=Inf)
+    %   NNMedianMultiplier: Nearest neighbor acceptance region (Default=3)
+    %   MinNumNeighbors:    Minimum number of neighbors in above (Default=0)
     %
     % FrameConnection:  {FrameConnect,SRA}
     %   On              Perform frame connection? (Default=true)
@@ -96,6 +100,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   NSigmaDev:      SE multiplier for pre-cluster distance threshold (Default=5)
     %   NNearestClusters: Number of clusters used in density estimates (Default=2)
     %   NIterations:    Number of iterative FC attempts when Method=lap-fc (Default=1)
+    %   MinNFrameConns  Minimum accepted number of frame connections (Default=1)
     %
     % DriftCorrection   {DriftCorrection,SRA}
     %  On               Perform drift correction? (Default=true)
@@ -178,6 +183,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Data.DataROI=[];
             obj.Data.FrameRate=1;
             obj.Data.PixelSize=0.1;
+            obj.Data.SEAdjust=0;
             
             %BoxFinding
             obj.BoxFinding.BoxSize=7;
@@ -207,6 +213,9 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Thresholding.MaxPSFSigma=2;
             obj.Thresholding.MinPhotons=100;
             obj.Thresholding.MaxBg=Inf;
+            obj.Thresholding.InMeanMultiplier=Inf;
+            obj.Thresholding.NNMedianMultiplier=3;
+            obj.Thresholding.MinNumNeighbors=0;
             
             %FrameConnection
             obj.FrameConnection.On=true;
@@ -217,6 +226,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.FrameConnection.NSigmaDev=5;
             obj.FrameConnection.NNearestClusters=2;
             obj.FrameConnection.NIterations=1;
+            obj.FrameConnection.MinNFrameConns=1;
             
             %DriftCorrection
             obj.DriftCorrection.On = true;
@@ -269,6 +279,7 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Data.FrameRate.Units = ...
                 'frames / second';
             obj.SMFFieldNotes.Data.PixelSize.Units = 'micrometers';
+            obj.SMFFieldNotes.Data.SEAdjust.Units = 'pixels';
             obj.SMFFieldNotes.BoxFinding.BoxSize.Units = 'pixels';
             obj.SMFFieldNotes.BoxFinding.BoxOverlap.Units = 'pixels';
             obj.SMFFieldNotes.BoxFinding.MinPhotons.Units = 'photons';
@@ -290,6 +301,12 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Thresholding.MaxPSFSigma.Units = 'pixels';
             obj.SMFFieldNotes.Thresholding.MinPhotons.Units = 'photons';
             obj.SMFFieldNotes.Thresholding.MaxBg.Units = 'photons';
+            obj.SMFFieldNotes.Thresholding.InMeanMultiplier.Units = ...
+                'positive number';
+            obj.SMFFieldNotes.Thresholding.NNMedianMultiplier.Units = ...
+                'positive number';
+            obj.SMFFieldNotes.Thresholding.MinNumNeighbors.Units = ...
+                'non-negative integer';
             obj.SMFFieldNotes.FrameConnection.On.Units = 'logical';
             obj.SMFFieldNotes.FrameConnection.Method.Units = '';
             obj.SMFFieldNotes.FrameConnection.MaxSeparation.Units = ...
@@ -302,6 +319,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.FrameConnection.NNearestClusters.Units = ...
                 'positive integer';
             obj.SMFFieldNotes.FrameConnection.NIterations.Units = ...
+                'positive integer';
+            obj.SMFFieldNotes.FrameConnection.MinNFrameConns.Units = ...
                 'positive integer';
             obj.SMFFieldNotes.DriftCorrection.On.Units = 'logical';
             obj.SMFFieldNotes.DriftCorrection.Method.Units = '';
@@ -394,6 +413,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 sprintf(['Pixel size of the camera used to collect\n', ...
                 'the raw data, back-projected to the objective\n', ...
                 'focal plane.']);
+            obj.SMFFieldNotes.Data.SEAdjust.Tip = ...
+                'Standard error inflation to be applied to each localization';
             obj.SMFFieldNotes.BoxFinding.BoxSize.Tip = ...
                 'See FindROI for usage';
             obj.SMFFieldNotes.BoxFinding.BoxOverlap.Tip = ...
@@ -445,6 +466,18 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.SMFFieldNotes.Thresholding.MaxBg.Tip = ...
                 sprintf(['Maximum number of background photons of\n', ...
                 'localizations retained after thresholding']);
+            obj.SMFFieldNotes.Thresholding.InMeanMultiplier.Tip = ...
+                sprintf(['Intensity mean multiplier defining maximum\n', ...
+                'photons allowed to retain a localization']);
+            obj.SMFFieldNotes.Thresholding.NNMedianMultiplier.Tip = ...
+                sprintf(['Standard error mean multiplier defining the\n'...
+                'acceptance region for counting numbers of neighbors\n', ...
+                '(Do not use on dSTORM data)']);
+            obj.SMFFieldNotes.Thresholding.MinNumNeighbors.Tip = ...
+                sprintf(['In conjunction with ''NNMedianMultiplier'',\n', ...
+                'the minumum number of neighbors that must be in the\n', ...
+                'acceptance region to retain a localization\n', ...
+                '(Do not use on dSTORM data)']);
             obj.SMFFieldNotes.FrameConnection.On.Tip = ...
                 sprintf(['Indicates whether or not frame connection\n', ...
                 'will be performed']);
@@ -477,6 +510,10 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                 'algorithm when Method=''LAP-FC''.  With each\n', ...
                 'iteration, internal parameters are re-estimated\n', ...
                 'from the previous iteration''s results.']);
+            obj.SMFFieldNotes.FrameConnection.MinNFrameConns.Tip = ...
+                sprintf(['Do not retain localizations representing\n', ...
+                'this or fewer frame connection sequences\n', ...
+                '(Do not use on dSTORM data)']);
             obj.SMFFieldNotes.DriftCorrection.On.Tip = ...
                 sprintf(['Indicates whether or not drift correction\n', ...
                 'will be performed']);
@@ -740,6 +777,11 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                     error('''SMF.Data.PixelSize'' must be numeric.')
                 end
             end
+            if isfield(DataInput, 'SEAdjust')
+                if ~isnumeric(DataInput.SEAdjust)
+                    error('''SMF.Data.SEAdjust'' must be numeric.')
+                end
+            end
             
             % Set the input fields as class properties.
             InputFields = fieldnames(DataInput);
@@ -910,6 +952,22 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
                     error('''SMF.Thresholding.MaxBg'' must be numeric.')
                 end
             end
+            if isfield(ThresholdingInput, 'InMeanMultiplier')
+                if ~isnumeric(ThresholdingInput.InMeanMultiplier)
+                    error('''SMF.Thresholding.InMeanMultiplier'' must be numeric.')
+                end
+            end
+            if isfield(ThresholdingInput, 'NNMedianMultiplier')
+                if ~isnumeric(ThresholdingInput.NNMedianMultiplier)
+                    error('''SMF.Thresholding.NNMedianMultiplier'' must be numeric.')
+                end
+            end
+            if isfield(ThresholdingInput, 'MinNumNeighbors')
+                if (mod(ThresholdingInput.MinNumNeighbors, 1) || (ThresholdingInput.MinNumNeighbors<0))
+                    error(['''SMF.Thresholding.MinNumNeighbors'' ', ...
+                        'must be a non-negative integer.'])
+                end
+            end
             
             % Set the input fields as class properties.
             InputFields = fieldnames(ThresholdingInput);
@@ -970,6 +1028,12 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             if isfield(FCInput, 'NIterations')
                 if (mod(FCInput.NIterations, 1) || (FCInput.NIterations<1))
                     error(['''SMF.FrameConnection.NIterations'' ', ...
+                        'must be a positive integer.'])
+                end
+            end
+            if isfield(FCInput, 'MinNFrameConns')
+                if (mod(FCInput.MinNFrameConns, 1) || (FCInput.MinNFrameConns<1))
+                    error(['''SMF.FrameConnection.MinNFrameConns'' ', ...
                         'must be a positive integer.'])
                 end
             end
