@@ -9,7 +9,7 @@ function [PlotAxes] = plotImageStack(PlotAxes, ...
 %   PlotAxes: Axes in which the image stack will be plotted.
 %             (Default = gca())
 %   ImageStack: A 3d array containing the images. 
-%               (MxNxNImages numeric array)
+%               (MxNx3xNImages numeric array)
 %   StackSpacing: Spacing between the NImages in ImageStack.
 %                 (pixels)(Default = 5)
 %   ColorMap: Color map used to display the images. Note that this is not
@@ -50,12 +50,23 @@ if (~exist('ImageScaling', 'var') || isempty(ImageScaling))
     ImageScaling = 'global';
 end
 
-% Reshape 'ColorMap' if needed.
-StackSize = size(ImageStack, 1:3);
-if (size(ColorMap, 1) ~= StackSize(3))
-    ColorMap = repmat(ColorMap(1, 1:size(ColorMap, 2)), StackSize(3), 1);
+% Reshape input stack if needed.
+StackSize = size(ImageStack, 1:4);
+if (StackSize(3) ~= 3)
+    if (StackSize(3) ~= 1)
+        % Assume images are arranged as YxXxNImages.
+        ImageStack = reshape(ImageStack, ...
+            [StackSize(1), StackSize(2), 1, StackSize(3)]);
+    end
+    ImageStack = repmat(ImageStack, [1, 1, 3]);
 end
-FaceAlpha = ones(StackSize(3), 1);
+NImages = size(ImageStack, 4);
+
+% Reshape 'ColorMap' if needed.
+if (size(ColorMap, 1) ~= NImages)
+    ColorMap = repmat(ColorMap(1, 1:size(ColorMap, 2)), NImages, 1);
+end
+FaceAlpha = ones(NImages, 1);
 if (size(ColorMap, 2) > 3)
     FaceAlpha = ColorMap(:, 4);
 end
@@ -63,7 +74,7 @@ end
 % Prepare the plot axes.
 XRange = [1, StackSize(2)];
 YRange = [1, StackSize(1)];
-ZRange = [1, StackSize(3) * StackSpacing];
+ZRange = [1, NImages * StackSpacing];
 axis(PlotAxes, [XRange, YRange, ZRange])
 view(PlotAxes, ViewLOS)
 axis(PlotAxes, 'off')
@@ -73,23 +84,17 @@ axis(PlotAxes, 'equal')
 ImageStack = (ImageStack-min(ImageStack(:))) ...
     ./ max(ImageStack(:)-min(ImageStack(:)));
 if strcmpi(ImageScaling, 'local')
-    for nn = 1:StackSize(3)
-        CurrentImage = ImageStack(:, :, nn);
-        ImageStack(:, :, nn) = (CurrentImage-min(CurrentImage(:))) ...
-            ./ max(CurrentImage(:)-min(CurrentImage(:)));
+    for nn = 1:NImages
+        ImageStack(:, :, :, nn) = ...
+            smi_vis.contrastStretch(ImageStack(:, :, :, nn));
     end
 end
 
-% Convert the image stack to an RGB image (but don't apply color map yet).
-ImageStackReshaped = reshape(ImageStack, ...
-    StackSize(1), StackSize(2), 1, StackSize(3));
-ImageStackRGB = repmat(ImageStackReshaped, [1, 1, 3, 1]);
-
 % Loop through the image stack and plot each image.
-for nn = 1:StackSize(3)
+for nn = 1:NImages
     ZSurfVal = repmat(nn * StackSpacing, [2, 2]);
     surface(PlotAxes, XRange, YRange, ZSurfVal, ...
-        ImageStackRGB(:, :, :, nn).*reshape(ColorMap(nn, 1:3), 1, 1, 3), ...
+        ImageStack(:, :, :, nn).*reshape(ColorMap(nn, 1:3), 1, 1, 3), ...
         'facecolor', 'texturemap', 'FaceAlpha', FaceAlpha(nn));
 end
 
