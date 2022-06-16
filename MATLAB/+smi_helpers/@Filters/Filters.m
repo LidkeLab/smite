@@ -12,11 +12,11 @@ classdef Filters < handle
 
 methods(Static)
 
-   SMD = filterNonNeg(SMD)
-   SMD = filterIntensity(SMD, MeanMultiplier)
-   SMD = inflateSE(SMD, SEAdjust)
-   SMD = filterFC(SMD, nFC)
-   SMD = filterNN(SMD, n_NN, MedianMultiplier)
+   SMD = filterNonNeg(SMD, Verbose)
+   SMD = filterIntensity(SMD, Verbose, MeanMultiplier)
+   SMD = inflateSE(SMD, Verbose, SEAdjust)
+   SMD = filterFC(SMD, Verbose, nFC)
+   SMD = filterNN(SMD, Verbose, n_NN, MedianMultiplier)
 
 end % methods(Static)
 

@@ -60,6 +60,17 @@ Threshold.Verbose = obj.Verbose;
 [SMDPreThresh] = Threshold.setThreshFlag(SMDCandidates, MinMax);
 if obj.SMF.Thresholding.On
    [SMD] = Threshold.applyThresh(SMDPreThresh, obj.Verbose);
+
+   % Remove bright localizations that are likely to be more than one emitter,
+   % that is, localizations satisfying
+   %    intensity > InMeanMultiplier * mean(intensity)
+   % are removed.
+   SMD = smi_helpers.Filters.filterIntensity(SMD, obj.Verbose, ...
+            obj.SMF.Thresholding.InMeanMultiplier);
+
+   % Inflate standard errors.  This is used by BaGoL.
+   SMD = smi_helpers.Filters.inflateSE(SMD, obj.Verbose, ...
+                                            obj.SMF.Data.SEAdjust);
 else
    SMD = SMDPreThresh;
 end

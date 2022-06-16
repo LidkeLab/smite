@@ -187,8 +187,13 @@ methods
         end
         if obj.Verbose >= 1
             fprintf('Processing %d datasets ...\n', numel(DatasetList));
-            fprintf('Frame Connection/Drift Correction methods: %s, %s\n', ...
-                    obj.SMF.FrameConnection.Method, obj.DCMethod);
+            if obj.SMF.FrameConnection.On
+               fprintf('Frame Connection on, method = %s\n', ...
+                       obj.SMF.FrameConnection.Method);
+            end
+            if obj.SMF.DriftCorrection.On
+               fprintf('Drift Correction on, method = %s\n', obj.DCMethod);
+            end
         end
         for nn=1:numel(DatasetList)
             SMDnn = obj.analyzeDataset(DatasetList(nn), nn);
@@ -208,6 +213,13 @@ methods
                              obj.PreSeqImages, obj.ParamStruct);
             end
         end
+
+        % Localizations are eliminated if they do not have MinNumNeighbors
+        % neighbors that are within MedianMultiplier times the localization
+        % sigma median.  Do not use on dSTORM data.
+        SMD = smi_helpers.Filters.filterNN(obj.SMD, obj.Verbose, ...
+                 obj.SMF.Thresholding.MinNumNeighbors, ...
+                 obj.SMF.Thresholding.NNMedianMultiplier);
 
         % Copy PixelSize from SMF to SMD.
         obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
@@ -269,6 +281,12 @@ methods
         if obj.SMF.FrameConnection.On
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
+
+            % Filter out localizations representing fewer than MinNFrameConns
+            % frame connections.  This filter should not be used for dSTORM
+            % data.
+            SMD = smi_helpers.Filters.filterFC(SMD, obj.Verbose, ...
+                     obj.SMF.FrameConnection.MinNFrameConns);
         end
 
         % Intra-dataset drift correction.
@@ -354,7 +372,8 @@ methods
         SMD = obj.SMD;
         SMF = obj.SMF.packageSMF();
         if obj.Verbose >= 1
-            fprintf('Saving SMD and SMF structures ...\n');
+            fprintf('Saving SMD and SMF structures ...\n(%s)\n', ...
+                    fullfile(obj.ResultsSubDir, fn));
         end
 
         % Save SMD and SMF structures.

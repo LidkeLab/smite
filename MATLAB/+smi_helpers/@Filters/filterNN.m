@@ -1,4 +1,4 @@
-function SMD = filterNN(SMD, n_NN, MedianMultiplier)
+function SMD = filterNN(SMD, Verbose, n_NN, MedianMultiplier)
 %filterNN:  Localizations are filtered based on the NND within MedianMultiplier
 % times the median of the localization sigma, that is, localizations are
 % eliminated if they do not have n_NN neighbors that are within Medianultiplier
@@ -8,6 +8,7 @@ function SMD = filterNN(SMD, n_NN, MedianMultiplier)
 %
 % INPUTS:
 %    SMD                Single Molecule Data structure
+%    Verbose            verbosity flag [DEFAULT = false]
 %    n_NN               minimum number of neighbors within
 %                       MedianMultiplier*Prec_Median required to retain a
 %                       localization [DEFAULT = 0]
@@ -20,6 +21,10 @@ function SMD = filterNN(SMD, n_NN, MedianMultiplier)
 
 % Created by
 %    Mohamad Fazel and Michael J. Wester (5/25/2022)
+
+if ~exist('Verbose', 'var')
+   Verbose = false;
+end
 
 if ~exist('MedianMultiplier', 'var')
    MedianMultiplier = 3;
@@ -50,13 +55,14 @@ if n_NN > 0
    Ind = N >= n_NN;
  
    % Only retain localizations that satisfy the above criteria.
-   SMD.X = SMD.X(Ind);
-   SMD.Y = SMD.Y(Ind);
-   SMD.X_SE = SMD.X_SE(Ind);
-   SMD.Y_SE = SMD.Y_SE(Ind);
-   SMD.FrameNum = SMD.FrameNum(Ind);
-   fprintf('NN localizations kept = %d out of %d\n', sum(Ind), numel(Ind));
-   if n_Ind == 0
+   SMD = smi_core.SingleMoleculeData.isolateSubSMD(SMD, Ind);
+
+   if Verbose >= 2
+      fprintf('Neighbor filtered localizations kept = %d out of %d\n',...
+              sum(Ind), numel(Ind));
+   end
+
+   if sum(Ind) == 0
       error('No localizations kept!');
    end
 end
