@@ -26,6 +26,11 @@ fprintf('Files to analyze = %d\n', n_files);
 if ~isempty(DataROI) && size(DataROI, 1) ~= n_files
    error('DataROI must either be [] or contain %d rows!', n_files);
 end
+% SE_Adjust is the standard error inflation (pixel), provided either as a
+% constant (for all datasets) or an array, one per dataset
+if numel(BaGoLParams.SE_Adjust) ~= 1 && numel(BaGoLParams.SE_Adjust) ~= n_files
+   error('DataROI must contain 1 or %d values!', n_files);
+end
 
 if n_files > 0
    status = zeros(n_files, 1);
@@ -63,7 +68,7 @@ if n_files > 0
          [DataDir, File, Ext] = fileparts(Files{i});
          SaveDir = fullfile(DataDir, Results_BaGoL);
 
-         % Set up DataROI for BGLParams.
+         % Set up BGLParams for parallel processing via a parfor loop.
          BGLParams = BaGoLParams;
 
          % Run hierBaGoL_analysis.
@@ -78,9 +83,13 @@ if n_files > 0
                        BGLParams.DataROI);
             end
 
-            if ~isempty(DataROI)
-               BGLParams.DataROI = DataROI(i, :);
+            if numel(BaGoLParams.SE_Adjust) == 1          
+               BGLParams.SE_Adjust = BaGoLParams.SE_Adjust;
+            else
+               BGLParams.SE_Adjust = BaGoLParams.SE_Adjust(i);
             end
+            fprintf('SE_Adjust = %g\n', BGLParams.SE_Adjust);
+
             warning('OFF', 'stats:kmeans:FailedToConvergeRep');
             smi.BaGoL.hierBaGoL_analysis(data.SMD, Files{i}, SaveDir, ...
                                          BGLParams);

@@ -55,6 +55,7 @@ BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 %BaGoLParams.N_Burnin = 20000;       % Length of Burn-in chain
 %BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
+BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 
 % Y_Adjust is sometimes needed to deal with lower left versus upper left
 % y-origin issues.  Lower left with y increasing upwards is the default,
@@ -66,9 +67,10 @@ BaGoLParams.Y_Adjust = [];
 
 % SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
 % data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
-% be used.
+% be used.  Note that this quantity can be specified as an array of length
+% n_files if applied differently to each file.
 BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
-BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
+%BaGoLParams.SE_Adjust = [0, 0];     % Precision inflation applied to SE (nm)
 
 % The values for ROIsz and OverLap directly below are good for denser data as
 % less computational effort is required, so the code runs faster.  The second
