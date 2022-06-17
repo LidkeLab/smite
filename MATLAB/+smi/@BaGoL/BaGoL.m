@@ -364,6 +364,8 @@ classdef BaGoL < handle
        dispIm()
        [Coords,Ind] = SEfilter(ROIs)
        Im=genSRMAPNOverlay(SMD,MAPN,XSize,YSize,PixelSize,SaveDir,XStart,YStart,RadiusScale,ScaleBarLength)
+       BGL = hierBaGoL_analysis(SMD, FileNameIn, SaveDir, BaGoLParams)
+       hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams)
     end
     
 end

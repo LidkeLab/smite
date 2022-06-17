@@ -1,6 +1,6 @@
 % Script to produce BaGoL results from SMITE *_Results.mat files.  The BaGoL
 % results are placed in the subdirectory Results_BaGoL, assigned a name below,
-% under the directory containing the *_Results.mat files.  BaGoLHier_analysis
+% under the directory containing the *_Results.mat files.  hierBaGoL_analysis
 % is called separately on each file in a parfor loop, assigning a worker for
 % each dataset, so conducive to be run on a multi-core machine.
 %
@@ -25,9 +25,7 @@
 % can be input or learned from data.  We demonstrate the method on a range of
 % synthetic data, DNA origami constructs and biological structures using
 % DNA-PAINT and dSTORM.
-
-% ----------------------------------------------------------------------
-
+%
 % Pre-filtering actions (frame connection and NN not used for dSTORM data):
 %
 % SR data -> remove localizations with negative coordinates
@@ -36,7 +34,15 @@
 %         -> frame connection, removing connections which involve only N_FC
 %            frames
 %         -> Nearest Neighbor filter (N_NN) --- Do not use on dSTORM data!
-%         -> BaGoL (via parfor calling BaGoLHier_analysis on each dataset)
+%         -> BaGoL (via parfor calling hierBaGoL_analysis on each dataset)
+%
+% SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
+% data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
+% be used.
+%
+% The pre-filtering is all now in SMLM.
+
+% ----------------------------------------------------------------------
 
 % Output directory name.
 %Results_BaGoL = 'Results_BaGoLHier';
@@ -53,21 +59,6 @@ BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 %BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
 
-% Eliminate localizations whose intensity > InMeanMultiplier*mean(intensity).
-BaGoLParams.InMeanMultiplier = 2;
-
-% Determine the minimum number of nearest neighbors needed for a localization
-% to survive if it is located within 3 times the median of the localization
-% sigma.  Do not use this filter for dSTORM data (set N_NN = 0)..
-%BaGoLParams.N_NN =  5;              % Minimum number of nearest neighbors
-BaGoLParams.N_NN =  0;
-
-% Filter out localizations with N_FC or fewer connected frames, that is,
-% localizations represented by a very few frames.  Do not use for dSTORM data
-% (set N_FC = 0).
-BaGoLParams.N_FC = 1;   % DNA-PAINT
-%BaGoLParams.N_FC = 0;   % dSTORM
-
 % Y_Adjust is sometimes needed to deal with lower left versus upper left
 % y-origin issues.  Lower left with y increasing upwards is the default,
 % requiring no changes, while upper left with y increasing downwards can
@@ -76,28 +67,9 @@ BaGoLParams.N_FC = 1;   % DNA-PAINT
 %BaGoLParams.Y_Adjust = BaGoLParams.ImageSize;
 BaGoLParams.Y_Adjust = [];
 
-% If Xi is a non-empty cell array, override the BaGoLParams.Xi value defined
-% below, passing the corresponding (indexed by dataset) value to
-% BaGoL_analysis.  This is useful for batch analysis when trying to make use of
-% as many computer cores as possible in a single run.
-Xi = {};
-% Similar for DataROI, which should be dimensioned n_files x 4 if non-empty.
-DataROI = [];
-
-% SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
-% data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should be
-% used.
-%
 % k and theta below are the shape and scale parameters for the Gamma
 % probability distribution function.  If just one parameter is provided,
 % a Poisson distribution is used.
-%
-% DataROI is defined when running BaGoL over only part of the image.
-% If DataROI is empty, use the whole image.
-% 
-% Note for batch runs, in which Files, Xi and DataROI are input by hand,
-% please see ### comments below.
-% 
 BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 % The values for ROIsz and OverLap directly below are good for denser data as
@@ -111,8 +83,7 @@ BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 
-% File names and parameters per file.  If the parameters per file (Xi,
-% DataROI) are not set below, use the generic values above.
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 %start_DataDir = '.';
 %Files = uipickfiles('FilterSpec', start_DataDir, 'REFilter', ...
@@ -120,106 +91,29 @@ BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 %                    '_ResultsStruct.mat files');
 % ### Comment out the 3 lines above and use the commented out lines below when
 % ### making batch runs, for example, on CARC.  Here, the files to process are
-% ### defined relative to the directory where BaGoLHier_wrapper is run.
+% ### defined relative to the directory where hierBaGoL_wrapper is run.
 % ### Absolute pathnames are also fine, especially when used in conjunction
 % ### with fullfile.
 %'BaGoLHier/Data_2020-10-8-17-58-54_Results.mat'
-%'BaGoLHier/SMD_DNA-Origami_MPI.mat'
-%'BaGoLHier/SMR_dSTORM_EGFR.mat'
 Files = {
-'Data_2021-11-3-11-10-11_Results.mat'
+'Cell_02_Label_01_Results.mat'
+'Cell_05_Label_01_Results.mat'
 };
-%Xi = {
-%[50, 1]
-%};
+
+% DataROI is defined when running BaGoL over only part of the image.
+% If DataROI is empty, use the whole image.
+% 
 % Define a single region of interest for each dataset (units are pixels).
 % [YStart, XStart, YEnd, XEnd] = [163, 385, 233, 455]
 % [Xmin, Xmax, Ymin, Ymax] (pixel)
 % [385, 455, 163, 233]
-% [412, 428, 190, 206]
-%DataROI = [
-%[120, 135, 120, 135]
-%];
+DataROI = [
+[120, 136, 190, 206]
+[110, 126,  90, 106]
+];
 
 % ----------------------------------------------------------------------
 
-if iscell(Files)
-   n_files = numel(Files);
-else
-   n_files = 0;
-end
-fprintf('Files to analyze = %d\n', n_files);
-nXi = numel(Xi);
-if nXi ~= 0 && nXi ~= n_files
-   error('Xi must either be {} or contain %d values!', n_files);
-end
-if ~isempty(DataROI) && size(DataROI, 1) ~= n_files
-   error('DataROI must either be [] or contain %d rows!', n_files);
-end
-% This code is needed to avoid DIPimage's split interfering with the parfor
-% when using BaGoLParams.Xi rather than manually defining Xi above.
-if nXi == 0
-   Xi = cell(1, n_files);
-   for i = 1 : n_files
-      Xi{i} = BaGoLParams.Xi;
-   end
-end
-
-if n_files > 0
-   status = zeros(n_files, 1);
-
-   % When using parfor, dispatch the dataset analyses to as many workers as
-   % available.
-   delete(gcp('nocreate'));
-   MachineInfo = parcluster();
-   NumWorkers = MachineInfo.NumWorkers;
-   parpool('local', min(NumWorkers, n_files));
-
-   % For debugging, it can be helpful to use the "for" rather than the
-   % "parfor", and comment out the "try" line + "catch ... end" section below.
-%  for i = 1 : n_files
-   parfor i = 1 : n_files
-      fprintf('(%d) %s ...\n', i, Files{i});
-      [DataDir, File, Ext] = fileparts(Files{i});
-      SaveDir = fullfile(DataDir, Results_BaGoL);
-
-      % Set up Xi and DataROI for BGLParams.
-      BGLParams = BaGoLParams;
-
-      % Xi.
-      BGLParams.Xi = Xi{i};
-      if numel(BGLParams.Xi) == 1
-         fprintf('Xi = %g\n', BGLParams.Xi);
-      else
-         fprintf('Xi = [%g, %g]\n', BGLParams.Xi);
-      end
-
-      % If DataROI is defined, override the default value given in BaGoLParams.
-      if ~isempty(DataROI)
-         BGLParams.DataROI = DataROI(i, :);
-         fprintf('DataROI: [Xmin, Xmax, Ymin, Ymax] = [%g, %g, %g, %g]\n', ...
-                 BGLParams.DataROI);
-      end
-
-      % Run BaGoLHier_analysis.
-      try
-         warning('OFF', 'stats:kmeans:FailedToConvergeRep');
-         BaGoLHier_analysis(File, DataDir, SaveDir, BGLParams);
-         status(i) = 1;
-      catch ME
-         fprintf('### PROBLEM with %s ###\n', Files{i});
-         fprintf('%s\n', ME.identifier);
-         fprintf('%s\n', ME.message);
-         status(i) = -1;
-      end
-      fprintf('DONE (%d) %s.\n', i, Files{i});
-      fprintf('\n');
-   end
-
-   fprintf('BaGoL status by file (-1 PROBLEM, 0 NOT DONE, 1 DONE):\n');
-   for i = 1 : n_files
-      fprintf('[%2d] %2d   %s\n', i, status(i), Files{i});
-   end
-end
-warning('ON', 'stats:kmeans:FailedToConvergeRep');
-fprintf('Done BaGoL.\n');
+% Run the BaGoL analyses.
+smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams);
+fprintf('Done BaGoL.\n')

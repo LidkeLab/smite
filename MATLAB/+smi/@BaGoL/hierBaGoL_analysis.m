@@ -1,4 +1,5 @@
-%% Bayesian Grouping of Localizations (BaGoL)
+function BGL = hierBaGoL_analysis(SMD, FileNameIn, SaveDir, BaGoLParams)
+%Bayesian Grouping of Localizations (BaGoL)
 %
 %  This function is adapted from EGFR_dSTORM.m in the BaGoL distribution.
 %
@@ -13,16 +14,19 @@
 %   3. BaGoL class
 %
 % Description of how to run...
-%   1. Set the parameters in the following section via BaGoLHier_wrapper.
+%   1. Set the parameters in the following section via hierBaGoL_wrapper.
 %   2. Results are placed in ResultsDir.  The main results (the .mat file
 %      containing the BGL object which includes the input SMD structure,
 %      output MAPN structure, the posterior image [PImage], the Xi chain, etc.,
 %         BaGoL_Results_*_ResultsStruct.mat
+%      and the .mat file which contains the MAPN coordinates, etc.,
+%         MAPN_*.mat
 %      ) are placed at the top level, while various plots are placed in the
 %      subdirectory identified by the dataset that was processed.
 %
 % Results include:
 %   Saved Results:
+%     See above as well.
 %     BaGoL_X-SE.png:            Histogram of X-localization precisions after
 %                                grouping. 
 %     BaGoL_Y-SE.png:            Histogram of Y-Localization precisions after
@@ -33,6 +37,8 @@
 %                                emitters.
 %     MAPN-Im.png:               MAPN image which is the image of localizations
 %                                from the most likely model. 
+%     MAPN_NmeanHist.png:        Histogram of the number of localizations per
+%                                emitter found for the MAPN results.
 %     NND.png:                   Histogram of nearest neighbor distances from
 %                                MAPN-coordinates. 
 %     NNDScaledData.png:         PDFs of nearest neighbor distances + random
@@ -66,13 +72,12 @@
 %     MAPN.AlphaY: Y-Drifts of clusters (nm/frame)
 %     MAPN.AlphaX_SE: X-Drift precisions (nm/frame)
 %     MAPN.AlphaY_SE: Y-Drift precisions (nm/frame)
-%     MAPN.Nmean: Mean number of binding events per docking strand
-
-function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
+%     MAPN.Nmean: Mean number of binding events per docking strand or
+%                 localizations per emitter
 %
 % INPUTS:
+%    SMD           Single Molecule Data structure containg X, Y, X_SE, Y_SE
 %    FileNameIn    name of file containing coordinate SMD structure
-%    DataDir       directory in which FileNameIn is located
 %    SaveDir       directory in which saved results are put
 %    BaGoLParams   structure with the following parameters:
 %       ImageSize         Image size (pixel)
@@ -91,18 +96,7 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %                         sampling Xi
 %       Y_Adjust          Apply coordinate transform for y-coordinates if
 %                         non-empty in the form Y = Y_Adjust - Y (pixels)
-%       InMeanMultiplier  Localizations for which
-%                             intensity > InMeanMultiplier*mean(intensity)
-%                         are removed.
-%                         
-%       N_FC              Filter out localizations representing this number of
-%                         frame connections or less
-%       N_NN              Minimum # of nearest neighbors to survive filtering
 %       
-%
-%    SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
-%    data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
-%    be used.
 %
 %    k and theta are the shape and scale parameters for the Gamma probability
 %    distribution function.
@@ -118,25 +112,22 @@ function BGL = BaGoL_analysis(FileNameIn, DataDir, SaveDir, BaGoLParams)
 %    Mohamadreza Fazel (2019) and Michael J. Wester (2022), Lidke Lab
 
 %% Important Parameters
-SZ        = BaGoLParams.ImageSize;       % Image size (pixel)
-PixelSize = BaGoLParams.PixelSize;       % Pixel size (nm)
-DataROI   = BaGoLParams.DataROI;         % Optional analysis ROI (nm)
-Y_Adjust  = BaGoLParams.Y_Adjust;        % LL vs UL origin transform
-ImSize    = SZ*PixelSize;                % Image size (nm)
+SZ        = BaGoLParams.ImageSize;   % Image size (pixel)
+PixelSize = BaGoLParams.PixelSize;   % Pixel size (nm)
+DataROI   = BaGoLParams.DataROI;     % Optional analysis ROI (nm)
+Y_Adjust  = BaGoLParams.Y_Adjust;    % LL vs UL origin transform
+ImSize    = SZ*PixelSize;            % Image size (nm)
+Xi        = BaGoLParams.Xi;          % [k, theta] parameters for gamma prior
 
 % --------- Initialize BaGoL
 
 %% Load data
-load(fullfile(DataDir,FileNameIn));
+%load(fullfile(DataDir, FileNameIn));
 % The above data is assumed to be an SMD structure.  Note that X/Y and
 % X_SE/Y_SE units are pixels, later to be transformed into nm for the BaGoL
 % analysis.
 if ~exist('SMD', 'var')
-   if exist('SMR', 'var')
-      SMD = SMR;
-   else
-      error('SMD structure expected!');
-   end
+   error('SMD structure expected!');
 end
 % If Y_Adjust is non-empty (y-coordinate origin is in the upper left and y
 % increases downward), adjust the Y values so their origin is in the lower left
@@ -163,54 +154,13 @@ end
 
 %% Filter localizations
 % BaGoL works better with non-negative coordinates.
-n_prefilter = numel(SMD.X);
-SMD = smi_helpers.Filters.filterNonNeg(SMD);
-fprintf('Nonnegative localizations kept = %d out of %d\n', ...
-        numel(SMD.X), n_prefilter);
+Verbose = 2;
+SMD = smi_helpers.Filters.filterNonNeg(SMD, Verbose);
 
-% Remove bright localizations that are likely to be more than one emitter,
-% that is, localizations satisfying
-%    intensity > InMeanMultiplier * mean(intensity)
-% are removed.
-if BaGoLParams.InMeanMultiplier > 0
-   n_prefilter = numel(SMD.X);
-   SMD = ...
-      smi_helpers.Filters.filterIntensity(SMD, BaGoLParams.InMeanMultiplier);
-   fprintf('Intensity filtered localizations kept = %d out of %d\n', ...
-           numel(SMD.X), n_prefilter);
-end
-
-% Inflate standard errors.  Note that inflateSE is expecting pixels (as SMD is
-% in pixels), while SE_Adjust is given in nm, so need to convert units.
-if BaGoLParams.SE_Adjust > 0
-   SMD = smi_helpers.Filters.inflateSE(SMD, BaGoLParams.SE_Adjust/PixelSize);
-   fprintf('Inflate standard errors.\n');
-end
-
-% Filter out localizations representing N_FC or fewer frame connections.  This
-% filter should not be used for dSTORM data (set N_FC  = 0).
-if BaGoLParams.N_FC > 0
-   n_prefilter = numel(SMD.X);
-   SMD = smi_helpers.Filters.filterFC(SMD, BaGoLParams.N_FC);
-   fprintf('Frame connected filtered localizations kept = %d out of %d\n', ...
-           numel(SMD.X), n_prefilter);
-end
-
-% Localizations are filtered based on the NND within 3 times the median of
-% the localization sigma, that is, localizations are eliminated if they do not
-% have N_NN nearest neighbors that are within 3 times the localization sigma
-% median.  Do not use on dSTORM data (set N_NN == 0).
-if BaGoLParams.N_NN > 0
-   n_prefilter = numel(SMD.X);
-   MedianMultiplier = 3;
-   SMD = smi_helpers.Filters.filterNN(SMD, BaGoLParams.N_NN, MedianMultiplier);
-   fprintf('Frame connected filtered localizations kept = %d out of %d\n', ...
-           numel(SMD.X), n_prefilter);
-end
-
-Xi = BaGoLParams.Xi; %[k, theta] parameters for gamma prior.
 % Make the run on a smaller subregion.
 %DataROI = [80 120 120 160];%Region to find Xi (pixel) [XStart XEnd YStart YEnd]
+
+%% Examine a ROI if desired
 if ~isempty(DataROI)
    if ~isempty(Y_Adjust)
       SMD.Y = Y_Adjust - SMD.Y;
@@ -235,9 +185,15 @@ else
    Ind = SMD.FrameNum > 0;
 end
 
-% FULL plot.
-figure; hold on; plot(SMD.X, SZ - SMD.Y, 'k.');
-title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
+% FULL plot (full set of SMD localizations).
+figure;
+hold on;
+plot(SMD.X, SZ - SMD.Y, 'k.');
+title('ALL localizations');
+xlabel('x (pixels)');
+ylabel('y (pixels)');
+hold off;
+saveas(gcf, fullfile(SaveDirLong, 'FULL'), 'png');
 
 % Convert from pixels to nm.
 SMD.X = PixelSize*SMD.X(Ind);
@@ -251,9 +207,15 @@ if isfield('SMD', 'NFrames')
       SMD.NFrames*single((SMD.DatasetNum(Ind)-1))+single(SMD.FrameNum(Ind));
 end
 
-% ROI plot.
-figure; hold on; plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
-title(FileName); hold off; saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
+% ROI plot (localizations only in ROI).
+figure;
+hold on;
+plot(SMD.X/PixelSize, SZ - SMD.Y/PixelSize, 'k.');
+title('ROI localizations');
+xlabel('x (pixels)');
+ylabel('y (pixels)');
+hold off;
+saveas(gcf, fullfile(SaveDirLong, 'ROI'), 'png');
 
 %% Set the class properties
 BGL = smi.BaGoL;
@@ -298,7 +260,7 @@ BGL.analyze_all()
 
 % This file can be huge for many localizations, so only produce it if the
 % number of input localizations is not too large.
-if numel(SMD.X) <= 10000
+if numel(SMD.X) <= 50000
    fprintf('Saving BGL ...\n');
    try
       save(fullfile(SaveDir, ...
@@ -310,6 +272,8 @@ if numel(SMD.X) <= 10000
    end
 end
 
+% This file contains just the MAPN coordinates, so much smaller than the
+% ResultsStruct file and should always be saved.
 fprintf('saveMAPN ...\n');
 try
    MAPN = BGL.MAPN;
@@ -378,9 +342,29 @@ try
    else
       plot(BGL.XiChain(:, 1) .* BGL.XiChain(:, 2), 'k.');
    end
+   hold on
+   title('Xi chain');
+   xlabel(sprintf('RJMCMC jumps sampled every %d', BaGoLParams.NSamples));
+   ylabel('\lambda (localizations per emitter)');
+   hold off
    saveas(gcf, fullfile(SaveDirLong, 'XiChain'), 'png');
 catch ME
    fprintf('### PROBLEM with XiChain ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
+end
+
+fprintf('MAPN_NmeanHistogram ...\n');
+try
+   histogram(MAPN.Nmean);
+   hold on
+   title('MAPN localizations per emitter');
+   xlabel('localizations per emitter');
+   ylabel('frequency');
+   hold off
+   saveas(gcf, fullfile(SaveDirLong, 'MAPN_NmeanHist'), 'png');
+catch ME
+   fprintf('### PROBLEM with MAPN_NmeanHist ###\n');
    fprintf('%s\n', ME.identifier);
    fprintf('%s\n', ME.message);
 end
