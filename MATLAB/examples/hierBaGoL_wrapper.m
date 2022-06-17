@@ -36,11 +36,8 @@
 %         -> Nearest Neighbor filter (N_NN) --- Do not use on dSTORM data!
 %         -> BaGoL (via parfor calling hierBaGoL_analysis on each dataset)
 %
-% SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
-% data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
-% be used.
-%
-% The pre-filtering is all now in SMLM.
+% The pre-filtering is all now in SMLM, although SE_Adjust can be set here as
+% well if not done previously.
 
 % ----------------------------------------------------------------------
 
@@ -67,11 +64,12 @@ BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
 %BaGoLParams.Y_Adjust = BaGoLParams.ImageSize;
 BaGoLParams.Y_Adjust = [];
 
-% k and theta below are the shape and scale parameters for the Gamma
-% probability distribution function.  If just one parameter is provided,
-% a Poisson distribution is used.
-BaGoLParams.SE_Adjust = 3;          % Precision inflation applied to SE (nm)
+% SE_Adjust adds to X_SE and Y_SE, so inflates the precision.  For DNA_PAINT
+% data, SE_Adjust = 1--2 nm, while for dSTORM, slightly bigger values should
+% be used.
+BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
+
 % The values for ROIsz and OverLap directly below are good for denser data as
 % less computational effort is required, so the code runs faster.  The second
 % set of values can be used for sparser data to generate larger ROIs, but may
@@ -80,7 +78,14 @@ BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
+
+% k and theta below are the shape and scale parameters for the Gamma
+% probability distribution function.  If just one parameter is provided,
+% a Poisson distribution is used.
 BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
+
+% Note for batch runs, in which Files and DataROI are input by hand, please see
+% ### comments below.
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

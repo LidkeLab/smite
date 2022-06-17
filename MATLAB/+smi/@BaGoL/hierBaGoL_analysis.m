@@ -245,7 +245,7 @@ BGL.Drift = BaGoLParams.ClusterDrift;
    % Pixel size for the posterior image
 BGL.PixelSize = BaGoLParams.OutputPixelSize;
    % Localization precision adjustment (nm)
-%BGL.SE_Adjust = BaGoLParams.SE_Adjust;
+BGL.SE_Adjust = BaGoLParams.SE_Adjust;
 if ~isempty(DataROI)
    BGL.XStart = XStart;
    BGL.YStart = YStart;
