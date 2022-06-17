@@ -84,7 +84,7 @@ end
         SeparationDimer = X{5};
         
         % Define the dimer state pdf.
-        VarianceDimer = sum(PositionSE.^2, 2) + SigmaOverlay;
+        VarianceDimer = sum(PositionSE.^2, 2) + SigmaOverlay^2;
         DimerPDF = (Separation./VarianceDimer) ...
             .* exp(-0.5*(Separation.^2+SeparationDimer^2)./VarianceDimer) ...
             .* besseli(0, Separation*SeparationDimer./VarianceDimer);
