@@ -89,6 +89,7 @@ BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
 % Note for batch runs, in which Files and DataROI are input by hand, please see
 % ### comments below.
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
+DataROI = [];
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

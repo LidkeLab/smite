@@ -91,8 +91,7 @@ if n_files > 0
             fprintf('SE_Adjust = %g\n', BGLParams.SE_Adjust);
 
             warning('OFF', 'stats:kmeans:FailedToConvergeRep');
-            smi.BaGoL.hierBaGoL_analysis(data.SMD, Files{i}, SaveDir, ...
-                                         BGLParams);
+            smi.BaGoL.hierBaGoL_analysis(data.SMD, File, SaveDir, BGLParams);
             status(i) = 1;
          catch ME
             fprintf('### PROBLEM with %s ###\n', Files{i});
