@@ -120,7 +120,7 @@ end
         SeparationDomain = X{8};
         
         % Define the domain state pdf.
-        VarianceDomain = sum(PositionSE.^2, 2) + SigmaOverlay;
+        VarianceDomain = sum(PositionSE.^2, 2) + SigmaOverlay^2;
         DomainPDF = (Separation./VarianceDomain) ...
             .* exp(-0.5*(Separation.^2+SeparationDomain^2)./VarianceDomain) ...
             .* besseli(0, Separation*SeparationDomain./VarianceDomain);
