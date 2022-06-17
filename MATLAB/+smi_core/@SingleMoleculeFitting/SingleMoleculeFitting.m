@@ -121,8 +121,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
     %   MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) (Default=10)
     %   MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) (Default=10)
     %   MinTrackLength: Minimum track length of trajectory (Frames) (Default=3)
-    %   NIterMax: Max. number of iterative tracking attempts (Integer)(Default = 1)
-    %   NIterMaxBatch: Max. number of batch tracking iterations (Integer)(Default = 10)
+    %   NIterMax: Max. number of iterative tracking attempts (Integer)(Default = 5)
+    %   NIterMaxBatch: Max. number of batch tracking iterations (Integer)(Default = 5)
     %   MaxRelativeChange: Max. relative param. change to end iterations (Default = 1e-5)
     %   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=inf)
     %   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=inf)
@@ -249,8 +249,8 @@ classdef SingleMoleculeFitting < matlab.mixin.Copyable
             obj.Tracking.MinTrackLength=3;
             obj.Tracking.MaxZScoreDist=inf;
             obj.Tracking.MaxZScorePhotons=inf;
-            obj.Tracking.NIterMax=1;
-            obj.Tracking.NIterMaxBatch=10;
+            obj.Tracking.NIterMax=5;
+            obj.Tracking.NIterMaxBatch=5;
             obj.Tracking.ParamsHistory={};
             obj.Tracking.MaxRelativeChange=1e-5;
             obj.Tracking.TryLowPValueLocs=false;
