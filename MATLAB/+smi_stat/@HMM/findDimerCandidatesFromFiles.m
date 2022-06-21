@@ -114,7 +114,7 @@ for ff = 1:numel(FileList1)
         if isobject(SMF1)
             % If the 'SMF' was saved as an instance of the class, we should
             % convert it to a struct to save space.
-            SMF1 = SMF1.exportSMF();
+            SMF1 = SMF1.packageSMF();
         end
     catch
         if Verbose
@@ -134,7 +134,7 @@ for ff = 1:numel(FileList1)
         if isobject(SMF2)
             % If the 'SMF' was saved as an instance of the class, we should
             % convert it to a struct to save space.
-            SMF2 = SMF2.exportSMF();
+            SMF2 = SMF2.packageSMF();
         end
     catch
         if Verbose
