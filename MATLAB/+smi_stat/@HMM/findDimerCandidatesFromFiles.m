@@ -152,7 +152,7 @@ for ff = 1:numel(FileList1)
     FileList = [FileList; ...
         repmat([FileList1(ff), FileList2(ff)], size(TRArrayCurrent, 1), 1)];
     SMFArray = [SMFArray;
-        repmat([SMF1; SMF2], size(TRArrayCurrent, 1), 1)];
+        repmat([SMF1, SMF2], size(TRArrayCurrent, 1), 1)];
 end
 
 
