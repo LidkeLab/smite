@@ -22,7 +22,7 @@ end
 
 % Extract misc. parameters from obj (to clean up the code) and define other
 % useful parameters.
-FrameRate = obj.SMF.Data.FrameRate;
+FrameRate = obj.SMF(1).Data.FrameRate;
 UnitFlag = obj.UnitFlag;
 NStates = numel(obj.PDFHandles);
 TimeUnitString = smi_helpers.arrayMUX({'frame', 'second'}, UnitFlag);
@@ -209,7 +209,8 @@ if obj.GeneratePlots(2)
         % Generate the plot.
         obj.PlotParams.PairNumber = ii;
         [~, obj.PlotParams] = obj.createSummaryPlot(FigureHandle, ...
-            TRArrayDimer(ii, :), obj.SMF, obj.PlotParams, obj.UnitFlag);
+            TRArrayDimer(ii, :), obj.SMF(1), ...
+            obj.PlotParams, obj.UnitFlag);
 
         % Save the plot.
         FileName = fullfile(DimerDir, sprintf('DimerPair%i', ii));
@@ -223,8 +224,16 @@ end
 % Generate dimer movies (if requested).
 if obj.GenerateMovies
     obj.MovieParams.UnitFlag = true;
+    DataROIs = obj.SMF(1).Data.DataROI;
+    if (numel(obj.SMF) > 1)
+        % If multiple SMFs were provided, take the channel dependent data
+        % ROI from each.
+        DataROIs = [DataROIs; obj.SMF(2).Data.DataROI];
+    else
+        DataROIs = repmat(DataROIs, [2, 1]);
+    end
     obj.MovieParams = obj.createAllMovies(TRArrayDimer, ...
-        obj.MovieParams, DimerDir);
+        obj.MovieParams, DimerDir, [], DataROIs);
 end
 
 

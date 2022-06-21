@@ -116,7 +116,7 @@ for ii = 1:numel(TR1)
         % Determine which frames (if any) these two trajectories were
         % both observed in.
         OverlapBoolChannel1 = ismember(FrameNumChannel1, FrameNumChannel2);
-        if sum(OverlapBoolChannel1) < MinValidPoints
+        if (sum(OverlapBoolChannel1) < MinValidPoints)
             % If these trajectories didn't overlap in time for sufficiently
             % many frames, we can skip to the next iteration of the loop
             % now. 

@@ -1,4 +1,4 @@
-function [TRArray, FileList] = findDimerCandidatesFromFiles(...
+function [TRArray, SMFArray, FileList] = findDimerCandidatesFromFiles(...
     FileDir, FilePatterns, ...
     MaxDimerSeparation, MaxSeparation, MinValidPoints, MinMedianPhotons, ...
     BorderPadding, Verbose)
@@ -11,19 +11,19 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 %   FileDir: Directory containing the tracking results files.
 %   FilePatterns: Patterns to match to find and pair tracking results in
 %                 FileDir. The pattern can contain a wildcard '*' but
-%                 is otherwise a normal string. 
-%                 (Default = {'*Channel1_Results.mat'; 
+%                 is otherwise a normal string.
+%                 (Default = {'*Channel1_Results.mat';
 %                             '*Channel2_Results.mat'})
 %   MaxDimerSeparation: Maximum value of the minimum trajectory separation
 %                       for a pair to be considered a dimer candidate.
 %                       (pixels)(Default = 1)
 %   MaxSeparation: Maximum distance between candidate trajectories that
 %                  will be saved in the output TRArray.  For example, if
-%                  two trajectories were separated by 
+%                  two trajectories were separated by
 %                  [10, 5, 3, 1, 1, 4, 12], and the MaxSeparation is 4, the
 %                  output TRArray will contain the segments of these
-%                  trajectories corresponding to the separations 
-%                  [3, 1, 1, 4]. 
+%                  trajectories corresponding to the separations
+%                  [3, 1, 1, 4].
 %                  (pixels)(Default = 10 * MaxDimerDistance).
 %   MinValidPoints: Minimum number of points during which the candidates
 %                   must be within MaxSeparation of each other.
@@ -37,16 +37,16 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 %
 % OUTPUTS:
 %   TRArray: A structure array of TR structures, where the constituent TR
-%            structures correspond to dimer candidate trajectories.  The 
-%            first index corresponds to the "channel" of the trajectory and 
+%            structures correspond to dimer candidate trajectories.  The
+%            first index corresponds to the "channel" of the trajectory and
 %            the second index corresponds to the pair number.  For example,
-%            TRArray(j, 1) will contain information about a trajectory from 
+%            TRArray(j, 1) will contain information about a trajectory from
 %            TR1 that was observed within MaxDimerDistance of
 %            TRArray(j, 2), a trajectory in TR2.
 %            NOTE: The entirety of the two trajectories will be saved in
 %                  the TRArray, and a new field DimerCandidateBool will be
 %                  added to describe which datapoints correspond to the
-%                  trajectories being close to each other (e.g., 
+%                  trajectories being close to each other (e.g.,
 %                  TRArray(j, 1).FrameNum(TRArray(j, 1).DimerCandidateBool)
 %                  will give the frames during which the trajectories were
 %                  close).  Another field, ObservationStatus is defined as
@@ -56,6 +56,7 @@ function [TRArray, FileList] = findDimerCandidatesFromFiles(...
 %                  observed. ObservationStatus(2) is a boolean indicating
 %                  whether or not the "on" to "off" transition was
 %                  observed.
+%   SMFArray: Array of SMFs loaded alongside the TRArrays.
 %   FileList: List of files sharing the same size as TRArray, such that
 %             TRArray(ii, jj) is a trajectory present in FileList{ii, jj}.
 
@@ -99,6 +100,7 @@ FileList2 = fullfile(FileDir, FileList2);
 % Loop through the provided files, load them, and construct the TRArray.
 FileList = {};
 TRArray = struct([]);
+SMFArray = struct([]);
 for ff = 1:numel(FileList1)
     % Load the TR structures and add the filename.
     try
@@ -108,6 +110,12 @@ for ff = 1:numel(FileList1)
         [TR1.FileName] = deal(FilesCh1{ff});
         [TR1.RawDataPath] = ...
             deal(fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}));
+        SMF1 = SMF;
+        if isobject(SMF1)
+            % If the 'SMF' was saved as an instance of the class, we should
+            % convert it to a struct to save space.
+            SMF1 = SMF1.exportSMF();
+        end
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...
@@ -122,6 +130,12 @@ for ff = 1:numel(FileList1)
         [TR2.FileName] = deal(FilesCh2{ff});
         [TR2.RawDataPath] = ...
             deal(fullfile(SMF.Data.FileDir, SMF.Data.FileName{1}));
+        SMF2 = SMF;
+        if isobject(SMF2)
+            % If the 'SMF' was saved as an instance of the class, we should
+            % convert it to a struct to save space.
+            SMF2 = SMF2.exportSMF();
+        end
     catch
         if Verbose
             warning(['findDimerCandidatesFromFiles(): ''TR'' structure ', ...
@@ -129,7 +143,7 @@ for ff = 1:numel(FileList1)
         end
         continue
     end
-    
+
     % Find dimer candidates between 'TR1' and 'TR2'.
     TRArrayCurrent = smi_stat.HMM.findDimerCandidates(TR1, TR2, ...
         MaxDimerSeparation, MaxSeparation, ...
@@ -137,6 +151,8 @@ for ff = 1:numel(FileList1)
     TRArray = smi_core.TrackingResults.catTR(TRArray, TRArrayCurrent, false);
     FileList = [FileList; ...
         repmat([FileList1(ff), FileList2(ff)], size(TRArrayCurrent, 1), 1)];
+    SMFArray = [SMFArray;
+        repmat([SMF1; SMF2], size(TRArrayCurrent, 1), 1)];
 end
 
 

@@ -94,11 +94,10 @@ classdef HMM < handle
         GeneratePlots = [true; true];
 
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
-        % NOTE: As of this writing, this class uses SMF.Data.FrameRate and
-        %       SMF.Data.PixelSize (when UnitFlag = true).  If
-        %       DiffusionCoefficient is empty, obj.performFullAnalysis()
-        %       will use the value in SMF.Tracking.D.
-        SMF
+        % NOTE: This can be passed as an array of two SMFs, one for each
+        %       channel, which can be used when information about each
+        %       channel is needed (e.g., in obj.createAllMovies()).
+        SMF = smi_core.SingleMoleculeFitting;
         
         % Top level directory for saving results.
         % NOTE: If left empty, obj.saveResults() will try to use
@@ -146,6 +145,8 @@ classdef HMM < handle
             obj.MovieParams.AutoCrop = true;
             obj.MovieParams.IndicateDimer = true;
             obj.MovieParams.IndicateDimerCandidate = true;
+            obj.MovieParams.CropToDimerCandidates = true;
+            obj.MovieParams.TrajColor = [0, 1, 0; 1, 0, 1];
         end
         
         function set.ConditionLabel(obj, InputValue)
@@ -176,7 +177,7 @@ classdef HMM < handle
         [TRArray] = findDimerCandidates(TR1, TR2, ...
             MaxDimerSeparation, MaxSeparation, MinValidPoints, ...
             MinPhotons, BorderPadding);
-        [TRArray, FileList] = ...
+        [TRArray, SMFArray, FileList] = ...
             findDimerCandidatesFromFiles(FileDir, FilePatterns, ...
             MaxDimerSeparation, MaxSeparation, MinValidPoints, ...
             MinPhotons, BorderPadding, Verbose);
@@ -195,7 +196,7 @@ classdef HMM < handle
             TRArray, RawDataChannel1, RawDataChannel2, ...
             FilePath, MovieParams, SMF, VideoObject)
         [MovieParams] = createAllMovies(TRArray, ...
-            MovieParams, SaveDir, RawDataBaseDir);
+            MovieParams, SaveDir, RawDataBaseDir, DataROIs);
         [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
             TRArray, SMF, DisplayParams, UnitFlag);
     end

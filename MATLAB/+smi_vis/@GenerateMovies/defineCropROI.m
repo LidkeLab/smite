@@ -20,6 +20,12 @@ function [Params] = defineCropROI(TR, Params)
 
 % Enforce the temporal cropping and padding.
 AllFrames = cell2mat({TR.FrameNum}.');
+if Params.CropToDimerCandidates
+    DimerCandidateBool = cell2mat({TR.DimerCandidateBool}.');
+    AllFrames = AllFrames(DimerCandidateBool);
+else
+    DimerCandidateBool = ones(size(AllFrames), 'logical');
+end
 MinFrame = smi_helpers.arrayMUX({min(AllFrames), 1}, isempty(AllFrames));
 MaxFrame = smi_helpers.arrayMUX({max(AllFrames), TR(1).NFrames}, ...
     isempty(AllFrames));
@@ -30,6 +36,7 @@ Params.ZFrames = [max(1, MinFrame-Params.NPadFrames), ...
 IsDisplayed = ...
     ismember(AllFrames, Params.ZFrames(1):Params.ZFrames(2));
 AllX = cell2mat({TR.X}.');
+AllX = AllX(DimerCandidateBool);
 MinX = smi_helpers.arrayMUX({min(AllX(IsDisplayed)), 1}, isempty(AllX));
 MaxX = smi_helpers.arrayMUX({max(AllX(IsDisplayed)), TR(1).XSize}, ...
     isempty(AllX));
@@ -41,6 +48,7 @@ XStart = max(1, floor(min(XCenterIdeal-XWidth/2, TR(1).XSize-XWidth)));
 XEnd = min(TR(1).XSize, ceil(XStart+XWidth));
 Params.XPixels = [XStart, XEnd];
 AllY = cell2mat({TR.Y}.');
+AllY = AllY(DimerCandidateBool);
 MinY = smi_helpers.arrayMUX({min(AllY(IsDisplayed)), 1}, isempty(AllY));
 MaxY = smi_helpers.arrayMUX({max(AllY(IsDisplayed)), TR(1).YSize}, ...
     isempty(AllY));

@@ -80,6 +80,11 @@ function [Params] = prepDefaults()
 %           TrajColor: Color of each trajectory in TR.
 %                      (NTrajx3 numeric array)
 %                      (Default = [], values set automatically elsewhere)
+%           CropToDimerCandidates: 0 for normal behavior.
+%                                  1 if 'AutoCrop' should apply temporally
+%                                  to only those frames in which the
+%                                  trajectory was a dimer candidate.
+%                                  (Default = 0)
 %           IndicateDimer: 0 if you don't want special dimer marker
 %                          1 if you want to indicate dimer events
 %                          If the field TR.StateSequence doesn't exist/is
@@ -123,6 +128,7 @@ Params.AddTimeStamp = false;
 Params.RawDataColors = [0, 1, 0; 1, 0, 1];
 Params.TrajColor = [];
 Params.ChannelNames = {'Channel 1'; 'Channel 2'};
+Params.CropToDimerCandidates = false;
 Params.IndicateDimer = false;
 Params.IndicateDimerCandidate = false;
 

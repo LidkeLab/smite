@@ -49,6 +49,13 @@ for nn = 1:NTraj
     % Plot the trajectories, adding extra decorations for dimerization if
     % needed.
     if AddDimerDecorations
+        % Add a dotted line for the entire trajectory (this should get
+        % covered up by the other lines where relevant, otherwise it'll
+        % stay as a dotted line to indicate parts that weren't dimer
+        % candidates).
+        line(PlotAxes, X, Y, FrameNum, ...
+            'Color', Color(nn, :), 'LineStyle', ':');
+
         % Indicate dimer candidate frames, making sure to not have overlaps
         % (e.g., if there's a frame gap between candidate frames, don't
         % connect a line across the frame gap!).
@@ -56,25 +63,18 @@ for nn = 1:NTraj
             DimerCandidateBool = TR(nn).DimerCandidateBool(KeepBool);
             if any(DimerCandidateBool)
                 % Find and plot each segment of dimer candidates.
-                CandidateStartInd = unique([...
-                    find(DimerCandidateBool, 1, 'first'); ...
-                    min(numel(DimerCandidateBool), ...
-                    find(diff(DimerCandidateBool)==1) + 1)]);
-                CandidateEndInd = find(diff(DimerCandidateBool)==-1);
-                if (numel(CandidateStartInd) ~= numel(CandidateEndInd))
-                    CandidateEndInd = [CandidateEndInd; ...
-                        numel(CandidateStartInd)];
-                end
+                [CandidateStartInd, CandidateEndInd] = ...
+                    smi_helpers.findStartEndInds(DimerCandidateBool);
                 for ii = 1:numel(CandidateStartInd)
                     line(PlotAxes, ...
                         X(CandidateStartInd(ii):CandidateEndInd(ii)), ...
                         Y(CandidateStartInd(ii):CandidateEndInd(ii)), ...
                         FrameNum(CandidateStartInd(ii):CandidateEndInd(ii)), ...
                         'Color', Color(nn, :), ...
-                        'LineStyle', ':', 'LineWidth', 2)
+                        'LineStyle', '-', 'LineWidth', 2)
                 end
             end
-        else 
+        else
             DimerCandidateBool = zeros(size(FrameNum), 'logical');
         end
 
@@ -83,15 +83,8 @@ for nn = 1:NTraj
             DimerBool = (TR(nn).StateSequence(KeepBool) == 1);
             if any(DimerBool)
                 % Find and plot each segment of dimer candidates.
-                DimerStartInd = unique([...
-                    find(DimerBool, 1, 'first'); ...
-                    min(numel(DimerBool), ...
-                    find(diff(DimerBool)==1) + 1)]);
-                DimerEndInd = find(diff(DimerBool)==-1);
-                if (numel(DimerStartInd) ~= numel(DimerEndInd))
-                    DimerEndInd = [DimerEndInd; ...
-                        numel(CandidateStartInd)];
-                end
+                [DimerStartInd, DimerEndInd] = ...
+                    smi_helpers.findStartEndInds(DimerBool);
                 for ii = 1:numel(DimerStartInd)
                     line(PlotAxes, ...
                         X(DimerStartInd(ii):DimerEndInd(ii)), ...
@@ -104,12 +97,6 @@ for nn = 1:NTraj
         else
             DimerBool = zeros(size(FrameNum), 'logical');
         end
-
-        % Plot remaining portions of the trajectory as a solid line.
-        NormalTrajBool = ~(DimerBool | DimerCandidateBool);
-        line(PlotAxes, ...
-            X(NormalTrajBool), Y(NormalTrajBool), FrameNum(NormalTrajBool), ...
-            'Color', Color(nn, :), varargin{:});
 
         % Plot an invisible line over the whole trajectory for use as the
         % linehandle (which will allow us to click the trajectory in a
