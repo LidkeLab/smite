@@ -62,7 +62,7 @@ classdef HMM < handle
         ChannelNames cell = {'Channel 1'; 'Channel 2'};
         
         % Model state names added to certain outputs. (cell array of char)
-        StateNames cell = {'Dimer'; 'Domain'; 'Free'};
+        StateNames cell = {'Dimer'; 'Free'};
         
         % Label for save directory to indicate a condition. (char/string)
         ConditionLabel {mustBeText(ConditionLabel)} = '';
@@ -97,6 +97,9 @@ classdef HMM < handle
         % NOTE: This can be passed as an array of two SMFs, one for each
         %       channel, which can be used when information about each
         %       channel is needed (e.g., in obj.createAllMovies()).
+        %       Alternatively, this can be passed as an array of SMFs
+        %       matching the size of obj.TRArray, allowing for things like
+        %       loading raw data for each pair in TRArraay.
         SMF = smi_core.SingleMoleculeFitting;
         
         % Top level directory for saving results.
@@ -195,8 +198,8 @@ classdef HMM < handle
         [MovieParams] = createDimerMovie(MovieAxes, ...
             TRArray, RawDataChannel1, RawDataChannel2, ...
             FilePath, MovieParams, SMF, VideoObject)
-        [MovieParams] = createAllMovies(TRArray, ...
-            MovieParams, SaveDir, RawDataBaseDir, DataROIs);
+        [MovieParams] = createAllMovies(TRArray, SMFArray, ...
+            MovieParams, SaveDir);
         [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
             TRArray, SMF, DisplayParams, UnitFlag);
     end

@@ -39,6 +39,7 @@ obj.VideoObject.FrameRate = obj.Params.FrameRate;
 PlotFigure = figure();
 OriginalAxes = obj.MovieAxes;
 obj.MovieAxes = axes(PlotFigure);
+obj.MovieAxes.Toolbar.Visible = 'off';
 
 % Generate and save the movie.
 obj.generateMovie()

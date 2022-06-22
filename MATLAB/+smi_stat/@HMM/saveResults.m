@@ -10,8 +10,8 @@ function saveResults(obj)
 
 % Make sure that the top level save directory (obj.SaveDir) exists.
 if isempty(obj.SaveDir)
-    if  ~isempty(obj.SMF.Data.ResultsDir)
-        obj.SaveDir = obj.SMF.Data.ResultsDir;
+    if  ~isempty(obj.SMF(1).Data.ResultsDir)
+        obj.SaveDir = obj.SMF(1).Data.ResultsDir;
     else
         obj.SaveDir = pwd();
     end
@@ -66,15 +66,15 @@ end
 
 % Isolate all pairs from the TRArray that were found to have dimerized.
 TRArrayTemp = obj.TRArray;
-KeepBool = zeros(size(TRArrayTemp, 2), 1);
+DimerPairBool = zeros(size(TRArrayTemp, 2), 1, 'logical');
 for ii = 1:size(TRArrayTemp, 1)
     % Search for pairs that had a 1 in their StateSequence (state 1 is the
     % dimer state).
     StateSequenceCurrent = TRArrayTemp(ii, 1).StateSequence;
-    KeepBool(ii) = any(StateSequenceCurrent == 1);
+    DimerPairBool(ii) = any(StateSequenceCurrent == 1);
 end
-TRArrayDimer = TRArrayTemp(logical(KeepBool), :);
-TRArrayNotDimer = TRArrayTemp(~logical(KeepBool), :);
+TRArrayDimer = TRArrayTemp(logical(DimerPairBool), :);
+TRArrayNotDimer = TRArrayTemp(~logical(DimerPairBool), :);
 DimerDurations = cell2mat({TRArrayDimer(:, 1).DimerDurations}.');
 DimerDurations = DimerDurations * (UnitFlag/FrameRate + ~UnitFlag);
 
@@ -223,17 +223,20 @@ end
 
 % Generate dimer movies (if requested).
 if obj.GenerateMovies
-    obj.MovieParams.UnitFlag = true;
-    DataROIs = obj.SMF(1).Data.DataROI;
-    if (numel(obj.SMF) > 1)
-        % If multiple SMFs were provided, take the channel dependent data
-        % ROI from each.
-        DataROIs = [DataROIs; obj.SMF(2).Data.DataROI];
+    % Reshape obj.SMF to match the size of TRArrayDimer (needed for
+    % createAllMovies()).
+    if all(size(obj.SMF) >= size(TRArrayDimer))
+        SMFDimer = obj.SMF(DimerPairBool, :);
     else
-        DataROIs = repmat(DataROIs, [2, 1]);
+        % obj.SMF may have been provided as either a single SMF or two SMFs
+        % (one for each channel).
+        SMFPair1 = smi_core.SingleMoleculeFitting.reloadSMF(obj.SMF(1, :));
+        SMFDimer = repmat(SMFPair1, ...
+            size(TRArrayDimer, 1:2) - size(SMFPair1, 1:2) + 1);
     end
-    obj.MovieParams = obj.createAllMovies(TRArrayDimer, ...
-        obj.MovieParams, DimerDir, [], DataROIs);
+    obj.MovieParams.UnitFlag = true;
+    obj.MovieParams = obj.createAllMovies(TRArrayDimer, SMFDimer, ...
+        obj.MovieParams, DimerDir);
 end
 
 
