@@ -259,12 +259,16 @@ BGL.analyze_all()
 % ---------- Save Results and Plots
 
 % This file can be huge for many localizations, so only produce it if the
-% number of input localizations is not too large.
-if numel(SMD.X) <= 50000
+% number of input localizations is not too large.  Most of the space is taken
+% up by the Chain.
+if numel(SMD.X) <= 100000
    fprintf('Saving BGL ...\n');
    try
+%     BGL.Chain  = [];
+%     BGL.PImage = [];
+%     BGL.SMD    = [];
       save(fullfile(SaveDir, ...
-                 sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
+              sprintf('BaGoL_Results_%s_ResultsStruct', FileName)), 'BGL');
    catch ME
       fprintf('### PROBLEM with saving BGL ###\n');
       fprintf('%s\n', ME.identifier);
@@ -279,7 +283,7 @@ try
    MAPN = BGL.MAPN;
    save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN');
 catch ME
-   fprintf('### PROBLEM with saveBaGoL ###\n');
+   fprintf('### PROBLEM with saveMAPN ###\n');
    fprintf('%s\n', ME.identifier);
    fprintf('%s\n', ME.message);
 end
@@ -356,11 +360,18 @@ end
 
 fprintf('MAPN_NmeanHistogram ...\n');
 try
-   histogram(MAPN.Nmean);
+   h = histogram(MAPN.Nmean);
    hold on
+   lo = BGL.N_Burnin/BGL.NSamples + 1;
+   AB = median(BGL.XiChain(lo : end, :));
+   X = h.BinLimits(1) : 0.1 : h.BinLimits(2); 
+   plot(X, sum(h.Data(:)) * h.BinWidth * gampdf(X, AB(1), AB(2)));
+%  plot(X, sum(BGL.XiChain(lo : end, 1) .* BGL.XiChain(lo : end, 2)) .* ...
+%              gampdf(X, AB(1), AB(2)));
    title('MAPN localizations per emitter');
    xlabel('localizations per emitter');
    ylabel('frequency');
+   legend('MAPN.Nmean', 'gampdf(XiChain)', 'Location', 'NorthEast');
    hold off
    saveas(gcf, fullfile(SaveDirLong, 'MAPN_NmeanHist'), 'png');
 catch ME
@@ -374,7 +385,7 @@ close all
 fprintf('Producing prior.txt ...\n');
 try
    L = BGL.XiChain;
-   L = L(BaGoLParams.N_Burnin/BaGoLParams.NSamples + 1 : end, :);
+   L = L(BGL.N_Burnin/BGL.NSamples + 1 : end, :);
    l = L(:, 1) .* L(:, 2);
    m = mean(l);
    v = var(l);
