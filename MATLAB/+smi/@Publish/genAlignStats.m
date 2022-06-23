@@ -136,8 +136,8 @@ close(PlotFigure);
 
 % Compute the 'registration error' as found from the residual drift that is
 % corrected during the drift correction process (if the input SMD wasn't
-% empty).
-if ~isempty(SMD)
+% empty or SMD.DriftX wasn't empty).
+if ~isempty(SMD) && isfield(SMD, 'DriftX') && ~isempty(SMD.DriftX)
     PlotFigure = figure();
     PlotAxes = axes(PlotFigure);
     [~, RegError] = smi.Publish.plotXYRegError(PlotAxes, SMD);
