@@ -214,21 +214,21 @@ methods
             end
         end
 
-        % Localizations are eliminated if they do not have MinNumNeighbors
-        % neighbors that are within MedianMultiplier times the localization
-        % sigma median.  Do not use on dSTORM data.
-        SMD = smi_helpers.Filters.filterNN(obj.SMD, obj.Verbose, ...
-                 obj.SMF.Thresholding.MinNumNeighbors, ...
-                 obj.SMF.Thresholding.NNMedianMultiplier);
-
-        % Copy PixelSize from SMF to SMD.
-        obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
-
         % Produce some statistics on rejected localizations.
         THR = smi_core.Threshold;
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
            THR.rejectedLocalizations(obj.SMDPreThresh, '');
         end
+
+        % Localizations are eliminated if they do not have MinNumNeighbors
+        % neighbors that are within MedianMultiplier times the localization
+        % sigma median.  Do not use on dSTORM data.
+        obj.SMD = smi_helpers.Filters.filterNN(obj.SMD, obj.Verbose, ...
+                 obj.SMF.Thresholding.MinNumNeighbors, ...
+                 obj.SMF.Thresholding.NNMedianMultiplier);
+
+        % Copy PixelSize from SMF to SMD.
+        obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
     end
 
     % ---------------------------------------------------------------------
