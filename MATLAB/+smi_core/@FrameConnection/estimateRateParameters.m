@@ -27,6 +27,10 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 %   Verbose: Flag to indicate verbosity of outputs. (Default = 1)
 %
 % CITATION:
+%   David J. Schodt and Keith A. Lidke, "Spatiotemporal Clustering of
+%   Repeated Super-Resolution Localizations via Linear Assignment
+%   Problem", Frontiers in Bioinformatics, 2021
+%   https://doi.org/10.3389/fbinf.2021.724325
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2021)
@@ -35,7 +39,7 @@ function [KOn, KOff, KBleach, PMiss, NEmitters] = ...
 % Set defaults if needed.
 if (~exist('Verbose', 'var') || isempty(Verbose))
     Verbose = 1;
-end    
+end
 
 % Compute some quantities needed from each cluster.
 NClusters = numel(ClusterData);
@@ -45,14 +49,14 @@ for nn = 1:NClusters
     % Compute the total duration of the cluster.
     CurrentFrames = ClusterData{nn}(:, 5);
     ClusterDurations(nn) = max(CurrentFrames) - min(CurrentFrames) + 1;
-    
+
     % Compute the total number of observed localizations (clusters might
     % have multiple localizations per frame due to generous pre-clustering,
     % so we should make sure not to overcount those).
     NObservations(nn) = numel(unique(CurrentFrames));
 end
 
-% Estimate KOff+KBleach and PMiss, assuming each cluster was a single 
+% Estimate KOff+KBleach and PMiss, assuming each cluster was a single
 % blinking event of a single emitter.
 % NOTE: I've added the isinf() check to KOffPKBleach just to avoid crashing
 %       this code (in case the user wants to run it in some strange
@@ -74,11 +78,11 @@ FitOptions = optimset('Display', ...
 K = @(KOn) KOn + KOffPKBleach;
 L1 = @(KOn) KOn * KBleach / K(KOn);
 L2 = @(KOn) (KOn+KOffPKBleach) - L1(KOn);
-CostFunction = @(X) mean((NLocSum ...
-    - ceil(X(1))*(1-PMiss)*(X(2)/K(X(2))) ...
+Model = @(X) ceil(X(1))*(1-PMiss)*(X(2)/K(X(2))) ...
     * ((1/L1(X(2)))*(1-exp(-L1(X(2))*(Frames-1))) ...
-    - (1/L2(X(2)))*(1-exp(-L2(X(2))*(Frames-1))))).^2);
-NEmittersInitGuess = ceil(NClusters * KBleach);
+    - (1/L2(X(2)))*(1-exp(-L2(X(2))*(Frames-1))));
+CostFunction = @(X) mean((NLocSum - Model(X)).^2);
+NEmittersInitGuess = ceil(NClusters * KBleach / (KOff*(1-PMiss))); % DJS 22/06/23: better guess than suggested in paper
 if ((NEmittersInitGuess<max(NLoc)) || (NEmittersInitGuess>NClusters))
     NEmittersInitGuess = (NClusters-max(NLoc)) / 2;
 end

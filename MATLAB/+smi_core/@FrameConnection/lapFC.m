@@ -76,8 +76,8 @@ SMDPreClustered = SMD;
 SMDPreClustered.ConnectID = smi_cluster.clusterSTSigma(SMD, ...
     SMF.FrameConnection.MaxFrameGap, SMF.FrameConnection.NSigmaDev);
 SMD.ConnectID = SMDPreClustered.ConnectID;
-if (numel(unique(SMDPreClustered.FrameNum)) ...
-        == numel(SMDPreClustered.FrameNum))
+if (numel(unique(SMDPreClustered.ConnectID)) ...
+        == numel(SMDPreClustered.ConnectID))
     % This condition checks if pre-clustering actually did anything.  If
     % not, we don't need to proceed (since each pre-cluster already has
     % only 1 localization).
