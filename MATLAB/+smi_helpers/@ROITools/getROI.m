@@ -52,13 +52,12 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
    end
 
    if ~iscell(src)
-      [XY{1}, XY_SE{1}, XYsize, SMR] = ...
-         smi_helpers.ROITools.import_XY(src, obj.Pixel2nm, fmt);
+      [XY{1}, XY_SE{1}, XYsize, SMR] = obj.import_XY(src, obj.Pixel2nm, fmt);
    else
       n_labels = numel(src);
       for i = 1 : n_labels
          [XY{i}, XY_SE{i}, XYsize, SMR] = ...
-            smi_helpers.ROITools.import_XY(src{i}, obj.Pixel2nm, fmt);
+            obj.import_XY(src{i}, obj.Pixel2nm, fmt);
       end
    end
    [n_ROIs, RoI] = ...

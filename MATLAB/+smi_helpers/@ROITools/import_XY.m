@@ -1,4 +1,4 @@
-function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
+function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
 % Import N x 2 (x, y) coordinates and standard deviations from ...
 %    a BGL, SMA_SR or SMD data structure,
 %    point (x, y) coordinates [provided as N x 2 matrices, or if x_SE and
@@ -75,17 +75,13 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
       if isempty(fmt)
          load(src);
          if exist('SMD', 'var')
-            [XY, XY_SE, XYsize, SMDimport] = ...
-               smi_helpers.ROITools.import_XY(SMD, pixel2nm);
+            [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(SMD, pixel2nm);
          elseif exist('SMASR', 'var')
-            [XY, XY_SE, XYsize, SMDimport] = ...
-               smi_helpers.ROITools.import_XY(SMASR, pixel2nm);
+            [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(SMASR, pixel2nm);
          elseif exist('SMR', 'var') & ~isempty(SMR)
-            [XY, XY_SE, XYsize, SMDimport] = ...
-               smi_helpers.ROITools.import_XY(SMR, pixel2nm);
+            [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(SMR, pixel2nm);
          elseif exist('BGL', 'var')
-            [XY, XY_SE, XYsize, SMDimport] = ...
-               smi_helpers.ROITools.import_XY(BGL, pixel2nm);
+            [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(BGL, pixel2nm);
          else
             error('No BGL, SMASR, SMD or SMR object found in %s!', src);
          end
@@ -110,6 +106,10 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
                     pixel2nm, 1000 * src.PixelSize);
             pixel2nm = 1000 * src.PixelSize;
          end
+         if ~isempty(obj.Mask)
+            src = smi_core.SingleMoleculeData.maskSMD(src, obj.Mask);
+         end
+
          XY = [ double(src.X) .* pixel2nm, double(src.Y) .* pixel2nm ];
          if isfield(src, 'X_SE') & isfield(src, 'Y_SE')
             XY_SE = [ double(src.X_SE) .* pixel2nm, ...
