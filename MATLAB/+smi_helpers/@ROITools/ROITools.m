@@ -90,6 +90,7 @@ properties
    SRzoom = 1;            % Zoom factor for gaussianImage.
    EM = false;            % EM data format for import_XY.
    Transform = {};        % Coordinate transform from label i -> 1.
+   Mask = {};             % Boolean image mask to be used with an SMD source
 
 end % properties
 % =============================================================================
@@ -114,16 +115,9 @@ methods
    [n_ROIs, ROI, index_ROI] = get_ROI(obj, X, Y, x_size, y_size, txt)
    [n_ROIs, ROI, index_ROI] = ...
       get_ROI_GaussIm(obj, X, Y, x_size, y_size, txt, SMD)
+   [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
 
 end % methods
-% =============================================================================
-
-% =============================================================================
-methods(Static)
-
-   [XY, XY_SE, XYsize, SMDimport] = import_XY(src, pixel2nm, fmt)
-
-end % methods(Static)
 % =============================================================================
 
 end % classdef ROITools
