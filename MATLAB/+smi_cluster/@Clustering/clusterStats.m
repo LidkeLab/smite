@@ -108,7 +108,12 @@ function results = clusterStats(obj, SMD, C, centers)
                                     repmat(pdist(xy), 1, 2)];
       else % n_pts >= 3
          results.numclust(3) = results.numclust(3) + 1;
-         results.sigma_actual(i) = std(pdist(xy));
+         % The line below can sometimes cause MATLAB to crash inelegantly if
+         % n_pts is large and may have some special size.
+         %results.sigma_actual(i) = std(pdist(xy));
+         TMP = pdist(xy);
+         results.sigma_actual(i) = std(TMP);
+         clear TMP
          try
             %[k, A] = convhull(xy(:, 1), xy(:, 2));
             if dim == 2
