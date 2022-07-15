@@ -54,6 +54,10 @@ properties
    Xlim = [];   % x-axis limits if defined
    Ylim = [];   % y-axis limits if defined
 
+   % Properties used by clusterStats.
+   DoSigmaActual = true; % this calc. can run out of memory for very dense ROIs
+                         % (see clusterStats), so make it optional
+
    % Properties used by voronoi_Levet.
    Alpha      = 2;
       % Ratio of local density / overall density for a point's Voronoi
@@ -73,7 +77,7 @@ properties
    PixelSize = 100;      % conversion from pixels to nm
    PlotFigures = true;   % plot various cluster related figures
    Sigma_Reg = [10, 10]; % registration error in x, y (nm)
-   Timing = true; % produce timings for clustering
+   Timing = true;        % produce timings for clustering
 
 % =============================================================================
 end % properties

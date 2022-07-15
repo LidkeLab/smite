@@ -111,9 +111,13 @@ function results = clusterStats(obj, SMD, C, centers)
          % The line below can sometimes cause MATLAB to crash inelegantly if
          % n_pts is large and may have some special size.
          %results.sigma_actual(i) = std(pdist(xy));
-         TMP = pdist(xy);
-         results.sigma_actual(i) = std(TMP);
-         clear TMP
+         % DoSigmaActual is a flag to allow this calculation to be performed,
+         % noting the potential memory issues.
+         if obj.DoSigmaActual
+            results.sigma_actual(i) = std(pdist(xy));
+         else
+            results.sigma_actual(i) = 0;
+         end
          try
             %[k, A] = convhull(xy(:, 1), xy(:, 2));
             if dim == 2
