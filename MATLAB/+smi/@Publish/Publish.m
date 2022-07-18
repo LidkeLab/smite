@@ -91,6 +91,9 @@ classdef Publish < handle
 
         % Set of brightfield focus images loaded from data files.
         FocusImageStructs = {};
+
+        % Set of brightfield masks generated from FocusImageStructs.
+        BFMasks = {};
     end
 
     methods
@@ -150,7 +153,8 @@ classdef Publish < handle
         [SMD, BestRegInd] = shiftToBestReg(SMD, RefImage, FocusImages);
         [Mask] = ...
             defineShiftMask(LocalImShifts, ImageROIs, MaxShift, ImSize);
-        [Mask] = genBFMask(FocusImageStructs, MaxBrightfieldShift)
+        [Mask, Shifts, ImageROIs] = ...
+            genBFMask(FocusImageStruct, RefImage, MaxBrightfieldShift);
         [LocalShiftMag, LocalShift1To2, ImageROIs] = ...
             computeBFShifts(FocusImStruct1, FocusImStruct2, SubROISize);
     end
