@@ -33,6 +33,7 @@ elseif iscell(FocusImageStruct)
     Mask = ones([ImSize, size(FocusImageStruct, 1)], 'logical');
     Shifts = [];
     if isinf(MaxBrightfieldShift)
+        ImageROIs = [1, 1, size(RefImage, 1:2)]; % define ImageROIs (MJW)
         return
     end
     for ii = 1:size(FocusImageStruct, 1)
