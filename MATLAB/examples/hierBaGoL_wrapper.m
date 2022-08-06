@@ -43,7 +43,7 @@
 
 % Output directory name.
 %Results_BaGoL = 'Results_BaGoLHier';
-Results_BaGoL = 'Xi=50_1';
+Results_BaGoL = 'Xi=20_1';
 
 % Generic parameters.
 BaGoLParams.ImageSize = 256;        % (pixel)
@@ -51,9 +51,9 @@ BaGoLParams.ImageSize = 256;        % (pixel)
 BaGoLParams.PixelSize = 97.8;       % (nm) [sequential]
 BaGoLParams.OutputPixelSize = 4;    %2; % pixel size for posterior images (nm)
 BaGoLParams.N_Burnin = 8000;        % Length of Burn-in chain
-BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
-%BaGoLParams.N_Burnin = 20000;       % Length of Burn-in chain
-%BaGoLParams.N_Trials = 10000;       % Length of post-burn-in chain
+BaGoLParams.N_Trials = 500;         % Length of post-burn-in chain
+%BaGoLParams.N_Burnin = 8000;        % Length of Burn-in chain
+%BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
 BaGoLParams.ClusterDrift = 0;       % Expected magnitude of drift (nm/frame)
 
@@ -76,15 +76,17 @@ BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 % less computational effort is required, so the code runs faster.  The second
 % set of values can be used for sparser data to generate larger ROIs, but may
 % produce artifacts with dense data.
-BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
-BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
+BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
+BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
+%BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
+%BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 
 % k and theta below are the shape and scale parameters for the Gamma
 % probability distribution function.  If just one parameter is provided,
 % a Poisson distribution is used.
-BaGoLParams.Xi = [50, 1];           % [k, theta] parameters for gamma prior
+BaGoLParams.Xi = [20, 1];           % [k, theta] parameters for gamma prior
 
 % Note for batch runs, in which Files and DataROI are input by hand, please see
 % ### comments below.
@@ -103,9 +105,10 @@ DataROI = [];
 % ### Absolute pathnames are also fine, especially when used in conjunction
 % ### with fullfile.
 %'BaGoLHier/Data_2020-10-8-17-58-54_Results.mat'
+D1 = '.';
 Files = {
-'Cell_02_Label_01_Results.mat'
-'Cell_05_Label_01_Results.mat'
+fullfile(D1, 'Cell_02_Label_01_Results.mat');
+fullfile(D1, 'Cell_05_Label_01_Results.mat');
 };
 
 % DataROI is defined when running BaGoL over only part of the image.
