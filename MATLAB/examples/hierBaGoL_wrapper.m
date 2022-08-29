@@ -4,6 +4,14 @@
 % is called separately on each file in a parfor loop, assigning a worker for
 % each dataset, so conducive to be run on a multi-core machine.
 %
+% The wrapper sets parameters and lists files (full paths) to be analyzed and
+% optional ROIs to apply in the next to last section.
+%
+% For _Results.mat files with large numbers of localizations (> 300,000 or so),
+% hierBaGoL may crash (or partially crash), so should not be part of a parfor
+% loop as a crash will cause ALL of the non-finished parallel jobs to restart.
+% Such _Results.mat files should be analyzed in separate MATLABs.
+%
 % See:
 %
 % Sub-Nanometer Precision using Bayesian Grouping of Localizations
@@ -99,7 +107,7 @@ DataROI = [];
 %Files = uipickfiles('FilterSpec', start_DataDir, 'REFilter', ...
 %                    '.*_ResultsStruct.*\.mat', 'Prompt',     ...
 %                    '_ResultsStruct.mat files');
-% ### Comment out the 3 lines above and use the commented out lines below when
+% ### Comment out the 4 lines above and use the commented out lines below when
 % ### making batch runs, for example, on CARC.  Here, the files to process are
 % ### defined relative to the directory where hierBaGoL_wrapper is run.
 % ### Absolute pathnames are also fine, especially when used in conjunction
@@ -118,10 +126,10 @@ fullfile(D1, 'Cell_05_Label_01_Results.mat');
 % [YStart, XStart, YEnd, XEnd] = [163, 385, 233, 455]
 % [Xmin, Xmax, Ymin, Ymax] (pixel)
 % [385, 455, 163, 233]
-DataROI = [
-[120, 136, 190, 206]
-[110, 126,  90, 106]
-];
+%DataROI = [
+%[120, 136, 190, 206]
+%[110, 126,  90, 106]
+%];
 
 % ----------------------------------------------------------------------
 
