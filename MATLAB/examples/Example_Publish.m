@@ -34,6 +34,11 @@ Publish.GenerateImagingStats = 1;
 Publish.GenerateOverlayStats = 0;
 Publish.ShiftToReg = 0; % can be useful for color overlay data, use with caution!
 
+% Define trust regions, so that anything that seems to have a shift above the
+% value below will be masked out.  Note that PixelSize is in microns/pixel, so
+% the multiplying factor (0.2) is in units of microns.
+%Publish.MaxBrightfieldShift = 0.2 / SMF.Data.PixelSize; % pixels
+
 % smi.Publish contains several useful methods, however we'll almost always
 % just call performFullAnalysis().
 Publish.performFullAnalysis();
