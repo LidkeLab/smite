@@ -150,8 +150,8 @@ end
 try
 ImFlag = 2;
 [SRIm]=obj.genMAPNIm(ImFlag);
-tSRIm = SRIm;
 SRIm = smi.BaGoL.scaleIm(SRIm,98);
+tSRIm = SRIm;
 SRIm = smi.BaGoL.scalebar(SRIm,PixelSize,Length);
 imwrite(SRIm,hot(256),fullfile(SaveDir,'SR-Im.png'));
 catch ME
@@ -174,34 +174,79 @@ fprintf('%s\n', ME.identifier);
 fprintf('%s\n', ME.message);
 end
 
-%Overlay of filtered SR image and posterior image
-try
+% Color coding: SR (green), Posterior (blue), MAPN (red).
+% When there are just 2 colors with one of them green, the blue and red are
+% mixed together to make magenta for easier visualization.
 if OverlayFlag
-    Scale = 255;  
-    overlayIm = zeros([size(SRIm),3]);                  
-    overlayIm(:,:,1) = (2*tPIm/Scale+tSRIm/Scale)/3;                  
+    Scale = 255;
+
+    try
+    %Overlay of filtered SR image and posterior image
+    overlayIm = zeros([size(SRIm),3]);
+    %overlayIm(:,:,1) = (2*tPIm/Scale+tSRIm/Scale)/3;
+    overlayIm(:,:,1) = tPIm/Scale/3; %
     overlayIm(:,:,2) = tSRIm/Scale/3;
-    overlayIm(:,:,3) = tSRIm/Scale/3;
+    overlayIm(:,:,3) = tPIm/Scale/3;
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post.png'), 'PNG');                  
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post.png'), 'PNG');
+    catch ME
+    fprintf('### PROBLEM with saving Overlay_SR_Post.png ###\n');
+    fprintf('%s\n', ME.identifier);
+    fprintf('%s\n', ME.message);
+    end
 
-    %Overlay of filtered SR image and MAPN image image
-    overlayIm = zeros([size(tMapIm),3]);                  
-    overlayIm(:,:,1) = (2*tMapIm/Scale+tSRIm/Scale)/3;                  
+    try
+    %Overlay of filtered SR image and MAPN image
+    overlayIm = zeros([size(tMapIm),3]);
+    %overlayIm(:,:,1) = (2*tMapIm/Scale+tSRIm/Scale)/3;
+    overlayIm(:,:,1) = tMapIm/Scale/3;
     overlayIm(:,:,2) = tSRIm/Scale/3;
-    overlayIm(:,:,3) = tSRIm/Scale/3;
+    overlayIm(:,:,3) = tMapIm/Scale/3; %
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
     %overlayIm = 10*overlayIm/Scale;
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG'); 
-end
-catch ME
-fprintf('### PROBLEM with saving Overlay_SR_Map.png ###\n');
-fprintf('%s\n', ME.identifier);
-fprintf('%s\n', ME.message);
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG');
+    catch ME
+    fprintf('### PROBLEM with saving Overlay_SR_Map.png ###\n');
+    fprintf('%s\n', ME.identifier);
+    fprintf('%s\n', ME.message);
+    end
+
+    try
+    %Overlay of posterior image and MAPN image
+    overlayIm = zeros([size(tMapIm),3]);
+    %overlayIm(:,:,1) = (2*tMapIm/Scale+tPIm/Scale)/3;
+    overlayIm(:,:,1) = tMapIm/Scale/3;
+    overlayIm(:,:,2) = tPIm/Scale/3; %
+    overlayIm(:,:,3) = tPIm/Scale/3;
+    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_Post_Map.png'), 'PNG');
+    catch ME
+    fprintf('### PROBLEM with saving Overlay_Post_Map.png ###\n');
+    fprintf('%s\n', ME.identifier);
+    fprintf('%s\n', ME.message);
+    end
+
+    try
+    %Overlay of SR image, posterior image and MAPN image
+    overlayIm = zeros([size(tSRIm),3]);
+    overlayIm(:,:,1) = tMapIm/Scale/3;
+    overlayIm(:,:,2) = tSRIm/Scale/3;
+    overlayIm(:,:,3) = tPIm/Scale/3;
+    overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
+    overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
+    overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post_Map.png'), 'PNG');
+    catch ME
+    fprintf('### PROBLEM with saving Overlay_SR_Post_Map.png ###\n');
+    fprintf('%s\n', ME.identifier);
+    fprintf('%s\n', ME.message);
+    end
 end
 
 %MAPN = obj.MAPN;
