@@ -30,7 +30,7 @@ SMF.Thresholding.MinPhotons = 200; % dSTORM
 SMF.Thresholding.MaxXY_SE = 0.15; % pixels
 
 % Additional filtering
-%SMF.Data.SEAdjust = 0.03 / (1000 * SMF.Data.PixelSize); % pixels
+%SMF.Data.SEAdjust = 3 / (1000 * SMF.Data.PixelSize); % pixels
 %SMF.FrameConnection.MinNFrameConns = 2;
 %SMF.Thresholding.InMeanMultiplier = 2;
 %SMF.Thresholding.NNMedianMultiplier = 3; % DNA-PAINT
