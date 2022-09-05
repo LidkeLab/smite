@@ -43,6 +43,10 @@ else
     barlength=round(Length/PixelSize);
 end
 
+%fprintf( ...
+% 'scalebar: size = %d, PixelSize = %g nm, Length = %d nm, barlength = %d\n',...
+%        sizein(1), PixelSize, Length, barlength);
+
 % Calculate scale bar width
 barwidth=round(sizein(2)*0.015);
 

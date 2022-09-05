@@ -288,8 +288,23 @@ catch ME
    fprintf('%s\n', ME.message);
 end
 
-fprintf('saveBaGoL ...\n');
+% NOTE: In the case of the posterior image, for example, the ratio
+% BGL.PImageSize / BGL.PixelSize is the size of BGL.PImage (pixels) in one
+% dimension.  Remember that BGL.PixelSize = BGLParams.OutputPixelSize.  This is
+% the output number of pixels.  The input number of pixels % is SZ (= 256), so
+% the ratio of the output number to the input number is the pixel magnification
+% of the posterior image over the original 256 x 256 input image.
+%
+% The ScaleBarLength (nm) divided by the input PixelSize (nm/pixel) is the
+% number of input pixels that represent this length.  Multiplying by the above
+% pixel magnification yields the length of the scale bar in the posterior
+% image:
+%
+%    (BGL.PImageSize / BGL.PixelSize) / SZ * (ScaleBarLength / PixelSize)
 ScaleBarLength = 1000;   % nm
+fprintf('ScaleBarLength = %g nm\n', ScaleBarLength);
+
+fprintf('saveBaGoL ...\n');
 try
    BGL.saveBaGoL(ScaleBarLength, SaveDirLong, 1);
 catch ME
