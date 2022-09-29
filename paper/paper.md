@@ -1,17 +1,19 @@
 ---
-title: 'SMITE: Single Molecule Imaging Toolbox Extraordinaire'
+title: 'SMITE: Single Molecule Imaging (MATLAB) Toolbox Extraordinaire'
 tags:
   - MATLAB
   - single molecule localization microscopy (SMLM)
   - single particle tracking (SPT)
   - super resolution
 authors:
-  - name: David J. Schodt^[co-first author] # note this makes a footnote saying 'co-first author'
+  - name: David J. Schodt
     orcid: 0000-0002-8986-2736
-    affiliation: 1 # (Multiple affiliations must be quoted)
-  - name: Michael J. Wester^[co-first author] # note this makes a footnote saying 'co-first author'
+    affiliation: 1
+    equal-contrib: true
+  - name: Michael J. Wester
     orcid: 0000-0002-3520-7605
-    affiliation: "1, 2"
+    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    equal-contrib: true
   - name: Mohamadreza Fazel
     affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
@@ -32,9 +34,10 @@ authors:
   - name: Elton Jhamba
     orcid: 0000-0002-5272-6466
     affiliation: 3
-  - name: Keith A. Lidke^[corresponding author]
+  - name: Keith A. Lidke
     orcid: 0000-0002-9328-4318
     affiliation: 1
+    corresponding: true
 affiliations:
  - name: Department of Physics and Astronomy, University of New Mexico
    index: 1
@@ -42,7 +45,7 @@ affiliations:
    index: 2
  - name: Department of Pathology, University of New Mexico Health Sciences Center
    index: 2
-date: 20 April 2022
+date: 29 September 2022
 bibliography: paper.bib
 
 ---
@@ -66,6 +69,8 @@ in a very low density domain.  These procedures all require intensive numerical
 computation, and the methods are tightly interwoven.  The SMITE toolbox
 consists of a MATLAB infrastructure with some C and CUDA code embedded to
 provide CPU/GPU speed-ups for particularly expensive computations.
+The source code for SMITE has been archived to GitHub:
+https://github.com/LidkeLab/smite
 
 # Statement of need
 
@@ -105,5 +110,11 @@ Typical raw image data can be found in [@Pallikkuth_data:2018].
 ![SMITE GUIs for making movies from SPT trajectories, SMLM analysis, channel
 registration, and inspection of results contained in SMD
 structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
+
+# Acknowledgements
+
+This work was supported by NIH grants
+NIBIB 1R21EB019589, NIGMS 1R21GM132716, R01CA248166, P30CA118100,
+and the New Mexico Spatiotemporal Modeling Center (NIH P50GM085273).
 
 # References
