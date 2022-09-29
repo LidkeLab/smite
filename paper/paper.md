@@ -113,8 +113,8 @@ structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
 
 # Acknowledgements
 
-This work was supported by NIH grants
-NIBIB 1R21EB019589, NIGMS 1R21GM132716, R01CA248166, P30CA118100,
-and the New Mexico Spatiotemporal Modeling Center (NIH P50GM085273).
+This work was supported by NIH grants NIBIB R21EB019589, NIGMS R21GM132716,
+NCI R01CA248166, NCI P30CA118100, NIGMS R35GM126934,
+and the New Mexico Spatiotemporal Modeling Center (NIGMS P50GM085273).
 
 # References
