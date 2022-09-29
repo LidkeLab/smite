@@ -82,6 +82,8 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
             [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(SMR, pixel2nm);
          elseif exist('BGL', 'var')
             [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(BGL, pixel2nm);
+         elseif exist('EGF', 'var')
+            [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(EGF, pixel2nm);
          else
             error('No BGL, SMASR, SMD or SMR object found in %s!', src);
          end

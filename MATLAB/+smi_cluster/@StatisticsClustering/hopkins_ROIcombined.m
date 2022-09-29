@@ -24,7 +24,7 @@ function H = hopkins_ROIcombined(obj, n_ROIs, RoI)
 
 base_name = obj.BaseName;
 
-test = 25;       % The number of test points.
+test = 5;        % The number of test points.
 ntests = 1000;   % The number of Hopkins statistics to use.
 
 % Dimension (2D or 3D)
