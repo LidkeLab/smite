@@ -45,9 +45,9 @@ affiliations:
    index: 2
  - name: Department of Pathology, University of New Mexico Health Sciences Center
    index: 3
-[^co-first_author]: co-first author
 date: 29 September 2022
 bibliography: paper.bib
+[^co-first_author]: co-first author
 
 ---
 
