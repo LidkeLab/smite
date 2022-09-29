@@ -1,16 +1,17 @@
 ---
-title: 'SMITE: Single Molecule Imaging (MATLAB) Toolbox Extraordinaire'
+title: 'SMITE: Single Molecule Imaging Toolbox Extraordinaire (MATLAB)'
 tags:
   - MATLAB
   - single molecule localization microscopy (SMLM)
   - single particle tracking (SPT)
   - super resolution
 authors:
-  - name: David J. Schodt
+  - name: David J. Schodt[^*]
     orcid: 0000-0002-8986-2736
     affiliation: 1
     equal-contrib: true
-  - name: Michael J. Wester
+[^*] co-first author
+  - name: Michael J. Wester[^*]
     orcid: 0000-0002-3520-7605
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
     equal-contrib: true
@@ -34,7 +35,7 @@ authors:
   - name: Elton Jhamba
     orcid: 0000-0002-5272-6466
     affiliation: 3
-  - name: Keith A. Lidke
+  - name: Keith A. Lidke^[corresponding author]
     orcid: 0000-0002-9328-4318
     affiliation: 1
     corresponding: true
