@@ -6,11 +6,11 @@ tags:
   - single particle tracking (SPT)
   - super resolution
 authors:
-  - name: David J. Schodt^[co-first author]
+  - name: David J. Schodt[^co-first_author]
     orcid: 0000-0002-8986-2736
     affiliation: 1
     equal-contrib: true
-  - name: Michael J. Wester^[co-first author]
+  - name: Michael J. Wester[^co-first_author]
     orcid: 0000-0002-3520-7605
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
     equal-contrib: true
@@ -44,7 +44,8 @@ affiliations:
  - name: Department of Mathematics and Statistics, University of New Mexico
    index: 2
  - name: Department of Pathology, University of New Mexico Health Sciences Center
-   index: 2
+   index: 3
+[^co-first author]: co-first author
 date: 29 September 2022
 bibliography: paper.bib
 
