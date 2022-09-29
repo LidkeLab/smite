@@ -6,11 +6,11 @@ tags:
   - single particle tracking (SPT)
   - super resolution
 authors:
-  - name: David J. Schodt[^*]
+  - name: David J. Schodt^[co-first author]
     orcid: 0000-0002-8986-2736
     affiliation: 1
     equal-contrib: true
-  - name: Michael J. Wester[^*]
+  - name: Michael J. Wester^[co-first author]
     orcid: 0000-0002-3520-7605
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
     equal-contrib: true
@@ -38,7 +38,6 @@ authors:
     orcid: 0000-0002-9328-4318
     affiliation: 1
     corresponding: true
-[^*] co-first author
 affiliations:
  - name: Department of Physics and Astronomy, University of New Mexico
    index: 1
