@@ -27,7 +27,7 @@ authors:
     affiliation: 1
   - name: Farzin Farzam
     affiliation: 1
-  - name: Will K. Kanagy
+  - name: William K. Kanagy
     affiliation: 3
   - name: Derek A. Rinaldi
     affiliation: 3
