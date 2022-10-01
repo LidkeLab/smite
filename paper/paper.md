@@ -6,7 +6,7 @@ tags:
   - single particle tracking (SPT)
   - super resolution
 authors:
-  - name: David J. Schodt^[co-first author]
+  - name: David J. Schodt^[co-first author] # note this makes a footnote saying 'co-first author'
     orcid: 0000-0002-8986-2736
     affiliation: 1
     equal-contrib: true
