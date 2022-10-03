@@ -291,7 +291,7 @@ end
 % NOTE: In the case of the posterior image, for example, the ratio
 % BGL.PImageSize / BGL.PixelSize is the size of BGL.PImage (pixels) in one
 % dimension.  Remember that BGL.PixelSize = BGLParams.OutputPixelSize.  This is
-% the output number of pixels.  The input number of pixels % is SZ (= 256), so
+% the output number of pixels.  The input number of pixels is SZ (= 256), so
 % the ratio of the output number to the input number is the pixel magnification
 % of the posterior image over the original 256 x 256 input image.
 %
