@@ -87,6 +87,7 @@ function BGL = hierBaGoL_analysis(SMD, FileNameIn, SaveDir, BaGoLParams)
 %       ClusterDrift      Expected magnitude of drift (nm/frame)
 %       ROIsz             ROI size for RJMCMC (nm)
 %       OverLap           Size of overlapping region (nm)
+%       Cutoff            Pre-clustering cutoff (nm) [default = ROIsz]
 %       Xi                Loc./emitter parameters for [lambda] (Poisson) or
 %                         [k theta] (Gamma) prior
 %       DataROI           [Xmin, Xmax, Ymin, Ymax] (pixel)
@@ -235,6 +236,8 @@ BGL.ROIsize = BaGoLParams.ROIsz;
    % Overlapping region size between adjacent regions
 BGL.Overlap = BaGoLParams.OverLap;
    % Parameters for prior distribution (gamma in this case)
+BGL.Cutoff = BaGoLParams.Cutoff;
+   % Pre-clustering cutoff (nm) [default = ROIsz]
 BGL.Xi = Xi;
    % Length of Burn-in chain
 BGL.N_Burnin = BaGoLParams.N_Burnin;

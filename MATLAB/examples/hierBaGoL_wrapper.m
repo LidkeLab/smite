@@ -86,8 +86,9 @@ BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 % produce artifacts with dense data.
 BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
-%BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
-%BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
+BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
+BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
+BaGoLParams.Cutoff = 50;            % Pre-clustering cutoff (nm)
 %BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 
