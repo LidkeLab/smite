@@ -8,6 +8,10 @@ obj.YStart = min(obj.SMD.Y-3*obj.SMD.Y_SE);
 X_max = max(obj.SMD.X+3*obj.SMD.X_SE);
 Y_max = max(obj.SMD.Y+3*obj.SMD.Y_SE);
 
-obj.PImageSize=ceil(max((X_max-obj.XStart)/DX,(Y_max-obj.YStart)/DX));
+% No pre-clustering version
+%obj.PImageSize=ceil(max((X_max-obj.XStart/DX),(Y_max-obj.YStart/DX)));
+% Pre-clustering version from Mohamad
+%obj.PImageSize=ceil(max((X_max-obj.XStart)/DX,(Y_max-obj.YStart)/DX));
+obj.PImageSize=ceil(max((X_max+obj.XStart/DX),(Y_max+obj.YStart/DX)));
 
 end
