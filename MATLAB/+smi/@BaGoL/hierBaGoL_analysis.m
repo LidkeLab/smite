@@ -291,21 +291,44 @@ catch ME
    fprintf('%s\n', ME.message);
 end
 
-% NOTE: In the case of the posterior image, for example, the ratio
-% BGL.PImageSize / BGL.PixelSize is the size of BGL.PImage (pixels) in one
-% dimension.  Remember that BGL.PixelSize = BGLParams.OutputPixelSize.  This is
-% the output number of pixels.  The input number of pixels is SZ (= 256), so
-% the ratio of the output number to the input number is the pixel magnification
-% of the posterior image over the original 256 x 256 input image.
+% In general, the number of pixels that make up the scale bar is (from
+% scalebar.m)
+%    barlength = round(Length / PixelSize);
+% where Length is the desired scale bar length in um (SMITE) or nm (BaGoL),
+% and the input camera PixelSize is in corresponding units (um/pixel or
+% nm/pixel).
 %
-% The ScaleBarLength (nm) divided by the input PixelSize (nm/pixel) is the
-% number of input pixels that represent this length.  Multiplying by the above
-% pixel magnification yields the length of the scale bar in the posterior
-% image:
+% For SMITE Gaussian images, the SMD coordinates (pixels) are magnified by
+% SRImageZoom (see +smi_vis/@GenerateImages/gaussianImage.m where
+%    SMDin.X = SMD.X * SRImageZoom, etc.
+% ), so the true scale bar length in original coordinates is thus
+%    ScalebarLength / SRImageZoom
+% which by default (see +smi_vis/@GenerateImages/gaussianImage.m:
+%    ScalebarLength   scalebar length (um) [default: 10 um]
+% and +smi/@SMLM/SMLM.m:
+%    SRImageZoom  = 20 % magnification factor for SR     images generated
+%    SRCircImZoom = 25 % magnification factor for circle images generated
+% ) is 10 um / 20 = 0.5 um = 500 nm.
+% For circle images, the default is 10 um / 25 = 0.4 um = 400 nm.
 %
-%    (BGL.PImageSize / BGL.PixelSize) / SZ * (ScaleBarLength / PixelSize)
-ScaleBarLength = 1000;   % nm
-fprintf('ScaleBarLength = %g nm\n', ScaleBarLength);
+% Now for BaGoL Gaussian and circle plots, the input SMD structure from SMITE
+% provided to BaGoL has pixel coordinates.  These are converted into nm via
+% SMD.PixelSize (see "Convert from pixels to nm" above where there are lines
+% like
+%    SMD.X = PixelSize * SMD.X(Ind);
+% in which PixelSize = BaGoLParams.PixelSize, that is, the input pixel size,
+% meaning the camera number of nm per pixel).  To produce the Gaussian/circle
+% plots, it is necessary to convert nm into the OutputPixelSize, which
+% confusingly is called PixelSize in BaGoL (+smi/@BaGoL/hierBaGoL_analysis.m):
+%    BGL.PixelSize = BaGoLParams.OutputPixelSize;
+% For example, in +smi/@BaGoL/genSRMAPNOverlay.m, there are lines like
+%    X = ((SMD.X - Xstart) / PixelSize);
+% Therefore, the true scale bar length for these BaGoL plots will be simply
+% ScaleBarLength (as the conversion to output pixels is done properly in
+% scalebar.m).  ScaleBarLength defaults to 1 um = 500 nm (see line below).
+ScaleBarLength = 500;   % nm
+fprintf('ScaleBarLength = %g nm, OutputPixelSize = %g nm\n', ...
+        ScaleBarLength, BGLParms.OutputPixelSize);
 
 fprintf('saveBaGoL ...\n');
 try
