@@ -328,7 +328,7 @@ end
 % scalebar.m).  ScaleBarLength defaults to 1 um = 500 nm (see line below).
 ScaleBarLength = 500;   % nm
 fprintf('ScaleBarLength = %g nm, OutputPixelSize = %g nm\n', ...
-        ScaleBarLength, BGLParms.OutputPixelSize);
+        ScaleBarLength, BaGoLParams.OutputPixelSize);
 
 fprintf('saveBaGoL ...\n');
 try
