@@ -71,15 +71,16 @@ function clusterFig = plotClusters(obj, SMD, C, centers, ptsI, txt, options)
       if printing
          fprintf('cluster %d has %2d points (%s)\n', i, n_pts, color);
       end
+try
       %plot(XY(C{i}, 1), XY(C{i}, 2), [color, '.'], 'MarkerSize', 12);
       plot(XY(C{i}, 1), XY(C{i}, 2), [color, '.']);
       if labeling
          text(centers(1, i), centers(2, i), sprintf('%d', i));
       end
       if outlines
-         if length(C{i}) <= 2
+         if length(C{i}) == 2
             plot(XY(C{i}, 1), XY(C{i}, 2), [color, '-'], 'LineWidth', 2);
-         else %if length(C{i}) >= 3
+         elseif length(C{i}) >= 3
             xy = double(XY(C{i}, :));
             %k = convhull(XY(C{i}, 1), XY(C{i}, 2));
             k = boundary(xy(:, 1), xy(:, 2), obj.ShrinkFactor);
@@ -87,6 +88,11 @@ function clusterFig = plotClusters(obj, SMD, C, centers, ptsI, txt, options)
             plot(XY(k, 1), XY(k, 2), [color, '-'], 'LineWidth', 2);
          end
       end
+catch ME
+fprintf('### PROBLEM with plotting cluster %d ###\n', i);
+fprintf('%s\n', ME.identifier);
+fprintf('%s\n', ME.message);
+end
    end
    if n_isolated > 0
       %plot(XY(ptsI, 1), XY(ptsI, 2), 'k.', 'MarkerSize', 12);
