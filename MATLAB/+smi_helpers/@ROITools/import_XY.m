@@ -84,14 +84,19 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
             [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(BGL, pixel2nm);
          elseif exist('EGF', 'var')
             [XY, XY_SE, XYsize, SMDimport] = obj.import_XY(EGF, pixel2nm);
+         elseif exist('MAPN', 'var')
+            [XY, XY_SE, XYsize, SMDimport] = ...
+               obj.import_XY(MAPN, pixel2nm, 'MAPN');
          else
-            error('No BGL, SMASR, SMD or SMR object found in %s!', src);
+            error('No BGL, EGF, MAPN, SMASR, SMD, SMR object found in %s!', src);
          end
       elseif strcmp(fmt, 'EM')
          % (x, y) data is in columns (2, 3).
          [x, y] = textread(src, '%*u %u %u %*u', 'headerlines', 1);
          XY = [x, y] .* pixel2nm;
          XYsize = [256, 256] .* pixel2nm;
+      elseif strcmp(fmt, 'MAPN')
+         % Do nothing here.
       else
          error('Unknown fmt (%s)!', fmt);
       end
@@ -112,10 +117,19 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
             src = smi_core.SingleMoleculeData.maskSMD(src, obj.Mask);
          end
 
-         XY = [ double(src.X) .* pixel2nm, double(src.Y) .* pixel2nm ];
+         MAPN = ~isempty(fmt) && strcmp(fmt, 'MAPN');
+         if MAPN
+            XY = [ double(src.X), double(src.Y) ];
+         else
+            XY = [ double(src.X) .* pixel2nm, double(src.Y) .* pixel2nm ];
+         end
          if isfield(src, 'X_SE') & isfield(src, 'Y_SE')
-            XY_SE = [ double(src.X_SE) .* pixel2nm, ...
-                      double(src.Y_SE) .* pixel2nm ];
+            if MAPN
+               XY_SE = [ double(src.X_SE), double(src.Y_SE) ];
+            else
+               XY_SE = [ double(src.X_SE) .* pixel2nm, ...
+                         double(src.Y_SE) .* pixel2nm ];
+            end
          elseif isfield(src, 'X_STD') & isfield(src, 'Y_STD')
             XY_SE = [ double(src.X_STD) .* pixel2nm, ...
                       double(src.Y_STD) .* pixel2nm ];
