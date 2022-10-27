@@ -110,7 +110,7 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
             && pixel2nm ~= 1000 * src.PixelSize
             warning(['Incompatible pixel2nm/PixelSize specification:\n', ...
                      '(PixelSize from input source = %f overrides pixel2nm = %f)\n'], ...
-                    pixel2nm, 1000 * src.PixelSize);
+                     1000 * src.PixelSize, pixel2nm);
             pixel2nm = 1000 * src.PixelSize;
          end
          if ~isempty(obj.Mask)
