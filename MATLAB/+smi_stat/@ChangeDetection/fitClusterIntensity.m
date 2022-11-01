@@ -12,7 +12,7 @@ function icp=fitClusterIntensity( data, logBayesThreshold, plotit)
         data=positiveData;
     end
     data=data(3:end);
-    icp=IntensityCPA(data, logBayesThreshold);
+    icp=smi_stat.ChangeDetection(data, logBayesThreshold);
     if plotit
         icp.plotIntensityEstimate();
     end
