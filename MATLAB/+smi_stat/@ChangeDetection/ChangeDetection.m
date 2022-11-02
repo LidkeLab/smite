@@ -30,49 +30,49 @@ classdef ChangeDetection < handle
     end
 
     methods
-        function obj=ChangeDetection(data, logBayesThreshold)
+        function obj=ChangeDetection(Data, LogBayesThreshold)
             % Inputs:
             %   data: a vector of integer values representing poission
             %       distributed values from a sequence where the mean of the poisson
             %       process changes at discrete times
-            %   logBayesThreshold: the log of the Bayes factor to accept a
+            %   LogBayesThreshold: the log of the Bayes factor to accept a
             %       change point with.  Should be positive. Larger values will estimate 
             %       fewer change points.  Values will need to be larger when the counts 
             %       in the data are bigger.   Start with 1e1 and increase as needed for lower
             %       sensitivity.
-            obj.setData(data, logBayesThreshold);
+            obj.setData(Data, LogBayesThreshold);
         end
 
-        function setData(obj, data, logBayesThreshold)
+        function setData(obj, Data, LogBayesThreshold)
             % Inputs:
-            %   data: a vector of integer values representing poission
+            %   Data: a vector of integer values representing poission
             %       distributed values from a sequence where the mean of the poisson
             %       process changes at discrete times
-            %   logBayesThreshold: the log of the Bayes factor to accept a
+            %   LogBayesThreshold: the log of the Bayes factor to accept a
             %       change point with.  Should be negative. Smaller values will estimate fewer change
             %       points.  Values will need to be smaller when the counts in the
             %       data are bigger.   Try something in the range of -10 to -1E6.
-            if ~isvector(data)
+            if ~isvector(Data)
                 error('ChangePoint:setData','data must be a vector')
             end
-            if ~all(round(data)==data)
+            if ~all(round(Data)==Data)
                 error('ChangePoint:setData','data must be integer valued')
             end
-            obj.Data=data;
+            obj.Data=Data;
             obj.Nobservations=length(obj.Data);
             if nargin==3
-                if logBayesThreshold<=0
+                if LogBayesThreshold<=0
                     error('ChangePoint:setData','logBayesThreshold should be positive')
                 end
-                obj.LogBayesThreshold=logBayesThreshold;
+                obj.LogBayesThreshold=LogBayesThreshold;
             end
             obj.estimateSequence();
         end
         
-        function f=plotIntensityEstimate(obj)
+        function F=plotIntensityEstimate(obj)
             % plot estimated step trace and probablity of change point at
             % each observation
-            f=figure();
+            F=figure();
             xs=1:obj.Nobservations;
             subplot(2,1,1);
             stairs(xs, obj.Data, '-ko');
@@ -87,7 +87,7 @@ classdef ChangeDetection < handle
             legend('Data', 'Estimated', 'Location', 'North');
             subplot(2,1,2);
             xs=2:obj.Nobservations;
-            pCP=arrayfun(@(cp) smi_stat.ChangeDetection.logP_H2(obj.Data,cp), xs);
+            pCP=arrayfun(@(CP) smi_stat.ChangeDetection.logP_H2(obj.Data,CP), xs);
             plot(xs, pCP, '-ko');
             xlabel('time');
             ylabel('logP(cp|H_2)');
@@ -95,95 +95,95 @@ classdef ChangeDetection < handle
     end %public methods
 
     methods(Static=true)
-        function data=simulate(nObservations, changePoints, intensity)
+        function Data=simulate(NObservations, ChangePoints, Intensity)
             % Simulate an intensity sequence
             % Inputs:
-            %   nObservations - Scalar integer: length of data sequence
-            %   changePoints - vector: indexs of change point locations
-            %   intensity - vector: length=length(changePoints)+1: mean intensities
+            %   NObservations - Scalar integer: length of data sequence
+            %   ChangePoints - vector: indexs of change point locations
+            %   intensity - vector: length=length(ChangePoints)+1: mean intensities
             %       for each subinterval
             % Outputs:
-            %   data - A 1xnObservations vector of integer intensity values for
+            %   Data - A 1xNObservations vector of integer intensity values for
             %      specified change point sequence
-            assert(length(intensity)==length(changePoints)+1);%Correct number of intenisites
-            assert(all(changePoints>1)); % Not too small
-            assert(all(changePoints)<=nObservations); %Not too big
-            assert(length(unique(changePoints))==length(changePoints)); %No identical change points
-            assert(all(sort(changePoints)==changePoints)); % alrady sorted
-            assert(all(intensity(2:end)~=intensity(1:end-1))); %Change points actually change intensity
-            data=zeros(1,nObservations);
-            nCP=length(changePoints);
-            cp=1;
-            for n=1:nObservations
-                if cp<=nCP && changePoints(cp)==n
-                    cp=cp+1;
+            assert(length(Intensity)==length(ChangePoints)+1);%Correct number of intenisites
+            assert(all(ChangePoints>1)); % Not too small
+            assert(all(ChangePoints)<=NObservations); %Not too big
+            assert(length(unique(ChangePoints))==length(ChangePoints)); %No identical change points
+            assert(all(sort(ChangePoints)==ChangePoints)); % alrady sorted
+            assert(all(Intensity(2:end)~=Intensity(1:end-1))); %Change points actually change intensity
+            Data=zeros(1,NObservations);
+            nCP=length(ChangePoints);
+            CP=1;
+            for n=1:NObservations
+                if CP<=nCP && ChangePoints(CP)==n
+                    CP=CP+1;
                 end
-                data(n)=poissrnd(intensity(cp),1,1);
+                Data(n)=poissrnd(Intensity(CP),1,1);
             end
         end
 
-        function [icp,f]=plotSimulatedEstimate(nObservations, changePoints, intensity, logBayesThreshold)
+        function [Icp,F]=plotSimulatedEstimate(NObservations, ChangePoints, Intensity, LogBayesThreshold)
             % Given a fixed set of changepoints and intensities, 
             % simulate, analyze and plot a data sets.  Arguments are similar to
             % the simulate method.
             % Inputs:
-            %   nObservations - Scalar integer: length of data sequence
-            %   changePoints - vector: indexs of change point locations
-            %   intensity - vector: length=length(changePoints)+1: mean intensities
+            %   NObservations - Scalar integer: length of data sequence
+            %   ChangePoints - vector: indexs of change point locations
+            %   Intensity - vector: length=length(ChangePoints)+1: mean intensities
             %       for each subinterval
-            %   logBayesThreshold - positive scalar.  Threshold for accepting
+            %   LogBayesThreshold - positive scalar.  Threshold for accepting
             %       change points
             % Outputs:
-            %   icp - The ChangePoint for this data
+            %   Icp - The object instance of ChangeDetection
             %   f - figure handle
-            data=smi_stat.ChangeDetection.simulate(nObservations, changePoints, intensity);
-            icp=smi_stat.ChangeDetection(data,logBayesThreshold);
-            f=figure();
-            xs=1:nObservations;
+            Data=smi_stat.ChangeDetection.simulate(NObservations, ChangePoints, Intensity);
+            Icp=smi_stat.ChangeDetection(Data,LogBayesThreshold);
+            F=figure();
+            xs=1:NObservations;
             subplot(2,1,1);
-            stairs(xs, data, '-ko');
+            stairs(xs, Data, '-ko');
             hold on;
-            modelIs=smi_stat.ChangeDetection.modelIntensity(nObservations, changePoints, intensity);
-            estimatedIs=smi_stat.ChangeDetection.modelIntensity(nObservations, icp.ChangePoints, icp.Intensity);
+            modelIs=smi_stat.ChangeDetection.modelIntensity(NObservations, ChangePoints, Intensity);
+            estimatedIs=smi_stat.ChangeDetection.modelIntensity(NObservations, Icp.ChangePoints, Icp.Intensity);
             stairs(xs, modelIs , '-b','LineWidth', 2.0);
             stairs(xs, estimatedIs, '-r', 'LineWidth', 2.0);
             yl=ylim;
             ylim([0,yl(2)]);
             hold off;
             xlabel('time');
-            ylabel('intensity');
+            ylabel('Intensity');
             legend('Data', 'Model', 'Estimated', 'Location', 'North');
             subplot(2,1,2);
-            xs=2:nObservations;
-            pCP=arrayfun(@(cp) smi_stat.ChangeDetection.logP_H2(data,cp), xs);
+            xs=2:NObservations;
+            pCP=arrayfun(@(CP) smi_stat.ChangeDetection.logP_H2(Data,CP), xs);
             plot(xs, pCP, '-ko');
             xlabel('time');
             ylabel('logP(cp|H_2)');
         end
 
-        function [icp,f]=plotRandSimulatedEstimate(nObservations, nChangePoints, meanIntensity, logBayesThreshold)
+        function [Icp,F]=plotRandSimulatedEstimate(NObservations, NChangePoints, meanIntensity, LogBayesThreshold)
             % Generate a random sequence of change points and intensities, then 
             % simulate, analyze and plot the data.
             % Inputs:
-            %   nObservations - Scalar integer: length of data sequence
-            %   nChangePoints - Scalar integer: number of change points to
+            %   NObservations - Scalar integer: length of data sequence
+            %   NChangePoints - Scalar integer: number of change points to
             %                   simulate
             %   meanIntensity - scalar for mean intensity.  Intensities are
             %                   uniformly distributed on [1, 2*meanIntensity]
-            %   logBayesThreshold - positive scalar.  Threshold for accepting
+            %   LogBayesThreshold - positive scalar.  Threshold for accepting
             %                       change points
             % Outputs:
-            %   icp - The ChangePoint for this data
-            %   f - figure handle
-            changePoints=sort(round(rand(1,nChangePoints)*(nObservations-1)+2));
-            while length(unique(changePoints))~=length(changePoints)
-                changePoints=sort(round(rand(1,nChangePoints)*(nObservations-1)+2));
+            %   Icp - The ChangePoint for this data
+            %   F - figure handle
+            ChangePoints=sort(round(rand(1,NChangePoints)*(NObservations-1)+2));
+            while length(unique(ChangePoints))~=length(ChangePoints)
+                ChangePoints=sort(round(rand(1,NChangePoints)*(NObservations-1)+2));
             end
-            intensity=round(1+rand(1,nChangePoints+1)*2*meanIntensity);
-            while any(intensity(2:end)==intensity(1:end-1))
-                intensity=round(1+rand(1,nChangePoints+1)*2*meanIntensity);
+            Intensity=round(1+rand(1,NChangePoints+1)*2*meanIntensity);
+            while any(Intensity(2:end)==Intensity(1:end-1))
+                Intensity=round(1+rand(1,NChangePoints+1)*2*meanIntensity);
             end
-            [icp,f]=smi_stat.ChangeDetection.plotSimulatedEstimate(nObservations, changePoints, intensity, logBayesThreshold);
+            [Icp,F]=smi_stat.ChangeDetection.plotSimulatedEstimate(NObservations, ChangePoints, Intensity, LogBayesThreshold);
         end
     end %public static methods
 
@@ -221,7 +221,7 @@ classdef ChangeDetection < handle
 
     methods(Static=true)
         
-        function [changePoints, accLogBayesFactors, rejLogBayesFactors]=estimateChangePoints(data,logBayesFactorThreshold)
+        function [ChangePoints, AccLogBayesFactors, RejLogBayesFactors]=estimateChangePoints(Data,LogBayesFactorThreshold)
             % This is the main recursive method for identifiying change points
             % since it and other helper methods work on parts of the data set
             % recursivly we make it a static method that takes in only the
@@ -230,209 +230,209 @@ classdef ChangeDetection < handle
             %   data: a vector of integer values representing poission
             %       distributed values from a sequence where the mean of the poisson
             %       process changes at discrete times
-            %   logBayesThreshold - positive scalar.  Threshold for accepting
+            %   LogBayesThreshold - positive scalar.  Threshold for accepting
             %                       change points
             % Outputs:
-            %   changePoints - The ChangePoint for this data
-            %   accLogBayesFactors - accepted logBayesThreshold
-            %   rejLogBayesFactors - rejected logBayesThreshold
+            %   ChangePoints - The ChangePoint for this data
+            %   AccLogBayesFactors - accepted logBayesThreshold
+            %   RejLogBayesFactors - rejected logBayesThreshold
 
-            logBF=smi_stat.ChangeDetection.logBayesFactor(data);
-            if ~isempty(logBF) && logBF>=logBayesFactorThreshold && numel(data)>=2
+            LogBF=smi_stat.ChangeDetection.logBayesFactor(Data);
+            if ~isempty(LogBF) && LogBF>=LogBayesFactorThreshold && numel(Data)>=2
                 %split data into two parts at the change point
-                cp=smi_stat.ChangeDetection.estimateChangePointLocation(data);
-                data1=data(1:cp-1);
-                data2=data(cp:end);
-                [cP1, accLogBF1, rejLogBF1]=smi_stat.ChangeDetection.estimateChangePoints(data1,logBayesFactorThreshold);
-                [cP2, accLogBF2, rejLogBF2]=smi_stat.ChangeDetection.estimateChangePoints(data2,logBayesFactorThreshold);
-                accLogBayesFactors=[accLogBF1 logBF accLogBF2];
-                rejLogBayesFactors=[rejLogBF1 rejLogBF2];
-                changePoints=[cP1 cp cP2+cp-1];
+                CP=smi_stat.ChangeDetection.estimateChangePointLocation(Data);
+                Data1=Data(1:CP-1);
+                Data2=Data(CP:end);
+                [cP1, accLogBF1, rejLogBF1]=smi_stat.ChangeDetection.estimateChangePoints(Data1,LogBayesFactorThreshold);
+                [cP2, accLogBF2, rejLogBF2]=smi_stat.ChangeDetection.estimateChangePoints(Data2,LogBayesFactorThreshold);
+                AccLogBayesFactors=[accLogBF1 LogBF accLogBF2];
+                RejLogBayesFactors=[rejLogBF1 rejLogBF2];
+                ChangePoints=[cP1 CP cP2+CP-1];
             else
-                changePoints=[];
-                rejLogBayesFactors=logBF;
-                accLogBayesFactors=[];
+                ChangePoints=[];
+                RejLogBayesFactors=LogBF;
+                AccLogBayesFactors=[];
             end
         end
 
-        function [accepted, accLogBayesFactors, rejected, rejLogBayesFactors]=filterChangePoints(data,changePoints, logBayesFactorThreshold)
+        function [Accepted, AccLogBayesFactors, Rejected, RejLogBayesFactors]=filterChangePoints(Data,ChangePoints, LogBayesFactorThreshold)
             %remove change points that are below the logBayesFactorThreshold
             % Inputs:
-            %   data: a vector of integer values representing poission
+            %   Data: a vector of integer values representing poission
             %       distributed values from a sequence where the mean of the poisson
             %       process changes at discrete times
-            %   changePoints - The ChangePoint for this data
+            %   ChangePoints - The ChangePoint for this data
             %
-            %   logBayesFactorThreshold - positive scalar.  Threshold for accepting
+            %   LogBayesFactorThreshold - positive scalar.  Threshold for accepting
             %                             change points
             % Outputs:
-            %   accepted - accepted Change Points
-            %   accLogBayesFactors - accepted logBayesThreshold
-            %   rejected - rejected Change Points
-            %   rejLogBayesFactors - rejected logBayesThreshold
+            %   Accepted - accepted Change Points
+            %   AccLogBayesFactors - accepted logBayesThreshold
+            %   Rejected - rejected Change Points
+            %   RejLogBayesFactors - rejected logBayesThreshold
 
-            nChangePoints=length(changePoints);
+            NChangePoints=length(ChangePoints);
             
-            if nChangePoints==0
-                accepted=[];
-                accLogBayesFactors=[];
-                rejected=[];
-                rejLogBayesFactors=[];
+            if NChangePoints==0
+                Accepted=[];
+                AccLogBayesFactors=[];
+                Rejected=[];
+                RejLogBayesFactors=[];
                 return
             end
-            lBF=zeros(1,nChangePoints);
-            for n=1:nChangePoints
+            lBF=zeros(1,NChangePoints);
+            for n=1:NChangePoints
                 if n==1
                     first=1;
                 else
-                    first=changePoints(n-1);
+                    first=ChangePoints(n-1);
                 end
-                if n==nChangePoints
-                    last=length(data);
+                if n==NChangePoints
+                    last=length(Data);
                 else
-                    last=changePoints(n+1)-1;
+                    last=ChangePoints(n+1)-1;
                 end
-                lBF(n)=smi_stat.ChangeDetection.logBayesFactorPoint(data(first:last),changePoints(n)-(first-1));
+                lBF(n)=smi_stat.ChangeDetection.logBayesFactorPoint(Data(first:last),ChangePoints(n)-(first-1));
             end
-            rejIdx=find(lBF<logBayesFactorThreshold);
-            accIdx=setdiff(1:nChangePoints,rejIdx);
-            accepted=changePoints(accIdx);
-            accLogBayesFactors=lBF(accIdx);
-            rejected=changePoints(rejIdx);
-            rejLogBayesFactors=lBF(rejIdx);
-            if ~isempty(rejected)
-                [accepted, accLogBayesFactors, new_rejected, new_rejLogBayesFactors]=smi_stat.ChangeDetection.filterChangePoints(data,accepted, logBayesFactorThreshold);
-                rejected=[rejected new_rejected];
-                rejLogBayesFactors=[rejLogBayesFactors new_rejLogBayesFactors];
-                [rejected, shuffle]=sort(rejected);
-                rejLogBayesFactors=rejLogBayesFactors(shuffle);
+            rejIdx=find(lBF<LogBayesFactorThreshold);
+            accIdx=setdiff(1:NChangePoints,rejIdx);
+            Accepted=ChangePoints(accIdx);
+            AccLogBayesFactors=lBF(accIdx);
+            Rejected=ChangePoints(rejIdx);
+            RejLogBayesFactors=lBF(rejIdx);
+            if ~isempty(Rejected)
+                [Accepted, AccLogBayesFactors, New_rejected, New_rejLogBayesFactors]=smi_stat.ChangeDetection.filterChangePoints(Data,Accepted, LogBayesFactorThreshold);
+                Rejected=[Rejected New_rejected];
+                RejLogBayesFactors=[RejLogBayesFactors New_rejLogBayesFactors];
+                [Rejected, shuffle]=sort(Rejected);
+                RejLogBayesFactors=RejLogBayesFactors(shuffle);
             end
         end
 
-        function logP=logP_H1(data)
+        function LogP=logP_H1(Data)
             % Compute the unnormalized log probability of hypothesis H1 (there
             % are no change points and all data comes from the same poisson
             % distribution)
             % This is unnormalized as we don't have the Jeffery's prior constant
-            N=length(data);
-            C=sum(data);
-            logR=-logFactorialSum(data);
-            logP=logR+(C-.5)*log(C)-C*(1+log(N))+.5*log(2*pi);
+            N=length(Data);
+            C=sum(Data);
+            logR=-logFactorialSum(Data);
+            LogP=logR+(C-.5)*log(C)-C*(1+log(N))+.5*log(2*pi);
         end
 
-        function logP=logP_H2(data, change_point)
+        function LogP=logP_H2(Data, change_point)
             % Compute the unnormalized log probability of hypothesis H2 (there
             % is a change point at change_points from a poisson process with one mean
             % to a poisson process witha second mean after marginalizing accross all possible
             % intensities).
             % This is unnormalized as we don't have the Jeffery's prior constant
-            N=length(data);
+            N=length(Data);
             assert(change_point>1 && change_point<=N);
             N1=change_point-1;
             N2=N-N1;
-            C1=sum(data(1:N1));
-            C2=sum(data(N1+1:end));
+            C1=sum(Data(1:N1));
+            C2=sum(Data(N1+1:end));
             
             term1=(2/pi)/((C1/N1)^2+(C2/N2)^2);
             
-            logR=-logFactorialSum(data);
+            logR=-logFactorialSum(Data);
             LFC1=logFactorial(C1);
             LFC2=logFactorial(C2);
 
-            logP=log(term1)+logR+LFC1+LFC2-(C1+1)*log(N1)-(C2+1)*log(N2);
+            LogP=log(term1)+logR+LFC1+LFC2-(C1+1)*log(N1)-(C2+1)*log(N2);
         end
 
-        function logP=mean_LogP_H2(data)
+        function LogP=mean_LogP_H2(Data)
             % compute the total log probability of hypothesis H2 (there
             % is a change point from the data
-            logP=log(mean(arrayfun(@(cp) exp(smi_stat.ChangeDetection.logP_H2(data, cp)), 2:length(data))));
+            LogP=log(mean(arrayfun(@(CP) exp(smi_stat.ChangeDetection.logP_H2(Data, CP)), 2:length(Data))));
         end
 
-        function logBF=logBayesFactor(data)
+        function LogBF=logBayesFactor(Data)
             %compute the total Bayes Factor, which is total log probability
             %of hypothesis H2 (one change point) minus the log probability of
             %hypothesis H1 (no change point)
-            N=length(data);
-            C=sum(data);
+            N=length(Data);
+            C=sum(Data);
             H2LogTerms=zeros(1,N-1);
-            C1=data(1);
+            C1=Data(1);
             C2=C-C1;
             N1=1;
             N2=N-N1;
-            for cp=2:N
-                H2LogTerms(cp-1)= logFactorial(C1)+logFactorial(C2)-(C1+1)*log(N1)-(C2+1)*log(N2) ...
+            for CP=2:N
+                H2LogTerms(CP-1)= logFactorial(C1)+logFactorial(C2)-(C1+1)*log(N1)-(C2+1)*log(N2) ...
                                     - log((C1/N1)^2+(C2/N2)^2);
-                C1=C1+data(cp);
-                C2=C2-data(cp);
+                C1=C1+Data(CP);
+                C2=C2-Data(CP);
                 N1=N1+1;
                 N2=N2-1;
             end
-            logBF=log(2/pi) + C*log(N) - logFactorial(C-1)-log(N-1)+logSum(H2LogTerms);
+            LogBF=log(2/pi) + C*log(N) - logFactorial(C-1)-log(N-1)+logSum(H2LogTerms);
         end
 
-        function logBF=logBayesFactorPoint(data, changePoint)
+        function LogBF=logBayesFactorPoint(Data, ChangePoint)
             %compute the Bayes Factor at the change point, which is the
             %log probability of hypothesis H2 (one change point) minus the log probability of
             %hypothesis H1 (no change point)
-            logBF=smi_stat.ChangeDetection.logP_H2(data,changePoint) - smi_stat.ChangeDetection.logP_H1(data);
+            LogBF=smi_stat.ChangeDetection.logP_H2(Data,ChangePoint) - smi_stat.ChangeDetection.logP_H1(Data);
         end
 
-        function logPs=logP_ChangePoint(data)
+        function LogPs=logP_ChangePoint(Data)
             %compute the log probability of the change point
-            logPs=zeros(1,length(data));
-            N=length(data);
-            C=sum(data);
-            C1=data(1);
+            LogPs=zeros(1,length(Data));
+            N=length(Data);
+            C=sum(Data);
+            C1=Data(1);
             C2=C-C1;
             N1=1;
             N2=N-N1;
-            for cp=2:length(data)
-                logPs(cp)=logFactorial(C1)+logFactorial(C2)-(C1+1)*log(N1)-(C2+1)*log(N2)...
+            for CP=2:length(Data)
+                LogPs(CP)=logFactorial(C1)+logFactorial(C2)-(C1+1)*log(N1)-(C2+1)*log(N2)...
                                 - log((C1/N1)^2+(C2/N2)^2);
-                C1=C1+data(cp);
-                C2=C2-data(cp);
+                C1=C1+Data(CP);
+                C2=C2-Data(CP);
                 N1=N1+1;
                 N2=N2-1;
             end
         end
 
-        function cp=estimateChangePointLocation(data)
+        function CP=estimateChangePointLocation(Data)
             % get the location of the change point
-            logPs=smi_stat.ChangeDetection.logP_ChangePoint(data);
-            [~,cp]=max(logPs(2:end)); %the first time cannot be a change point
-            cp=cp+1; %correct for dropping first point
+            LogPs=smi_stat.ChangeDetection.logP_ChangePoint(Data);
+            [~,CP]=max(LogPs(2:end)); %the first time cannot be a change point
+            CP=CP+1; %correct for dropping first point
         end
 
-        function logP=logPLambda(data, lambda)
-            %compute log probability of the mean intensity (lambda)
-            N=length(data);
-            C=sum(data);
-            logP=C*log(N) + (C-1)*log(lambda) - N*lambda - logFactorial(C-1);
+        function LogP=logPLambda(Data, Lambda)
+            %compute log probability of the mean intensity (Lambda)
+            N=length(Data);
+            C=sum(Data);
+            LogP=C*log(N) + (C-1)*log(Lambda) - N*Lambda - logFactorial(C-1);
         end
 
-        function lambda=estimateIntensity(data)
+        function Lambda=estimateIntensity(Data)
             % compute the mean intensity of the data
-            N=length(data);
-            C=sum(data);
-            lambda=C/N;
+            N=length(Data);
+            C=sum(Data);
+            Lambda=C/N;
         end
 
-        function model_intensity=modelIntensity(nObservations, changePoints, intensity)
+        function Model_intensity=modelIntensity(NObservations, ChangePoints, Intensity)
             % Helper for plotting an input intensity sequence
-            %   nObservations - Scalar integer: length of data sequence
-            %   changePoints - vector: indexs of change point locations
-            %   intensity - vector: length=length(changePoints)+1: mean intensities
+            %   NObservations - Scalar integer: length of data sequence
+            %   ChangePoints - vector: indexs of change point locations
+            %   intensity - vector: length=length(ChangePoints)+1: mean intensities
             %       for each subinterval
             % Outputs:
-            %   model_intensity -intensity of model sequence (no noise)
-            model_intensity=zeros(1,nObservations);
-            nCP=length(changePoints);
-            cp=1;
-            for n=1:nObservations
-                if cp<=nCP && changePoints(cp)==n
-                    cp=cp+1;
+            %   Model_intensity -intensity of model sequence (no noise)
+            Model_intensity=zeros(1,NObservations);
+            nCP=length(ChangePoints);
+            CP=1;
+            for n=1:NObservations
+                if CP<=nCP && ChangePoints(CP)==n
+                    CP=CP+1;
                 end
-                model_intensity(n)=intensity(cp);
+                Model_intensity(n)=Intensity(CP);
             end
         end
 

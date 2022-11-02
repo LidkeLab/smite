@@ -2,30 +2,30 @@
 % This script demonstrates the basic usage of the smi_stat.ChangeDetection class.
 
 %% simulate data
-nObservations = 50;  % Scalar integer: length of data sequence
-changePoints = round([0.2,0.6]*nObservations); %vector: indexs of change point locations
-intensity = [200,100,60]; %vector: length=length(changePoints)+1: mean intensities for each subinterval
-data=smi_stat.ChangeDetection.simulate(nObservations, changePoints, intensity);
+NObservations = 50;  % Scalar integer: length of data sequence
+ChangePoints = round([0.2,0.6]*NObservations); %vector: indexs of change point locations
+Intensity = [200,100,60]; %vector: length=length(ChangePoints)+1: mean intensities for each subinterval
+Data=smi_stat.ChangeDetection.simulate(NObservations, ChangePoints, Intensity);
 
 % change detection
-logBayesThreshold = 10;
-icp = smi_stat.ChangeDetection(data,logBayesThreshold);
-icp.plotIntensityEstimate();
+LogBayesThreshold = 10;
+Icp = smi_stat.ChangeDetection(Data,LogBayesThreshold);
+Icp.plotIntensityEstimate();
 
 
 %% alternative simulation methods
 % given change points
-nObservations = 50;  % Scalar integer: length of data sequence
-changePoints = round([0.2,0.6]*nObservations); %vector: indexs of change point locations
-intensity = [200,100,60]; %vector: length=length(changePoints)+1: mean intensities for each subinterval
-logBayesThreshold = 10;
-data=smi_stat.ChangeDetection.simulate(nObservations, changePoints, intensity);
+NObservations = 50;  % Scalar integer: length of data sequence
+ChangePoints = round([0.2,0.6]*NObservations); %vector: indexs of change point locations
+Intensity = [200,100,60]; %vector: length=length(ChangePoints)+1: mean intensities for each subinterval
+LogBayesThreshold = 10;
+Data=smi_stat.ChangeDetection.simulate(NObservations, ChangePoints, Intensity);
 
-[icp,f]=smi_stat.ChangeDetection.plotSimulatedEstimate(nObservations, changePoints, intensity, logBayesThreshold);
+[Icp,F]=smi_stat.ChangeDetection.plotSimulatedEstimate(NObservations, ChangePoints, Intensity, LogBayesThreshold);
 
 %% random change points
-nObservations = 50;  % Scalar integer: length of data sequence
-nChangePoints = 2; % Scalar integer: number of change points to simulate
-meanintensity = 100; % scalar for mean intensity.  Intensities are uniformly distributed on [1, 2*meanIntensity]
-logBayesThreshold = 10;
-[icp,f]=smi_stat.ChangeDetection.plotRandSimulatedEstimate(nObservations, nChangePoints, meanintensity, logBayesThreshold);
+NObservations = 50;  % Scalar integer: length of data sequence
+NChangePoints = 2; % Scalar integer: number of change points to simulate
+Meanintensity = 100; % scalar for mean intensity.  Intensities are uniformly distributed on [1, 2*meanIntensity]
+LogBayesThreshold = 10;
+[Icp,F]=smi_stat.ChangeDetection.plotRandSimulatedEstimate(NObservations, NChangePoints, Meanintensity, LogBayesThreshold);
