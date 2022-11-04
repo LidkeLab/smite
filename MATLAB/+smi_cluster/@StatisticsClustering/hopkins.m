@@ -35,6 +35,7 @@ function results = hopkins(obj, particle_types, SMD)
 %    Michael Wester and Stanly Steinberg (2008)
 
 base_name = obj.BaseName;
+base_text = regexprep(base_name, '_', '\\_');
 
 % Dimension (2D or 3D)
 dim = 2;
@@ -140,10 +141,10 @@ for m = 1 : length(particle_types)
    xlabel('H -- The Hopkins Statistic');
    ylabel('PDF');
    if fitting
-      title({['Hopkins PDF for ', base_name, '\_', particle_types{m}], ...
+      title({['Hopkins PDF for ', base_text, '\_', particle_types{m}], ...
              sprintf('(x, fit)_{max} = (%5.3f, %.3f)', x_max, fit_max)});
    else
-      title(['Hopkins PDF for ', base_name, '\_', particle_types{m}]);
+      title(['Hopkins PDF for ', base_text, '\_', particle_types{m}]);
    end
    if fitting
       legend('data', 'Gaussian fit', 'random', 'Location', 'NorthWest');

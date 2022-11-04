@@ -32,6 +32,7 @@ function results = pairwiseMutualDist(obj, particle_types, SMD1, SMD2)
 %    Michael J. Wester (2021)
 
    base_name = obj.BaseName;
+   base_text = regexprep(base_name, '_', '\\_');
 
    % Dimension (2D or 3D)
    dim = 2;
@@ -128,7 +129,7 @@ function results = pairwiseMutualDist(obj, particle_types, SMD1, SMD2)
 %  plot(x, yr, 'r--', obj.Line_props{:});
 
 %  legend('data', 'random', 'Location', 'NorthEast');
-   title(['Pairwise Distance PDF for ', base_name, '\_', ...
+   title(['Pairwise Distance PDF for ', base_text, '\_', ...
           particle_types{1}, ',', particle_types{2}]);
    xlabel('distance (nm)');
    ylabel('frequency');
@@ -168,7 +169,7 @@ function results = pairwiseMutualDist(obj, particle_types, SMD1, SMD2)
    %plot(xxr, fr, 'm--', obj.Line_props{:});
 
 %  legend('data', 'random', 'Location', 'SouthEast');
-   title(['Pairwise Distance CDF for ', base_name, '\_', ...
+   title(['Pairwise Distance CDF for ', base_text, '\_', ...
           particle_types{1}, ',', particle_types{2}]);
    xlabel('distance (nm)');
    ylabel('frequency');

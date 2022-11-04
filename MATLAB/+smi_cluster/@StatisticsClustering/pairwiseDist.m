@@ -31,6 +31,7 @@ function results = pairwiseDist(obj, particle_types, SMD)
 %    Michael J. Wester (2020)
 
    base_name = obj.BaseName;
+   base_text = regexprep(base_name, '_', '\\_');
 
    % Dimension (2D or 3D)
    dim = 2;
@@ -107,7 +108,7 @@ function results = pairwiseDist(obj, particle_types, SMD)
       y_r{m} = yr;
 
       legend('data', 'random', 'Location', 'NorthEast');
-      title(['Pairwise Distance PDF for ', base_name, '\_', ...
+      title(['Pairwise Distance PDF for ', base_text, '\_', ...
              particle_types{m}]);
       xlabel('distance (nm)');
       ylabel('frequency');
@@ -146,7 +147,7 @@ function results = pairwiseDist(obj, particle_types, SMD)
       %plot(xxr, fr, 'm--', obj.Line_props{:});
 
       legend('data', 'random', 'Location', 'SouthEast');
-      title(['Pairwise Distance CDF for ', base_name, '\_', ...
+      title(['Pairwise Distance CDF for ', base_text, '\_', ...
              particle_types{m}]);
       xlabel('distance (nm)');
       ylabel('frequency');

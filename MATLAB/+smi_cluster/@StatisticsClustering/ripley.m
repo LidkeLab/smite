@@ -30,6 +30,7 @@ function results = ripley(obj, particle_types, SMD)
 %    Michael Wester and Stanly Steinberg (2008)
 
 base_name = obj.BaseName;
+base_text = regexprep(base_name, '_', '\\_');
 
 % Dimension (2D or 3D)
 dim = 2;
@@ -170,7 +171,7 @@ legend({'random', probes{:}}, 'Location', 'NorthWest');
 axis([0 obj.Ripley_cutoff 0 mx]);
 xlabel('r (nm)');
 ylabel('K(r)');
-title(['Ripley for ', base_name]);
+title(['Ripley for ', base_text]);
 hold off
 name = fullfile(obj.ResultsDir, [base_name, '_ripley']);
 if ~isempty(obj.Fig_ext)
@@ -201,7 +202,7 @@ end
 legend(probes, 'Location', 'NorthWest');
 xlabel('r (nm)');
 ylabel('L(r) - r ');
-title(['Ripley L(r) - r for ', base_name]);
+title(['Ripley L(r) - r for ', base_text]);
 hold off
 name = fullfile(obj.ResultsDir, [base_name, '_l_r_ripley']);
 if ~isempty(obj.Fig_ext)
@@ -235,7 +236,7 @@ legend(probes, 'Location', 'NorthEast');
 axis([0 obj.Ripley_cutoff 0 mx]);
 xlabel('r (nm)');
 ylabel('K(r)/(\pi r^2)');
-title(['Normalized Ripley for ', base_name]);
+title(['Normalized Ripley for ', base_text]);
 hold off
 name = fullfile(obj.ResultsDir, [base_name, '_norm_ripley']);
 if ~isempty(obj.Fig_ext)

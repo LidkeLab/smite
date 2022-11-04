@@ -36,6 +36,7 @@ function nn_dists = nn_ROIcombined(obj, base_name, n_ROIs, RoI)
    if isempty(base_name)
       return;
    end
+   base_text = regexprep(base_name, '_', '\\_');
 
    % Histogram
    if ~isempty(obj.Fig_ext)
@@ -49,7 +50,7 @@ function nn_dists = nn_ROIcombined(obj, base_name, n_ROIs, RoI)
    if ~isempty(obj.Xlim)
        xlim(obj.Xlim);
    end
-   title(base_name);
+   title(base_text);
    xlabel('nearest neighbor distance (nm)');
    ylabel('frequency');
    hold off
@@ -78,7 +79,7 @@ function nn_dists = nn_ROIcombined(obj, base_name, n_ROIs, RoI)
    if ~isempty(obj.Ylim)
        ylim(obj.Ylim);
    end
-   title([base_name, ' [all ROIs]']);
+   title([base_text, ' [all ROIs]']);
    xlabel('nearest neighbor distance (nm)');
    ylabel('probability');
    hold off
