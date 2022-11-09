@@ -25,6 +25,10 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
 % Created by:
 %    Michael J. Wester (2021)
 
+   if ~exist('fmt', 'var')
+      fmt = [];
+   end
+
    XY_SE = [];
    SMDimport = [];
 

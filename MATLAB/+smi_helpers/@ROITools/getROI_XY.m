@@ -76,7 +76,7 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
    end
    RoI = cell(1, n_ROIs);
    for i = 1 : n_ROIs
-      fprintf('ROI %d = %.3f %.3f %.3f %.3f\n', i, ROI{i});
+      fprintf('ROI %d extent = [%.2f %.2f %.2f %.2f], pts =', i, ROI{i});
       RoI{i}.ROI   = ROI{i};
       for j = 1 : n_labels
          k = index_ROI{i}{j};
@@ -84,7 +84,9 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
          RoI{i}.Y{j}    = Y{j}(k);
          RoI{i}.X_SE{j} = X_SE{j}(k);
          RoI{i}.Y_SE{j} = Y_SE{j}(k);
+         fprintf(' L%d:%d', j, numel(RoI{i}.X{j}));
       end
+      fprintf('\n');
    end
 
 end
