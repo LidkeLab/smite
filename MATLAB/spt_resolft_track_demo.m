@@ -112,7 +112,7 @@ for ii = 1:numel(trackID)
 
     [P, CRLB,LL] = feval(k,single(roi),PSFSigma,SZ,Iterations,d_Parameters,d_CRLBs,d_LogLikelihood,NFitsActual);
     % add photons from bleaching step to original photon sequence
-    photon = P(:,3);
+    photon = gather(P(:,3));
     mask = photon<300 & photon>2;
     photon = photon(mask);
     Photons_laststep =  round(double([trk.Photons;photon]));
