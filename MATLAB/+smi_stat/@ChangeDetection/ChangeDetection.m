@@ -23,6 +23,7 @@ classdef ChangeDetection < handle
         NchangePoints; % Output - The number of change points detected
         ChangePoints; % Output - The discrete times at which a change point was detected (size=NchangePoints)
         Intensity; % Output - The mean intensities for each subsequence  (size=NchangePoints+1)
+        IntensityModel; % Output - Intensity of model sequence
         LogBayesFactors; % Output - The bayes factors for each accepted change points (size=NchangePoints)
         NrejectedChangePoints; % Output - The number of rejected change points
         RejectedChangePoints;  % Output - The rejected change points (size=NrejectedChangePoints)
@@ -77,7 +78,7 @@ classdef ChangeDetection < handle
             subplot(2,1,1);
             stairs(xs, obj.Data, '-ko');
             hold on;
-            Is=smi_stat.ChangeDetection.modelIntensity(obj.Nobservations, obj.ChangePoints, obj.Intensity);
+            Is=obj.IntensityModel;
             stairs(xs, Is, '-r', 'LineWidth', 2.0);
             yl=ylim;
             ylim([0,yl(2)]);
@@ -144,7 +145,7 @@ classdef ChangeDetection < handle
             stairs(xs, Data, '-ko');
             hold on;
             modelIs=smi_stat.ChangeDetection.modelIntensity(NObservations, ChangePoints, Intensity);
-            estimatedIs=smi_stat.ChangeDetection.modelIntensity(NObservations, Icp.ChangePoints, Icp.Intensity);
+            estimatedIs=Icp.IntensityModel;
             stairs(xs, modelIs , '-b','LineWidth', 2.0);
             stairs(xs, estimatedIs, '-r', 'LineWidth', 2.0);
             yl=ylim;
@@ -216,6 +217,7 @@ classdef ChangeDetection < handle
                 end
                 obj.Intensity(n)=smi_stat.ChangeDetection.estimateIntensity(obj.Data(first:last));
             end
+            obj.IntensityModel=smi_stat.ChangeDetection.modelIntensity(obj.Nobservations, obj.ChangePoints, obj.Intensity);
         end
     end % Protected methods
 

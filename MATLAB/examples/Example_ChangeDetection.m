@@ -11,7 +11,7 @@ Data=smi_stat.ChangeDetection.simulate(NObservations, ChangePoints, Intensity);
 LogBayesThreshold = 10;
 Icp = smi_stat.ChangeDetection(Data,LogBayesThreshold);
 Icp.plotIntensityEstimate();
-
+IntensityModel = Icp.IntensityModel; % intensity of the model sequence (no noise)
 
 %% alternative simulation methods
 % given change points
