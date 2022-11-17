@@ -325,7 +325,7 @@ end
 %    X = ((SMD.X - Xstart) / PixelSize);
 % Therefore, the true scale bar length for these BaGoL plots will be simply
 % ScaleBarLength (as the conversion to output pixels is done properly in
-% scalebar.m).  ScaleBarLength defaults to 1 um = 500 nm (see line below).
+% scalebar.m).  ScaleBarLength defaults to 0.5 um = 500 nm (see line below).
 ScaleBarLength = 500;   % nm
 fprintf('ScaleBarLength = %g nm, OutputPixelSize = %g nm\n', ...
         ScaleBarLength, BaGoLParams.OutputPixelSize);

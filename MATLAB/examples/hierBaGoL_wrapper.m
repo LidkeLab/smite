@@ -12,12 +12,17 @@
 % loop as a crash will cause ALL of the non-finished parallel jobs to restart.
 % Such _Results.mat files should be analyzed in separate MATLABs.
 %
+% NOTE: MAPN_*.mat files are always produced containng simply the MAPN
+% coordinates.  See +smi/@BaGoL/hierBaGoL_analysis.m for more details on files
+% produced.
+%
 % See:
 %
 % Sub-Nanometer Precision using Bayesian Grouping of Localizations
 % Mohamadreza Fazel, Michael J. Wester, David J. Schodt, Sebastian Restrepo
 % Cruz, Sebastian Strauss, Florian Schueder, Thomas Schlichthaerle, Jennifer M.
-% Gillette, Diane S. Lidke, Bernd Rieger, Ralf Jungmann, Keith A. Lidke
+% Gillette, Diane S. Lidke, Bernd Rieger, Ralf Jungmann and Keith A. Lidke
+% (Nature Communications, 2022)
 % 
 % Single-molecule localization microscopy super-resolution methods rely on
 % stochastic blinking events, which can occur multiple times from each emitter
