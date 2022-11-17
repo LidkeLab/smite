@@ -103,8 +103,8 @@ SMITE is a tool designed to be used by researchers and upper level students
 interested in fluorescence single molecule imaging and applications.  Parts of
 it have already been or are in the process of being published, e.g., frame
 connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
-Bayesian grouping of localizations [@Fazel_unpub:2019].  Applications are
-described in [@Mazloom-Farsibaf_article:2021; @Bailey_article:2021].
+Bayesian grouping of localizations [@Fazel_article:2022].  Applications are
+described in [@Mazloom-Farsibaf_article:2021; @Bailey_article:2022].
 Typical raw image data can be found in [@Pallikkuth_data:2018].
 
 ![SMITE GUIs for making movies from SPT trajectories, SMLM analysis, channel

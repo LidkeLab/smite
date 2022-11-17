@@ -1,0 +1,24 @@
+  - name: David J. Schodt^[co-first author] # note this makes a footnote saying 'co-first author'
+david.schodt@teledyne.com
+  - name: Michael J. Wester^[co-first author]
+wester@math.unm.edu
+  - name: Mohamadreza Fazel
+fazel.mohamadreza@gmail.com
+  - name: Hanieh Mazloom-Farsibaf
+h.mfarsibaf@gmail.com
+  - name: Sandeep Pallikkuth
+sandeep.pallikkuth@nih.gov
+  - name: Sajjad Khan
+sajjadkhan@unm.edu
+  - name: Marjolein B. M. Meddens
+marjoleinmeddens@gmail.com
+  - name: Farzin Farzam
+farzinfarzam1983@gmail.com
+  - name: William K. Kanagy
+will.kanagy@gmail.com
+  - name: Derek A. Rinaldi
+darinaldi@salud.unm.edu
+  - name: Elton Jhamba
+EJhamba@salud.unm.edu
+  - name: Keith A. Lidke^[corresponding author]
+klidke@unm.edu
