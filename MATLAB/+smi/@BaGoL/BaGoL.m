@@ -130,6 +130,7 @@ classdef BaGoL < handle
         Chain = {}; % Cell array of RJMCMC chains for clusters
         XiChain; % Chain of samples for Xi. [lambda]->Poisson, [k, theta]-> gamma
         SaveName = 'BaGoL'; % Final results are saved under this name
+        Cutoff; %preclustering parameter used in hierarchical clustering (nm) (Default = ROIsize)
     end
     
     methods
@@ -164,8 +165,11 @@ classdef BaGoL < handle
             obj.SMD.X_SE(Ind) = [];
             obj.SMD.Y_SE(Ind) = [];
             obj.SMD.FrameNum(Ind) = [];
-            obj.XStart = obj.XStart;
-            obj.YStart = obj.YStart;
+%             obj.XStart = obj.XStart;
+%             obj.YStart = obj.YStart;
+            if isempty(obj.Cutoff)
+                obj.Cutoff = obj.ROIsize;
+            end
             if isempty(obj.SMD.FrameNum)
                 obj.SMD.FrameNum = zeros(size(obj.SMD.X));
             else
@@ -179,7 +183,8 @@ classdef BaGoL < handle
                 SZ = ceil(obj.PImageSize/obj.PixelSize);
                 PostIm = zeros(SZ,'single');
             end
-            obj.assignROIs(ROIs);
+            %obj.assignROIs(ROIs);
+            obj.precluster(ROIs);
             obj.MAPN.X = [];
             obj.MAPN.Y = [];
             obj.MAPN.Z = [];
@@ -208,8 +213,10 @@ classdef BaGoL < handle
                     obj.Chain = cell(length(obj.ClusterSMD),1);
                 end
                 for nn = 1:ClustNumHeirar
-                    fprintf('Subregion: %g out of %g \n',nn,ClustNumHeirar);
-
+                    if nn/10 == floor(nn/10)
+                        fprintf('Subregion: %g out of %g \n',nn,ClustNumHeirar);
+                    end
+                    
                     AnimFlag = 0;
                     [TChain]=smi.BaGoL.BaGoL_RJMCMC(obj.ClusterSMD(nn),obj.Xi,MaxAlpha,obj.P_Jumps,obj.N_Trials,obj.N_Burnin,AnimFlag);
 

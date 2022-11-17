@@ -36,8 +36,8 @@ end
 Ind = obj.removeOverlap(ROIs,XChain,YChain,ii);
 
 if isempty(obj.XStart)
-    MinX = (obj.PImageSize - (max(obj.SMD.X)-min(obj.SMD.X)))/2 - min(obj.SMD.X); 
-    MinY = (obj.PImageSize - (max(obj.SMD.Y)-min(obj.SMD.Y)))/2 - min(obj.SMD.Y);
+    MinX = -((obj.PImageSize - (max(obj.SMD.X)-min(obj.SMD.X)))/2 - min(obj.SMD.X)); 
+    MinY = -((obj.PImageSize - (max(obj.SMD.Y)-min(obj.SMD.Y)))/2 - min(obj.SMD.Y));
 else
     MinX = -obj.XStart;
     MinY = -obj.YStart;
