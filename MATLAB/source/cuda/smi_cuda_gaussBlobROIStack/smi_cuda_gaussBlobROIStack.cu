@@ -33,7 +33,7 @@ __global__ void kernel_guassiansampleblobs( const int sz, const int Nframes, con
         for(jj=0;jj<sz;jj++) {
             pixely=jj; // sample at pixel center
             // generate model for pixel ii jj
-            d_im[Idx+Idxii+jj] = Bg + (A* exp( -1/(2*(1-pow(covariance,2))) * ( pow(x-pixelx-0.5,2)/pow(xsigma,2) + pow(y-pixely-0.5,2)/pow(ysigma,2) - 2*covariance*(x-pixelx-0.5)*(y-pixely-0.5)/(xsigma*ysigma) ) ) );
+            d_im[Idx+Idxii+jj] = Bg + (A* exp( -1/(2*(1-pow(covariance,2))) * ( pow(x-pixelx,2)/pow(xsigma,2) + pow(y-pixely,2)/pow(ysigma,2) - 2*covariance*(x-pixelx)*(y-pixely)/(xsigma*ysigma) ) ) );
         }
     }
 	return;
@@ -70,11 +70,11 @@ __global__ void kernel_guassianintegrateblobs( const int sz, const int Nframes, 
 	for (ii=0;ii<sz;ii++) {
         pixelx=ii;
         Idxii = ii*sz;
-        B = erf((x-pixelx)*SX)-erf((x-pixelx-1)*SX);
+        B = erf((x-pixelx+0.5f)*SX)-erf((x-pixelx-0.5f)*SX);
         for(jj=0;jj<sz;jj++) {
             pixely=jj;
             // generate model for pixel ii jj
-            d_im[Idx+Idxii+jj] = Bg + (A*B*(erf((y-pixely)*SY)-erf((y-pixely-1)*SY)));  
+            d_im[Idx+Idxii+jj] = Bg + (A*B*(erf((y-pixely+0.5f)*SY)-erf((y-pixely-0.5f)*SY)));  
         }
     }
 	return;

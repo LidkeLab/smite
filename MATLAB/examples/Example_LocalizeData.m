@@ -14,7 +14,7 @@ LD = smi_core.LocalizeData(B, SMF)
 [SMD] = LD.genLocalizations();
 
 %Set Verbose to give color overlay output
-LD.Verbose=2
+LD.Verbose=3
 [SMD] = LD.genLocalizations();
 
     

@@ -20,7 +20,7 @@ __device__ float kernel_IntGauss1D(const int ii, const float x, const float sigm
 	 * \return float
 	 */
 	const float norm=1.0f/2.0f/sigma/sigma;
-    return 1.0f/2.0f*(erf((ii-x+1.0f)*sqrt(norm))-erf((ii-x)*sqrt(norm)));
+    return 1.0f/2.0f*(erf((ii-x+0.5f)*sqrt(norm))-erf((ii-x-0.5f)*sqrt(norm)));
 }
 
 //*******************************************************************************************
@@ -77,13 +77,13 @@ __device__ void kernel_DerivativeIntGauss1D(const int ii, const float x, const f
 	 * \param d2udt2 ???
 	 */    
     float a, b;
-    a = exp(-1.0f/2.0f*pow(((ii+1.0f-x)/sigma), 2.0f));
-    b = exp(-1.0f/2.0f*pow((ii-x)/sigma, 2.0f));
+    a = exp(-1.0f/2.0f*pow(((ii+0.5f-x)/sigma), 2.0f));
+    b = exp(-1.0f/2.0f*pow((ii-x-0.5f)/sigma, 2.0f));
     
     *dudt = -N/sqrt(2.0f*pi)/sigma*(a-b)*PSFy;
     
     if (d2udt2)
-        *d2udt2 =-N/sqrt(2.0f*pi)/pow(sigma, 3)*((ii+1.0f-x)*a-(ii-x)*b)*PSFy;
+        *d2udt2 =-N/sqrt(2.0f*pi)/pow(sigma, 3)*((ii+0.5f-x)*a-(ii-x-0.5f)*b)*PSFy;
 }
 
 //*******************************************************************************************
@@ -107,7 +107,7 @@ __device__ void kernel_DerivativeIntGauss1DSigma(const int ii, const float x,
     *dudt = -N/sqrt(2.0f*pi)/Sx/Sx*(ax*(ii-x+1.0f)-bx*(ii-x))*PSFy;
     
     if (d2udt2)
-        *d2udt2 =-2.0f/Sx*dudt[0]-N/sqrt(2.0f*pi)/pow(Sx, 5)*(ax*pow((ii-x+1.0f), 3)-bx*pow((ii-x), 3))*PSFy;
+        *d2udt2 =-2.0f/Sx*dudt[0]-N/sqrt(2.0f*pi)/pow(Sx, 5)*(ax*pow((ii-x+0.5f), 3)-bx*pow((ii-x-0.5f), 3))*PSFy;
 }
 
 //*******************************************************************************************
