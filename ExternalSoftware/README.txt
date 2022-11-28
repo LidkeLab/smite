@@ -55,3 +55,22 @@
 % -----------------------------------------------------------------------------
 % setupExternalSoftware
 %    function for startup.m to setup required paths for smite external software
+%
+% NOTE: In smi_cluster.Clustering, dbscan_Daszykowski.m is included with the
+% following notices:
+%    -------------------------------------------------------------------------
+%    References:
+%    [1] M. Ester, H. Kriegel, J. Sander, X. Xu, A density-based algorithm for
+%    discovering clusters in large spatial databases with noise, proc.
+%    2nd Int. Conf. on Knowledge Discovery and Data Mining, Portland, OR, 1996,
+%    p. 226, available from:
+%    www.dbs.informatik.uni-muenchen.de/cgi-bin/papers?query=--CO
+%    [2] M. Daszykowski, B. Walczak, D. L. Massart, Looking for
+%    Natural Patterns in Data. Part 1: Density Based Approach,
+%    Chemom. Intell. Lab. Syst. 56 (2001) 83-92
+%    -------------------------------------------------------------------------
+%    Written by Michal Daszykowski
+%    Department of Chemometrics, Institute of Chemistry,
+%    The University of Silesia
+%    December 2004
+%    http://www.chemometria.us.edu.pl
