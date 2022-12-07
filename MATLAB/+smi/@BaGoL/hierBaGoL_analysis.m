@@ -138,7 +138,9 @@ end
 %end
 
 % Eliminate trailing _Results* from the FileName for saving results.
-FileName = regexprep(FileNameIn, '_Results.*$', '');
+FileName = regexprep(FileNameIn, '\.mat$', '');
+FileName = regexprep(FileName, '_Results$', '');
+FileName = regexprep(FileName, '_ResultsStruct', '');
 % Save the BaGoL _ResultsStruct.mat file in SaveDir and the rest of the BaGoL
 % outputs in SaveDirLong.  This arrangement is chosen so that Results_BaGoL
 % holds only uniquely named files/directories for the situation where several

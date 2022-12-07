@@ -1,4 +1,4 @@
-function hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams)
+function hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs)
 %hierBaGoL_run runs one or more BaGoL analyses.
 % It is called by hierBaGoL_wrapper and calls hierBaGoL_analysis on each
 % individual dataset to be processed, so acts as a dispatch intermediary.
@@ -14,8 +14,17 @@ function hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams)
 %                     be saved in SaveDir = fullfile(DataDir, Results_BaGoL),
 %                     where DataDir is deduced from the input file path
 %    BaGoLParams      see hierBaGoL_analysis for details
+%    ROIs             for a single file of type _ROIs.mat, the ROIs selected
+%                     via ClusterInterface.defineROIs using
+%                     smi_helpers.ROITools.getROI are obtained
 % OUTPUTS:
 %    See hierBaGoL_analysis for details.
+
+if exist('ROIs', 'var')
+   ROIs = true;   % *_ROIs.mat file was input
+else
+   ROIs = false;
+end
 
 if ~iscell(Files)
    Files = { Files };
@@ -73,7 +82,13 @@ if n_files > 0
 
          % Run hierBaGoL_analysis.
          try
-            data = load(Files{i});
+            if ROIs
+               filename = regexprep(Files{i}, '_ROI_[0-9][0-9]\.', '.');
+               filename = regexprep(filename, ['Analysis', filesep], '');
+               data = load(filename);
+            else
+               data = load(Files{i});
+            end
             % If DataROI is defined, override the default value given in
             % BaGoLParams.
             if ~isempty(DataROI)
