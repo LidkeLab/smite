@@ -138,11 +138,11 @@ K(1, 2) = {RipleyK};
 if obj.Verbose >= 2
    fprintf('   Plotting the L(r) statistic for %s.\n', base_name);
 end
-if ~isempty(obj.Fig_ext)
-   figure('Visible', 'off');
-else
+%if ~isempty(obj.Fig_ext)
+%   figure('Visible', 'off');
+%else
    figure;
-end
+%end
 axes(obj.Font_props{:})
 grid on
 hold on
