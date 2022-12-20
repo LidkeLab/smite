@@ -242,7 +242,7 @@ name = fullfile(obj.ResultsDir, [base_name, '_norm_ripley']);
 if ~isempty(obj.Fig_ext)
    print(['-d', obj.Fig_ext], name);
 else
-   saveas(gcf, name);
+   saveas(gcf, name, 'fig');
    delete(gcf);
 end
 

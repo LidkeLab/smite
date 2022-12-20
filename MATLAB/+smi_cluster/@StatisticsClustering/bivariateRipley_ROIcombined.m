@@ -243,10 +243,11 @@ legend('data', 'confidence', 'Location', 'Best')
 name = fullfile(obj.ResultsDir, [base_name, '_bivripley_RC']);
 if ~isempty(obj.Fig_ext)
    print(['-d', obj.Fig_ext], name);
-else
-   saveas(gcf, name);
-   delete(gcf);
 end
+%else
+   saveas(gcf, name, 'fig');
+   delete(gcf);
+%end
 
 % m       is the number of different types of particles.
 % n       is the number of images in the experiment.
