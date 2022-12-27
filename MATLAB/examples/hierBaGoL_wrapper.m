@@ -56,15 +56,15 @@
 
 % Output directory name.
 %Results_BaGoL = 'Results_BaGoLHier';
-Results_BaGoL = 'Xi=20_1';
+Results_BaGoL = 'preC';
 
 % Generic parameters.
 BaGoLParams.ImageSize = 256;        % (pixel)
 %BaGoLParams.PixelSize = 108.018;    % (nm) [TIRF]
 BaGoLParams.PixelSize = 97.8;       % (nm) [sequential]
 BaGoLParams.OutputPixelSize = 4;    %2; % pixel size for posterior images (nm)
-BaGoLParams.N_Burnin = 8000;        % Length of Burn-in chain
-BaGoLParams.N_Trials = 500;         % Length of post-burn-in chain
+BaGoLParams.N_Burnin = 32000;       % Length of Burn-in chain
+BaGoLParams.N_Trials = 8000;        % Length of post-burn-in chain
 %BaGoLParams.N_Burnin = 8000;        % Length of Burn-in chain
 %BaGoLParams.N_Trials = 2000;        % Length of post-burn-in chain
 BaGoLParams.NSamples = 10;          % Number of samples before sampling Xi
@@ -89,11 +89,13 @@ BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 % less computational effort is required, so the code runs faster.  The second
 % set of values can be used for sparser data to generate larger ROIs, but may
 % produce artifacts with dense data.
-BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
-BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
-BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
-BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
-BaGoLParams.Cutoff = 50;            % Pre-clustering cutoff (nm)
+BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
+BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
+BaGoLParams.Cutoff = 30;            % Pre-clustering cutoff (nm)
+%BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
+%BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
+%BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
+%BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 
@@ -107,6 +109,11 @@ BaGoLParams.Xi = [20, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 DataROI = [];
 
+% If ROIs is true, the input file has ROIs already defined (*_ROIs.txt), so use
+% them below.
+ROIs = false;
+ROIs = true;
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 %start_DataDir = '.';
@@ -119,11 +126,11 @@ DataROI = [];
 % ### Absolute pathnames are also fine, especially when used in conjunction
 % ### with fullfile.
 %'BaGoLHier/Data_2020-10-8-17-58-54_Results.mat'
-D1 = '.';
+D1 = '../DATA';
 Files = {
 fullfile(D1, 'Cell_02_Label_01_Results.mat');
-fullfile(D1, 'Cell_05_Label_01_Results.mat');
 };
+%fullfile(D1, 'Cell_03_Label_01_Results.mat');
 
 % DataROI is defined when running BaGoL over only part of the image.
 % If DataROI is empty, use the whole image.
@@ -137,8 +144,30 @@ fullfile(D1, 'Cell_05_Label_01_Results.mat');
 %[110, 126,  90, 106]
 %];
 
+if numel(Files) == 1 && ROIs
+   [DataDir, File, Ext] = fileparts(Files{1});
+   basename = fullfile(DataDir, 'Analysis', File);
+   % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat and RoI
+   % files are of the form Cell_nn_Label_01_Results_ROIs.mat
+   filename = regexprep(basename, 'Label_02', 'Label_01');
+
+   ROIsFile = load([filename, '_ROIs.mat']);
+   n_ROIs = numel(ROIsFile.RoI);
+   DataROI = zeros(n_ROIs, 4);
+   for i = 1 : n_ROIs
+      DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+   end
+
+   Files = cell(n_ROIs, 1);
+   for i = 1 : n_ROIs
+      Files{i} = sprintf('%s_ROI_%02d.mat', basename, i);
+   end
+
+end
+
 % ----------------------------------------------------------------------
 
 % Run the BaGoL analyses.
-smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams);
-fprintf('Done BaGoL.\n')
+smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
+
+fprintf('Done BaGoL.\n');

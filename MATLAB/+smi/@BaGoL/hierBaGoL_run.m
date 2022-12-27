@@ -85,6 +85,10 @@ if n_files > 0
             if ROIs
                filename = regexprep(Files{i}, '_ROI_[0-9][0-9]\.', '.');
                filename = regexprep(filename, ['Analysis', filesep], '');
+               % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat
+               % and RoI files are of the form
+               % Cell_nn_Label_01_Results_ROIs.mat
+               filename = regexprep(filename, 'Label_02', 'Label_01');
                data = load(filename);
             else
                data = load(Files{i});
