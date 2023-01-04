@@ -88,7 +88,6 @@ if n_files > 0
                % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat
                % and RoI files are of the form
                % Cell_nn_Label_01_Results_ROIs.mat
-               filename = regexprep(filename, 'Label_02', 'Label_01');
                data = load(filename);
             else
                data = load(Files{i});
