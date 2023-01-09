@@ -25,7 +25,7 @@ function [Success] = unitTest()
 
 
 % Initialize the Success output.
-Success = zeros(6, 1, 'logical');
+Success = zeros(7, 1, 'logical');
 
 % Seed the random number generator so that the simulated SMD is predictable
 % NOTE: If this is changed, there will almost certainly be entries of
@@ -181,7 +181,7 @@ catch MException
 end
 cla(PlotAxes);
 try
-    ChannelReg.visualizeRegistrationResults(PlotAxes, ...
+    ChannelReg.visualizeRegistrationResults(PlotFigure, ...
         ChannelReg.RegistrationTransform{2}, ...
         ChannelReg.Coordinates{2}(:, :, 2), ...
         ChannelReg.Coordinates{2}(:, :, 1), ...
