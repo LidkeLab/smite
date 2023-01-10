@@ -9,12 +9,21 @@
 %       have to do that in script form (as demonstrated below) after
 %       computing the transform with the GUI.
 
-%% Two separate fiducial files, one image per file (2 channels total).
-% Define the path to the fiducial files.
+%% Simulate some fiducials to mimic format of real fiducial data.
+% NOTE: This will save the simulated fiducials in 'FiducialFileDir' as .mat
+%       files.
 SMITEPath = fileparts(which('setupSMITE.m'));
 FiducialFileDir = fullfile(SMITEPath, ...
     'examples', 'example_data', 'channel_registration');
-FiducialFileNames = {'Fiducial1.mat', 'Fiducial2.mat'};
+[~, FiducialFiles] = smi_core.ChannelRegistration.simFiducials(128, 8, ...
+    FiducialFileDir);
+[~, FileNames, Extension] = fileparts(FiducialFiles);
+
+%% Two separate fiducial files, one image per file (2 channels total).
+% Define the path to the fiducial files.  The first entry is for the
+% reference fiducial and the second is for the moving fiducial.
+FiducialFileNames = {sprintf('%s.mat', FileNames{1}); 
+    sprintf('%s.mat', FileNames{2})};
 
 % Prepare an SMF structure for fitting the fiducials.
 % NOTE: If using ChannelReg.AutoscaleFiducials = true, you can often get
@@ -114,7 +123,7 @@ TransformedImages = ChannelReg.transformImages(...
 
 % Save the transform.
 SaveDir = pwd();
-ChannelReg.exportTransform([], SaveDir)
+ChannelReg.exportTransform(SaveDir)
 
 % Open the GUI, which can do all of the above actions (except transform an
 % SMD/transform images).
@@ -122,10 +131,7 @@ ChannelReg.gui()
 
 %% Single fiducial image with two channels side by side.
 % Define the path to the fiducial files.
-SMITEPath = fileparts(which('setupSMITE.m'));
-FiducialFileDir = fullfile(SMITEPath, ...
-    'examples', 'example_data', 'channel_registration');
-FiducialFileNames = 'Fiducials2Channel.mat';
+FiducialFileNames = {sprintf('%s.mat', FileNames{3})};
 
 % Prepare an SMF structure for fitting the fiducials.
 % NOTE: If using ChannelReg.AutoscaleFiducials = true, you can often get

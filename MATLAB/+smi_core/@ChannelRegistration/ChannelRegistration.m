@@ -260,6 +260,7 @@ classdef ChannelRegistration < handle
         [PlotFigure] = visualizeRegistrationResults(PlotFigure, ...
             RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
             MovingImage, FixedImage);
+        [RawData, Files] = simFiducials(ROISize, NRows, SaveDir);
         unitTest()
     end
     
