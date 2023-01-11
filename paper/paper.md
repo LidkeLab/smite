@@ -81,7 +81,7 @@ microscopy (SMLM) and single-particle tracking (SPT).  The SMITE toolbox
 consists of a MATLAB infrastructure with some C and CUDA code embedded to
 provide CPU/GPU speed-ups for particularly expensive computations.
 The source code for SMITE has been archived to GitHub:
-https://github.com/LidkeLab/smite
+[https://github.com/LidkeLab/smite](https://github.com/LidkeLab/smite)
 
 SMITE is designed around the concept that a parameter structure, the Single
 Molecule Fitting (SMF) structure, uniquely and completely defines the data
