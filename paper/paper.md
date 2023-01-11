@@ -71,17 +71,17 @@ which follows the time
 course of one or a very small number of moving tagged molecules.  SMLM often
 involves distributions of particles at medium to high density, while SPT works
 in a very low density domain.  These procedures all require intensive numerical
-computation, and the methods are tightly interwoven.  The SMITE toolbox
-consists of a MATLAB infrastructure with some C and CUDA code embedded to
-provide CPU/GPU speed-ups for particularly expensive computations.
-The source code for SMITE has been archived to GitHub:
-https://github.com/LidkeLab/smite
+computation, and the methods are tightly interwoven.
 
 # Statement of need
 
 SMITE is a MATLAB-based toolbox that provides analysis tools for fluorescence
 single molecule imaging with an emphasis on single molecule localization
-microscopy (SMLM) and single-particle tracking (SPT).
+microscopy (SMLM) and single-particle tracking (SPT).  The SMITE toolbox
+consists of a MATLAB infrastructure with some C and CUDA code embedded to
+provide CPU/GPU speed-ups for particularly expensive computations.
+The source code for SMITE has been archived to GitHub:
+https://github.com/LidkeLab/smite
 
 SMITE is designed around the concept that a parameter structure, the Single
 Molecule Fitting (SMF) structure, uniquely and completely defines the data
