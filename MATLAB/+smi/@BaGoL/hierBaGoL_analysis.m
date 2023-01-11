@@ -119,6 +119,8 @@ DataROI   = BaGoLParams.DataROI;     % Optional analysis ROI (nm)
 Y_Adjust  = BaGoLParams.Y_Adjust;    % LL vs UL origin transform
 ImSize    = SZ*PixelSize;            % Image size (nm)
 Xi        = BaGoLParams.Xi;          % [k, theta] parameters for gamma prior
+XStart    = 0;
+YStart    = 0;
 
 % --------- Initialize BaGoL
 
@@ -287,6 +289,7 @@ end
 fprintf('saveMAPN ...\n');
 try
    MAPN = BGL.MAPN;
+   OutputPixelSize = BaGoLParams.OutputPixelSize;
    save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN', ...
         'XStart', 'YStart', 'OutputPixelSize');
 catch ME
