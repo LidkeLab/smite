@@ -282,11 +282,13 @@ if numel(SMD.X) <= 100000
 end
 
 % This file contains just the MAPN coordinates, so much smaller than the
-% ResultsStruct file and should always be saved.
+% ResultsStruct file and should always be saved.  Also, save a few extra
+% parameters that are handy for displaying ROIs.
 fprintf('saveMAPN ...\n');
 try
    MAPN = BGL.MAPN;
-   save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN');
+   save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN', ...
+        'XStart', 'YStart', 'OutputPixelSize');
 catch ME
    fprintf('### PROBLEM with saveMAPN ###\n');
    fprintf('%s\n', ME.identifier);
