@@ -122,8 +122,7 @@ TransformedImages = ChannelReg.transformImages(...
     TestImages);
 
 % Save the transform.
-SaveDir = pwd();
-ChannelReg.exportTransform(SaveDir)
+ChannelReg.exportTransform(FiducialFileDir)
 
 % Open the GUI, which can do all of the above actions (except transform an
 % SMD/transform images).
