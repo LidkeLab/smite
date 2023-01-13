@@ -1,58 +1,59 @@
 % This script demonstrates an example workflow for SPT batch processing
-% including the use of channel registration.
+% including the use of channel registration.  Simulated data and tracking
+% results will be saved in smite/MATLAB/examples/example_data/spt/
 
-%% Prepare the channel registration transform.
-FiducialDir = 'C:\Users\David\Documents\GitHub\smite\MATLAB\examples\example_data\spt\multiple_files\fiducial';
-FiducialFile = {'Fiducial.mat'};
-SMFFiducial = smi_core.SingleMoleculeFitting;
-SMFFiducial.Fitting.FitType = 'XYNBS';
-Verbose = 1;
-ChannelReg = smi_core.ChannelRegistration(...
-    FiducialDir, FiducialFile, SMFFiducial, Verbose);
-ChannelReg.SplitFormat = [1, 2]; % split fiducial by columns at the center
-ChannelReg.AutoscaleFiducials = true;
-ChannelReg.ManualCull = true;
-ChannelReg.TransformationType = 'lwm';
-ChannelReg.TransformationBasis = 'coordinates';
-ChannelReg.NNeighborPoints = 12;
-ChannelReg.findTransform();
-TransformPath = ChannelReg.exportTransform();
+%% Simulate and save some SPT data in the format expected for real data.
+% Simulate some diffusing blobs and save simulated raw data.
+rng(12)
+DataParams.NDatasets = 10;
+SimParams.FrameSize = [64, 64];
+SimParams.NFrames = 1000;
+SimParams.ParticleDensity = 0.01; % particles / px^2, make 2X target since we split into 2 channels
+SimParams.D = 0.1; % px^2 / s
+SimParams.KOffToOn = 0.95;
+SimParams.KOnToOff = 0.05;
+SimParams.KOnToBleach = 1e-3;
+SimParams.Intensity = 1000;
+SMITEPath = fileparts(which('setupSMITE.m'));
+DataDir = fullfile(SMITEPath, ...
+    'examples', 'example_data', 'spt', smi_helpers.genTimeString());
+if ~isfolder(DataDir)
+    mkdir(DataDir)
+end
+[Files, SimParams, DataParams] = smi_sim.SimSPT.makeExampleSim(...
+    SimParams, DataParams, DataDir); % SimParams and DataParams padded w/ defaults
 
 %% Prepare an SMF structure for each channel.
 % NOTE: Channel 1 will not be transformed (it is the reference channel), so
 %       we should ensure SMFChannel1.Data.RegistrationFilePath is empty!
-FileDir = 'C:\Users\David\Documents\GitHub\smite\MATLAB\examples\example_data\spt\multiple_files';
-PixelSize = 0.1;
+PixelSize = 0.1; % must be set to true data values
 FrameRate = 20;
 SMFChannel1 = smi_core.SingleMoleculeFitting;
 SMFChannel1.Data.AnalysisID = 'Channel1';
-SMFChannel1.Data.FileDir = FileDir;
-SMFChannel1.Data.DataROI = [1, 1, 64, 64]; % left half of data [YStart, XStart, YEnd, XEnd]
+SMFChannel1.Data.FileDir = DataDir;
+SMFChannel1.Data.DataROI = [1, 1, ...
+    SimParams.FrameSize(1), SimParams.FrameSize(2)]; % left half of data [YStart, XStart, YEnd, XEnd]
 SMFChannel1.Data.RegistrationFilePath = '';
 SMFChannel1.Data.PixelSize = PixelSize;
 SMFChannel1.Data.FrameRate = FrameRate;
-SMFChannel1.Fitting.PSFSigma = 1.3;
+SMFChannel1.Fitting.PSFSigma = SimParams.PSFSigma;
 SMFChannel1.Tracking.MaxFrameGap = 20;
-SMFChannel2 = smi_core.SingleMoleculeFitting;
+SMFChannel2 = copy(SMFChannel1);
 SMFChannel2.Data.AnalysisID = 'Channel2';
-SMFChannel2.Data.FileDir = FileDir;
-SMFChannel2.Data.DataROI = [1, 65, 64, 128]; % right half of data
-SMFChannel2.Data.RegistrationFilePath = TransformPath{1};
-SMFChannel2.Fitting.PSFSigma = 1.3;
-SMFChannel2.Tracking.MaxFrameGap = 20;
-SMFChannel2.Data.PixelSize = PixelSize;
-SMFChannel2.Data.FrameRate = FrameRate;
+SMFChannel2.Data.DataROI = [1, 1 + SimParams.FrameSize(2), ...
+    SimParams.FrameSize(1), 2*SimParams.FrameSize(2)]; % right half of data
+SMFChannel2.Data.RegistrationFilePath = '';
 
 %% Prepare an SPT class object for each channel and then track.
 SPTChannel1 = smi.SPT(SMFChannel1, false);
 SPTChannel1.GenerateMovies = false;
-SPTChannel1.GeneratePlots = true;
+SPTChannel1.GeneratePlots = false;
 SPTChannel2 = smi.SPT(SMFChannel2, false);
 SPTChannel2.GenerateMovies = false;
-SPTChannel2.GeneratePlots = true;
+SPTChannel2.GeneratePlots = false;
 
 %% Loop through our data files and track one at a time.
-FileList = dir(fullfile(FileDir, 'Data_*.mat'));
+FileList = dir(fullfile(DataDir, 'Data_*.mat'));
 FileList = FileList(~[FileList.isdir]); % exclude directories
 NFiles = numel(FileList);
 for nn = 1:NFiles
@@ -67,7 +68,7 @@ end
 
 %% Interactively prepare a movie for each channel.
 % Define the index of 'FileList' which we'd like to see a movie for.
-FileIndex = 3;
+FileIndex = 1;
 
 % Reload our tracking results (these contain TR, SMD, and SMF).
 [~, Channel1FileName] = fileparts(FileList(FileIndex).name);
@@ -113,6 +114,3 @@ MovieMaker2.SMD = Channel2Results.SMD;
 MovieMaker2.SMF = Channel2Results.SMF;
 MovieMaker2.RawData = RawDataChannel2;
 MovieMaker2.gui()
-
-
-

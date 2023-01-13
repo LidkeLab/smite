@@ -85,6 +85,8 @@ classdef SimSPT < handle
         [Coordinates, MaskedCoordinates] = ...
             applyCoordMask(Coordinates, Mask, FrameSize);
         [SMD] = convertTrajToSMD(TrajStruct, SimParams);
+        [Files, SimParams, DataParams] = makeExampleSim(...
+            SimParams, DataParams, SaveDir);
     end
     
     methods (Static, Hidden)
