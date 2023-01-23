@@ -1,13 +1,10 @@
-
-
-addpath('mex\')
-addpath('ptx\')
 %% here only need to select the data, other parameters will be set below
 SMF = smi_core.SingleMoleculeFitting;
 SMF.gui
 
 %% set path to dark frame file
-offsetfile = 'Y:\sCMOS Calibrations\SPT\GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
+%offsetfile = 'Y:\sCMOS Calibrations\SPT\GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
+offsetfile = '/mnt/nas/lidkelab/sCMOS Calibrations/SPT/GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
 load(offsetfile)
 ccdoffset = mean(sequence,3);
 ccdvar = var(single(sequence),1,3);

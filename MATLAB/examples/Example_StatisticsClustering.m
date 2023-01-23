@@ -149,3 +149,5 @@ fprintf('BivariateRipley ...\n');
 SC.bivariateRipley(particle_types, SMD1, SMD2);
 
 fprintf('Done 3D.\n');
+
+fprintf('All results in %s\n', SMF.Data.ResultsDir);

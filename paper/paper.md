@@ -66,12 +66,12 @@ Two common techniques are single-molecule localization microscropy (SMLM),
 [@Lidke_article:2005; @Betzig_article:2006; @Rust_article:2006;
 @Hell_article:2007; @vandeLinde_article:2011; @Fazel_article:2022]
 which is used to produce 2D or 3D super-resolution images of static or nearly
-static structures, and single-particle tracking (SPT), [@Shen_article:2017]
-which follows the time
-course of one or a very small number of moving tagged molecules.  SMLM often
-involves distributions of particles at medium to high density, while SPT works
-in a very low density domain.  These procedures all require intensive numerical
-computation, and the methods are tightly interwoven.
+static structures, and single-particle tracking (SPT) [@Shen_article:2017],
+which follows the time course of one or a very small number of moving tagged
+molecules.  SMLM often involves distributions of particles at medium to high
+density, while SPT works in a very low density domain.  These procedures all
+require intensive numerical computation, and the methods are tightly
+interwoven.
 
 # Statement of need
 
@@ -111,6 +111,16 @@ connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
 Bayesian grouping of localizations [@Fazel_article:2022a].  Applications are
 described in [@Mazloom-Farsibaf_article:2021; @Bailey_article:2022].
 Typical raw image data can be found in [@Pallikkuth_data:2018].
+
+SMAP [@Ries_article:2020], an alternative MATLAB integrated SMLM/SPT code, is
+GUI oriented, while SMITE was designed to be more focused on scripting
+(although many GUIs are available as well) in order to make batch processing
+extremely simple.  SMITE, in addition, is designed to operate with HDF5
+(Hierarchical Data Format) files which efficiently store very large datasets,
+while SMAP preferentially works with TIFF formatted files.  Both SMITE and SMAP
+work with separate software to control instruments, MATLAB Instrument Control
+(MIC) [@Pallikkuth_article:2018] and Micro-Manager [@Edelstein_article:2014],
+respectively.
 
 ![SMITE GUIs for (upper left) making movies from SPT trajectories, (upper
 right) SMLM analysis, (lower left) channel registration, and (lower right)

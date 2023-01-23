@@ -22,7 +22,8 @@ Clone (MacOS/Linux example; similar for Windows) into ~/Documents/MATLAB the ***
 
 ### Dependencies
 For full functionality ***smite*** requires:
-- MATLAB version R2019b or later
+- Linux, MacOS or Windows
+- MATLAB version R2021a or later
 - Nvidia GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
 - MATLAB Curve Fitting Toolbox [smi_cluster, smi_core.FRC, smi_stat.DiffusionEstimator]
 - MATLAB Image Processing Toolbox
@@ -94,4 +95,4 @@ Set SMF values from within GUI and run either a test dataset or analyze all data
 Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes.  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
 
 ## Contributions/Support
-Issues or problems with the software should be reported via the Issues tab of the ***smite*** GitHub repository.  People seeking support or wishing to contribute to ***smite*** should contact Keith Lidke (klidke@unm.edu).
+Issues or problems and people seeking support with the software should be reported via the Issues tab of the ***smite*** GitHub repository.  Contributions to ***smite*** should be performed on new branches which are then requested to merge with the main branch via Pull Requests.

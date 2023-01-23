@@ -5,6 +5,7 @@
 S=smi_sim.SimSMLM()
 NWings=20
 S.NDatasets=20
+S.SZ = 64;
 S.simStar(NWings)
 
 % Generate Images 

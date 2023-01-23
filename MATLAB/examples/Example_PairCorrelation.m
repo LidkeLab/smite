@@ -1,23 +1,26 @@
 PC = smi_cluster.PairCorrelation();
 PC.ResultsDir = 'Results';
 
-% Data from some external source.
-[x1, y1] = textread('9021_5.txt',  '%*u %u %u %*u', 'headerlines', 1);
+% Generated data.
+SZ = 1000;
+x1 = SZ * rand(2 * SZ, 1);
+y1 = SZ * rand(2 * SZ, 1);
 XY1 = [x1, y1];
 SMD1.X = x1;
 SMD1.Y = y1;
-[x2, y2] = textread('9021_10.txt', '%*u %u %u %*u', 'headerlines', 1);
+x2 = [SZ * rand(3 * SZ, 1)];
+y2 = [SZ * rand(3 * SZ, 1)];
 XY2 = [x2, y2];
 SMD2.X = x2;
 SMD2.Y = y2;
 
-PC.ROI = [0, 7400, 0, 6000];   % [x_min, x_max, y_min, y_max]
+PC.ROI = [0, SZ, 0, SZ];   % [x_min, x_max, y_min, y_max]
 % These two numbers below are often the same, but the user can increase
 % HistBinSize to make bigger internal pixels (or bigger internal histogram
 % image bins) and so produce more smoothing, or decrease this quantity and
 % attempt greater detail.
-PC.PixelSize = 2.7559;         % Actual camera pixel size (nm).
-PC.HistBinSize = 2.7559;       % Internal image pixel size (nm).
+PC.PixelSize = 1;         % Actual camera pixel size (nm).
+PC.HistBinSize = 1;       % Internal image pixel size (nm).
 
 % Make a RoI structure (see also smi_cluster.ROITools).  This is typically
 % used for invoking pair_correlation_ROIcombined with multiple ROIs, which
@@ -55,3 +58,6 @@ results_pac2  = PC.pair_correlation(XY2)
 results_Rpac2 = PC.pair_correlation_ROIcombined(1, n_ROIs, RoI, 2)
 results_Vpac2 = PC.pair_correlation_Veatch(SMD2, [], 'auto')
 results_Vpac2 = PC.pair_correlation_Veatch(XY2, [], 'auto')
+
+fprintf('Done pair correlation.\n');
+fprintf('All results in %s\n', PC.ResultsDir);
