@@ -1,3 +1,5 @@
+%% Demonstrate how to call the smi_cluster.PairCorrelation class.
+
 PC = smi_cluster.PairCorrelation();
 PC.ResultsDir = 'Results';
 
@@ -45,6 +47,7 @@ results_Rpcc = PC.pair_correlation_ROIcombined(2, n_ROIs, RoI)
 results_Vpcc = PC.pair_correlation_Veatch(SMD1, SMD2, 'cross')
 results_Vpcc = PC.pair_correlation_Veatch(XY1, XY2, 'cross')
 
+% Auto correlation.
 PC.BaseName = '9021_5';
 results_pac1  = PC.pair_correlation(SMD1)
 results_pac1  = PC.pair_correlation(XY1)
@@ -52,6 +55,7 @@ results_Rpacc = PC.pair_correlation_ROIcombined(1, n_ROIs, RoI, 1)
 results_Vpac1 = PC.pair_correlation_Veatch(SMD1,  [], 'auto')
 results_Vpac1 = PC.pair_correlation_Veatch(XY1,  [], 'auto')
 
+% Auto correlation.
 PC.BaseName = '9021_10';
 results_pac2  = PC.pair_correlation(SMD2)
 results_pac2  = PC.pair_correlation(XY2)
