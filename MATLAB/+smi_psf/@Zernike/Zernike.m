@@ -20,7 +20,7 @@ methods(Static)
    [N, M] = zNoll2NM(NollIndex)
    l_max = zProperNollIndex(l_max)
    [n, m] = zWyant2NM(l)
-   unitTest()
+   success = unitTest()
 
 end % methods(Static)
 % =============================================================================

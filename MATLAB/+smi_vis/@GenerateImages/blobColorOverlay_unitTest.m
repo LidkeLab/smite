@@ -42,7 +42,10 @@ SMD.Bg=5*ones(NBlobs/2,1); % now add background to SMD for overlay
 
 % test with output
 fprintf('Testing with output...\n');
-[~] = smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
+[BlobImage] = smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
+fprintf('Check sequence if you like, it will close in 20 sec...\n');
+sliceViewer(BlobImage);
+pause(20)
 close all
 
 % finish

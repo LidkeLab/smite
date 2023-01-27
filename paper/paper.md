@@ -109,8 +109,9 @@ interested in fluorescence single molecule imaging and applications.  Parts of
 it have already been or are in the process of being published, e.g., frame
 connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
 Bayesian grouping of localizations [@Fazel_article:2022a].  Applications are
-described in [@Mazloom-Farsibaf_article:2021; @Bailey_article:2022].
-Typical raw image data can be found in [@Pallikkuth_data:2018].
+described in [@FrancoNitta_article:2021; @Mazloom-Farsibaf_article:2021;
+@Bailey_article:2022].  Typical raw image data can be found in
+[@Pallikkuth_data:2018].
 
 SMAP [@Ries_article:2020], an alternative MATLAB integrated SMLM/SPT code, is
 GUI oriented, while SMITE was designed to be more focused on scripting

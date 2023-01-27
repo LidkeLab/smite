@@ -49,6 +49,8 @@ ColorMapMagenta = repmat([1, 0, 1], NEmittersPerChannel, 1);
 ColorMap = [ColorMapGreen; ColorMapMagenta];
 [CircleImage, CircleImageRGB, SRImageZoom] = ...
     smi_vis.GenerateImages.circleImage(SMDAll, ColorMap, [], 16);
+imshow(CircleImage);
+imshow(CircleImageRGB);
 Success = 1;
 
 

@@ -1,11 +1,10 @@
-function unitTest
+function success = unitTest()
 %unitTest Test functionality of the Zernike polynomial portion of the class.
 
 % Created by
 %    Michael Wester, 2017, Lidkelab.
 
-   clear all
-   close all
+   success = 0;
 
    Z = smi_psf.Zernike();
 
@@ -53,5 +52,9 @@ function unitTest
       l_max = l_max_new;
       fprintf('\n!!!Resetting l_max to %d!!!\n', l_max);
    end
+
+   success = 1;
+
+   fprintf('Done.\n');
 
 end
