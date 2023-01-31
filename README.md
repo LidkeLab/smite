@@ -31,6 +31,7 @@ For full functionality ***smite*** requires:
 - MATLAB Parallel Computing Toolbox
 - MATLAB Signal Processing Toolbox [smi_core.FRC]
 - MATLAB Statistics and Machine Learning Toolbox
+- ffmpeg installed for Linux (https://ffmpeg.org) [smi_core.LocalizeData.genLocalizations for obj.Verbose >= 3]
 
 ## Examples
 ### Working with SMF

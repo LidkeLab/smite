@@ -289,9 +289,12 @@ end
 fprintf('saveMAPN ...\n');
 try
    MAPN = BGL.MAPN;
-   OutputPixelSize = BaGoLParams.OutputPixelSize;
+   PImageSize = BGL.PImageSize;
+   PixelSizeSAVE = PixelSize;
+   PixelSize = BaGoLParams.OutputPixelSize;
    save(fullfile(SaveDir, sprintf('MAPN_%s', FileName)), 'MAPN', ...
-        'XStart', 'YStart', 'OutputPixelSize');
+        'XStart', 'YStart', 'PImageSize', 'PixelSize');
+   PixelSize = PixelSizeSAVE;
 catch ME
    fprintf('### PROBLEM with saveMAPN ###\n');
    fprintf('%s\n', ME.identifier);

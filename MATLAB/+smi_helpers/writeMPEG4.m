@@ -24,6 +24,11 @@ function writeMPEG4(ResultsDir, FileBaseName, RGBImage)
    islinux = isunix && ~ismac;
    RGBout = fullfile(ResultsDir, FileBaseName);
    RGBImageReordered = permute(RGBImage, [1, 2, 4, 3]);
+   % Be sure RGBImageReordered is properly scaled if it is a float array.
+   maxRGBImageReordered = max(max(max(max(RGBImageReordered(:)))));
+   if isfloat(RGBImageReordered) & maxRGBImageReordered > 1
+      RGBImageReordered = RGBImageReordered ./ maxRGBImageReordered;
+   end
    % VideoWriter in Linux cannot generate .mp4 files, so it necessary to
    % save in a different format and convert to .mp4 via external software
    % (ffmpeg), which, of course, must be installed.  ffmpeg can convert

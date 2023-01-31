@@ -168,7 +168,7 @@ catch ME
    Success(3) = 0;
 end
 % delete object and data
-clear SMLMobj
+%clear SMLMobj
 %delete(fullfile(tempdir, saveName, '*.*'));
 %rmdir(fullfile(tempdir, saveName));
 %delete(fullfile(tempdir, [saveName, '*.*']));

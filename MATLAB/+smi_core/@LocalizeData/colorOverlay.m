@@ -15,12 +15,24 @@ end
 [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SMD,obj.SMF,0,'SMF');
 
 minData = prctile(obj.ScaledData(:),1);
-minModel = prctile(Model(:),1);
 maxData = prctile(obj.ScaledData(:),99);
+minModel = prctile(Model(:),1);
 maxModel = prctile(Model(:),99);
 
 MinRange = min(minData,minModel);
-MaxRange =  max(maxData,maxModel);
+MaxRange = max(maxData,maxModel);
+
+% Deal with the rare case that can occur with very sparse data (such as the
+% unitTest).
+if MinRange == MaxRange
+   minData = min(obj.ScaledData(:));
+   maxData = min(obj.ScaledData(:));
+   minModel = max(Model(:));
+   maxModel = max(Model(:));
+
+   MinRange = min(minData,minModel);
+   MaxRange = max(maxData,maxModel);
+end
 
 R = (obj.ScaledData-MinRange)/(MaxRange-MinRange);
 G = (Model-MinRange)/(MaxRange-MinRange);

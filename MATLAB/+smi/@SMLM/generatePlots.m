@@ -88,6 +88,7 @@ if ismember("Bg", PlotDo)
 end
 
 if ismember("PSFSigma", PlotDo)
+   % Estimated or Fixed Sigma of 2D Gaussian PSF Model (symmetric PSF)
    plotAndSaveHist('PSFSigma','PSFSigma')
 end
 
@@ -114,7 +115,7 @@ end
 
 if ismember("NCombined", PlotDo)
    %create Number of Connected localization histogram
-   plotAndSaveHist('NCombined','Connected emitters')
+   plotAndSaveNCombinedHist('NCombined','Connected emitters')
 end
 
 %cumulative of DriftX, DriftY {, DriftZ} and total drift
@@ -270,9 +271,34 @@ end
 
     % nested function for plotting and saving histograms
     function plotAndSaveHist(FieldName,HistName)
-       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
+       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName)) ...
+                                 && ~isscalar(SMD.(FieldName))
           Vector_in=SMD.(FieldName);
           FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
+          [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
+          BaseName = [BaseName, ID];
+          if ~isempty(PlotSaveDir2)
+             FileName = [BaseName '_' regexprep(HistName,' ','_') '_Hist.png'];
+             saveas(FigH,(fullfile(PlotSaveDir2,FileName)),'png');
+          end
+          if ~ShowPlots; close(gcf); end
+       end
+    end
+
+    % nested function for plotting and saving the NCombined histogram
+    function plotAndSaveNCombinedHist(FieldName,HistName)
+       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName)) ...
+                                 && ~isscalar(SMD.(FieldName))
+          Vector_in=SMD.(FieldName);
+          %FigH = smi_vis.GenerateImages.plotHistogram(Vector_in,HistName);
+          FigH=figure;
+          hold on
+          h = histogram(Vector_in);
+          xlabel(sprintf('%s', HistName));
+          ylabel('Frequency');
+          title(sprintf('Histogram of %s', HistName));
+          hold off
+
           [~,BaseName,~] = fileparts(obj.SMF.Data.FileName{1});
           BaseName = [BaseName, ID];
           if ~isempty(PlotSaveDir2)
@@ -286,7 +312,8 @@ end
     % nested function for plotting and saving the PValue histogram, which is
     % plotted specially with log axes.
     function plotAndSavePValueHist(FieldName,HistName)
-       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName))
+       if isfield(SMD,FieldName) && ~isempty(SMD.(FieldName)) ...
+                                 && ~isscalar(SMD.(FieldName))
           Vector_in=SMD.(FieldName);
           % Convert data values near zero to slightly larger values so that
           % they show up in the histogram plot below.
