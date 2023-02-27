@@ -21,3 +21,30 @@ SMITE code templates requiring user-supplied data:
    Example_SMLM_script		example of SMLM analysis
    hierBaGoL_wrapper		wrapper used to call BaGoL routines
    spt_resolft_track_demo	SPT-RESOLFT example
+
+SMITE unit tests:
+   smi.SMLM.unitTest
+   smi.SPT.unitTestFFGC (frame-to-frame and gap closing processes)
+   smi_core.ChannelRegistration.unitTest
+   smi_core.DataToPhotons.unitTest
+   smi_core.DriftCorrection.unitTest
+   smi_core.FRC.unitTest
+   smi_core.FrameConnection.unitTest
+   smi_core.LocalizeData.unitTest
+   smi_core.Threshold.unitTest
+   smi_psf.PointSpreadFunction.unitTest (does the following unit tests)
+      smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest
+      smi_psf.PointSpreadFunction.optimPSFZernike_unitTest
+      smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest
+      smi_psf.PointSpreadFunction.phaseRetrieval_unitTest
+      smi_psf.PointSpreadFunction.psfROIStack_unitTest
+      smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest
+      smi_psf.PointSpreadFunction.zernikeImage_unitTest
+   smi_psf.Zernike.unitTest
+   smi_sim.SimSMLM.unitTest
+   smi_vis.GenerateImages.blobColorOverlay_unitTest
+   smi_vis.GenerateImages.circleImage_unitTest
+   smi_vis.GenerateImages.colorImage_unitTest
+   smi_vis.GenerateImages.driftImage_unitTest
+   smi_vis.GenerateImages.gaussianImage_unitTest
+   smi_vis.GenerateImages.histogramImage_unitTest

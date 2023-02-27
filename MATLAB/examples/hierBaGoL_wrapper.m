@@ -16,6 +16,18 @@
 % coordinates.  See +smi/@BaGoL/hierBaGoL_analysis.m for more details on files
 % produced.
 %
+% If the variable ROIs is true and only one filename is provided (see below),
+% and assuming SMD files are of the form Cell_nn_Label_0n_Results.mat and ROI
+% files are of the form Cell_nn_Label_01_Results_ROIs.mat (and are located
+% in the subdirectory 'Analysis' of DataDir) as done when choosing ROIs using
+% the scripts simpleROIcluster or simplePairCorr, this current script will
+% automatically use the ROI information in the _ROIs.mat file to produce a
+% series of individual analyses for each ROI which smi.BaGoL.hierBaGoL_run will
+% parallelize via a parfor loop.  The set of analyses will take on names of the
+% form Cell_nn_Label_0n_Results_ROI_mm.  PairAnalysis.overlayBaGoLROIs is a
+% useful function for plotting the ROIs produced by this process, both 1-color
+% and 2-color.
+%
 % See:
 %
 % Sub-Nanometer Precision using Bayesian Grouping of Localizations
@@ -147,8 +159,9 @@ fullfile(D1, 'Cell_02_Label_01_Results.mat');
 if numel(Files) == 1 && ROIs
    [DataDir, File, Ext] = fileparts(Files{1});
    basename = fullfile(DataDir, 'Analysis', File);
-   % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat and RoI
-   % files are of the form Cell_nn_Label_01_Results_ROIs.mat
+   % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat and ROI
+   % files are of the form Cell_nn_Label_01_Results_ROIs.mat (and are located
+   % in the subdirectory 'Analysis' of DataDir).
    filename = regexprep(basename, 'Label_02', 'Label_01');
 
    ROIsFile = load([filename, '_ROIs.mat']);

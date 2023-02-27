@@ -7,6 +7,8 @@ MATLAB/+smi:
    @SPT/			single-particle tracking analysis
 MATLAB/+smi_cluster:
    @Clustering/			clustering algorithms (DBSCAN, Voronoi, H-SET)
+   @ClusterInterface/ 		interface functions for Clustering class
+   @PairAnalysis/		interface functions for PairCorrelation class
    @PairCorrelation/		pair correlation (auto- and cross-) on ROIs
    @StatisticsClustering/	clustering statistical analyses
 MATLAB/+smi_core:

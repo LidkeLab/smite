@@ -97,3 +97,6 @@ Additional ***smite*** examples can be found in the examples subdirectory of MAT
 
 ## Contributions/Support
 Issues or problems and people seeking support with the software should be reported via the Issues tab of the ***smite*** GitHub repository.  Contributions to ***smite*** should be performed on new branches which are then requested to merge with the main branch via Pull Requests.
+
+## Related Software
+Please note the related software: MATLAB Instrument Control (***MIC***), a collection of MATLAB classes for automated data collection on complex, multi-component custom built microscopes.  This software can be obtained from the ***MIC*** GitHub distribution (https://github.com/LidkeLab/matlab-instrument-control.git).
