@@ -20,6 +20,13 @@ SMITE code templates requiring user-supplied data:
    Example_SMLM_Basic		demonstrate basic SMLM functionality
    Example_SMLM_script		example of SMLM analysis
    hierBaGoL_wrapper		wrapper used to call BaGoL routines
+   plotROIDriver                plot dot, Gaussian or circle images of ROIs
+   simplePairCorr               step-by-step script to choose 2-label ROIs & do
+                                various analyses for ROIs separate or combined
+   simpleROIcluster             step-by-step script to choose ROIs, cluster and
+                                analyze/compare conditions for 1-label data
+   singleConditionDriver        batch cluster analysis for comparison of
+                                experimental conditions for 1-label data
    spt_resolft_track_demo	SPT-RESOLFT example
 
 SMITE unit tests:

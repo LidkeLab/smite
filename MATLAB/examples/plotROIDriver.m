@@ -1,0 +1,95 @@
+function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
+% Plot dot, Gaussian or circle images of SMD/MAPN coordinates per ROI per Cell.
+% In other words, this function can plot cluster boundaries overlaid on dot,
+% Gaussian or circle plots of SR or BaGoL results.  The driver collects the
+% paths and files needed, while plotROI produces the specified plots from these
+% and a few other pieces of information for each ROI in each Cell, putting the
+% results in SaveDir.
+%
+% INPUTS:
+%    PixelSize       plxel length (nm)
+%    options         cell array of strings that are selected from the following
+%                    options [DEFAULT = {'BaGoL', 'Gaussian', 'Cluster'}]:
+%       SR              SR Results file
+%       BaGoL           BaGoL Results file (BGL.SMD)
+%       MAPN            BaGoL Results file (BGL.MAPN)
+%       Dot             Dot plot
+%       Gaussian        Gaussian plot
+%       Circle          Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
+%       Boundary        Include ROI boundaries
+%       Cluster         Include ROI clusters
+%    start_datadir   starting data directory from which SaveDir will be made a
+%                    subdirectory of by default if SaveDir not provided
+%                    [DEFAULT = '.']
+%    SaveDir         directory in which to save images
+%                    [DEFAULT = fullfile(start_datadir, 'ROIClusterAnalysis')]
+
+%  PixelSize = 97.8; % nm   % pixel length (nm)
+
+   if ~exist('options', 'var')
+      options = {'BaGoL', 'Gaussian', 'Cluster'};
+   end
+
+   opt.SR = false;
+   opt.BaGoL = false;
+   opt.MAPN = false;
+   opt.Dot = false;
+   opt.Gaussian = false;
+   opt.Circle = false;
+   opt.Boundary = false;
+   opt.Cluster = false;
+
+   if contains('SR', options)
+      opt.SR = true;
+   end
+   if contains('BaGoL', options)
+      opt.BaGoL = true;
+   end
+   if contains('MAPN', options)
+      opt.MAPN = true;
+   end
+   if contains('Dot', options)
+      opt.Dot = true;
+   end
+   if contains('Gaussian', options)
+      opt.Gaussian = true;
+   end
+   if contains('Circle', options)
+      opt.Circle = true;
+   end
+   if contains('Boundary', options)
+      opt.Boundary = true;
+   end
+   if contains('Cluster', options)
+      opt.Cluster = true;
+   end
+
+   CI = smi_cluster.ClusterInterface();
+
+   if ~exist('start_datadir', 'var')
+      start_datadir = '.';
+   end
+   if ~exist('SaveDir', 'var')
+      SaveDir = fullfile(start_datadir, 'ROIClusterAnalysis');
+   end
+   if ~isfolder(SaveDir)
+      mkdir(SaveDir);
+   end
+
+   % Clusters collected together in a single *_results.mat file.
+   [pathnameC, filesC] = smi_helpers.selectFiles(start_datadir, ...
+      '*_results.mat single file', '*_results.mat');
+   if opt.SR
+      [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
+         'SR _Results.mat files', '*_Results.mat');
+   elseif opt.BaGoL 
+      % BaGoL Result/ResultStruct files.
+      [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
+         'MF BaGoL _Results*.mat files', 'BaGoL_Results_*_Results*.mat');
+   end
+
+   CI.plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir);
+
+   fprintf('Done.\n');
+
+end
