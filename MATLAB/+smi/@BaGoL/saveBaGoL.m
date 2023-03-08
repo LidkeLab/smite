@@ -181,16 +181,16 @@ if OverlayFlag
     Scale = 255;
 
     try
-    %Overlay of filtered SR image and posterior image
+    %Overlay of filtered SR image (green) and posterior image (magenta)
     overlayIm = zeros([size(SRIm),3]);
     %overlayIm(:,:,1) = (2*tPIm/Scale+tSRIm/Scale)/3;
-    overlayIm(:,:,1) = tPIm/Scale/3; %
+    overlayIm(:,:,1) = tPIm/Scale/3;
     overlayIm(:,:,2) = tSRIm/Scale/3;
     overlayIm(:,:,3) = tPIm/Scale/3;
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post.png'), 'PNG');
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_gSR_mPost.png'), 'PNG');
     catch ME
     fprintf('### PROBLEM with saving Overlay_SR_Post.png ###\n');
     fprintf('%s\n', ME.identifier);
@@ -198,17 +198,17 @@ if OverlayFlag
     end
 
     try
-    %Overlay of filtered SR image and MAPN image
+    %Overlay of filtered SR image (green) and MAPN image (magenta)
     overlayIm = zeros([size(tMapIm),3]);
     %overlayIm(:,:,1) = (2*tMapIm/Scale+tSRIm/Scale)/3;
     overlayIm(:,:,1) = tMapIm/Scale/3;
     overlayIm(:,:,2) = tSRIm/Scale/3;
-    overlayIm(:,:,3) = tMapIm/Scale/3; %
+    overlayIm(:,:,3) = tMapIm/Scale/3;
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
     %overlayIm = 10*overlayIm/Scale;
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Map.png'), 'PNG');
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_gSR_mMap.png'), 'PNG');
     catch ME
     fprintf('### PROBLEM with saving Overlay_SR_Map.png ###\n');
     fprintf('%s\n', ME.identifier);
@@ -216,16 +216,16 @@ if OverlayFlag
     end
 
     try
-    %Overlay of posterior image and MAPN image
+    %Overlay of posterior image (cyan) and MAPN image (red)
     overlayIm = zeros([size(tMapIm),3]);
     %overlayIm(:,:,1) = (2*tMapIm/Scale+tPIm/Scale)/3;
     overlayIm(:,:,1) = tMapIm/Scale/3;
-    overlayIm(:,:,2) = tPIm/Scale/3; %
+    overlayIm(:,:,2) = tPIm/Scale/3;
     overlayIm(:,:,3) = tPIm/Scale/3;
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_Post_Map.png'), 'PNG');
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_cPost_rMap.png'), 'PNG');
     catch ME
     fprintf('### PROBLEM with saving Overlay_Post_Map.png ###\n');
     fprintf('%s\n', ME.identifier);
@@ -233,7 +233,7 @@ if OverlayFlag
     end
 
     try
-    %Overlay of SR image, posterior image and MAPN image
+    %Overlay of SR image (green), posterior image (blue) and MAPN image (red)
     overlayIm = zeros([size(tSRIm),3]);
     overlayIm(:,:,1) = tMapIm/Scale/3;
     overlayIm(:,:,2) = tSRIm/Scale/3;
@@ -241,7 +241,7 @@ if OverlayFlag
     overlayIm(:,:,1) = smi.BaGoL.scalebar(overlayIm(:,:,1)*Scale,PixelSize,Length);
     overlayIm(:,:,2) = smi.BaGoL.scalebar(overlayIm(:,:,2)*Scale,PixelSize,Length);
     overlayIm(:,:,3) = smi.BaGoL.scalebar(overlayIm(:,:,3)*Scale,PixelSize,Length);
-    imwrite(overlayIm, fullfile(SaveDir,'Overlay_SR_Post_Map.png'), 'PNG');
+    imwrite(overlayIm, fullfile(SaveDir,'Overlay_gSR_bPost_rMap.png'), 'PNG');
     catch ME
     fprintf('### PROBLEM with saving Overlay_SR_Post_Map.png ###\n');
     fprintf('%s\n', ME.identifier);
