@@ -47,8 +47,9 @@ Corresponding examples are presented in:
 
 In all the examples and throughout ***smite***, three main data
 structures are used to organize the analysis parameters and data:
-- [SMF](Single Molecule Fitting), which uniquely and completely
-  defines the data analysis parameters;
-- [SMD](Single Molecule Data), which stores the data results;
-- [TR](Tracking Results), which is a variation of SMD used for
-  tracking data results.
+- [SMF](CoreFunctionality/SMF) (Single Molecule Fitting), which
+  uniquely and completely defines the data analysis parameters;
+- [SMD](CoreFunctionality/SMD) (Single Molecule Data), which stores
+  the data results;
+- [TR](CoreFunctionality/TR) (Tracking Results), which is a variation
+  of SMD used for tracking data results.

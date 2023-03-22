@@ -95,6 +95,9 @@ Set SMF values from within GUI and run either a test dataset or analyze all data
 ### Additional Examples
 Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes.  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
 
+### Additional Details
+Additional details on ***smite*** can be found [here](doc/DetailedOverview.md).
+
 ## Contributions/Support
 Issues or problems and people seeking support with the software should be reported via the Issues tab of the ***smite*** GitHub repository.  Contributions to ***smite*** should be performed on new branches which are then requested to merge with the main branch via Pull Requests.
 
