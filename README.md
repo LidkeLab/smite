@@ -93,7 +93,7 @@ Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin\Dock2-Cell1-2020-11-12-10-29-58.h5
 Set SMF values from within GUI and run either a test dataset or analyze all datasets. 
 
 ### Additional Examples
-Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes.  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
+Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes (see [here](MATLAB/examples/README.txt) for a summary).  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
 
 ### Additional Details
 Additional details on ***smite*** can be found [here](doc/DetailedOverview.md).
