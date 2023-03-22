@@ -92,7 +92,10 @@ function [SMD, Statistics] = driftCorrectKNN(obj, SMD)
 %         drifted coordinates - drift correction = drift corrected coordinates
 %
 % CITATION:
-%    "Robust, Fiducial-Free Drift Correction for Super-resolution Imaging"
+%    "Robust, fiducial-free drift correction for super-resolution imaging",
+%    Michael J. Wester, David J. Schodt, Hanieh Mazloom-Farsibaf, Mohamadreza
+%    Fazel, Sandeep Pallikkuth and Keith A. Lidke, Scientific Reports,
+%    (DOI: 10.1038/s41598-021-02850-7).
 
 % Created by
 %    Modelz... Bewerdorf's group

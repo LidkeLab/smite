@@ -15,7 +15,7 @@ classdef BaGoL < handle
 % localizations to emitters. The localization precisions are assumed to be
 % accurate. The prior distribution is parameterized by either a Poisson 
 % or Gamma distribution function which can be either given as an input or 
-% learned via the hierarchical Bayes approcah.
+% learned via the hierarchical Bayes approach.
 %
 % The primary BaGoL outputs are a 'Posterior Image' and MAPN coordinates
 % that can also be used to generate a 'MAPN image'. The Posterior Image
@@ -94,12 +94,13 @@ classdef BaGoL < handle
 %   MATLAB 2016 or higher versions.
 %   Statistics and Machine learning toolbox.
 %
-% CITATION: "Sub-Nanometer Precision using Bayesian Grouping of Localizations"
-%           Mohamadreza Fazel, Michael J. Wester, Sebastian Restrepo Cruz,
-%           Sebastian Strauss, Florian Schueder, Thomas Schlichthaerle, 
-%           Jennifer M. Gillette, Diane S. Lidke, Bernd Rieger,
-%           Ralf Jungmann, Keith A. Lidke
-%
+% CITATION: "High-Precision Estimation of Emitter Positions using Bayesian
+%           Grouping of Localizations", Mohamadreza Fazel, Michael J. Wester,
+%           David J. Schodt, Sebastian Restrepo Cruz, Sebastian Strauss,
+%           Florian Schueder, Thomas Schlichthaerle, Jennifer M. Gillette,
+%           Diane S. Lidke, Bernd Rieger, Ralf Jungmann and Keith A. Lidke,
+%           Nature Communications, 13(7152), November 22, 2022, 1--11,
+%           (DOI: 10.1038/s41467-022-34894-2).
 
 % Created by:
 %   Mohamadreza Fazel, Lidke Lab 2019

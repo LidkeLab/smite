@@ -121,10 +121,10 @@ BaGoLParams.Xi = [20, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 DataROI = [];
 
-% If ROIs is true, the input file has ROIs already defined (*_ROIs.txt), so use
-% them below.
+% If ROIs is true, the input file has ROIs already defined (*_ROIs.mat), so use
+% them below if only one filename is provided.
+%ROIs = true;
 ROIs = false;
-ROIs = true;
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -137,7 +137,6 @@ ROIs = true;
 % ### defined relative to the directory where hierBaGoL_wrapper is run.
 % ### Absolute pathnames are also fine, especially when used in conjunction
 % ### with fullfile.
-%'BaGoLHier/Data_2020-10-8-17-58-54_Results.mat'
 D1 = '../DATA';
 Files = {
 fullfile(D1, 'Cell_02_Label_01_Results.mat');
@@ -156,6 +155,9 @@ fullfile(D1, 'Cell_02_Label_01_Results.mat');
 %[110, 126,  90, 106]
 %];
 
+% Special case in which a single file is broken up into pre-selected ROIs if
+% the variable ROIs is set to true.  The ROIs are processed via a parfor loop
+% in smi.BaGoL.hierBaGoL_run.  See also comments at the top of this function.
 if numel(Files) == 1 && ROIs
    [DataDir, File, Ext] = fileparts(Files{1});
    basename = fullfile(DataDir, 'Analysis', File);
