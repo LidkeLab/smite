@@ -8,7 +8,7 @@ This MATLAB-based toolbox provides analysis tools for fluorescence single molecu
 ***smite*** is designed around the concept that a parameter structure, the Single Molecule Fitting (SMF) structure, uniquely and completely defines the data analysis.  The results are completely contained in a Single Molecule Data (SMD) structure.  ***smite*** is designed to make lowest-level tools just as easy to use as the higher-level application-specific classes.  All tools make use of the SMF and SMD structures.   
 
 ### Code organization
-***smite*** is organized into a set of namespaces that group similar tools and concepts.  The namespace  `+smi`  contains the highest level tools that will be the most common entry point for processing SMLM and SPT data sets.  The file [SMITEclasses.txt](SMITEclasses.txt) provides a short 1-line desscription of each class in the distribution.
+***smite*** is organized into a set of namespaces that group similar tools and concepts.  The namespace  `+smi`  contains the highest level tools that will be the most common entry point for processing SMLM and SPT data sets.  The file [SMITEclasses.txt](doc/SMITEclasses.txt) provides a short 1-line description of each class in the distribution.
 
 ### Image and Detector Model
 Image arrays follow MATLAB's column-major format.  An image coordinate of (1,1) means the center of the top-left pixel, whereaas (2,1) would indicate the center of the pixel that is one down from the top, but in the left-most column.   
