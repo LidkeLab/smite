@@ -9,11 +9,13 @@ NOTE: This class is designed around .h5 files containing raw data
       with the directory names following the scheme
       Cell*\Label*\Data*.h5
 
-REQUIRES: MATLAB 2018a or later (for Publish.genAlignStats())
-          Image Processing Toolbox
-          Statistics and Machine Learning Toolbox
-          Curve Fitting Toolbox
+REQUIRES:
+- MATLAB 2018a or later (for Publish.genAlignStats())
+- Image Processing Toolbox
+- Statistics and Machine Learning Toolbox
+- Curve Fitting Toolbox
 
+```
 properties:
     % Structure of parameters (see smi_core.SingleMoleculeFitting)
     SMF
@@ -69,3 +71,4 @@ properties:
 
     % Structure containing several analysis results.
     ResultsStruct = struct([]);
+```

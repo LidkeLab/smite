@@ -8,7 +8,7 @@ This MATLAB-based toolbox provides analysis tools for fluorescence single molecu
 ***smite*** is designed around the concept that a parameter structure, the Single Molecule Fitting (SMF) structure, uniquely and completely defines the data analysis.  The results are completely contained in a Single Molecule Data (SMD) structure.  ***smite*** is designed to make lowest-level tools just as easy to use as the higher-level application-specific classes.  All tools make use of the SMF and SMD structures.   
 
 ### Code organization
-***smite*** is organized into a set of namespaces that group similar tools and concepts.  The namespace  `+smi`  contains the highest level tools that will be the most common entry point for processing SMLM and SPT data sets.  The file [SMITEclasses.txt](doc/SMITEclasses.txt) provides a short 1-line description of each class in the distribution.
+***smite*** is organized into a set of namespaces that group similar tools and concepts.  The namespace  `+smi`  contains the highest level tools that will be the most common entry point for processing SMLM and SPT data sets.  The file [SMITEclasses.md](doc/SMITEclasses.md) provides a short 1-line description of each class in the distribution.
 
 ### Image and Detector Model
 Image arrays follow MATLAB's column-major format.  An image coordinate of (1,1) means the center of the top-left pixel, whereaas (2,1) would indicate the center of the pixel that is one down from the top, but in the left-most column.   
@@ -93,7 +93,7 @@ Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin\Dock2-Cell1-2020-11-12-10-29-58.h5
 Set SMF values from within GUI and run either a test dataset or analyze all datasets. 
 
 ### Additional Examples
-Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes (see [here](MATLAB/examples/README.txt) for a summary).  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
+Additional ***smite*** examples can be found in the examples subdirectory of MATLAB as well as the unitTests for some of the classes (see [here](MATLAB/examples/README.md) for a summary).  Some of the examples generate and analyze their own data, while others provide a template for how to run the example given supplied data.
 
 ### Additional Details
 Additional details on ***smite*** can be found [here](doc/DetailedOverview.md).

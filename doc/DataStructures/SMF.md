@@ -13,6 +13,7 @@ that use each sub-structure is listed in {}.
 
 The SMF structure has the following sub-structures and fields:
 
+```
 SMF:  Fields that are structures:
 
 Data:             {LoadData}
@@ -133,3 +134,4 @@ Tracking          {SPT}
   MaxZScoreDist:  Max. abs(z-score) x/y jump size (Default=inf)
   MaxZScorePhotons: Max. abs(z-score) for photon diffs. (Default=inf)
   TryLowPValueLocs: Try to incorporate low p-val. locs. (Default=false)
+```

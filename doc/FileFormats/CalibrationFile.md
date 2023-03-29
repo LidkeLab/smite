@@ -1,5 +1,6 @@
 Example camera calibration file:
 
+```
 >> CalibrationFile.Params
 
 ans = 
@@ -18,3 +19,4 @@ ans =
                    CameraObj: [1×1 struct]
               LampPowerRange: [1×20 single]
                         Gain: [256×256 single]
+```

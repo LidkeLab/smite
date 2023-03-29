@@ -3,9 +3,10 @@ SPT contains methods useful for single-particle tracking analysis.
   useful for the analysis of single-particle tracking data.
 
 REQUIRES:
-  Image Processing Toolbox
-  Statistics and Machine Learning Toolbox
+- Image Processing Toolbox
+- Statistics and Machine Learning Toolbox
 
+```
 properties:
     % Structure of parameters (see smi_core.SingleMoleculeFitting)
     SMF
@@ -68,3 +69,4 @@ properties:
     
     % Verbosity of the main analysis workflow. (Default = 1)
     Verbose = 1;
+```

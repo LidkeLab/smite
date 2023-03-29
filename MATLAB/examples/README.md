@@ -1,3 +1,4 @@
+```
 Self-contained examples of using SMITE code:
    Example_ChangeDetection	change point detection
 G  Example_ChannelRegstration	2-color channel registration
@@ -55,3 +56,4 @@ SMITE unit tests:
    smi_vis.GenerateImages.driftImage_unitTest
    smi_vis.GenerateImages.gaussianImage_unitTest
    smi_vis.GenerateImages.histogramImage_unitTest
+```

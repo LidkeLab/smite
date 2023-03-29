@@ -31,7 +31,7 @@ a spatially extended data set typical of super-resolution experiments.
 This includes breaking data into subregions and collating the results
 from the subregions.
 
-
+```
 USAGE:
   B=BaGoL()       % create object
   B.SMD=....      % set properties
@@ -92,11 +92,12 @@ PROPERTIES:
 REQUIRES:
   MATLAB 2016 or higher versions.
   Statistics and Machine learning toolbox.
+```
 
 CITATION: "High-Precision Estimation of Emitter Positions using Bayesian
           Grouping of Localizations", Mohamadreza Fazel, Michael J. Wester,
           David J. Schodt, Sebastian Restrepo Cruz, Sebastian Strauss,
           Florian Schueder, Thomas Schlichthaerle, Jennifer M. Gillette,
           Diane S. Lidke, Bernd Rieger, Ralf Jungmann and Keith A. Lidke,
-          Nature Communications, 13(7152), November 22, 2022, 1--11,
+          Nature Communications, **13**(7152), November 22, 2022, 1--11,
           (DOI: 10.1038/s41467-022-34894-2).

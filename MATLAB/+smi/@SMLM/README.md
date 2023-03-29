@@ -10,8 +10,9 @@ Molecule Data (SMD) structures, the latter containing the processed data.  In
 addition, various plots describing the processed data are created and placed
 in a directory under Results identifying the dataset.  This identification is
 derived from the original dataset's name, optionally with an analysis ID
-appended.  See generatePlots for more details on the plots produced.
+appended.  See generatePlots (below) for more details on the plots produced.
 
+```
 properties:
     SMDPreThresh      % Keeps track of why localizations were filtered out
     SMD               % SMD structure with final analysis results
@@ -25,14 +26,16 @@ properties:
     FullvsTest        % Logical value set by fullAnalysis or testFit to tell
                       % saveResults to make the proper call to generatePlots
     CalledByGUI=false % Keeps track of how fitting is called
+```
 
-=========================================================================
+---
 
 analyzeAll loops over a list of datasets and creates an SMD.
 If DatasetList not provided, use obj.SMD.Data.DatasetList .
 
 analyzeAll flow:
 
+```
 analyzeAll:
    for n = DatasetList      (iterate over each dataset)
       analyzeDataset:
@@ -47,11 +50,13 @@ analyzeAll:
    end
    DriftCorrection (inter-dataset drift correction)
    Threshold       (produce statistics for rejected localizations)
+```
 
-=========================================================================
+---
 
 generatePlots creates all histograms and plots for an SMD structure.
 
+```
 INPUT:
    obj          SMLM object
       obj.SMD      Single Molecule Data structure
@@ -91,3 +96,4 @@ INPUT:
 
 OUTPUT:
    The figures are saved in .png format in PlotSaveDir1/2.
+```

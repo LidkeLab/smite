@@ -1,13 +1,14 @@
 SingleMoleculeData: A class defining the Single Molecule Data structure
 
-This datatype is one of the primary results structures in the smite
-enviroment. The SMD structure is an input and output of many smi
+This datatype is one of the primary results structures in the ***smite***
+environment. The SMD structure is an input and output of many smi
 methods. It intended to be extensible.
 The SMD class implements tools for working with SMD structures,
-but the data strcuture itself is not an object of the class.
+but the data structure itself is not an object of the class.
 
-The structure has the following Properties:
+The structure has the following properties:
 
+```
 SMD:
   NDims:          Number of dimensions in localization information (2,3)
   NFrames:        Number of image frames in raw data sets
@@ -52,6 +53,8 @@ SMD:
   DriftZ:         Z drift relative to first frame (Pixels) (NFrames x NDatasets)
   IsTransformed:  Flag indicating channel reg. was performed on this SMD
   RegError:       Error in channel registration. (Pixels)
+```
 
 SEE ALSO:
-  smi_core.SMF, smi_core.TR
+  (smi_core.SingleMoleculeFitting)[SMF.md],
+  (smi_core.TrackingResults)[TR.md]
