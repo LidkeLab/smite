@@ -1,3 +1,5 @@
+### SMD
+
 SingleMoleculeData: A class defining the Single Molecule Data structure
 
 This datatype is one of the primary results structures in the ***smite***

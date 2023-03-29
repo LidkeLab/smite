@@ -1,3 +1,5 @@
+### +smi_core/GaussMLE
+
 GaussMLE: Maximum Likelihood Estimate of 2D Gaussian blob parameters
 
 GaussMLE fits a 2D Gaussian blob model to the each image in a stack of 2D

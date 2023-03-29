@@ -1,4 +1,6 @@
-**SMITE classes**|
+### smite namespaces and classes
+
+|***SMITE classes**||
 -------------|---
 [MATLAB/+smi](../MATLAB/+smi/README.md):
 &nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | Bayesian Grouping of Localizations

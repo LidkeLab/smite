@@ -1,3 +1,5 @@
+### ***smite*** examples and unit tests
+
 ```
 Self-contained examples of using SMITE code:
    Example_ChangeDetection	change point detection

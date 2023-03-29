@@ -1,3 +1,5 @@
+### +smi/@Publish
+
 Publish contains methods useful for batch processing of SR data.
   This class contains a collection of analysis/visualization methods
   useful for batch-processing of super-resolution data, particularly

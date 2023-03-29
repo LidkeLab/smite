@@ -15,6 +15,8 @@ tools and concepts.  The namespace  `+smi`  contains the highest
 level tools that will be the most common entry point for processing
 SMLM and SPT data sets.
 
+List of [***smite*** namespaces and classes](SMITEclasses.md).
+
 The core functionality of ***smite*** (contained in the namespace
 `+smi`) are
 - [SMLM](../MATLAB/+smi/@SMLM/README.md) (Single Molecule Localization

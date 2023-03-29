@@ -1,3 +1,5 @@
+### +smi/@SMLM
+
 Single Molecule Localization Microscopy Analysis
 
 This is a high-level class that provides complete analysis of SMLM data.

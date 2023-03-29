@@ -1,8 +1,10 @@
+### +smi_stat
+
 +smi_stat is the namespace for various statistical functions and classes of
 ***smite***:
-- (@ChangeDetection)[@ChangeDetection/README.md]:
-- (@DiffusionEstimator)[@DiffusionEstimator/README.md]:
-- (@HMM)[@HMM/README.md]:
+- [@ChangeDetection](@ChangeDetection/README.md):
+- [@DiffusionEstimator](@DiffusionEstimator/README.md):
+- [@HMM](@HMM/README.md):
 
 Functions:
 - bootstrapFit:

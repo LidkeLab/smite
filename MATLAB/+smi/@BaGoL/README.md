@@ -1,3 +1,5 @@
+### +smi/@BaGoL
+
 BaGoL Implements a Bayesian Grouping of Localizations (BaGoL)
 
 Single molecule localization based super-resolution data can contain

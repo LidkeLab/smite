@@ -1,3 +1,5 @@
+### +smi_helpers
+
 +smi_helpers is the namespace for helper functions and classes of ***smite***:
 - (@Filters)[@Filters/README.md]:
   filters useful for BaGoL operating on SMDs
@@ -27,7 +29,7 @@ Functions:
 - getFileNames:
   creates a list of filenames in FileDir
 - nMODm:
-  Modulus such that r is in [1, m] rather than [0, m - 1]
+  modulus such that r is in [1, m] rather than [0, m - 1]
 - padStruct:
   pads the input 'Struct' with defaults in 'DefaultStruct'
 - pairText:

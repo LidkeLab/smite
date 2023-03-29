@@ -1,3 +1,5 @@
+### +smi/@SPT
+
 SPT contains methods useful for single-particle tracking analysis.
   This class contains a collection of analysis/visualization methods
   useful for the analysis of single-particle tracking data.

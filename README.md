@@ -11,7 +11,7 @@ This MATLAB-based toolbox provides analysis tools for fluorescence single molecu
 ***smite*** is organized into a set of namespaces that group similar tools and concepts.  The namespace  `+smi`  contains the highest level tools that will be the most common entry point for processing SMLM and SPT data sets.  The file [SMITEclasses.md](doc/SMITEclasses.md) provides a short 1-line description of each class in the distribution.
 
 ### Image and Detector Model
-Image arrays follow MATLAB's column-major format.  An image coordinate of (1,1) means the center of the top-left pixel, whereaas (2,1) would indicate the center of the pixel that is one down from the top, but in the left-most column.   
+Image arrays follow MATLAB's column-major format.  An image coordinate of (1,1) means the center of the top-left pixel, whereas (2,1) would indicate the center of the pixel that is one down from the top, but in the left-most column.   
 
 ## Installation
 Clone (MacOS/Linux example; similar for Windows) into ~/Documents/MATLAB the ***smite*** GitHub distribution (https://github.com/LidkeLab/smite.git).  Add to Documents/MATLAB/startup.m the following:
@@ -86,9 +86,10 @@ Create an SMLM object.  When there are no input aruments, it will open the GUI:
 ```
   SMLMobj = smi.SMLM()  
 ```
-Use the GUI to navigate to a test dataset such as this TIRF DNA-PAINT: 
-
-Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin\Dock2-Cell1-2020-11-12-10-29-58.h5
+Use the GUI to navigate to a test dataset such as available from
+[Pallikkuth, S., Martin, C., Farzam, F., Edwards, J. S., Lakin, M. R., Lidke, D. S., & Lidke, K. A. (2018). Supporting data for Sequential Super-Resolution Imaging using DNA Strand Displacement [Data set]. University of New Mexico. https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files)
+or
+[Wester, Michael J., Mazloom-Farsibaf, Hanieh, Farzam, Farzin, Fazel, Mohamadreza, Meddens, Marjolein B. M., & Lidke, Keith A. (2020), Comparing Lifeact and Phalloidin for super-resolution imaging of actin in fixed cells, Dryad, Dataset, https://doi.org/10.5061/dryad.xsj3tx9cn](https://datadryad.org/stash/dataset/doi:10.5061/dryad.xsj3tx9cn).
 
 Set SMF values from within GUI and run either a test dataset or analyze all datasets. 
 

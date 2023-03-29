@@ -1,10 +1,12 @@
+### +smi_vis
+
 +smi_vis is the namespace for the visualization functions and classes of
 ***smite***:
-- (@GenerateImages)[@GenerateImages/README.md]:
+- [@GenerateImages](@GenerateImages/README.md):
   general visualization of super-resolution data
-- (@GenerateMovies)[@GenerateMovies/README.md]:
+- [@GenerateMovies](@GenerateMovies/README.md):
   generate movies
-- (@InspectResults)[@InspectResults/README.md]:
+- [@InspectResults](@InspectResults/README.md):
   inspect super-resolution data
 
 Functions:
