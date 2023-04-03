@@ -1,6 +1,7 @@
 function clusterFig = plotClustersSE(obj, SMD, C, centers, ptsI, txt, ...
                                      options)
-% Plot and label the 2D clusters.
+% Plot and label the 2D clusters, producing circles with radii proportional to
+% the standard error (SE).
 %
 % INPUTS:
 %    SMD          (x, y) coordinates in the format

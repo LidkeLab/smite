@@ -3,27 +3,30 @@
 +smi_stat is the namespace for various statistical functions and classes of
 ***smite***:
 - [@ChangeDetection](@ChangeDetection/README.md):
+  change detection analysis methods
 - [@DiffusionEstimator](@DiffusionEstimator/README.md):
+  diffusion estimation methods
 - [@HMM](@HMM/README.md):
+  hidden Markov model methods
 
 Functions:
-- bootstrapFit:
+- **bootstrapFit**:
   minimizes CostFunction with constraints and performs a basic bootstrap
-- bootstrapFitCon:
+- **bootstrapFitCon**:
   minimizes CostFunction and performs a basic bootstrap
-- computeHessian:
+- **computeHessian**:
   computes the Hessian of FunctionHandle around ParamsHat
-- findCoordAffine:
+- **findCoordAffine**:
   finds an affine transform to transform Coords2 to Coords1
-- findOffset:
+- **findOffset**:
   estimates a sub-pixel offset between two stacks of images
-- findOffsetIter:
+- **findOffsetIter**:
   iteratively estimates the sub-pixel shift between images
-- findZOffset:
+- **findZOffset**:
   finds the offset between Image and Stack along Z
-- frequencyMask:
+- **frequencyMask**:
   prepares a boolean mask defining a frequency cutoff
-- leastSquaresFit:
+- **leastSquaresFit**:
   performs a least squares fit on the provided data
-- shiftImage:
+- **shiftImage**:
   shifts an image by the provided shift

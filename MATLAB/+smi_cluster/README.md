@@ -14,7 +14,7 @@
   clustering statistical analyses
 
 In addition, there are functions:
-- clusterSTDist: performs pre-clustering on localizations in SMD based
+- **clusterSTDist**: performs pre-clustering on localizations in SMD based
   on their spatiotemporal separations with cutoffs MaxFrameGap and MaxDist
-- clusterSTSigma: performs pre-clustering on localizations in SMD based
+- **clusterSTSigma**: performs pre-clustering on localizations in SMD based
   on their spatiotemporal separations with cutoffs MaxFrameGap, NSigmaDev, MaxNN

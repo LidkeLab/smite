@@ -7,48 +7,48 @@
   select ROIs from an image; save in a structure
 
 Functions:
-- addBasicGUI:
+- **addBasicGUI**:
   adds simple GUI controls based on the fields in 'ParamStruct'
-- arrayMUX:
+- **arrayMUX**:
   a multiplexer intended to generalize for most arrays
-- compressToRange:
+- **compressToRange**:
   compresses the 'IntegerArray' to a range of integers with no missing values
-- convertTimeStringToNum:
+- **convertTimeStringToNum**:
   converts a time string to a number
-- filenameWindows2Unix:
+- **filenameWindows2Unix**:
   converts the Windows filenameWindows to the Unix filename filenameUnix,
   optionally preceded by prefix
-- findStartEndInds:
+- **findStartEndInds**:
   finds the start and end indices of events in BoolArray
-- gatherFullPathnames:
+- **gatherFullPathnames**:
   combines or searches for directory paths and filenames matching a pattern
-- genTimeString:
+- **genTimeString**:
   creates a char array with the current time
-- getDirectoryNames:
+- **getDirectoryNames**:
   generates directory names matching a NameString
-- getFileNames:
+- **getFileNames**:
   creates a list of filenames in FileDir
-- nMODm:
+- **nMODm**:
   modulus such that r is in [1, m] rather than [0, m - 1]
-- padStruct:
+- **padStruct**:
   pads the input 'Struct' with defaults in 'DefaultStruct'
-- pairText:
+- **pairText**:
   creates paired lists of text from two sets of text lists
-- pairTimeStrings:
+- **pairTimeStrings**:
   selects indices from the input 'TimeStringOptions' that are closest in time
   to the timestrings provided in 'TimeStrings'
-- removeBorder:
+- **removeBorder**:
   removes border pixels from the input image
-- requiredToolboxes:
+- **requiredToolboxes**:
   print out required toolboxes for each directory in the SMITE directory
   structure
-- selectFiles:
+- **selectFiles**:
   select a list of files
-- subdivideImage:
+- **subdivideImage**:
   divvys up an image into sub-ROIs of the image
-- subdivideSMD:
+- **subdivideSMD**:
   divvys up an SMD into sub-ROIs
-- triangle_threshold:
+- **triangle_threshold**:
   use the triangle method to find a threshold
-- writeMPEG4:
+- **writeMPEG4**:
   writes a .mp4 image constructed from the RGB image input on all OS

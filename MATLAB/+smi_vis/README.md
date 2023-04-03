@@ -10,6 +10,6 @@
   inspect super-resolution data
 
 Functions:
-- contrastStretch: scales images to the range MinMax
-- plotCDFs:        plots multiple CDFs on the same plot.
-- plotImageStack:  plots a stack of images contained in a 3D array
+- **contrastStretch**: scales images to the range MinMax
+- **plotCDFs**:        plots multiple CDFs on the same plot.
+- **plotImageStack**:  plots a stack of images contained in a 3D array

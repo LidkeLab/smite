@@ -1,7 +1,7 @@
 function results_ls = ...
    doLocSep2(n_ROIs, RoI, desc, particles, results_dir, plotting)
-% Find the nearest neighbor of each label 2 cluster to each label 1 cluster
-% using center-to-center distances.
+% Find the nearest neighbor of each label 2 localization to each label 1
+% localization.
 %
 % INPUTS:
 %    n_ROIs        number of ROIs
