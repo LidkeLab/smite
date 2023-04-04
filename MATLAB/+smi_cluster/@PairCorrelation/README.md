@@ -1,4 +1,4 @@
-### +smi_cluster/PairCorrelation
+### +smi_cluster/@PairCorrelation
 
 PairCorrelation performs pair correlation (auto- and cross-correlation) on
 user selected rectangular regions of interest (ROIs).  Input units are
@@ -12,6 +12,8 @@ pair_correlation (and pair_correlation_Veatch) operates on a single pair of
 images (pair_correlation_Veatch is basically the original code written by
 Sarah Veatch).  pair_correlation_ROIcombined combines pair correlation on a
 series of images/ROIs.
+
+---
 
 Example main program (see [MATLAB/examples/Example_PairCorrelation.m](../../examples/Example_PairCorrelation.m)):
 ```
@@ -73,8 +75,10 @@ Example main program (see [MATLAB/examples/Example_PairCorrelation.m](../../exam
    results_Vpac2 = PC.pair_correlation_Veatch(SMD2, [], 'auto')
    results_Vpac2 = PC.pair_correlation_Veatch(XY2, [], 'auto')
 ```
-properties:
+---
+
 ```
+properties:
    % If ROI is provided, it will be used, otherwise the xy_size will be
    % calculated using the (x_min, x_max, y_min, y_max) computed from the data
    % as

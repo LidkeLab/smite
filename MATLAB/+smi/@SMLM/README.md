@@ -14,6 +14,8 @@ in a directory under Results identifying the dataset.  This identification is
 derived from the original dataset's name, optionally with an analysis ID
 appended.  See generatePlots (below) for more details on the plots produced.
 
+---
+
 ```
 properties:
     SMDPreThresh      % Keeps track of why localizations were filtered out

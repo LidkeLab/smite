@@ -1,4 +1,4 @@
-classdef FRC < handle
+### +smi_core/@FRC
 
 Fourier Ring Correlation (FRC) class for computing average image resolution.
 FRC is a measure of the average resolution over a super-resolution image.  It
@@ -42,22 +42,24 @@ NOTE:
    This is needed because DIPimage also has a smooth function which will
    typically shadow MATLAB's smooth. 
 
-properties:
+---
+
 ```
+properties:
    PixelSize   = 100;   % nm per pixel
    SRImageZoom = 10;    % image magnification factor
    Repeats     = 1;     % number of times FRC curve is computed for averaging
 ```
 
+---
+
 methods:
-```
-- **posToFRC**:
+- **[posToFRC](posToFRC.m)**:
   calculates the Fourier Ring Correlation curve
-- **posToResolution**:
+- **[posToResolution](posToResolution.m)**:
   computes the image resolution from a list of localizations
-- **qCorrectionLocs**:
+- **[qCorrectionLocs](qCorrectionLocs.m)**:
   calculates Q-corrected FRC curves and resolutions
-- **unitTest**:
+- **[unitTest](unitTest.m)**:
   Test Fourier Ring Correlation (FRC) interface functions and provide examples
   of usage
-```

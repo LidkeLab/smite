@@ -64,8 +64,8 @@ see code fragment:
 
 ---
 
-properties:
 ```
+properties:
    % Box sizes used when clicking the left mouse button (nm).
    ROI_sizes = [3000, 3000];   % nm
    Color = ['g', 'm', 'k', 'c', 'r', 'y'];   % Label colors.

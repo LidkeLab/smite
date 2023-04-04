@@ -1,4 +1,4 @@
-### +smi_cluster/Clustering
+### +smi_cluster/@Clustering
 
 See MATLAB/examples/Example_Clustering for an example using cluster, which
 dispatches on "algorithm" to the appropriate routines.
@@ -36,8 +36,10 @@ dispatches on "algorithm" to the appropriate routines.
   Biology of the Cell_, Volume 27, Number 6, March 15, 2016, 1002--1014
   (DOI: 10.1091/mbc.E15-06-0355, PMID: 26792838, PMCID: PMC4791122).
 
-properties:
+---
+
 ```
+properties:
    % --- Generic properties.
    Font_props = {'FontSize', 15, 'FontWeight', 'bold'};
    Fig_ext = 'png';
@@ -72,13 +74,17 @@ properties:
    Sigma_Reg = [10, 10]; % registration error in x, y (nm)
    Timing = true;        % produce timings for clustering
 ```
+
+---
+
 methods:
-- **cluster**:
-- **clusterSR**:
+- **[cluster](cluster.m)**:
+  Main interface to the clustering algorithms
+- **[clusterSR](clusterSR.m)**:
   Combine multiple clustered points into single localizations when appropriate
   via a top-down descent through a hierarchal dendrogram relationship between
   points
-- **clusterStats**:
+- **[clusterStats](clusterStats.m)**:
   produces large variety of statistics on computed clusters:
 ```
      nC                number of clusters
@@ -114,47 +120,47 @@ methods:
      nn_within_clust   nearest neighbor distances between points within
                        clusters only
 ```
-- **cluster_HSET**:
+- **[cluster_HSET](cluster_HSET.m)**:
   Perform the clustering implied by H-SET, in which the nodes that would be
   combined in normal H-SET are taken to be clusters here
-- **cluster_voronoi**:
+- **[cluster_voronoi](cluster_voronoi.m)**:
   Taking the density indices i_rho that identify points to be clustered, 
   generate the clusters C (their number given by nC)
-- **dbscan_Daszykowski**:
+- **[dbscan_Daszykowski](dbscan_Daszykowski.m)**:
   Clustering the data with Density-Based Scan Algorithm with Noise (DBSCAN);
   this seems to be the same or very similar to MATLAB's dbscan introduced in
   R2019a
-- **edge2edge**:
+- **[edge2edge](edge2edge.m)**:
   the minimum edge-to-edge distance between hull 1 and hull 2
-- **hierarchal**:
+- **[hierarchal](hierarchal.m)**:
   Form clusters such that any point in a cluster is within E of some other
   point in the same cluster
-- **hierarchalSingleLabel**:
+- **[hierarchalSingleLabel](hierarchalSingleLabel.m)**:
   Combine multiple clustered points into single labels when appropriate via a
   top-down descent through a hierarchal dendrogram relationship between points
-- **my_ismemberBuiltinTypes**:
+- **[my_ismemberBuiltinTypes](my_ismemberBuiltinTypes.m)**:
   Extracted and simplified from MATLAB's ismember.m for simplified usage
-- **nn_ROIcombined**:
+- **[nn_ROIcombined](nn_ROIcombined.m)**:
   Plots the mean particle nearest neighbor distances for a series of ROIs
-- **nn_ROIrandom**:
+- **[nn_ROIrandom](nn_ROIrandom.m)**:
   plots the PDF of nearest neighbor distances (NND) for points in a ROI vs a
   theoretical curve based on the same point density
-- **nn_distances**:
+- **[nn_distances](nn_distances.m)**:
   minimum nearest neighbor distances from each point in xy to the other points
-- **plotClusters**:
+- **[plotClusters](plotClusters.m)**:
   Plot and label the 2D clusters
-- **plotClusters3**:
+- **[plotClusters3](plotClusters3.m)**:
   Plot and label the 3D clusters
-- **plotClustersSE**:
+- **[plotClustersSE](plotClustersSE.m)**:
   Plot and label the 2D clusters, producing circles with radii proportional to
   the standard error (SE)
-- **plot_voronoi**:
+- **[plot_voronoi](plot_voronoi.m)**:
   plots the Voronoi diagram corresponding to (X, Y), coloring cells
   according to the density rho
-- **plot_voronoi3**:
+- **[plot_voronoi3](plot_voronoi3.m)**:
   plots the Voronoi diagram corresponding to (X, Y, Z), coloring
   the cells according to the density rho
-- **singleLabelTest**:
+- **[singleLabelTest](singleLabelTest.m)**:
   Tests if a cluster of points came from point source 
-- **voronoi_Levet**:
+- **[voronoi_Levet](voronoi_Levet.m)**:
   implements Voronoi diagram based clustering

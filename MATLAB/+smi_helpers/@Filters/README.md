@@ -12,14 +12,16 @@ SR data -> remove localizations with negative coordinates
         -> BaGoL
 ```
 
+---
+
 static methods:
-- **filterNonNeg**:
+- **[filterNonNeg](filterNonNeg.m)**:
   filter out localizations with negative coordinates
-- **filterIntensity**:
+- **[filterIntensity](filterIntensity.m)**:
   filter localizations based on intensity
-- **inflateSE**:
+- **[inflateSE](inflateSE.m)**:
   inflate standard errors
-- **filterFC**:
+- **[filterFC](filterFC.m)**:
   filter out localizations representing fewer than nFC frame connections
-- **filterNN**:
+- **[filterNN](filterNN.m)**:
   localizations are filtered based on the nearest neighbor distance

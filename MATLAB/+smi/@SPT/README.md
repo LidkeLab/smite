@@ -8,6 +8,8 @@ REQUIRES:
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
 
+---
+
 ```
 properties:
     % Structure of parameters (see smi_core.SingleMoleculeFitting)

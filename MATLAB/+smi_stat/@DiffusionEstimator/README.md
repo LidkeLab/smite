@@ -6,8 +6,13 @@ constants from single-particle tracking data.
 REQUIRES:
 - Optimization Toolbox (to use fmincon() for certain models)
 
-properties:
+For a detailed example, see
+[Example_DiffusionEstimator.m](../../examples/Example_DiffusionEstimator.m).
+
+---
+
 ```
+properties:
    % ID of the diffusion model to be considered (char array/string)
    % OPTIONS:
    %   'Brownian'
@@ -75,22 +80,37 @@ properties:
    %   Verbose 3: Debugging mode, extensive outputs
    Verbose = 0;
 ```
-Methods:
-- **brownianJumpCDF**: generates a model of the CDF of Brownian jumps
-- **brownianJumpLikelihood**: computes the likelihood of given Brownian jumps
-- **computeCDFOfJumps**: computes the CDF (CPD) of the jumps in 'MSDStruct'.
-- **computeMSD**: computes the mean squared displacement from TR
-- **computeSingleTrajMSD**: computes the mean squared displacement from TR
-- **estimateDiffusionConstant**: estimates the diffusion constant
-- **fitCDFOfJumps**: fits the CDF of displacement data (jumps)
-- **fitCDFOfJumpsBrownian**: fits the CDF of jumps to a Brownian motion model
-- **fitMSD**: fits mean squared displacement data
-- **fitMSDBrownian**: fits an MSD to a Brownian motion model
-- **mleOfJumps**: finds the MLE from the likelihood of observed jumps
-- **mleOfJumpsBrownian**: finds the MLE for Brownian motion jumps
-- **plotEnsembleCDFOfJumps**: plots the CDF of jumps and an associated fit
-- **plotEnsembleMSD**: plots an ensemble MSD and an associated fit
-- **saveResults**: saves useful results of diffusion estimation analysis
 
-For a detailed example, see
-[Example_DiffusionEstimator.m](../../examples/Example_DiffusionEstimator.m).
+---
+
+methods:
+- **[brownianJumpCDF](brownianJumpCDF.m)**:
+  generates a model of the CDF of Brownian jumps
+- **[brownianJumpLikelihood](brownianJumpLikelihood.m)**:
+  computes the likelihood of given Brownian jumps
+- **[computeCDFOfJumps](computeCDFOfJumps.m)**:
+  computes the CDF (CPD) of the jumps in 'MSDStruct'.
+- **[computeMSD](computeMSD.m)**:
+  computes the mean squared displacement from TR
+- **[computeSingleTrajMSD](computeSingleTrajMSD.m)**:
+  computes the mean squared displacement from TR
+- **[estimateDiffusionConstant](estimateDiffusionConstant.m)**:
+  estimates the diffusion constant
+- **[fitCDFOfJumps](fitCDFOfJumps.m)**:
+  fits the CDF of displacement data (jumps)
+- **[fitCDFOfJumpsBrownian](fitCDFOfJumpsBrownian.m)**:
+  fits the CDF of jumps to a Brownian motion model
+- **[fitMSD](fitMSD.m)**:
+  fits mean squared displacement data
+- **[fitMSDBrownian](fitMSDBrownian.m)**:
+  fits an MSD to a Brownian motion model
+- **[mleOfJumps](mleOfJumps.m)**:
+  finds the MLE from the likelihood of observed jumps
+- **[mleOfJumpsBrownian](mleOfJumpsBrownian.m)**:
+  finds the MLE for Brownian motion jumps
+- **[plotEnsembleCDFOfJumps](plotEnsembleCDFOfJumps.m)**:
+  plots the CDF of jumps and an associated fit
+- **[plotEnsembleMSD](plotEnsembleMSD.m)**:
+  plots an ensemble MSD and an associated fit
+- **[saveResults](saveResults.m)**:
+  saves useful results of diffusion estimation analysis

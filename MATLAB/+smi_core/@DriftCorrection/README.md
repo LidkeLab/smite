@@ -1,4 +1,4 @@
-### smi_core.DriftCorrection
+### smi_core/@DriftCorrection
 
 driftCorrectKNN performs drift correction on 2D or 3D data
 provided in an SMD structure using K nearest neighbor (KNN) searching,
@@ -16,8 +16,10 @@ EXAMPLE USAGE (see also unitTest):
    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
    SMDout = SMDInter;
 
-properties:
+---
+
 ```
+properties:
    % Intra-dataset threshold (pixel)
    L_intra        = 1;
    % Inter-dataset threshold (pixel)
@@ -59,46 +61,49 @@ properties:
    Verbose        = 1;
    SMF            = [];
 ```
+
+---
+
 methods:
-- **calcDCRMSE**:
+- **[calcDCRMSE](calcDCRMSE.m)**:
   calculates the RMSE of SMD relative to true coordinates/curves
-- **changeInterRef**:
+- **[changeInterRef](changeInterRef.m)**:
   shifts SMD coordinates to new dataset reference
-- **driftCorrectBF**:
+- **[driftCorrectBF](driftCorrectBF.m)**:
   performs drift correction from brightfield images stored in an h5 file
-- **driftCorrectBFInit**:
+- **[driftCorrectBFInit](driftCorrectBFInit.m)**:
   initializes drift correction from brightfield images
-- **driftCorrectBFInter**:
+- **[driftCorrectBFInter](driftCorrectBFInter.m)**:
   computes inter-DS drift correction from brightfield images
-- **driftCorrectBFIntra**:
+- **[driftCorrectBFIntra](driftCorrectBFIntra.m)**:
   computes intra-DS drift correction from brightfield images
-- **driftCorrectKNN**:
+- **[driftCorrectKNN](driftCorrectKNN.m)**:
   calculates the drift directly from X,Y{,Z} coordinates
   by fitting a polynomial depending on time (i.e., frame number) to the frames
   with each dataset (intra-dataset), and fitting constant shifts between
   datasets (inter-dataset)
-- **driftCorrectKNNInter**:
+- **[driftCorrectKNNInter](driftCorrectKNNInter.m)**:
   Inter-dataset portion of **driftCorrectKNN**
-- **driftCorrectKNNInterPair**:
+- **[driftCorrectKNNInterPair](driftCorrectKNNInterPair.m)**:
   calculates inter-dataset drift directly from X,Y{,Z}
   coordinates (i.e., constant shifts between datasets)
-- **driftCorrectKNNIntra**:
+- **[driftCorrectKNNIntra](driftCorrectKNNIntra.m)**:
   Intra-dataset portion of **driftCorrectKNN**
-- **minD**:
+- **[minD](minD.m)**:
   Sum of nearest neighbor distances for intra/inter-dataset drift correction
-- **plotCumDrift**:
+- **[plotCumDrift](plotCumDrift.m)**:
   creates cumulative plots for Drift in any direction
-- **plotDriftAndReg**:
+- **[plotDriftAndReg](plotDriftAndReg.m)**:
   plots drift correction and brightfield corrections
-- **plotDriftCorrection**:
+- **[plotDriftCorrection](plotDriftCorrection.m)**:
   plots the computed drift correction stored in SMD
   structure for 2D or 3D data.  The plot is color coded so as to indicate the
   drift correction as a function of time
-- **plotXYDriftParametric**:
+- **[plotXYDriftParametric](plotXYDriftParametric.m)**:
   makes a parametric plot of the x,y drift model
-- **regViaDC**:
+- **[regViaDC](regViaDC.m)**:
   (registration via drift correction) takes two differently labeled
   data collections of the same biological phenomenon and attempts to align them
   using inter-dataset drift correction
-- **unitTest**:
+- **[unitTest](unitTest.m)**:
   tests smi_core.DriftCorrection.driftCorrectKNN

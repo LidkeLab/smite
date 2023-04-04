@@ -1,4 +1,4 @@
-### +smi_core/ChannelRegistration
+### +smi_core/@ChannelRegistration
 
 This class contains methods for performing channel registration and
 methods used to interpret/visualize the results.
@@ -8,9 +8,11 @@ REQUIRES:
       size(Image, [1, 2]) wasn't allowed pre-2019b).
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
+
+---
     
-properties:
 ```
+properties:
    % Single molecule fitting structure (see SingleMoleculeFitting)
    % This SMF structure is used to find localizations in the fiducial
    % files specified by FiducialFilePath.  If
@@ -134,48 +136,51 @@ properties:
    %      this class.
    Verbose = 1;
 ```
+
+---
+
 methods:
-- **convertSplitFormatToROIs**:
+- **[convertSplitFormatToROIs](convertSplitFormatToROIs.m)**:
   converts a split format to an array of ROIs
-- **estimateRegErrorLOO**:
+- **[estimateRegErrorLOO](estimateRegErrorLOO.m)**:
   estimates registration error by leave-one-out analysis
-- **estimateRegistrationError**:
+- **[estimateRegistrationError](estimateRegistrationError.m)**:
   estimates the registration error
-- **exportTransform**:
+- **[exportTransform](exportTransform.m)**:
   exports transform information into a .mat file
-- **findTransform**:
+- **[findTransform](findTransform.m)**:
   finds a channel registration transform
-- **gui**:
+- **[gui](gui.m)**:
   is the GUI method for the ChannelRegistration class
-- **loadFiducials**:
+- **[loadFiducials](loadFiducials.m)**:
   loads fiducial files and sets associated class properties
-- **pairCoordinates**:
+- **[pairCoordinates](pairCoordinates.m)**:
   pairs sets of coordinates with each other
-- **performManualCull**:
+- **[performManualCull](performManualCull.m)**:
   performs the interactive (graphical) culling process
-- **plotCoordsOnData**:
+- **[plotCoordsOnData](plotCoordsOnData.m)**:
   plots coordinates in Coordinates on top of ScaledData
-- **rescaleFiducials**:
+- **[rescaleFiducials](rescaleFiducials.m)**:
   rescales the images in Fiducials as needed
-- **simFiducials**:
+- **[simFiducials](simFiducials.m)**:
   simulates two channel fiducials to test channel registration
-- **transformCoords**:
+- **[transformCoords](transformCoords.m)**:
   transforms a set of coordinates with the given transform
-- **transformCoordsDirect**:
+- **[transformCoordsDirect](transformCoordsDirect.m)**:
   transforms a set of coordinates directly
-- **transformImages**:
+- **[transformImages](transformImages.m)**:
   transforms a set of images with the given transform
-- **transformSMD**:
+- **[transformSMD](transformSMD.m)**:
   transforms SMD structures using the specified transform
-- **transformTR**:
+- **[transformTR](transformTR.m)**:
   transforms a TR structure using the specified transform
-- **unitTest**:
+- **[unitTest](unitTest.m)**:
   tests vital functionality of smi_core.ChannelRegistration
-- **visualizeCoordTransform**:
+- **[visualizeCoordTransform](visualizeCoordTransform.m)**:
   creates visuals for a coordinate transform
-- **visualizeImageTransform**:
+- **[visualizeImageTransform](visualizeImageTransform.m)**:
   creates visuals for an image transform
-- **visualizeRegistrationError**:
+- **[visualizeRegistrationError](visualizeRegistrationError.m)**:
   visualizes the error in RegistrationTransform
-- **visualizeRegistrationResults**:
+- **[visualizeRegistrationResults](visualizeRegistrationResults.m)**:
   shows registration results on the fiducials

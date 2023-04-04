@@ -17,6 +17,8 @@ REQUIRES:
 - Statistics and Machine Learning Toolbox
 - Curve Fitting Toolbox
 
+---
+
 ```
 properties:
     % Structure of parameters (see smi_core.SingleMoleculeFitting)

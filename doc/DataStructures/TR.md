@@ -16,5 +16,5 @@ The TR structure is just an array of SMD structures, with each array
 element being an SMD structure corresponding to a single trajectory.
 
 SEE ALSO:
-  (smi_core.SingleMoleculeData)[SMD.md],
-  (smi_core.SingleMoleculeFitting)[SMF.md]
+- [smi_core.SingleMoleculeData](SMD.md),
+- [smi_core.SingleMoleculeFitting](SMF.md)

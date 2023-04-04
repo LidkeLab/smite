@@ -58,5 +58,5 @@ SMD:
 ```
 
 SEE ALSO:
-  (smi_core.SingleMoleculeFitting)[SMF.md],
-  (smi_core.TrackingResults)[TR.md]
+- [smi_core.SingleMoleculeFitting](SMF.md),
+- [smi_core.TrackingResults](TR.md)

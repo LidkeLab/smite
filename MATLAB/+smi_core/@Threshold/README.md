@@ -1,4 +1,4 @@
-### +smi_core/Threshold
+### +smi_core/@Threshold
 
 Threshold localizations based on various properties of the localizations.
 This is done by creating a *ThreshFlag* field for the SMD structure using the
@@ -9,23 +9,25 @@ localizations were eliminated and for what reasons.  **translateThreshFlag**
 can also be used to produce human readable interpretations of the
 **ThreshFlag**.
 
+---
+
 methods:
-- **applyThresh**:
+- **[applyThresh](applyThresh.m)**:
   applies ThreshFlag to perform thresholding on SMD,
   where SMD can be any appropriate smite coordinate containing structure.
-- **rejectedLocalizations**:
+- **[rejectedLocalizations](rejectedLocalizations.m)**:
   Produce plots of accepted and rejected localization fits,
   individually by reason rejected and combined by number of reasons rejected
   or by major reason rejected
-- **setMinMax**:
+- **[setMinMax](setMinMax.m)**:
   creates the MinMax structure used throughout the Threshold class
   from a provided SMF structure.  The MinMax fields contain a minimum and a
   maximum value on which to threshold
-- **setThreshFlag**:
+- **[setThreshFlag](setThreshFlag.m)**:
   Creates ThreshFlag field for SMD, the same size as SMD.X
-- **translateThreshFlag**:
+- **[translateThreshFlag](translateThreshFlag.m)**:
   is a static "wrapper" for translateThreshFlagNS
-- **translateThreshFlagNS**:
+- **[translateThreshFlagNS](translateThreshFlagNS.m)**:
   translates ThreshFlag to a human readable string
-- **unitTest**:
+- **[unitTest](unitTest.m)**:
   unitTest for setThreshFlag() in smi_core.Threshold class

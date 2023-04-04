@@ -1,5 +1,5 @@
 function results = hopkins(obj, particle_types, SMD)
-% Use the Hopkins' statistic to test the clustering of the points in P.
+% Use the Hopkins' statistic to test the clustering of the points in SMD.
 %
 % INPUTS:
 %    obj             various properties used by the algorithms

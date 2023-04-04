@@ -30,8 +30,36 @@ EITHER, generate an SMD structure with positional and intensity noise.
 (SMD_Data <- genNoisySMD) OR ALTERNATIVELY, generate the blobs without
 Poisson noise (Model) and then add it in (Data) [see genImageStack].
 
-properties
+---
+
+Examples using this class can be found in MATLAB/examples:
+- Example_Clustering.m
+- Example_StatisticsClustering.m
+- Example_simSMLM.m
+For example,
 ```
+   %% Example of generating sythetic SMLM data
+
+   %Create sim object
+
+   S=smi_sim.SimSMLM()
+   NWings=20
+   S.NDatasets=20
+   S.SZ = 64;
+   S.simStar(NWings)
+
+   % Generate Images 
+   [Model,Data]=S.genImageStack();
+
+   % Generate Noisy Coordinates
+   [SMD_Noisy]=S.genNoisySMD()
+   figure;scatter(SMD_Noisy.X,SMD_Noisy.Y)
+```
+
+---
+
+```
+properties
    SZ=256            % Linear size of image (pixels)
    Rho=30            % Fluorophore Density (fluorophore/pixel)
    NDatasets=1       % Number of datasets
@@ -70,47 +98,33 @@ properties
    % SMD_Labeled.  That is,
    %
    %    obj.SMD_Labeled.X(obj.SMD_Model.ConnectID) == obj.SMD_Model.X
+
+---
+
 ```
 methods:
-- **applyLabelEffic**:
+- **[applyLabelEffic](applyLabelEffic.m)**:
   applies labeling efficiency to an existing set of fluorophores
-- **genBlinks**:
+- **[genBlinks](genBlinks.m)**:
   generates the blinking time traces for a single particle over the given
   number of the frames considering the input parameters and returns the
   SMD_Model structure
-- **genImageStack**: generates image stacks without and with Poisson noise
-- **genModel**: generates SMD_Labeled and SMD_Model from SMD_True
-- **genNoisyData**: generates a noisy image
-- **genNoisySMD**:
+- **[genImageStack](genImageStack.m)**:
+  generates image stacks without and with Poisson noise
+- **[genModel](genModel.m)**:
+  generates SMD_Labeled and SMD_Model from SMD_True
+- **[genNoisyData](genNoisyData.m)**:
+  generates a noisy image
+- **[genNoisySMD](genNoisySMD.m)**:
   takes the SMD_Model struct as an input, generates the noisy SMD struct and
   return SMD_Data
-- **kTet**:
+- **[kTet](kTet.m)**:
   produces a circle of k equally spaced points starting at a random place
-- **simStar**: simulates the Siemen star
-- **simkTets**: generates 2D k-tets in the simulation region
+- **[simStar](simStar.m)**:
+  simulates the Siemen star
+- **[simkTets](simkTets.m)**:
+  generates 2D k-tets in the simulation region
+
 unit test:
-- **unitTest**: tests the functionality of this class
-
-Examples using this class can be found in MATLAB/examples:
-- Example_Clustering.m
-- Example_StatisticsClustering.m
-- Example_simSMLM.m
-For example,
-```
-   %% Example of generating sythetic SMLM data
-
-   %Create sim object
-
-   S=smi_sim.SimSMLM()
-   NWings=20
-   S.NDatasets=20
-   S.SZ = 64;
-   S.simStar(NWings)
-
-   % Generate Images 
-   [Model,Data]=S.genImageStack();
-
-   % Generate Noisy Coordinates
-   [SMD_Noisy]=S.genNoisySMD()
-   figure;scatter(SMD_Noisy.X,SMD_Noisy.Y)
-```
+- **[unitTest](unitTest.m)**:
+  tests the functionality of this class

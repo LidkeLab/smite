@@ -1,5 +1,6 @@
 function results = bivariateRipley(obj, particle_types, SMD1, SMD2)
-% Bivariate Ripley's statistic to test the clustering of the points in P.
+% Bivariate Ripley's statistic to test the clustering of the points in
+% SMD1 and SMD2.
 %
 % INPUTS:
 %    obj              various properties used by the algorithms

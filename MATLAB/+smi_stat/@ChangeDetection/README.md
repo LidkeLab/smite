@@ -11,8 +11,10 @@ Detection of Intensity Changes in Single Molecule and
 Molecular Dynamics Trajectories, J. Phys. Chem. B 2010
 https://doi.org/10.1021/jp906786b
 
-properties:
+---
+
 ```
+properties:
    % Input variables
 
    Data;   % Input data given to constructor or set with setData
@@ -36,6 +38,8 @@ properties:
    RejectedLogBayesFactors; % The Bayes factors for each rejected change points
                             % (size=NrejectedChangePoints)
 ```
+---
+
 Function **estimateChangePoints**(Data,LogBayesFactorThreshold)
 is the main recursive method for identifiying change points
 since it and other helper methods work on parts of the data set

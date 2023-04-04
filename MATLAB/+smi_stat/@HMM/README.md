@@ -22,9 +22,14 @@ REQUIRES:
 - Optimization Toolbox
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
+
+For a detailed example, see
+[Example_HMM.m](../../examples/Example_HMM.m).
+
+---
     
-properties:
 ```
+properties:
    % Separation between fluorophores on a dimer (pixels)
    DimerSeparation(1, 1) {mustBeFloat(DimerSeparation)} = 0.5;
    
@@ -108,30 +113,43 @@ properties:
    % Verbosity level of obj.performFullAnalysis(). (Default = 1)
    Verbose {mustBeInteger(Verbose)} = 1;
 ```
-Methods:
-- **computeDimerDurations**:
-  computes the length of dimer events in StateSequence
-- **computeLogLikelihood**: computes the LogLikelihood of a sequence in the HMM
-- **computePairSeparation**: computes separation between traj. pairs in TRArray
-- **computeViterbiPath**: estimates state sequence for a HMM using Viterbi alg
-- **createAllMovies**: creates dimer movies for all pairs in TRArray
-- **createDimerMovie**:
-  creates a movie of trajectories superimposed on raw data
-- **createSummaryPlot**: creates a multi-panel summary plot of the HMM analysis
-- **estimateRateParameters**: estimates rate parameters from dimer candidates
-- **findDimerCandidates**: finds dimer candidate pairs between TR1 and TR2
-- **findDimerCandidatesFromFiles**: creates a TRArray from the provided files
-- **generateEmissionMatrix**:
-  computes emission matrix for an observed separation
-- **generateEmissionPDFs**: creates array of emission density function handles
-- **generateTransitionMatrix**:
-  generates the transition matrix of a Markov model
-- **isolateCandidateTRArray**: isolates dimer candidate pairs in TRArray
-- **performFullAnalysis**: performs all analyses on the data in obj.TRArray
-- **plotDimerPairInfo**:
-  creates various plots related to dimer pair trajectories
-- **plotSepDistribs**: makes histograms of the distributions of separations
-- **saveResults**: saves useful results of the Hidden Markov model analysis.
 
-For a detailed example, see
-[Example_HMM.m](../../examples/Example_HMM.m).
+---
+
+methods:
+- **[computeDimerDurations](computeDimerDurations.m)**:
+  computes the length of dimer events in StateSequence
+- **[computeLogLikelihood](computeLogLikelihood.m)**:
+  computes the LogLikelihood of a sequence in the HMM
+- **[computePairSeparation](computePairSeparation.m)**:
+  computes separation between traj. pairs in TRArray
+- **[computeViterbiPath](computeViterbiPath.m)**:
+  estimates state sequence for a HMM using Viterbi alg
+- **[createAllMovies](createAllMovies.m)**:
+  creates dimer movies for all pairs in TRArray
+- **[createDimerMovie](createDimerMovie.m)**:
+  creates a movie of trajectories superimposed on raw data
+- **[createSummaryPlot](createSummaryPlot.m)**:
+  creates a multi-panel summary plot of the HMM analysis
+- **[estimateRateParameters](estimateRateParameters.m)**:
+  estimates rate parameters from dimer candidates
+- **[findDimerCandidates](findDimerCandidates.m)**:
+  finds dimer candidate pairs between TR1 and TR2
+- **[findDimerCandidatesFromFiles](findDimerCandidatesFromFiles.m)**:
+  creates a TRArray from the provided files
+- **[generateEmissionMatrix](generateEmissionMatrix.m)**:
+  computes emission matrix for an observed separation
+- **[generateEmissionPDFs](generateEmissionPDFs.m)**:
+  creates array of emission density function handles
+- **[generateTransitionMatrix](generateTransitionMatrix.m)**:
+  generates the transition matrix of a Markov model
+- **[isolateCandidateTRArray](isolateCandidateTRArray.m)**:
+  isolates dimer candidate pairs in TRArray
+- **[performFullAnalysis](performFullAnalysis.m)**:
+  performs all analyses on the data in obj.TRArray
+- **[plotDimerPairInfo](plotDimerPairInfo.m)**:
+  creates various plots related to dimer pair trajectories
+- **[plotSepDistribs](plotSepDistribs.m)**:
+  makes histograms of the distributions of separations
+- **[saveResults](saveResults.m)**:
+  saves useful results of the Hidden Markov model analysis.

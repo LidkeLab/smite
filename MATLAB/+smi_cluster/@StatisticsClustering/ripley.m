@@ -1,5 +1,5 @@
 function results = ripley(obj, particle_types, SMD)
-% Use Ripley's statistics to test the clustering of the points in P.
+% Use Ripley's statistics to test the clustering of the points in SMD.
 %
 % INPUTS:
 %    obj              various properties used by the algorithms

@@ -16,9 +16,11 @@ REQUIRES:
 
 SEE ALSO:
 - smi_psf.Zernike
+
+---
     
-properties
 ```
+properties
    Lambda          % Emission wavelength (micron)
    NA              % Numerical Aperture
    N               % Index of Refraction
@@ -36,34 +38,61 @@ properties
    MaxZCMag=81     % Max Zenike Expansion in Magnitude Smoothing
    MaxZCPhase=81   % Max Zenike Expansion in Phase Smoothing
 ```
-methods:
-- **createPSFStruct**: Creates a default PSF Structure
-- **createZernikeStruct**: Creates a Zernike Structure
-- **crlbPSFPupil**: Cramer Rao Lower Bound on (Y,X,Z,Photons,Bg)
-- **gui**: The beginnings of a GUI for dealing with PSF data
-- **optimPSFZernike**: Optimize PSF via Zernike Coef search
-- **oversamplePSFPupil**: Resamples a PSF to smaller pixels
-- **phaseRetrieval**: Phase retrieval using GS Algorithm
-- **phaseRetrievalEM**: Phase retrieval plus EM to optimize NA, Lambda
-- **phaseRetrieval_Spiral**: Phase retrieval using GS Algorithm
-- **psfROIStack**: Generates boxes of the data containing single particles
-     (blobs)
-- **rescaleOTF**: OTF rescaling
-- **scalarPSF**: PSF stack based on a scalar model with OTF rescaling
-- **scalarPSFPrasadZone**: PSF stack based on a scalar model Prasad Zones
-- **scalarPSFPupil**: PSF stack from Pupil based on a scalar model with OTF
-     Rescaling
-- **scalarPSFZernike**: PSF stack from Zernike Coefficients based on a scalar
-     model with OTF Rescaling
-- **zernikeExpansion**: xpand Image into Zernike Moments
-- **zernikeImage**: Generate a Zernike Polynomical Image from Noll Coefficient
-- **zernikeSum**: Generate an image from Noll Coefficients
 
-- **crlbPSFPupil_unitTest**: Tests crlbPSFPupil functionality
-- **optimPSFZernike_unitTest**: Tests optimPSFZernike functionality
-- **oversamplePSFPupil_unitTest**: Test and Demonstrate oversamplePFSPupil
-- **phaseRetrieval_unitTest**: Tests phaseRetrieval using GS Algorithm
-- **psfROIStack_unitTest**: Tests psfROIStack functionality
-- **scalarPSFPrasadZone_unitTest**: Test scalarPSFPrasadZone functionality
-- **zernikeImage_unitTest**: Tests zernikeImage functionality
-- **unitTest**: runs the individual unitTests
+---
+
+methods:
+- **[createPSFStruct](createPSFStruct.m)**:
+  Creates a default PSF Structure
+- **[createZernikeStruct](createZernikeStruct.m)**:
+  Creates a Zernike Structure
+- **[crlbPSFPupil](crlbPSFPupil.m)**:
+  Cramer Rao Lower Bound on (Y,X,Z,Photons,Bg)
+- **[gui](gui.m)**:
+  The beginnings of a GUI for dealing with PSF data
+- **[optimPSFZernike](optimPSFZernike.m)**:
+  Optimize PSF via Zernike Coef search
+- **[oversamplePSFPupil](oversamplePSFPupil.m)**:
+  Resamples a PSF to smaller pixels
+- **[phaseRetrieval](phaseRetrieval.m)**:
+  Phase retrieval using GS Algorithm
+- **[phaseRetrievalEM](phaseRetrievalEM.m)**:
+  Phase retrieval plus EM to optimize NA, Lambda
+- **[phaseRetrieval_Spiral](phaseRetrieval_Spiral.m)**:
+  Phase retrieval using GS Algorithm
+- **[psfROIStack](psfROIStack.m)**:
+  Generates boxes of the data containing single particles (blobs)
+- **[rescaleOTF](rescaleOTF.m)**:
+  OTF rescaling
+- **[scalarPSF](scalarPSF.m)**:
+  PSF stack based on a scalar model with OTF rescaling
+- **[scalarPSFPrasadZone](scalarPSFPrasadZone.m)**:
+  PSF stack based on a scalar model Prasad Zones
+- **[scalarPSFPupil](scalarPSFPupil.m)**:
+  PSF stack from Pupil based on a scalar model with OTF Rescaling
+- **[scalarPSFZernike](scalarPSFZernike.m)**:
+  PSF stack from Zernike Coefficients based on a scalar model with OTF Rescaling
+- **[zernikeExpansion](zernikeExpansion.m)**:
+  xpand Image into Zernike Moments
+- **[zernikeImage](zernikeImage.m)**:
+  Generate a Zernike Polynomical Image from Noll Coefficient
+- **[zernikeSum](zernikeSum.m)**:
+  Generate an image from Noll Coefficients
+
+unit tests:
+- **[crlbPSFPupil_unitTest](crlbPSFPupil_unitTest.m)**:
+  Tests crlbPSFPupil functionality
+- **[optimPSFZernike_unitTest](optimPSFZernike_unitTest.m)**:
+  Tests optimPSFZernike functionality
+- **[oversamplePSFPupil_unitTest](oversamplePSFPupil_unitTest.m)**:
+  Test and Demonstrate oversamplePFSPupil
+- **[phaseRetrieval_unitTest](phaseRetrieval_unitTest.m)**:
+  Tests phaseRetrieval using GS Algorithm
+- **[psfROIStack_unitTest](psfROIStack_unitTest.m)**:
+  Tests psfROIStack functionality
+- **[scalarPSFPrasadZone_unitTest](scalarPSFPrasadZone_unitTest.m)**:
+  Test scalarPSFPrasadZone functionality
+- **[zernikeImage_unitTest](zernikeImage_unitTest.m)**:
+  Tests zernikeImage functionality
+- **[unitTest](unitTest.m)**:
+  runs the individual unitTests

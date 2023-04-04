@@ -1,4 +1,4 @@
-### +smi_cluster/StatisticsClustering
+### +smi_cluster/@StatisticsClustering
 
 StatisticsClustering contains statistics and plots for detecting clustering.
 Data can be 2D or 3D.
@@ -26,6 +26,8 @@ structure or one SMD structure or one array.
 
 **plotCombined** is a handy way to plot the same data in several different ways
 as indicated by the user.
+
+---
 
 properties:
 ```
@@ -66,3 +68,33 @@ properties:
 
    Verbose = 1;           % verbosity level
 ```
+
+---
+
+methods:
+- **[bivariateRipley](bivariateRipley.m)**:
+  Bivariate Ripley's statistic to test the clustering of the points in
+  SMD1 and SMD2
+- **[bivariateRipley_ROIcombined](bivariateRipley_ROIcombined.m)**:
+  Use bivariate Ripley statistics to test the clustering of a series of ROIs
+  all of the same size
+- **[histogram](histogram.m)**:
+  simple histogram function
+- **[hopkins](hopkins.m)**:
+  Use the Hopkins' statistic to test the clustering of the points in SMD
+- **[hopkins_ROIcombined](hopkins_ROIcombined.m)**:
+  Use Hopkins' statistics to test the clustering of a series of ROIs
+- **[hopkinstat](hopkinstat.m)**:
+  Compute a Hopkin's statistic for the 2D particles P
+- **[hopkinstat3](hopkinstat3.m)**:
+  Compute a Hopkin's statistic for the 3D particles P
+- **[pairwiseDist](pairwiseDist.m)**:
+  plots pairwise distances and CDFs
+- **[pairwiseMutualDist](pairwiseMutualDist.m)**:
+  Plot pairwise distances and CDFs between two populations of particles
+- **[plotCombined](plotCombined.m)**:
+  Combined frequency, CDF, PDF, plotSpread, box and bar plots of the arrays y
+- **[ripley](ripley.m)**:
+  Use Ripley's statistics to test the clustering of the points in SMD
+- **[ripley_ROIcombined](ripley_ROIcombined.m)**:
+  Use Ripley's statistics to test the clustering of a series of ROIs

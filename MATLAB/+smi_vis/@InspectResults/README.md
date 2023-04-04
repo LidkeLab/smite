@@ -24,6 +24,8 @@ REQUIRES:
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
 
+---
+
 properties:
 ```
    % Single Molecule Data structure. (see smi_core.SingleMoleculeData)
