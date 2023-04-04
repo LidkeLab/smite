@@ -9,7 +9,7 @@
 - [@InspectResults](@InspectResults/README.md):
   inspect super-resolution data
 
-Functions:
+functions:
 - **contrastStretch**: scales images to the range MinMax
 - **plotCDFs**:        plots multiple CDFs on the same plot.
 - **plotImageStack**:  plots a stack of images contained in a 3D array

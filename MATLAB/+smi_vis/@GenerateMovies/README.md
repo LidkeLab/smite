@@ -7,8 +7,8 @@ REQUIRES:
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox
     
-```
 properties:
+```
    % Structure of parameters enforced in the generated movie.
    % See prepDefaults() for a description of the parameter options and
    % playMovie() for usage.

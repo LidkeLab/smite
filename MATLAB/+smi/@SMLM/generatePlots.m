@@ -35,7 +35,7 @@ function generatePlots(obj, PlotSaveDir1, PlotSaveDir2, AnalysisID, ...
 %                 "CircleIm"   2D Circle image from SR data
 %                 "CircleImDrift" 2D circle image color coded by time
 %                 (Default is to make all plots)
-%                 For example, PlotDo = ["PValue", "FitFrame", DriftIm"]
+%                 For example, PlotDo = ["PValue", "FitFrame", "DriftIm"]
 %                 NOTE: plots will only be produced if there is corresponding
 %                      data in the SMD structure!
 %

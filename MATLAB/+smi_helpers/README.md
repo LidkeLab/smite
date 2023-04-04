@@ -6,8 +6,8 @@
 - (@ROITools)[@ROITools/README.md]:
   select ROIs from an image; save in a structure
 
-Functions:
-- **addBasicGUI**:
+functions:
+- **(addBasicGUI](addBasicGUI.m)**:
   adds simple GUI controls based on the fields in 'ParamStruct'
 - **arrayMUX**:
   a multiplexer intended to generalize for most arrays

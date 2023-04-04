@@ -1,4 +1,4 @@
-### +smi_core/GaussMLE
+### [+smi_core/GaussMLE.m](GaussMLE.m)
 
 GaussMLE: Maximum Likelihood Estimate of 2D Gaussian blob parameters
 
@@ -20,12 +20,12 @@ REQUIRES:
 - smi_cuda_FindROI.cu
 
 CITATION:
-Smith, C., Joseph, N., Rieger, B. et al.
-Fast, single-molecule localization that achieves theoretically minimum
-uncertainty. Nat Methods 7, 373–375 (2010).
-https://doi.org/10.1038/nmeth.1449
+- Smith, C., Joseph, N., Rieger, B. et al.
+  Fast, single-molecule localization that achieves theoretically minimum
+  uncertainty. Nat Methods 7, 373–375 (2010).
+  https://doi.org/10.1038/nmeth.1449
 
-Huang, F., Hartwich, T., Rivera-Molina, F. et al. Video-rate nanoscopy
-using sCMOS camera–specific single-molecule localization algorithms.
-Nat Methods 10, 653–658 (2013).
-https://doi.org/10.1038/nmeth.2488
+- Huang, F., Hartwich, T., Rivera-Molina, F. et al. Video-rate nanoscopy
+  using sCMOS camera–specific single-molecule localization algorithms.
+  Nat Methods 10, 653–658 (2013).
+  https://doi.org/10.1038/nmeth.2488

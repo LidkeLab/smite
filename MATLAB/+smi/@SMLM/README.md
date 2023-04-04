@@ -20,7 +20,7 @@ properties:
     SMD               % SMD structure with final analysis results
     SMF               % Single Molecule Fitting structure
     FitFramePreFC     % Fits per frame pre-frame connection
-    PlotDo = [] % Plots to generate (all by default);see generatePlots comments
+    PlotDo = []       % Plots to generate (all by default);see generatePlots comments
     SRImageZoom  = 20 % magnification factor for SR     images generated
     SRCircImZoom = 25 % magnification factor for circle images generated
     Verbose = 1       % Verbosity level
@@ -92,7 +92,7 @@ INPUT:
                 "CircleIm"   2D Circle image from SR data
                 "CircleImDrift" 2D circle image color coded by time
                 (Default is to make all plots)
-                For example, PlotDo = ["PValue", "FitFrame", DriftIm"]
+                For example, PlotDo = ["PValue", "FitFrame", "DriftIm"]
                 NOTE: plots will only be produced if there is corresponding
                      data in the SMD structure!
 

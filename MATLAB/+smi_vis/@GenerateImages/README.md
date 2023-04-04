@@ -3,7 +3,7 @@
 GenerateImages contains static methods for general visualization functions
 of single molecule super-resolution data.
 
-Methods:
+methods:
 - **blobColorOverlay** creates color overlay of fitted emitters (green) onto
   data (red).
 - **colorImage** generates RGB image with given colormap from a grey scale

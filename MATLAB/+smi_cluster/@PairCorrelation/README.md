@@ -13,7 +13,7 @@ images (pair_correlation_Veatch is basically the original code written by
 Sarah Veatch).  pair_correlation_ROIcombined combines pair correlation on a
 series of images/ROIs.
 
-Example main program:
+Example main program (see [MATLAB/examples/Example_PairCorrelation.m](../../examples/Example_PairCorrelation.m)):
 ```
    PC = smi_cluster.PairCorrelation();
    PC.ResultsDir = 'Results';

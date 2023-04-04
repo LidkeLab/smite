@@ -7,7 +7,7 @@ series of steps (one per section, mostly optional) to analyze pairs of 1-color
 SR files (so 2-color) produced
 by smi.SMLM by computing clusters and various statistics.
 
-Methods:
+methods:
 - **defineROIs2**:
   Select ROIs simultaneously for label 1 and label 2 over all images
 - **doAnalysis**:

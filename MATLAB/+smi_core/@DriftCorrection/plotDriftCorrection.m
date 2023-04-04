@@ -1,6 +1,6 @@
 function DC_fig = plotDriftCorrection(obj, SMD, option)
 %plotDriftCorrection plots the computed drift correction stored in SMD
-% stucture for 2D or 3D data.  The plot is color coded so as to indicate the
+% structure for 2D or 3D data.  The plot is color coded so as to indicate the
 % drift correction as a function of time.
 %
 % The computed drift for each dataset is plotted with a tapering line segment

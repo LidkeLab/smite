@@ -6,16 +6,16 @@ dispatches on "algorithm" to the appropriate routines.
 - *DBSCAN_Daszykowski* is the recommended DBSCAN algorithm as it is both fast
   and stable under coordinate reordering.
 
-  Martin Ester, Hans-Peter Kriegel and J\"org Sander and Xiaowei Xu, ``A
+  Martin Ester, Hans-Peter Kriegel, J\"org Sander and Xiaowei Xu, ``A
   Density-Based Algorithm for Discovering Clusters in Large Spatial Databases
   with Noise'', in _Proceedings of 2nd International Conference on Knowledge
   Discovery and Data Mining (KDD-96)_ edited by Evangelos Simoudis, Jiawei Han
-  and Usama M. Fayyad, AAAI Press, 1996, 226--231, ISBN:1-57735-004-9,
-  DOI:10.1.1.71.1980.
+  and Usama M. Fayyad, AAAI Press, 1996, 226--231, ISBN:1-57735-004-9
+  (DOI:10.1.1.71.1980).
 
   M. Daszykowski, B. Walczak, D. L. Massart, Looking for Natural Patterns in
-  Data. Part 1: Density Based Approach, Chemom. Intell. Lab. Syst. 56 (2001)
-  83-92. 
+  Data. Part 1: Density Based Approach, Chemometrics and Intelligent
+  Laboratory Systems 56(2) (2001) 83-92. (DOI: 10.1016/S0169-7439(01)00111-3).
 
 - *Hierarchical* is Matlab's hierarchal clustering algorithm with some small
   additions.

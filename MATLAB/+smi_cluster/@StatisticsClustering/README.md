@@ -3,6 +3,9 @@
 StatisticsClustering contains statistics and plots for detecting clustering.
 Data can be 2D or 3D.
 
+See [MATLAB/examples/Example_StatisticsClustering.m](../../examples/Example_StatisticsClustering.m)
+for 2D and 3D examples.
+
 The main routines here are:
 ```
    hopkins              hopkins_ROIcombined           Hopkins' statistic
