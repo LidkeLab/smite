@@ -1,10 +1,10 @@
 %% This acts as a Makefile for the ptx files.
 
 % This only needs to be run once.  ptx and cu files will be saved to the
-% SMA/ptx directory.
+% smite/MATLAB/ptx directory.
 %
 % IMPORTANT:
-%    cuda_Make MUST be run while in the SMA/source/cuda directory.
+%    cuda_Make MUST be run while in the smite/MATLAB/source/cuda directory.
 %
 % REQUIREMENTS:
 %    Need to have a CUDA toolkit and VS2013 installed (Windows).

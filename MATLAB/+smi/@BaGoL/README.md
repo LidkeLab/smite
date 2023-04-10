@@ -110,6 +110,8 @@ PROPERTIES:
 ---
 
 methods:
+- **[analyze_all](BaGoL.m)** Implements complete BaGoL analysis of SR dataset
+
 - **[BaGoL_RJMCMC](BaGoL_RJMCMC.m)**:
   This the core BaGoL algorithm. It uses Reversible Jump Markov Chain 
   Monte Carlo to add, remove and move emitters, and to explore the 

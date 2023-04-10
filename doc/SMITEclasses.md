@@ -1,6 +1,6 @@
 ### smite namespaces and classes
 
-|***SMITE classes***|description|
+|***SMITE*** classes|description|
 -------------|---
 [MATLAB/+smi](../MATLAB/+smi/README.md):
 &nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | Bayesian Grouping of Localizations
@@ -13,7 +13,7 @@
 &nbsp;&nbsp;&nbsp;[@PairAnalysis/](../MATLAB/+smi_cluster/@PairAnalysis/README.md)                 | interface functions for PairCorrelation class
 &nbsp;&nbsp;&nbsp;[@PairCorrelation/](../MATLAB/+smi_cluster/@PairCorrelation/README.md)           | pair correlation (auto- and cross-) on ROIs
 &nbsp;&nbsp;&nbsp;[@StatisticsClustering/](../MATLAB/+smi_cluster/@StatisticsClustering/README.md) | clustering statistical analyses
-&nbsp;&nbsp;&nbsp;[MATLAB/+smi_core](../MATLAB/+smi_core/README.md):
+[MATLAB/+smi_core](../MATLAB/+smi_core/README.md):
 &nbsp;&nbsp;&nbsp;[@ChannelRegistration/](../MATLAB/+smi_core/@ChannelRegistration/README.md)      | channel registration
 &nbsp;&nbsp;&nbsp;[@DataToPhotons/](../MATLAB/+smi_core/@DataToPhotons/README.md)                  | convert raw data to photons
 &nbsp;&nbsp;&nbsp;[@DriftCorrection/](../MATLAB/+smi_core/@DriftCorrection/README.md)              | drift correction on 2D/3D data

@@ -1,61 +1,62 @@
 ### ***smite*** examples and unit tests
 
-```
 Self-contained examples of using SMITE code:
-   Example_ChangeDetection	change point detection
-G  Example_ChannelRegstration	2-color channel registration
-   Example_Clustering		various ways to invoke clustering routines
-   Example_DiffusionEstimator	diffusion estimator
-G  Example_GaussBlobs 		generate image stack of randomly located blobs
-G  Example_HMM			hidden Markov model for dimer detection
-G  Example_LocalizeData		find localizations in an image stack
-   Example_PairCorrelation	compute auto- and cross-correlations of data
-G  Example_SPT			single particle tracking
-G  Example_SPTBatch		single particle tracking using channel reg.
-   Example_StatisticsClustering	various statistical measures of clustering
-   Example_simSMLM		generate synthetic data for a Siemen's star
+
+|| example code ||
+---|---|---
+&nbsp;| [Example_ChangeDetection](Example_ChangeDetection.m)                    | change point detection
+G     | [Example_ChannelRegstration](Example_ChannelRegstration.m)              | 2-color channel registration
+&nbsp;| [Example_Clustering](Example_Clustering.m)                              | various ways to invoke clustering routines
+&nbsp;| [Example_DiffusionEstimator](Example_DiffusionEstimator.m)              | diffusion estimator
+G     | [Example_GaussBlobs](Example_GaussBlobs.m)                              | generate image stack of randomly located blobs
+G     | [Example_HMM](Example_HMM.m)                                            | hidden Markov model for dimer detection
+G     | [Example_LocalizeData](Example_LocalizeData.m)                          | find localizations in an image stack
+&nbsp;  | [Example_PairCorrelation](Example_PairCorrelation.m)                  | compute auto- and cross-correlations of data
+G     | [Example_SPT](Example_SPT.m)                                            | single particle tracking
+G     | [Example_SPTBatch](Example_SPTBatch.m)                                  | single particle tracking using channel reg.
+&nbsp;| [Example_StatisticsClustering](Example_StatisticsClustering.m)          | various statistical measures of clustering
+&nbsp;| [Example_simSMLM](Example_simSMLM.m)                                    | generate synthetic data for a Siemen's star
 
 G indicates a GPU is used.
 
 SMITE code templates requiring user-supplied data:
-   Example_Publish		generate results for a microscope experiment
-   Example_Publish_generic	as above for multiple directories of data
-   Example_SMLM_Basic		demonstrate basic SMLM functionality
-   Example_SMLM_script		example of SMLM analysis
-   hierBaGoL_wrapper		wrapper used to call BaGoL routines
-   plotROIDriver                plot dot, Gaussian or circle images of ROIs
-   simplePairCorr               step-by-step script to choose 2-label ROIs & do
-                                various analyses for ROIs separate or combined
-   simpleROIcluster             step-by-step script to choose ROIs, cluster and
-                                analyze/compare conditions for 1-label data
-   singleConditionDriver        batch cluster analysis for comparison of
-                                experimental conditions for 1-label data
-   spt_resolft_track_demo	SPT-RESOLFT example
+
+| example code ||
+---|---
+[Example_Publish](Example_Publish.m)                                            | generate results for a microscope experiment
+[Example_Publish_generic](Example_Publish_generic.m)                            | as above for multiple directories of data
+[Example_SMLM_Basic](Example_SMLM_Basic.m)                                      | demonstrate basic SMLM functionality
+[Example_SMLM_script](Example_SMLM_script.m)                                    | example of SMLM analysis
+[hierBaGoL_wrapper](hierBaGoL_wrapper.m)                                        | wrapper used to call BaGoL routines
+[plotROIDriver](plotROIDriver.m)                                                | plot dot, Gaussian or circle images of ROIs
+[simplePairCorr](simplePairCorr.m)                                              | step-by-step script to choose 2-label ROIs & do various analyses for ROIs separate or combined
+[simpleROIcluster](simpleROIcluster.m)                                          | step-by-step script to choose ROIs, cluster and analyze/compare conditions for 1-label data
+[singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
+[spt_resolft_track_demo](spt_resolft_track_demo.m)                              | SPT-RESOLFT example
 
 SMITE unit tests:
-   smi.SMLM.unitTest
-   smi.SPT.unitTestFFGC (frame-to-frame and gap closing processes)
-   smi_core.ChannelRegistration.unitTest
-   smi_core.DataToPhotons.unitTest
-   smi_core.DriftCorrection.unitTest
-   smi_core.FRC.unitTest
-   smi_core.FrameConnection.unitTest
-   smi_core.LocalizeData.unitTest
-   smi_core.Threshold.unitTest
-   smi_psf.PointSpreadFunction.unitTest (does the following unit tests)
-      smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest
-      smi_psf.PointSpreadFunction.optimPSFZernike_unitTest
-      smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest
-      smi_psf.PointSpreadFunction.phaseRetrieval_unitTest
-      smi_psf.PointSpreadFunction.psfROIStack_unitTest
-      smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest
-      smi_psf.PointSpreadFunction.zernikeImage_unitTest
-   smi_psf.Zernike.unitTest
-   smi_sim.SimSMLM.unitTest
-   smi_vis.GenerateImages.blobColorOverlay_unitTest
-   smi_vis.GenerateImages.circleImage_unitTest
-   smi_vis.GenerateImages.colorImage_unitTest
-   smi_vis.GenerateImages.driftImage_unitTest
-   smi_vis.GenerateImages.gaussianImage_unitTest
-   smi_vis.GenerateImages.histogramImage_unitTest
-```
+- [smi.SMLM.unitTest](../+smi/@SMLM/unitTest.m)
+- [smi.SPT.unitTestFFGC](../+smi/@SPT/unitTestFFGC.m) (frame-to-frame and gap closing processes)
+- [smi_core.ChannelRegistration.unitTest](../+smi_core/@ChannelRegistration/unitTest.m)
+- [smi_core.DataToPhotons.unitTest](../+smi_core/@DataToPhotons/unitTest.m)
+- [smi_core.DriftCorrection.unitTest](../+smi_core/@DriftCorrection/unitTest.m)
+- [smi_core.FRC.unitTest](../+smi_core/@FRC/unitTest.m)
+- [smi_core.FrameConnection.unitTest](../+smi_core/@FrameConnection/unitTest.m)
+- [smi_core.LocalizeData.unitTest](../+smi_core/@LocalizeData/unitTest.m)
+- [smi_core.Threshold.unitTest](../+smi_core/@Threshold/unitTest.m)
+- [smi_psf.PointSpreadFunction.unitTest](../+smi_psf/@PointSpreadFunction/unitTest) (does the following unit tests)
+> [smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest](../+smi_psf/@PointSpreadFunction/crlbPSFPupil_unitTest.m)
+> [smi_psf.PointSpreadFunction.optimPSFZernike_unitTest](../+smi_psf/@PointSpreadFunction/optimPSFZernike_unitTest.m)
+> [smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest](../+smi_psf/@PointSpreadFunction/oversamplePSFPupil_unitTest.m)
+> [smi_psf.PointSpreadFunction.phaseRetrieval_unitTest](../+smi_psf/@PointSpreadFunction/phaseRetrieval_unitTest.m)
+> [smi_psf.PointSpreadFunction.psfROIStack_unitTest](../+smi_psf/@PointSpreadFunction/psfROIStack_unitTest.m)
+> [smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest](../+smi_psf/@PointSpreadFunction/scalarPSFPrasadZone_unitTest.m)
+> [smi_psf.PointSpreadFunction.zernikeImage_unitTest](../+smi_psf/@PointSpreadFunction/zernikeImage_unitTest.m)
+- [smi_psf.Zernike.unitTest](../+smi_psf/@Zernike/unitTest.m)
+- [smi_sim.SimSMLM.unitTest](../+smi_sim/@SimSMLM/unitTest.m)
+- [smi_vis.GenerateImages.blobColorOverlay_unitTest](../+smi_vis/@GenerateImages/blobColorOverlay_unitTest.m)
+- [smi_vis.GenerateImages.circleImage_unitTest](../+smi_vis/@GenerateImages/circleImage_unitTest.m)
+- [smi_vis.GenerateImages.colorImage_unitTest](../+smi_vis/@GenerateImages/colorImage_unitTest.m)
+- [smi_vis.GenerateImages.driftImage_unitTest](../+smi_vis/@GenerateImages/driftImage_unitTest.m)
+- [smi_vis.GenerateImages.gaussianImage_unitTest](../+smi_vis/@GenerateImages/gaussianImage_unitTest.m)
+- [smi_vis.GenerateImages.histogramImage_unitTest](smi_vis/@GenerateImages/histogramImage_unitTest.m)

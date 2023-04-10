@@ -16,12 +16,12 @@ authors:
     equal-contrib: true
   - name: Mohamadreza Fazel
     affiliation: 1
+  - name: Sajjad Khan
+    affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
     orcid: 0000-0002-2571-0418
     affiliation: 1
   - name: Sandeep Pallikkuth
-    affiliation: 1
-  - name: Sajjad Khan
     affiliation: 1
   - name: Marjolein B. M. Meddens
     affiliation: 1

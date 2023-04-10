@@ -29,22 +29,32 @@ indicate the center of the pixel that is one down from the top, but
 in the left-most column.
 
 ## Installation
-Clone (MacOS/Linux example; similar for Windows) into ~/Documents/MATLAB
+Clone (Linux/MacOS example; similar for Windows) into `~/Documents/MATLAB`
 the ***smite*** GitHub distribution
-(https://github.com/LidkeLab/smite.git).  Add to Documents/MATLAB/startup.m
-the following:
+(https://github.com/LidkeLab/smite.git).  Add to
+`~/Documents/MATLAB/startup.m` the following:
 ```
    addpath '~/Documents/MATLAB/smite/MATLAB'
-   setupSMITE;
+   setupSMITE
 ```
-Directories
-MATLAB/source/C
-cuda_Make
-MATLAB/source/C
-mex_Make
+In addition, depending on the machine's architecture, you may need to
+compile the mex files in `~/Documents/MATLAB/smite/MATLAB/source/c`
+using `mex_Make`:
+```
+   cd ~/Documents/MATLAB/smite/MATLAB/source/c
+   mex_Make
+```
+and the CUDA files in `~/Documents/MATLAB/smite/MATLAB/source/cuda`
+using `cuda_Make`:
+```
+   cd ~/Documents/MATLAB/smite/MATLAB/source/cuda
+   cuda_Make
+```
+The compiled files will be placed in the `smite/MATLAB/mex` or
+`smite/MATLAB/ptx` directories, respectively.
 
 ### Dependencies
-For full functionality ***smite*** requires:
+For full functionality, ***smite*** requires:
 - Linux, MacOS or Windows
 - MATLAB version R2021a or later
 - Nvidia GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
@@ -116,16 +126,16 @@ Create an SMLM object.  When there are no input aruments, it will open the GUI:
 ```
 Use the GUI to navigate to a test dataset such as available from
 
-- [Pallikkuth, S., Martin, C., Farzam, F., Edwards, J. S., Lakin,
+- Pallikkuth, S., Martin, C., Farzam, F., Edwards, J. S., Lakin,
   M. R., Lidke, D. S., & Lidke, K. A. (2018). Supporting data for
   Sequential Super-Resolution Imaging using DNA Strand Displacement
   [Data set]. University of New Mexico.
-  https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files)
-- [Wester, Michael J., Mazloom-Farsibaf, Hanieh, Farzam, Farzin,
+  [https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files)
+- Wester, Michael J., Mazloom-Farsibaf, Hanieh, Farzam, Farzin,
   Fazel, Mohamadreza, Meddens, Marjolein B. M., & Lidke, Keith A.
   (2020), Comparing Lifeact and Phalloidin for super-resolution imaging
   of actin in fixed cells, Dryad, Dataset,
-  https://doi.org/10.5061/dryad.xsj3tx9cn](https://datadryad.org/stash/dataset/doi:10.5061/dryad.xsj3tx9cn).
+  [https://doi.org/10.5061/dryad.xsj3tx9cn](https://datadryad.org/stash/dataset/doi:10.5061/dryad.xsj3tx9cn).
 
 Set SMF values from within the GUI and run either a test dataset
 or analyze all datasets.

@@ -18,11 +18,11 @@ SMLM and SPT data sets.
 List of [***smite*** namespaces and classes](SMITEclasses.md).
 
 The core functionality of ***smite*** (contained in the namespace
-`+smi`) are
+`+smi`) is
 - [SMLM](../MATLAB/+smi/@SMLM/README.md) (Single Molecule Localization
-  Microscopy), which processes 2D super-resolution (SR) data in .h5
-  files with standard [contents](FileFormats/H5.md). Data can also be
-  stored in .mat files under a variable with a name like "sequence";;
+  Microscopy), which processes 2D super-resolution (SR) data in
+  [.h5 files](FileFormats/H5.md) with standard contents.  Data can also be
+  stored in .mat files under a variable with a name like `sequence`;
 - [Publish](../MATLAB/+smi/@Publish/README.md), which batch-processes
   SR data assuming the .h5 files follow a standard naming convention
   (obj.CoverslipDir/Cell\*/Label\*/Data\*.h5);
@@ -36,11 +36,15 @@ The core functionality of ***smite*** (contained in the namespace
 Note: A [camera calibration file](FileFormats/CalibrationFile.md) is
 used by SMLM (and hence Publish and SPT) as well.
 
-Corresponding examples are presented in:
+Corresponding examples/tutorials are presented in:
 - [SMLM](../MATLAB/examples/Example_SMLM_Basic.m)
+  [SMLM tutorial](doc/Tutorials/SMLM.md)
 - [Publish](../MATLAB/examples/Example_Publish.m)
-- [SPT](../MATLAB/examples/Example_SPT.m)
-- BaGoL:
+  [Publish tutorial](doc/Tutorials/Publish.md)
+- [SPT](doc/xample_SPT.m)
+  [SPT tutorial](doc/Tutorials/SPT.md)
+- BaGoL
+  [BaGoL tutorial](doc/Tutorials/BaGoL.md)
 ```
   B=BaGoL()       % create object
   B.SMD=....      % set properties

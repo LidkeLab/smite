@@ -76,3 +76,43 @@ properties:
     % Structure containing several analysis results.
     ResultsStruct = struct([]);
 ```
+
+---
+
+methods:
+- **[computeBFShifts](computeBFShifts.m)**:
+  computes subROI shifts from brightfield data
+- **[computeRegCorrection](computeRegCorrection.m)**:
+  computes the registration corrections made
+- **[defineShiftMask](defineShiftMask.m)**:
+  generates a mask from the array of shifts LocalImShifts
+- **[estimateLocalCoordShifts](estimateLocalCoordShifts.m)**:
+  estimates local shifts between two SMDs
+- **[estimateLocalImShifts](estimateLocalImShifts.m)**:
+  estimates local shifts between two images
+- **[genAlignMovies](genAlignMovies.m)**:
+  generates movies related to brightfield registration
+- **[genAlignResults](genAlignResults.m)**:
+  produces figures/info related to brightfield registration
+- **[genAlignStats](genAlignStats.m)**:
+  generates interesting plots from AlignRegStruct
+- **[genAlignXCorr](genAlignXCorr.m)**:
+  generates xcorr curve data for AlignRegStruct
+- **[genBFMask](genBFMask.m)**:
+  masks overlays based on brightfield shifts
+- **[genOverlayResults](genOverlayResults.m)**:
+  generates some two-color overlay results
+- **[genSROverlays](genSROverlays.m)**:
+  generates various types of  SR overlay images
+- **[makeOverlayPlots](makeOverlayPlots.m)**:
+  makes interesting plots from two color overlays
+- **[performFullAnalysis](performFullAnalysis.m)**:
+  is the main run method for the smi.Publish class
+- **[plotXYRegError](plotXYRegError.m)**:
+  plots the x,y registration error in a scatter plot
+- **[processCell](processCell.m)**:
+  will process data corresponding to CellName
+- **[processLabel](processLabel.m)**:
+  processes the SR data for the specified label
+- **[shiftToBestReg](shiftToBestReg.m)**:
+  shifts coordinates based on best alignment results

@@ -10,7 +10,7 @@ produced earlier and fed into SMLM or it is created interactively when SMLM
 is invoked.  The output is a Results.mat file holding the SMF and Single
 Molecule Data (SMD) structures, the latter containing the processed data.  In
 addition, various plots describing the processed data are created and placed
-in a directory under Results identifying the dataset.  This identification is
+in a directory under Results/ identifying the dataset.  This identification is
 derived from the original dataset's name, optionally with an analysis ID
 appended.  See generatePlots (below) for more details on the plots produced.
 
@@ -34,10 +34,10 @@ properties:
 
 ---
 
-analyzeAll loops over a list of datasets and creates an SMD.
+**analyzeAll** loops over a list of datasets and creates an SMD.
 If DatasetList not provided, use obj.SMD.Data.DatasetList .
 
-analyzeAll flow:
+**analyzeAll** flow:
 
 ```
 analyzeAll:
@@ -58,7 +58,7 @@ analyzeAll:
 
 ---
 
-generatePlots creates all histograms and plots for an SMD structure.
+**generatePlots** creates all histograms and plots for an SMD structure.
 
 ```
 INPUT:
@@ -101,3 +101,30 @@ INPUT:
 OUTPUT:
    The figures are saved in .png format in PlotSaveDir1/2.
 ```
+
+methods:
+- **[SMLM](SMLM.m)**:
+  Create an SMLM object
+- **[fullAnalysis](SMLM.m)**:
+  analyzes all data, saves results and plots
+- **[testFit](SMLM.m)**:
+  performs detailed analysis and feedback of one dataset
+- **[analyzeAll](SMLM.m)**:
+  loops over a list of datasets and creates an SMD
+- **[analyzeDataset](SMLM.m)**:
+  loads and analyzes one dataset
+- **[createDirectories](SMLM.m)**:
+  creates directories for saving results in throughout the calculations
+- **[saveResults](SMLM.m)**:
+  saves all results and plots in subfolder.  Flow:  
+  (1) Save SMD and SMF structures  
+  (2) generatePlots (plots saved for fullAnalysis, displayed for testFit)
+
+- **[fitsPerFrame](fitsPerFrame.m)**:
+  finds the fits per frame for the localizations in the given SMD structure
+- **[generatePlots](generatePlots.m)**:
+  creates all histograms and plots for an SMD structure (see above)
+- **[gui](gui.m)**:
+  generates a GUI to facilitate use of the SMLM class
+- **[unitTest](unitTest.m)**:
+  Tests all functionality of smi.SMLM
