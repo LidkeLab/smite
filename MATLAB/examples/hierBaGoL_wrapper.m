@@ -12,7 +12,7 @@
 % loop as a crash will cause ALL of the non-finished parallel jobs to restart.
 % Such _Results.mat files should be analyzed in separate MATLABs.
 %
-% NOTE: MAPN_*.mat files are always produced containng simply the MAPN
+% NOTE: MAPN_*.mat files are always produced containing simply the MAPN
 % coordinates.  See +smi/@BaGoL/hierBaGoL_analysis.m for more details on files
 % produced.
 %
@@ -51,28 +51,32 @@
 % synthetic data, DNA origami constructs and biological structures using
 % DNA-PAINT and dSTORM.
 %
-% Pre-filtering actions (frame connection and NN not used for dSTORM data):
+% Suggested Pre-filtering actions (frame connection and NN not used for dSTORM
+% data) [NOTE that the middle four actions should be performed during the SMLM
+% analysis, e.g., Publish]:
 %
 % SR data -> remove localizations with negative coordinates
-%         -> intensity filter (InMeanMultiplier)
-%         -> inflate standard errors (SE_Adjust)
-%         -> frame connection, removing connections which involve only N_FC
-%            frames
+%            [smi_helpers.Filters.filterNonNeg called by hierBaGoL_analysis]
+%         -> intensity filter [SMF.Thresholding.InMeanMultiplier]
+%         -> inflate standard errors [SMF.Data.SEAdjust]
+%         -> frame connection, removing connections which involve only a
+%            specified number of frames [SMF.FrameConnection.MinNFrameConns]
 %         -> Nearest Neighbor filter (N_NN) --- Do not use on dSTORM data!
+%            [SMF.Thresholding.NNMedianMultiplier,
+%             SMF.Thresholding.MinNumNeighbors]
 %         -> BaGoL (via parfor calling hierBaGoL_analysis on each dataset)
 %
-% The pre-filtering is all now in SMLM, although SE_Adjust can be set here as
-% well if not done previously.
+% The pre-filtering (except for removing negative coordinates) is all now in
+% SMLM, although SE_Adjust can be set here as well.
 
 % ----------------------------------------------------------------------
 
 % Output directory name.
-%Results_BaGoL = 'Results_BaGoLHier';
-Results_BaGoL = 'preC';
+Results_BaGoL = 'Results_BaGoLHier';
 
 % Generic parameters.
 BaGoLParams.ImageSize = 256;        % (pixel)
-%BaGoLParams.PixelSize = 108.018;    % (nm) [TIRF]
+%BaGoLParams.PixelSize = 108.018;    % camera back projected size (nm) [TIRF]
 BaGoLParams.PixelSize = 97.8;       % (nm) [sequential]
 BaGoLParams.OutputPixelSize = 4;    %2; % pixel size for posterior images (nm)
 BaGoLParams.N_Burnin = 32000;       % Length of Burn-in chain
@@ -97,19 +101,17 @@ BaGoLParams.Y_Adjust = [];
 BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 %BaGoLParams.SE_Adjust = [0, 0];     % Precision inflation applied to SE (nm)
 
-% The values for ROIsz and OverLap directly below are good for denser data as
-% less computational effort is required, so the code runs faster.  The second
-% set of values can be used for sparser data to generate larger ROIs, but may
-% produce artifacts with dense data.
+% The values for ROIsz and OverLap directly below are good overall for much
+% data, but note that the larger the ROIsz, the more the computational effort.
+% Artifacts in dense data can come about if the ROIsz is too large.  The
+% pre-clustering cutoff should be around the localization precision.
 BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
 BaGoLParams.Cutoff = 30;            % Pre-clustering cutoff (nm)
-%BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
-%BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
-%BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
-%BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
+%BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)
+%BaGoLParams.OverLap = 10;           % Size of overlapping region (nm)
 
 % k and theta below are the shape and scale parameters for the Gamma
 % probability distribution function.  If just one parameter is provided,

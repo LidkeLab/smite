@@ -34,7 +34,7 @@ NOTE:
       .../FRCresolution_software/matlabdistribution/FRCresolutionfunctions
 ```
    where often ... = /Documents/MATLAB.  In the FRCresolutionfunctions, copy
-   smooth.m from the MATLAB Curve Fitting Toolbox into cfsmooth.m .  For
+   smooth.m from the MATLAB Curve Fitting Toolbox into cfsmooth.m.  For
    example, look in
 ```
       MATLAB_DISTRIBUTION/toolbox/curvefit/curvefit/smooth.m

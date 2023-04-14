@@ -3,11 +3,11 @@
 This [example](BaGoL_EGFR_dSTORM.m) is slightly modified (`EGF = BaGoL;`
 replaced by `EGF = smi.BaGoL;`) from the BaGoL distribution example of
 the same name found at
-[https://github.com/LidkeLab/BaGoL](https://github.com/LidkeLab/BaGoL).
+[https://github.com/LidkeLab/BaGoL](https://github.com/LidkeLab/BaGoL)
 (under Software).  Two other examples of running BaGoL and expected results
 can be found there as well.  This software can also be found in *Code Ocean*:
 
-Mohamadreza Fazel, Michael J. Wester, David J. Schodt, Sebastian Restrepo
+> Mohamadreza Fazel, Michael J. Wester, David J. Schodt, Sebastian Restrepo
 Cruz, Sebastian Strauss, Florian Schueder, Thomas Schlichthaerle, Jennifer M.
 Gillette, Diane S. Lidke, Bernd Rieger, Ralf Jungmann, Keith A. Lidke,
 "BaGoL (Bayesian Grouping of Localizations) [Source Code]",
@@ -18,9 +18,17 @@ Gillette, Diane S. Lidke, Bernd Rieger, Ralf Jungmann, Keith A. Lidke,
 Details on [BaGoL properties](../../MATLAB/+smi/@BaGoL/README.md) used in
 the above example are described more fully, along with a list of BaGoL methods.
 
+In addition,
+[MATLAB/examples/hierBaGoL_wrapper](../../MATLAB/examples/hierBaGoL_wrapper.m)
+is a script for processing multiple hierarchical BaGoL datasets or
+splitting a single dataset into multiple previously defined ROIs.
+See the [summary](hierBaGoL_wrapperSummary.md) for further details.
+
+---
+
 A full reference to the BaGoL paper:
 
-Mohamadreza Fazel, Michael J. Wester, David J. Schodt, Sebastian Restrepo
+> Mohamadreza Fazel, Michael J. Wester, David J. Schodt, Sebastian Restrepo
 Cruz, Sebastian Strauss, Florian Schueder, Thomas Schlichthaerle, Jennifer M.
 Gillette, Diane S. Lidke, Bernd Rieger, Ralf Jungmann and Keith A. Lidke,
 "High-Precision Estimation of Emitter Positions using Bayesian Grouping of

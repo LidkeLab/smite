@@ -26,7 +26,7 @@
 &nbsp;&nbsp;&nbsp;[@SingleMoleculeFitting/](../MATLAB/+smi_core/@SingleMoleculeFitting/README.md)  | define SMF structure
 &nbsp;&nbsp;&nbsp;[@Threshold/](../MATLAB/+smi_core/@Threshold/README.md)       | threshold based on various SMLM properties
 &nbsp;&nbsp;&nbsp;[@TrackingResults/](../MATLAB/+smi_core/@TrackingResults/README.md)              | define Tracking Results (TR) structure
-&nbsp;&nbsp;&nbsp;[GaussMLE.m](../MATLAB/+smi_core/GaussMLE.m/README.md)        | max likelihood estimate of 2D Gaussian blobs
+&nbsp;&nbsp;&nbsp;[GaussMLE.m](../MATLAB/+smi_core/README_GaussMLE.md)        | max likelihood estimate of 2D Gaussian blobs
 [MATLAB/+smi_helpers](../MATLAB/+smi_helpers/README.md):
 &nbsp;&nbsp;&nbsp;[@Filters/](../MATLAB/+smi_helpers/@Filters/README.md)        | filters useful for BaGoL operating on SMDs
 &nbsp;&nbsp;&nbsp;[@ROITools/](../MATLAB/+smi_helpers/@ROITools/README.md)      | select ROIs from an image; save in a structure

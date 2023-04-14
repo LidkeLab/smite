@@ -1,13 +1,15 @@
 ### +smi_helpers
 
 +smi_helpers is the namespace for helper functions and classes of ***smite***:
-- (@Filters)[@Filters/README.md]:
+- [@Filters](@Filters/README.md):
   filters useful for BaGoL operating on SMDs
-- (@ROITools)[@ROITools/README.md]:
+- [@ROITools](@ROITools/README.md):
   select ROIs from an image; save in a structure
 
+---
+
 functions:
-- **(addBasicGUI](addBasicGUI.m)**:
+- **[addBasicGUI](addBasicGUI.m)**:
   adds simple GUI controls based on the fields in 'ParamStruct'
 - **[arrayMUX](arrayMUX.m)**:
   a multiplexer intended to generalize for most arrays

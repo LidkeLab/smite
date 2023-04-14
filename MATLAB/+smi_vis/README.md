@@ -9,6 +9,8 @@
 - [@InspectResults](@InspectResults/README.md):
   inspect super-resolution data
 
+---
+
 functions:
 - **[contrastStretch](contrastStretch.m)**:
   scales images to the range MinMax

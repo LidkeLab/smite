@@ -36,15 +36,15 @@ The core functionality of ***smite*** (contained in the namespace
 Note: A [camera calibration file](FileFormats/CalibrationFile.md) is
 used by SMLM (and hence Publish and SPT) as well.
 
-Corresponding examples/tutorials are presented in:
+Corresponding examples/extended examples are presented in:
 - [SMLM](../MATLAB/examples/Example_SMLM_Basic.m)
-  [SMLM tutorial](doc/Tutorials/SMLM.md)
+  [SMLM_ExtExample](Examples/ExtSMLM.md)
 - [Publish](../MATLAB/examples/Example_Publish.m)
-  [Publish tutorial](doc/Tutorials/Publish.md)
-- [SPT](doc/xample_SPT.m)
-  [SPT tutorial](doc/Tutorials/SPT.md)
+  [Publish_ExtExample](ExtExamples/Publish.md)
+- [SPT](../MATLAB/examples/Example_SPT.m)
+  [SPT_ExtExample](ExtExamples/SPT.md)
 - BaGoL
-  [BaGoL tutorial](doc/Tutorials/BaGoL.md)
+  [BaGoLExtExample](ExtExamples/BaGoL.md)
 ```
   B=BaGoL()       % create object
   B.SMD=....      % set properties
@@ -59,3 +59,6 @@ structures are used to organize the analysis parameters and data:
   the data results;
 - [TR](DataStructures/TR.md) (Tracking Results), which is a variation
   of SMD used for tracking data results.
+
+Many [further examples](../MATLAB/examples/README.md) demonstrate
+various ***smite*** functionalities.

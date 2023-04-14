@@ -129,8 +129,8 @@ Use the GUI to navigate to a test dataset such as available from
 - Pallikkuth, S., Martin, C., Farzam, F., Edwards, J. S., Lakin,
   M. R., Lidke, D. S., & Lidke, K. A. (2018). Supporting data for
   Sequential Super-Resolution Imaging using DNA Strand Displacement
-  [Data set]. University of New Mexico.
-  [https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files)
+  [Data set]. University of New Mexicom
+  [https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files).
 - Wester, Michael J., Mazloom-Farsibaf, Hanieh, Farzam, Farzin,
   Fazel, Mohamadreza, Meddens, Marjolein B. M., & Lidke, Keith A.
   (2020), Comparing Lifeact and Phalloidin for super-resolution imaging

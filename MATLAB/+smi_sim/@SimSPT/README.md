@@ -5,6 +5,9 @@ single-particle tracking (SPT) data, including realistic raw data and
 ground-truth trajectories.
 Class structure is modeled on smi_sim.SimSMLM .
 
+properties:
+- SimParams = struct(); % Structure of parameters used in the simulation.
+
 ---
 
 Examples using this class can be found in MATLAB/examples:
@@ -30,9 +33,6 @@ See [defineDefaultParams](defineDefaultParams.m)
 for definitions of the above parameters.
 
 ----
-
-properties:
-- SimParams = struct(); % Structure of parameters used in the simulation.
 
 methods:
 - **[applyBoundaryCondition](applyBoundaryCondition.m)**:

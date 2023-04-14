@@ -102,6 +102,8 @@ OUTPUT:
    The figures are saved in .png format in PlotSaveDir1/2.
 ```
 
+---
+
 methods:
 - **[SMLM](SMLM.m)**:
   Create an SMLM object

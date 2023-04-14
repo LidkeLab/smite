@@ -12,6 +12,8 @@ called by this routine.  getROI can take many types of sources (src):
 - or directly from a data structure with fields X and Y (and X_SE, Y_SE or
      X_STD, Y_STD).
 
+---
+
 A simple invocation of getROI for a single label image is as follows:
 ```
    RT = ROITools;

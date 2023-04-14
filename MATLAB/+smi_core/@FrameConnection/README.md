@@ -35,6 +35,7 @@ properties:
    SMF % see SingleMoleculeFitting class
    SMD % see SingleMoleculeData class
    Verbose = 1; % (Default = 1) Verbosity level of main workflow
+```
 
 ---
 

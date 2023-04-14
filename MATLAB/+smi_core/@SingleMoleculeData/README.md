@@ -13,19 +13,19 @@ The structure has these [properties](../../../doc/DataStructures/SMD.md).
 ---
 
 methods:
--- **[catSMD](catSMD.m)**:
-   concatenates two SMD structures into one
--- **[computeDensity](computeDensity.m)**:
-   estimates the per frame density of observed emitters
--- **[computeDensityImage](computeDensityImage.m)**:
-   estimates the local density of observed emitters
--- **[defineSMDMask](defineSMDMask.m)**:
-   defines a boolean for masking SMD localizaions.
--- **[extractDatasets](extractDatasets.m)**:
-   extracts the 'Datasets' from 'SMD'
--- **[isolateSubROI](isolateSubROI.m)**:
-   isolates localizations within ROI
--- **[isolateSubSMD](isolateSubSMD.m)**:
-   isolates a subset of SMD defined by SubIndices
--- **[maskSMD](maskSMD.m)**:
-   masks the input SMD based on the image Mask
+- **[catSMD](catSMD.m)**:
+  concatenates two SMD structures into one
+- **[computeDensity](computeDensity.m)**:
+  estimates the per frame density of observed emitters
+- **[computeDensityImage](computeDensityImage.m)**:
+  estimates the local density of observed emitters
+- **[defineSMDMask](defineSMDMask.m)**:
+  defines a boolean for masking SMD localizaions.
+- **[extractDatasets](extractDatasets.m)**:
+  extracts the 'Datasets' from 'SMD'
+- **[isolateSubROI](isolateSubROI.m)**:
+  isolates localizations within ROI
+- **[isolateSubSMD](isolateSubSMD.m)**:
+  isolates a subset of SMD defined by SubIndices
+- **[maskSMD](maskSMD.m)**:
+  masks the input SMD based on the image Mask

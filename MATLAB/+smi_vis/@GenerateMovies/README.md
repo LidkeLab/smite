@@ -31,7 +31,7 @@ properties:
 
 ---
 
-Methods:
+methods:
 - **[addAxesTicks](addAxesTicks.m)**:
   prepares/displays tick labels on the axes.
 - **[addTimeStamp](addTimeStamp.m)**:

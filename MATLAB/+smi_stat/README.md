@@ -9,6 +9,8 @@
 - [@HMM](@HMM/README.md):
   hidden Markov model methods
 
+---
+
 Functions:
 - **[bootstrapFit](bootstrapFit.m)**:
   minimizes CostFunction with constraints and performs a basic bootstrap
