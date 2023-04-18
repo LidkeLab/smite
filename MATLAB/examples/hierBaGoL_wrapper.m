@@ -107,7 +107,7 @@ BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 % pre-clustering cutoff should be around the localization precision.
 BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
-BaGoLParams.Cutoff = 30;            % Pre-clustering cutoff (nm)
+BaGoLParams.Cutoff = 25;            % Pre-clustering cutoff (nm)
 %BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)

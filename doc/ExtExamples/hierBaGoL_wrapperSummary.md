@@ -1,4 +1,4 @@
-### hierBaGoL_wrapperSummary
+### hierBaGoL_wrapper Summary
 
 [examples/hierBaGoL_wrapper](../../MATLAB/examples/hierBaGoL_wrapper.m)
 is a script for processing multiple hierarchical BaGoL datasets or
@@ -50,6 +50,64 @@ form Cell_nn_Label_0n_Results_ROI_mm.
 [smi_cluster.PairAnalysis.overlayBaGoLROIs](../../MATLAB/+smi_cluster/@PairAnalysis/overlayBaGoLROIs.m)
 is a useful function for plotting the ROIs produced by this process,
 both 1-color and 2-color.
+
+---
+
+An example input file structure with `ROIs = true;` and 2 ROIs selected
+previously:
+```
+DATA/
+  ResultsStructs/
+    Cell_02_Label_01_Results.mat'
+    Analysis/
+      Cell_02_Label_01_Results_ROIs.mat'
+```
+results in these files:
+```
+      BaGoL_Results_Cell_02_Label_01_Results_ROI_01_ResultsStruct.mat
+      BaGoL_Results_Cell_02_Label_01_Results_ROI_02_ResultsStruct.mat
+      MAPN_Cell_02_Label_01_Results_ROI_01.mat
+      MAPN_Cell_02_Label_01_Results_ROI_02.mat
+      Cell_02_Label_01_Results_ROI_01/
+        BaGoL_X-SE.png
+        BaGoL_Y-SE.png
+        FULL.png
+        LocsScatter-MAPN.fig
+        MAPN.mat
+        MAPN-Im.png
+        MAPN_NmeanHist.png
+        NND.png
+        NNDScaledData.png
+        NNDScaledRandom.png
+        NND.txt
+        Overlay_cPost_rMap.png
+        Overlay_gSR_bPost_rMap.png
+        Overlay_gSR_mMap.png
+        Overlay_gSR_mPost.png
+        Overlay_SR_Map_circle.png
+        Post-Im.png
+        prior.txt
+        ROI.png
+        SR-Im.png
+        Xi.png
+        XiChain.png
+      Cell_02_Label_01_Results_ROI_02/
+        ...
+```
+- The scale bar throughout is 500 nm.
+- FULL.png and ROI.png are the SR localizations in the full cell and the ROI,
+  respectively.
+- Overlay_cPost_rMap: posterior localizations are colored cyan and MAPN red.
+- Overlay_gSR_bPost_rMap: SR, posterior and MAPN localizations are colored
+  green, blue and red, respectively.
+- Overlay_gSR_mMap: SR localizations are colored green and MAPN magenta.
+- Overlay_SR_Map_circle use the same color scheme as above (SR: green, MAPN:
+  magenta) and plots circles instead of Gaussian blobs where the radii of the
+  circles are proportional to the standard error (SE) of the localizations.
+- prior.txt is the estimated prior for a second run of the data, which is not
+  needed in hierarchical BaGoL.
+
+---
 
 Suggested pre-filtering actions (frame connection and NN not used for dSTORM
 data) [NOTE that the middle four actions should be performed during the SMLM
@@ -111,7 +169,7 @@ BaGoLParams.SE_Adjust = 0;          % Precision inflation applied to SE (nm)
 % pre-clustering cutoff should be around the localization precision.
 BaGoLParams.ROIsz = 500;            % ROI size for RJMCMC (nm)
 BaGoLParams.OverLap = 50;           % Size of overlapping region (nm)
-BaGoLParams.Cutoff = 30;            % Pre-clustering cutoff (nm)
+BaGoLParams.Cutoff = 25;            % Pre-clustering cutoff (nm)
 %BaGoLParams.ROIsz = 100;            % ROI size for RJMCMC (nm)
 %BaGoLParams.OverLap = 25;           % Size of overlapping region (nm)
 %BaGoLParams.ROIsz = 50;             % ROI size for RJMCMC (nm)

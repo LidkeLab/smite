@@ -63,7 +63,7 @@ function BGL = hierBaGoL_analysis(SMD, FileNameIn, SaveDir, BaGoLParams)
 %     Xi.png:                    Distribution of localizations per emitter.
 %     XiChain.png                Plot of the Xi chain after burnin.
 %   Output available on work space:
-%     MAPN: Clusters information are stored in this propertiy:
+%     MAPN: Clusters information are stored in this property:
 %     MAPN.X: X-Centers (nm)
 %     MAPN.Y: Y-Centers (nm)
 %     MAPN.X_SE: X-Centers precisions (nm)

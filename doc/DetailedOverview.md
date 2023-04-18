@@ -44,7 +44,7 @@ Corresponding examples/extended examples are presented in:
 - [SPT](../MATLAB/examples/Example_SPT.m)
   [SPT_ExtExample](ExtExamples/SPT.md)
 - BaGoL
-  [BaGoLExtExample](ExtExamples/BaGoL.md)
+  [BaGoL_ExtExample](ExtExamples/BaGoL.md)
 ```
   B=BaGoL()       % create object
   B.SMD=....      % set properties
