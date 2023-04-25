@@ -145,6 +145,7 @@ classdef DiffusionEstimator < handle
             MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
         [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
             MSDEnsemble, DiffusionStruct, UnitFlag);
+        success = unitTest();
     end
     
     methods (Static, Hidden)

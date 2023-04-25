@@ -164,3 +164,6 @@ methods:
   Tests if a cluster of points came from point source 
 - **[voronoi_Levet](voronoi_Levet.m)**:
   implements Voronoi diagram based clustering
+
+- **[unitTest](unitTest.m)**:
+  test calling Clustering routines

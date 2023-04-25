@@ -114,3 +114,5 @@ methods:
   plots an ensemble MSD and an associated fit
 - **[saveResults](saveResults.m)**:
   saves useful results of diffusion estimation analysis
+- **[unitTest](unitTest.m)**:
+  test calling smi_stat.DiffusionEstimator routines

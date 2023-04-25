@@ -96,6 +96,7 @@ methods(Static)
    [X,V]=histogram(A,ab,n)
    H = hopkinstat(P,A,B,mm)
    H = hopkinstat3(P,A,B,C,mm)
+   success = unitTest()
 
 end % methods(Static)
 % =============================================================================

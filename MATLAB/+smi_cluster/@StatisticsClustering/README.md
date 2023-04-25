@@ -98,3 +98,5 @@ methods:
   Use Ripley's statistics to test the clustering of the points in SMD
 - **[ripley_ROIcombined](ripley_ROIcombined.m)**:
   Use Ripley's statistics to test the clustering of a series of ROIs
+- **[unitTest](unitTest.m)**:
+  Test calling StatisticsClustering routines

@@ -10,7 +10,7 @@ by smi.SMLM by computing clusters and various statistics.
 methods:
 - **[combineBaGoLROIs](combineBaGoLROIs.m)**:
   This function will combine multiple BaGoL processed ROIs from multiple
-  (biological) cells into appropriately named combined _ROIs.mat files
+  (biological) cells into appropriately named combined \_ROIs.mat files
 - **[combineResults](combineResults.m)**:
   Multiple instantiations of a single condition potentially located in multiple
   directories are collected into a combined instance in a specified directory.

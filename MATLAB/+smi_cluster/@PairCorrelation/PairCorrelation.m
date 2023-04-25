@@ -139,6 +139,7 @@ methods(Static)
    [C, r, c, dc, mask, rmax] = get_crosscorr(I1, I2, mask, rmax, flag)
    [C, r, c, dc, rmax] = get_corr(n_ROIs, rmax, II1, II2)
    [estimates, errors, model] = pc_GaussFit(r,g_r,rmax,rho)
+   success = unitTest()
 
 % =============================================================================
 end % methods(Static)

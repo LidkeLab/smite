@@ -96,6 +96,8 @@ classdef ChangeDetection < handle
     end %public methods
 
     methods(Static=true)
+        success = unitTest()
+
         function Data=simulate(NObservations, ChangePoints, Intensity)
             % Simulate an intensity sequence
             % Inputs:

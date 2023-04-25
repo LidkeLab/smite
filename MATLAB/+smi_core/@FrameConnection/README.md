@@ -17,7 +17,7 @@ EXAMPLE USAGE:
 ```
 
 REQUIRES:
-- smi_c_FrameConnection.mex*
+- smi_c_FrameConnection.mex
 - Optimization Toolbox
 - Image Processing Toolbox
 - Statistics and Machine Learning Toolbox

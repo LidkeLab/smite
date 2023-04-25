@@ -35,6 +35,9 @@ SMITE code templates requiring user-supplied data:
 SMITE unit tests:
    smi.SMLM.unitTest
    smi.SPT.unitTestFFGC (frame-to-frame and gap closing processes)
+   smi_cluster.Clustering.unitTest
+   smi_cluster.PairCorrelation.unitTest
+   smi_cluster.StatisticsClustering.unitTest
    smi_core.ChannelRegistration.unitTest
    smi_core.DataToPhotons.unitTest
    smi_core.DriftCorrection.unitTest
@@ -51,7 +54,11 @@ SMITE unit tests:
       smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest
       smi_psf.PointSpreadFunction.zernikeImage_unitTest
    smi_psf.Zernike.unitTest
+   smi_sim.GaussBlobs.unitTest
    smi_sim.SimSMLM.unitTest
+   smi_stat.ChangeDetection.unitTest
+   smi_stat.DiffusionEstimator.unitTest
+   smi_stat.HMM.unitTest
    smi_vis.GenerateImages.blobColorOverlay_unitTest
    smi_vis.GenerateImages.circleImage_unitTest
    smi_vis.GenerateImages.colorImage_unitTest

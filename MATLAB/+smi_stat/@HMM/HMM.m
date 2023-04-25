@@ -202,6 +202,7 @@ classdef HMM < handle
             MovieParams, SaveDir);
         [FigureHandle, DisplayParams] = createSummaryPlot(FigureHandle, ...
             TRArray, SMF, DisplayParams, UnitFlag);
+        success = unitTest();
     end
     
     methods (Static, Hidden)

@@ -153,3 +153,5 @@ methods:
   makes histograms of the distributions of separations
 - **[saveResults](saveResults.m)**:
   saves useful results of the Hidden Markov model analysis.
+- **[unitTest](unitTest.m)**:
+  test calling smi_stat.HMM routines
