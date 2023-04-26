@@ -21,7 +21,7 @@ The core functionality of ***smite*** (contained in the namespace
 `+smi`) is
 - [SMLM](../MATLAB/+smi/@SMLM/README.md) (Single Molecule Localization
   Microscopy), which processes 2D super-resolution (SR) data in
-  [.h5 files](FileFormats/H5.md) with standard contents.  Data can also be
+  [.h5 files](FileFormats/HDF5.md) with standard contents.  Data can also be
   stored in .mat files under a variable with a name like `sequence`;
 - [Publish](../MATLAB/+smi/@Publish/README.md), which batch-processes
   SR data assuming the .h5 files follow a standard naming convention
