@@ -13,12 +13,18 @@ the main SMLM Interface. Note that most GUI elements have tool tips:
 hover with the mouse over to the control to display it. The components
 of the GUI are briefly explained here:
 
-1. **Data:**  In this part of the GUI, a data file can be imported. We provide two different functionalities for data anaysis. One is *Test fit* in which a single dataset is processed for a quick idea of how well the analysis parameters work; the other is *Full fit* which does a complete analysis of all datasets.
+1. **Data:**  In this part of the GUI, a data file can be imported. We
+   provide two different functionalities for data anaysis. One is *Test fit*
+   in which a single dataset is processed for a quick idea of how well the
+   analysis parameters work; the other is *Full fit* which does a complete
+   analysis of all datasets.
 
-    - FileName: Name of the raw data file you wish to analyze. Files can be selected by the button `Select File(s)`
+    - FileName: Name of the raw data file you wish to analyze. Files
+      can be selected by the button `Select File(s)`
     - FileDir: Name of directory containing the raw data file
     - ResultsDir: Name of directory in which results will be saved
-    - Analysis ID: Optional identifier to be tagged onto the filenames of saved results 
+    - Analysis ID: Optional identifier to be tagged onto the filenames
+      of saved results
     - FileType: Type of raw data file, e.g., mat or h5
     - DataVariable: Name of variable in raw data .mat file(s) containing the data
     - DatasetList: Array specifying the dataset number(s) to be analyzed
@@ -40,7 +46,8 @@ of the GUI are briefly explained here:
     - Export SMF: This button allows you to export the current settings displayed in this GUI to an SMF structure in a .mat file
     - Reset SMF: This button allows you to reset current settings to their default values defined in the `smi_core.SingleMoleculeFitting` class
 
-![Figure 1](SMLM1.png){ width=50% }
+![Figure 1](SMLM1.png | width=50% height=50%)
+<A HREF="SMLM1.png"><IMG SRC="SMLM1.png" WIDTH=50% HEIGHT=50%>Figure 1 (HTML)</A>
 
 2. **BoxFinding:** Box finding finds and collates subregions of local maxima from a stack of 2D images. Local maxima are used as the center of ROIs if the estimated single molecule intensity is greater than MinPhotons. The fields are:
 
