@@ -7,21 +7,21 @@ H5Structure. The structure consists of the `Data` and `Attributes`
 associated with each group. The data can be loaded and extracted. In
 Figure 1 cell data is loaded.
 
-![Figure 1](H1.png){ width=50% }
+<IMG SRC="SMLM1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1
 
 Each level of the HDF5 file hierarchy is named in the 'Groups'
 structure. For the data included here, we have two layers:
 /Channel01/Zposition001/.
 
-![Figure 2](H2.png){ width=50% }
+<IMG SRC="SMLM2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2
 
 Zposition001/ contains various groups with their group attributes.
 
-![Figure 3](H3.png){ width=50% }
+<IMG SRC="SMLM3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3
 
 Zposition001/ can be further extracted.
 
-![Figure 4](H4.png){ width=50% }
+<IMG SRC="SMLM4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4
 
 As can be seen from the above figure, Data0001 is the 2D microscopy raw
 data from the camera. A number of datasets can be written in the HDF5
