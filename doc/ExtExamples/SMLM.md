@@ -40,7 +40,7 @@ of the GUI are briefly explained here:
     - Export SMF: This button allows you to export the current settings displayed in this GUI to an SMF structure in a .mat file
     - Reset SMF: This button allows you to reset current settings to their default values defined in the `smi_core.SingleMoleculeFitting` class
 
-![Figure 1](SMLM1.png)
+![Figure 1](SMLM1.png){ width=50% }
 
 2. **BoxFinding:** Box finding finds and collates subregions of local maxima from a stack of 2D images. Local maxima are used as the center of ROIs if the estimated single molecule intensity is greater than MinPhotons. The fields are:
 
@@ -48,7 +48,7 @@ of the GUI are briefly explained here:
     - BoxOverlap: Overlap of boxes (pixels)
     - MinPhotons: Minimum number of photons allowed from an emitter.
 
-![Figure 2](SMLM2.png)
+![Figure 2](SMLM2.png){ width=50% }
 
 3. **Fitting:** Fits a 2D Gaussian blob model to the each image in a stack of 2D images. The fields are:
 
@@ -58,7 +58,7 @@ of the GUI are briefly explained here:
     - Iterations: Newton-Raphson iterations
     - ZFitStruct: Structure for astigmatic fitting with fields in drop-down menu.
 
-![Figure 3](SMLM3.png)
+![Figure 3](SMLM3.png){ width=50% }
 
 4. **Thresholding:** This part of the GUI thresholds localizations based on various set properties of the localizations. The thresholding can be set On in the start. The fields are:
     
@@ -75,7 +75,7 @@ of the GUI are briefly explained here:
     - NNMedianMultiplier: Standard error mean multiplier defining the acceptance region for counting numbers of neighbours (only suggested to use for DNA-PAINT data)
     - MinNumNeighbors: In conjunction with NNMedianMultiplier, the minimum number of neighbors that must be in acceptance region to retain a localization (only suggested to use for DNA-PAINT data)
 
-![Figure 4](SMLM4.png)
+![Figure 4](SMLM4.png){ width=50% }
 
 5. **FrameConnection:** In this part of the GUI, frame connection is performed on the data in an single molecule data (SMD) structure. The frame connection can be set On in the start. The fields are:
 
@@ -88,7 +88,7 @@ of the GUI are briefly explained here:
     - NIterations: Number of iterative calls to LAP-FC algorithm when the LAP-FC frame-connection method is selected. With each iteration, internal parameters are re-estimated from the previous iteration's results
     - MinNFrameConns: Do not retain localizations representing fewer frame connection sequences (only suggested to use for DNA-PAINT data)
 
-![Figure 5](SMLM5.png)
+![Figure 5](SMLM5.png){ width=50% }
 
 6. **DriftCorrection:** This GUI screen is use to correct drift on 2D or 3D data provided in an SMD structure. Drift correction can be set On in the start.
 
@@ -99,4 +99,4 @@ of the GUI are briefly explained here:
     - PixelSizeZUnit: This is X/Y pixel size in microns (only needed for 3D drift correction)
     - PDegree: Degree of the intra-dataset fitting polynomial for drift rate
 
-![Figure SMLM6](6.png)
+![Figure SMLM6](SMLM6.png){ width=50% }

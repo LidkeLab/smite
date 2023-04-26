@@ -37,14 +37,14 @@ Note: A [camera calibration file](FileFormats/CalibrationFile.md) is
 used by SMLM (and hence Publish and SPT) as well.
 
 Corresponding examples/extended examples are presented in:
-- [SMLM](../MATLAB/examples/Example_SMLM_Basic.m)
-  [SMLM_ExtExample](Examples/ExtSMLM.md)
-- [Publish](../MATLAB/examples/Example_Publish.m)
-  [Publish_ExtExample](ExtExamples/Publish.md)
-- [SPT](../MATLAB/examples/Example_SPT.m)
-  [SPT_ExtExample](ExtExamples/SPT.md)
+- [\[SMLM\]](../MATLAB/examples/Example_SMLM_Basic.m)
+  [\[SMLM_ExtExample\]](Examples/SMLM.md)
+- [\[Publish\]](../MATLAB/examples/Example_Publish.m)
+  [\[Publish_ExtExample\]](ExtExamples/Publish.md)
+- [\[SPT\]](../MATLAB/examples/Example_SPT.m)
+  [\[SPT_ExtExample\]](ExtExamples/SPT.md)
 - BaGoL
-  [BaGoL_ExtExample](ExtExamples/BaGoL.md)
+  [\[BaGoL_ExtExample\]](ExtExamples/BaGoL.md)
 ```
   B=BaGoL()       % create object
   B.SMD=....      % set properties

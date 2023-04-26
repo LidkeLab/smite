@@ -5,23 +5,23 @@ used to store large, well-organized multidimensional data for quick
 retrieval and analysis. `smite` extracts contents of an .h5 file into
 H5Structure. The structure consists of the `Data` and `Attributes`
 associated with each group. The data can be loaded and extracted. In
-Figure-1 cell data is loaded.
+Figure 1 cell data is loaded.
 
-![Figure 1](H1.png)
+![Figure 1](H1.png){ width=50% }
 
 Each level of the HDF5 file hierarchy is named in the 'Groups'
 structure. For the data included here, we have two layers:
 /Channel01/Zposition001/.
 
-![Figure 2](H2.png)
+![Figure 2](H2.png){ width=50% }
 
 Zposition001/ contains various groups with their group attributes.
 
-![Figure-3](H3.png)
+![Figure 3](H3.png){ width=50% }
 
 Zposition001/ can be further extracted.
 
-![Figure-4](H4.png)
+![Figure 4](H4.png){ width=50% }
 
 As can be seen from the above figure, Data0001 is the 2D microscopy raw
 data from the camera. A number of datasets can be written in the HDF5

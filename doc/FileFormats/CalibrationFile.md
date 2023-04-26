@@ -1,4 +1,4 @@
-### CalibrationFile
+### Camera Calibration File
 
 For quantitative analysis of single molecule localization microscopy
 (SMLM) images, pixelwise properties of the camera must be well
@@ -17,16 +17,16 @@ we use
 * Connect to the devices:
 
     1. Connect to camera:
-```
+    ```
     CameraSCMOS = MIC_HamamatsuCamera();
     CameraSCMOS.ReturnType = 'matlab';
     CameraSCMOS.gui();
-```
+    ```
     2. Connect to lamp:
-```
+    ```
     Lamp660 = MIC_ThorlabsLED('Dev1', 'ao0');
     Lamp660.gui();
-```
+    ```
 * Define a few parameters: 
 ```
     LampPowerRange = linspace(0, 3.6, 20); % selected to reach ~600 max. camera counts
