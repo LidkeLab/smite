@@ -56,7 +56,7 @@ of the GUI are briefly explained here:
     - Reset SMF: This button allows you to reset current settings to their
       default values defined in the `smi_core.SingleMoleculeFitting` class
 
-<IMG SRC="SMLM1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1
+<IMG SRC="SMLM1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1. **Data** tab.
 
 2. **BoxFinding:** Box finding finds and collates subregions of local
    maxima from a stack of 2D images. Local maxima are used as the center
@@ -67,7 +67,7 @@ of the GUI are briefly explained here:
     - BoxOverlap: Overlap of boxes (pixels)
     - MinPhotons: Minimum number of photons allowed from an emitter.
 
-<IMG SRC="SMLM2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2
+<IMG SRC="SMLM2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2. **BoxFinding** tab.
 
 3. **Fitting:** Fits a 2D Gaussian blob model to the each image in a
    stack of 2D images. The fields are:
@@ -85,7 +85,7 @@ of the GUI are briefly explained here:
     - ZFitStruct: Structure for astigmatic fitting with fields in
       drop-down menu.
 
-<IMG SRC="SMLM3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3
+<IMG SRC="SMLM3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3. **Fitting** tab.
 
 4. **Thresholding:** This part of the GUI thresholds localizations based
    on various set properties of the localizations. The thresholding can be
@@ -119,7 +119,7 @@ of the GUI are briefly explained here:
       minimum number of neighbors that must be in acceptance region to
       retain a localization (only suggested to use for DNA-PAINT data)
 
-<IMG SRC="SMLM4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4
+<IMG SRC="SMLM4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4. **Thresholding** tab.
 
 5. **FrameConnection:** In this part of the GUI, frame connection is
    performed on the data in an single molecule data (SMD) structure. The
@@ -148,7 +148,7 @@ of the GUI are briefly explained here:
     - MinNFrameConns: Do not retain localizations representing fewer
       frame connection sequences (only suggested to use for DNA-PAINT data)
 
-<IMG SRC="SMLM5.png" WIDTH=50% HEIGHT=50%><BR>Figure 5
+<IMG SRC="SMLM5.png" WIDTH=50% HEIGHT=50%><BR>Figure 5. **FrameConnection** tab.
 
 6. **DriftCorrection:** This GUI screen is use to correct drift on 2D
    or 3D data provided in an SMD structure. Drift correction can be set On
@@ -165,4 +165,4 @@ of the GUI are briefly explained here:
       for 3D drift correction)
     - PDegree: Degree of the intra-dataset fitting polynomial for drift rate
 
-<IMG SRC="SMLM6.png" WIDTH=50% HEIGHT=50%><BR>Figure 6
+<IMG SRC="SMLM6.png" WIDTH=50% HEIGHT=50%><BR>Figure 6. **DriftCorrection** tab.
