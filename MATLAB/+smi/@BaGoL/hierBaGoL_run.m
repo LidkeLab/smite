@@ -1,4 +1,4 @@
-function hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs)
+function BGL = hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs)
 %hierBaGoL_run runs one or more BaGoL analyses.
 % It is called by hierBaGoL_wrapper and calls hierBaGoL_analysis on each
 % individual dataset to be processed, so acts as a dispatch intermediary.
@@ -18,6 +18,7 @@ function hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs)
 %                     via ClusterInterface.defineROIs using
 %                     smi_helpers.ROITools.getROI are obtained
 % OUTPUTS:
+%    BGL              BaGoL object containing the results of the analysis
 %    See hierBaGoL_analysis for details.
 
 if exist('ROIs', 'var')
@@ -54,7 +55,8 @@ if n_files > 0
          data = load(Files{1});
          BaGoLParams.DataROI = DataROI;
          warning('OFF', 'stats:kmeans:FailedToConvergeRep');
-         smi.BaGoL.hierBaGoL_analysis(data.SMD, File, SaveDir, BaGoLParams);
+         BGL = smi.BaGoL.hierBaGoL_analysis(data.SMD, File, SaveDir, ...
+                                            BaGoLParams);
          status(1) = 1;
       %catch ME
       %   fprintf('### PROBLEM with %s ###\n', Files{i});
@@ -109,7 +111,8 @@ if n_files > 0
             fprintf('SE_Adjust = %g\n', BGLParams.SE_Adjust);
 
             warning('OFF', 'stats:kmeans:FailedToConvergeRep');
-            smi.BaGoL.hierBaGoL_analysis(data.SMD, File, SaveDir, BGLParams);
+            BGL = smi.BaGoL.hierBaGoL_analysis(data.SMD, File, SaveDir, ...
+                                               BGLParams);
             status(i) = 1;
          catch ME
             fprintf('### PROBLEM with %s ###\n', Files{i});

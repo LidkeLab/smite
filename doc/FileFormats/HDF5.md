@@ -5,23 +5,23 @@ used to store large, well-organized multidimensional data for quick
 retrieval and analysis. `smite` extracts contents of an .h5 file into
 H5Structure. The structure consists of the `Data` and `Attributes`
 associated with each group. The data can be loaded and extracted. In
-Figure 1 cell data is loaded.
+Figure 1, cell data is loaded.
 
-<IMG SRC="H1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1
+<IMG SRC="H1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1. Top-level view.
 
 Each level of the HDF5 file hierarchy is named in the 'Groups'
 structure. For the data included here, we have two layers:
 /Channel01/Zposition001/.
 
-<IMG SRC="H2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2
+<IMG SRC="H2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2. Top 3 levels.
 
 Zposition001/ contains various groups with their group attributes.
 
-<IMG SRC="H3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3
+<IMG SRC="H3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3. Zposition001 groups.
 
 Zposition001/ can be further extracted.
 
-<IMG SRC="H4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4
+<IMG SRC="H4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4. Datasets 1 through 5.
 
 As can be seen from the above figure, Data0001 is the 2D microscopy raw
 data from the camera. A number of datasets can be written in the HDF5
@@ -29,10 +29,11 @@ file. The figure example only contain 5 datasets. The `LoadData` class in
 `smite` has the functionality of loading and extracting further information
 about HDF5 data.
 
-`/Channel01/Zposition001/Data0001/Data0001` of size 5000 x 256 x 256
+<IMG SRC="H5.png" WIDTH=50% HEIGHT=50%><BR>Figure 5. Contents of Data0001.
+
+`/Channel01/Zposition001/Data0001/Data0001` of size 2000 x 256 x 256
 contains the raw data from the camera (arrays given in Analog to Digital Units
-[ADU]) for 5000 frames of 256x256 (y, x) 2D images.  This dataset is the only
-one absolutely needed for further analyses in ***smite***.
+[ADU]) for 2000 frames of 256x256 (y, x) 2D images.
 
 ---
 
