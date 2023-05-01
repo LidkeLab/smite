@@ -46,8 +46,14 @@ for ii = 1:NDataFiles
     %       (excluding 'bleaching' files).
     FilePath = fullfile(DataDir, DataFileNames{ii});
     H5FileStruct = h5info(FilePath);
-    FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
-    FocusImagesPresent = any(contains(FileGroupList, 'FocusImages'));
+    try
+        FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        FocusImagesPresent = any(contains(FileGroupList, 'FocusImages'));
+    catch ME
+        warning(['Publish,processLabel(): ', 'No Focus Images present: ', ...
+                 FilePath]);
+        FocusImagesPresent = false;
+    end
     if FocusImagesPresent
         % If the FocusImages field is present, we'll use those.
         FocusImageStruct = smi_core.LoadData.readH5File(...
@@ -62,14 +68,23 @@ for ii = 1:NDataFiles
         % sequence.  The AlignReg structure has a similar organization, so
         % we can just add a new field and store it in
         % obj.FocusImageStructs.
-        AlignReg = smi_core.LoadData.readH5File(FilePath, 'AlignReg');
-        for nn = 1:numel(AlignReg)
-            FocusImages{nn} = AlignReg(nn).Data.Image_Current;
-            AlignReg(nn).Data.PreSeqImages = AlignReg(nn).Data.Image_Current;
-        end
-        FocusImageStruct = AlignReg;
+        try
+           AlignReg = smi_core.LoadData.readH5File(FilePath, 'AlignReg');
+           for nn = 1:numel(AlignReg)
+               FocusImages{nn} = AlignReg(nn).Data.Image_Current;
+               AlignReg(nn).Data.PreSeqImages = AlignReg(nn).Data.Image_Current;
+           end
+           FocusImageStruct = AlignReg;
+       catch ME
+           warning(['Publish.processLabel(): ', ...
+                    'H5 file does not contain AlignReg structure. ', ...
+                    FilePath]);
+           FocusImageStruct = [];
+       end
     end
-    obj.FocusImageStructs{CellNumber, LabelNumber} = FocusImageStruct;
+    if ~isempty(FocusImageStruct)
+        obj.FocusImageStructs{CellNumber, LabelNumber} = FocusImageStruct;
+    end
 
     % Display some message to the Command Window to show progression
     % through the workflow.
@@ -83,9 +98,16 @@ for ii = 1:NDataFiles
 
     % Generate figures associated with the brightfield registration of the
     % cell (if that data exists).
-    H5FileStruct = h5info(FilePath);
-    FileGroupList = ...
-        {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+    try
+        H5FileStruct = h5info(FilePath);
+        FileGroupList = ...
+            {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+    catch ME
+        warning(['Publish.processLabel(): ', ...
+                 'H5 file not of expected structure. ', ...
+                 FilePath]);
+        FileGroupList = {};
+    end
     if obj.GenerateImagingStats
         % Generate the results.
         if any(contains(FileGroupList, 'AlignReg'))
