@@ -98,10 +98,10 @@ properties
    % SMD_Labeled.  That is,
    %
    %    obj.SMD_Labeled.X(obj.SMD_Model.ConnectID) == obj.SMD_Model.X
+```
 
 ---
 
-```
 methods:
 - **[applyLabelEffic](applyLabelEffic.m)**:
   applies labeling efficiency to an existing set of fluorophores
