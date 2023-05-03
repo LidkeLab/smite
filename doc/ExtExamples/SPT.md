@@ -15,14 +15,14 @@ in a more user-friendly manner for SPT data.
 
 The TrackingResults structure can be implemented for subsequent downstream 
 data analysis of each trajectory contained in the TR structure, 
-e.g. estimating diffusion, HMM analysis, etc.. (see (../examples/README.md)))
+e.g. estimating diffusion, HMM analysis, etc.. (see (../MATLAB/examples/README.md))
 
 
 Single particle tracking in ***smite*** utilizes the SMF 
 (Single Molecule Fitting)  structure as described here: [SMLM](../ExtExamples/SMLM.md).
 
 Parameters can be modified either in a script for batch tracking of multiple
-files (see (../examples/README.md)))  or through the SPT GUI.
+files (see (../MATLAB/examples/README.md))  or through the SPT GUI.
 
 
 #### Graphical User Interface (GUI) Parameters:
@@ -43,67 +43,66 @@ Figure 1 shows the main SPT GUI Tracking tab interface to create a TR structure.
 The components for tracking single molecule data from the SMF structure 
 either from a script or through the GUI briefly explained here:
 
-(Note that most GUI elements have tool tips: hover with the mouse over to the 
-control to display it.)
+*(Note that most GUI elements have tool tips: hover with the mouse over to the control to display it.)*
 
 <IMG SRC="SPT1.png" WIDTH=50% HEIGHT=50%><BR>Figure 1. **Tracking** tab.
 
 **Tracking:**     {SPT}
 
-  Method:         Method used for tracking. CostMatrix can only be selected as of 
+  **Method**:     Method used for tracking. CostMatrix can only be selected as of 
                   now. (Default='CostMatrix')
 
-  D:              Diffusion Constant (Pixels^2/Frame)  - The known or anticipated 
+  **D**:          Diffusion Constant (Pixels^2/Frame)  - The known or anticipated 
                   diffusion constant of emitters in the raw data. (Default=0.01).
 
-  TrajwiseD:      Use traj.-wise value for D (logical) - This allows for trajectory-wise 
-                  estimated diffusion constants when iteratively tracking. "NIterMax" or 
+  **TrajwiseD**:   Use traj.-wise value for D (logical) - This allows for trajectory-wise 
+                   estimated diffusion constants when iteratively tracking. "NIterMax" or 
                   "NIterMaxBatch" must be 2 or higher. (Default=true)
 
-  K_on:           Off to On Rate (Frame^-1) - The known or anticipated rate at which 
+  **K_on**:       Off to On Rate (Frame^-1) - The known or anticipated rate at which 
                   dark emitters become  fluorescent, or return from a dark state 
                   (e.g. rate at which out of focus emitter comes into view.) 
                   (Default=.9)
 
-  K_off:          On to Off Rate (Frame^-1) - The known or anticipated rate at which 
+  **K_off**:      On to Off Rate (Frame^-1) - The known or anticipated rate at which 
                   emitters transition to a dark state.(Default=.1)
 
-  MaxDistFF:      Maximum distance gap for frame-to-frame connection (Pixels) - The 
+  **MaxDistFF**:  Maximum distance gap for frame-to-frame connection (Pixels) - The 
                   maximum separation between localizations such that they can still 
                   be considered candidates for the fame-to-frame connection 
                   procedure. (Default=5)
 
-  MaxDistGC:      Maximum distance gap for Gap Closing (Pixels) - The maximum separation 
+  ****MaxDistGC**:Maximum distance gap for Gap Closing (Pixels) - The maximum separation 
                   between localizations such that they can still be considered candidates 
                   for the gap closing procedure. (Default=10)
 
-  MaxFrameGap:    Maximum frame gap for Gap Closing (Pixels) - The maximum number of frames 
+  **MaxFrameGap**:Maximum frame gap for Gap Closing (Pixels) - The maximum number of frames 
                   elapsed between localizations such that they still can be considered 
                   candidates for the gap-closing procedure. (Default=10)
 
-  MinTrackLength: Minimum track length of trajectory (Frames) - The minimum number of 
-                  observations (localizations) a trajectory must have to not be culled 
-                  after tracking. (Default=3)
+  **MinTrackLength**: Minimum track length of trajectory (Frames) - The minimum number of 
+                      observations (localizations) a trajectory must have to not be culled 
+                      after tracking. (Default=3)
 
-  MaxZScoreDist:  Max. abs(z-score) x/y jump size - The maximum z-score for jump sizes 
-                  allowed for trajectory connections. (Default=inf)
+  **MaxZScoreDist**:  Max. abs(z-score) x/y jump size - The maximum z-score for jump sizes 
+                      allowed for trajectory connections. (Default=inf)
 
-  MaxZScorePhotons: Max. abs(z-score) for photon diffs. - The maximum z-score for photon 
-                  differences allowed for trajectory connections. (Default=inf)
+  **MaxZScorePhotons**: Max. abs(z-score) for photon diffs. - The maximum z-score for photon 
+                        differences allowed for trajectory connections. (Default=inf)
 
-  NIterMax:       Max. number of iterative tracking attempts (Integer) - The maximum number of 
-                  iterations permitted if iteratively tracking. (Default=5)
+  **NIterMax**:       Max. number of iterative tracking attempts (Integer) - The maximum number of 
+                      iterations permitted if iteratively tracking. (Default=5)
 
-  NIterMaxBatch:  Max. number of batch tracking iterations (Integer) - The maximum number of 
-                  iterations permitted if iteratively tracking over batches. (Default = 5)
+  **NIterMaxBatch**:  Max. number of batch tracking iterations (Integer) - The maximum number of 
+                      iterations permitted if iteratively tracking over batches. (Default = 5)
 
-  MaxRelativeChange: Max. relative param. change to end iterations - The maximum relative change 
-                   in parameters allowed before ending iterative tracking.(Default = 1e-5)
+  **MaxRelativeChange**: Max. relative param. change to end iterations - The maximum relative change 
+                         in parameters allowed before ending iterative tracking.(Default = 1e-5)
 
-  TryLowPValueLocs: Try to incorporate low p-val. locs. - This allows to track with localizations 
-                  that were thresholded based on on their p-value. If those localizations are 
-                  incorporated into  trajectories they are kept, otherwise they are discarded. 
-                  (Default=false)
+  **TryLowPValueLocs**: Try to incorporate low p-val. locs. - This allows to track with localizations 
+                        that were thresholded based on on their p-value. If those localizations are 
+                        incorporated into  trajectories - they are kept, otherwise they are discarded. 
+                        (Default=false)
 
 
 ### Single Particle Tracking in *smite* walkthrough:
@@ -112,24 +111,28 @@ control to display it.)
 by importing a previously created SMF structure. It is imperative for single particle tracking
 that the single molecule fitting is capturing all wanted emitters throughout the frames being analyzed.
 This can be insured by clicking the "Test Fit" button in either the SMLM or SPT GUI.
+*(Note: Make sure the "Frame Connection" is ****off**, when performing the Test Fit)*
+Various histograms will pop up, helping the user optimize their fitting parameters.
 
-<IMG SRC="SPT2.png" WIDTH=50% HEIGHT=50%><BR>Figure 2. **Test Fit Image*
+<IMG SRC="SPT2.PNG" WIDTH=25% HEIGHT=25%><BR>Figure 2. **Test Fit Output*
 
 2. Utilizing the SPT.gui, the tracking tab in the SPT gui allows the user to adjust the trajectory 
 creation parameters, to test the parameters used the user simply just has to click
 the "Test Track" button in the SPT GUI.
+*(Note: Make sure "Frame Connection" is on)*
 
-<IMG SRC="SPT3.png" WIDTH=50% HEIGHT=50%><BR>Figure 3. **Test Track Image**
+<IMG SRC="SPT3.PNG" WIDTH=50% HEIGHT=50%><BR>Figure 3. **Test Track Image**
 
 3. Additionally, movies can be created and saved with the overlay of the tracking results on top of the
-raw data by clicking the "Movie GUI" button.
+raw data by clicking the "Movie GUI" button. Tracking results can easily be visualized across the entire sequence.
 
-<IMG SRC="SPT4.png" WIDTH=50% HEIGHT=50%><BR>Figure 4. **Movie GUI Image**
+
+<IMG SRC="SPT4.PNG" WIDTH=50% HEIGHT=50%><BR>Figure 4. **Movie GUI Image**
 
 4. Once satisfied with the parameters, the user simple has to click the "Track" button.
 
 For batch tracking multiple raw-data files, the user can then adjust the tracking parameters described above
-into a script such as the Example_SPTBatch.MAT file (see (../examples/README.md)).
+into a script such as the Example_SPTBatch.MAT file (see (../MATLAB/examples/README.md)).
 
 Single particle tracking of from multiple channels can be accomplished by importing channel registration results
 into the script or the GUI.  
