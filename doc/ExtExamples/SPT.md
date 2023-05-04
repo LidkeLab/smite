@@ -18,8 +18,8 @@ e.g., estimating diffusion, HMM analysis, etc.
 (see [code examples](../../MATLAB/examples/README.md)).
 
 Single particle tracking in ***smite*** also utilizes the SMF 
-(Single Molecule Fitting) structure as described here:
-[SMLM](SMLM.md).
+(Single Molecule Fitting) structure as described in the
+[SMLM writeup](SMLM.md).
 
 Parameters can be modified either in a script for batch tracking of
 multiple files (see, for example,
@@ -32,8 +32,8 @@ The ***smite*** SPT GUI allows for advanced single particle trajectory
 analysis without any programming experience. In this extended example,
 we present detailed step-by-step protocols on how to create a TR
 structure by either creating a new SMF structure from raw data or
-by importing a previously created SMF structure as described here:
-[SMLM](SMLM.md).
+by importing a previously created SMF structure as described in
+[SMLM writeup](SMLM.md).
 
 The ***smite*** SPT GUI can be initialized by typing the command `smi.SPT()` 
 in MATLAB. 
@@ -44,7 +44,7 @@ TR structure.
 same as in the description of the [SMLM GUI](SMLM.md).)*
 
 The components for tracking single molecule data from the SMF structure 
-either from a script or through the GUI is briefly explained here:
+either from a script or through the GUI is briefly explained here.
 *(Note that most GUI elements have a tool tip: hover with the mouse over
 to the control to display it.)*
 
@@ -106,9 +106,9 @@ to the control to display it.)*
 
 ### Single Particle Tracking in ***smite*** walkthrough:
 
-1. Create an SMF structure from raw data as described here:
-   [SMLM](SMLM.md) or by importing a previously created SMF structure. It
-   is imperative for single particle tracking that the single molecule
+1. Create an SMF structure from raw data as described in the
+   [SMLM writeup](SMLM.md) or by importing a previously created SMF structure.
+   It is imperative for single particle tracking that the single molecule
    fitting is capturing all wanted emitters throughout the frames being
    analyzed. This can be insured by clicking the "Test Fit" button in
    either the SMLM or SPT GUI. *(Note: Make sure the "Frame Connection"
@@ -135,7 +135,7 @@ to the control to display it.)*
 
 For batch tracking multiple raw-data files, the user can then adjust
 the tracking parameters described above into a script such as
-[Example\_SPTBatch.mat](../../MATLAB/examples/README.md).
+[Example\_SPTBatch.m](../../MATLAB/examples/Example_SPTBatch.m).
 
 Single particle tracking from multiple channels can be accomplished by
 importing channel registration results into the script or using the GUI.  
