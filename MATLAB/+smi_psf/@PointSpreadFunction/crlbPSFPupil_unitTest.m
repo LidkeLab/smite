@@ -6,7 +6,12 @@ function  [CRLB]=crlbPSFPupil_unitTest()
 %   NVidia GPU
 %
 
-
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'crlbPSFPupil');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'crlbPSFPupil'));
+end
 
 %% Astigmatism PSF
 PSFStruct=smi_psf.PointSpreadFunction.createPSFStruct()
@@ -17,6 +22,7 @@ PSFStruct.ZC_Phase(6)=1;
 sliceViewer(gather(PSF))
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PSFStruct)
 title('Astigmatism')
+saveas(gcf, fullfile(SaveDir, 'cPP1.png'));
 
 %% Prasad Spiral
 L=2;
@@ -26,6 +32,7 @@ PSFStruct.Z=(-1:.05:1);
 sliceViewer(gather(PSF))
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PSFStruct)
 title('Prasad Spiral L=1')
+saveas(gcf, fullfile(SaveDir, 'cPP2.png'));
 
 %% Tetrapod
 PSFStruct=smi_psf.PointSpreadFunction.createPSFStruct()
@@ -37,6 +44,7 @@ PSFStruct.Z=(-1:.05:1);
 sliceViewer(gather(PSF))
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PSFStruct)
 title('Tetrapod')
+saveas(gcf, fullfile(SaveDir, 'cPP3.png'));
 
 %% Spherical Aberration
 PSFStruct=smi_psf.PointSpreadFunction.createPSFStruct()
@@ -46,3 +54,4 @@ PSFStruct.Z=(-1:.05:1);
 sliceViewer(gather(PSF))
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PSFStruct)
 title('Spherical Abberation')
+saveas(gcf, fullfile(SaveDir, 'cPP4.png'));

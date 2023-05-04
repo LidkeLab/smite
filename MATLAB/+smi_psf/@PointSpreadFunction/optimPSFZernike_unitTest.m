@@ -9,6 +9,13 @@ function [Report]=optimPSFZernike_unitTest()
 %   NVidia GPU
 %
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'optimPSFZernike');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'optimPSFZernike'));
+end
+
 Report = 0;
  
 %% Blind start. Search for Astigmatism
@@ -17,6 +24,7 @@ PhaseMask=0;
 PhaseMask(6)=1; %Vertical Astigmatism 
 %clc;
 [PFound,PSF,CRLB_Astig]=smi_psf.PointSpreadFunction.optimPSFZernike(P,PhaseMask);
+saveas(gcf, fullfile(SaveDir, 'oPZ1.png'));
 
 %%  Directed Start. Search for Tetrapod
 P=smi_psf.PointSpreadFunction.createPSFStruct();
@@ -30,6 +38,7 @@ P.ZC_Phase(24)=2;
 %clc;
 [PFound_Tet,PSF3,CRLB_Tetra]=smi_psf.PointSpreadFunction.optimPSFZernike(P,PhaseMask,P.ZC_Phase);
 PFound_Tet.ZC_Phase
+saveas(gcf, fullfile(SaveDir, 'oPZ2.png'));
 
 Report = 1;
 

@@ -4,6 +4,13 @@ function success = gaussianImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.gaussianImage...\n');
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'gaussianImage');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'gaussianImage'));
+end
+
 % setting display options
 %TrueSize = dipgetpref('TrueSize');
 %dipsetpref('TrueSize',true)
@@ -27,12 +34,14 @@ SRImageZoom = 4;
 % test with no output
 fprintf('Testing with no output...\n');
 smi_vis.GenerateImages.gaussianImage(SMD,SRImageZoom);
+saveas(gcf, fullfile(SaveDir, 'gI1.png'));
 pause(3)
 close all
 % test with output
 fprintf('Testing with output and all input...\n');
 [gaussIm] = smi_vis.GenerateImages.gaussianImage(SMD,SRImageZoom);
 imshow(gaussIm)
+saveas(gcf, fullfile(SaveDir, 'gI2.png'));
 pause(3)
 close all
 

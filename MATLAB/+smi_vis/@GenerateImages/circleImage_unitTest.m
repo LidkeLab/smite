@@ -8,6 +8,12 @@ function [Success] =  circleImage_unitTest()
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'circleImage');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'circleImage'));
+end
 
 % Seed the random number generator so that the simulated SMD is predictable
 % NOTE: If this is changed, there will almost certainly be entries of
@@ -50,7 +56,9 @@ ColorMap = [ColorMapGreen; ColorMapMagenta];
 [CircleImage, CircleImageRGB, SRImageZoom] = ...
     smi_vis.GenerateImages.circleImage(SMDAll, ColorMap, [], 16);
 figure; imshow(CircleImage);
-figurecdimshow(CircleImageRGB);
+saveas(gcf, fullfile(SaveDir, 'CircleImage.png'));
+figure; imshow(CircleImageRGB);
+saveas(gcf, fullfile(SaveDir, 'CircleImageRGB.png'));
 Success = 1;
 
 

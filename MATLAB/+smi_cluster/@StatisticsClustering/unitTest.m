@@ -3,12 +3,19 @@ function success = unitTest()
 
 success = 0;
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'StatisticsClustering');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'StatisticsClustering'));
+end
+
 % Examples of how to call StatisticsClustering routines.
 
 % --- 2D ---
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 SC = smi_cluster.StatisticsClustering(SMF);
 SC.BaseName = 'twoD';
 SC.Verbose = 2;
@@ -102,7 +109,7 @@ fprintf('Done 2D.\n');
 % --- 3D ---
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 SC = smi_cluster.StatisticsClustering(SMF);
 SC.BaseName = 'threeD';
 ROI = [0, 1000, 0, 1000, 0, 1000];   % nm

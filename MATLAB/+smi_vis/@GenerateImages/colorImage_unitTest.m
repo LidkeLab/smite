@@ -5,6 +5,13 @@ success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.colorImage...\n');
 fprintf('Creating image...\n');
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'colorImage');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'colorImage'));
+end
+
 % create image
 SZ = 256;
 NFrames = 1;
@@ -20,18 +27,21 @@ MinMax = [sortedVals(round(NumEl*0.1)),sortedVals(round(NumEl*0.9))];
 fprintf('Testing with image as only input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data);
 imshow(RGBim);
+saveas(gcf, fullfile(SaveDir, 'cI1.png'));
 pause(3);
 close all
 % test with image and colormap input
 fprintf('Testing with image and colormap input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data,ColorMap);
 imshow(RGBim)
+saveas(gcf, fullfile(SaveDir, 'cI2.png'));
 pause(3)
 close all
 % test without colormap (default should be hot)
 fprintf('Testing with image, colormap and minmax input...\n');
 [RGBim]=smi_vis.GenerateImages.colorImage(Data,ColorMap,MinMax);
 imshow(RGBim)
+saveas(gcf, fullfile(SaveDir, 'cI3.png'));
 pause(3)
 close all
 

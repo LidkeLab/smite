@@ -37,9 +37,17 @@ methods (Static)
     % REQUIRES:
     %   DipImage
         fprintf('Testing gaussBlobROIStack...\n')
+        SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'GaussBlobs');
+        if ~isfolder(SaveDir)
+           mkdir(fullfile(tempdir, 'smite'));
+           mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+           mkdir(fullfile(tempdir, 'smite', 'unitTest', 'GaussBlobs'));
+        end
         [Model,Data]=smi_sim.GaussBlobs.gaussBlobROIStack();
         figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
+        saveas(gcf, fullfile(SaveDir, 'GB1.png'));
         figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
+        saveas(gcf, fullfile(SaveDir, 'GB2.png'));
         %dipshow(Model)
         %dipshow(Data)
 %       fprintf('Testing gaussBlobImage...\n')

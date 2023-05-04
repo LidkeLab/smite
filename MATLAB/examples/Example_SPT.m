@@ -17,8 +17,13 @@ SMF.Fitting.PSFSigma = 1.3;
 [~, sequence] = smi_sim.GaussBlobs.gaussBlobImage(SPTSim.SMD, SMF);
 
 % Save the simulated data in a .mat file.
-SMITEPath = fileparts(which('setupSMITE.m'));
-DataDir = fullfile(SMITEPath, 'examples', 'example_data', 'spt');
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'SPT');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'SPT'));
+end
+DataDir = fullfile(SaveDir, 'example_data', 'spt');
 if ~isfolder(DataDir)
     mkdir(DataDir)
 end

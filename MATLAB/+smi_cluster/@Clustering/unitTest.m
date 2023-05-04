@@ -3,15 +3,22 @@ function success = unitTest()
 
 success = 0;
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'Clustering');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'Clustering'));
+end
+
 % Examples of how to call Clustering routines.
 
 % If true, save plots produced into the ResultsDir defined below.
-Saving = false;
+Saving = true;
 
 % --- 2D ---
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 
 if Saving
    if ~exist(SMF.Data.ResultsDir, 'dir')

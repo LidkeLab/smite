@@ -5,8 +5,15 @@ Saving = false;
 
 % --- 2D ---
 
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'Clustering');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'Clustering'));
+end
+
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 
 if Saving
    if ~exist(SMF.Data.ResultsDir, 'dir')

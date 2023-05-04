@@ -3,6 +3,13 @@ function [Report]=scalarPSFPrasadZone_unitTest()
 
 Report = 0;
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'scalarPSFPrasadZone');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'scalarPSFPrasadZone'));
+end
+
 L=5;
 Photons=500;
 Bg=5;
@@ -15,9 +22,13 @@ P.OSZ=512;
 [PSF,P]=smi_psf.PointSpreadFunction.scalarPSFPrasadZone(P,L);
 
 figure; sliceViewer(gather(PSF));
+saveas(gcf, fullfile(SaveDir, 'sPPZ1.png'));
 figure; imshow(gather(P.Pupil(:,:,2)));
+saveas(gcf, fullfile(SaveDir, 'sPPZ2.png'));
 smi_psf.PointSpreadFunction.crlbPSFPupil(P,Photons,Bg);
+saveas(gcf, fullfile(SaveDir, 'sPPZ3.png'));
 smi_psf.PointSpreadFunction.crlbPSFPupil(smi_psf.PointSpreadFunction.createPSFStruct(),Photons,Bg)
+saveas(gcf, fullfile(SaveDir, 'sPPZ4.png'));
 
 Report = 1;
 

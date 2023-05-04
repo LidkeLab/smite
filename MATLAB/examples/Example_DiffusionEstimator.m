@@ -1,5 +1,12 @@
 % This script demonstrates the usage of smi_stat.DiffusionEstimator.
 
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'DiffusionEstimator');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'DiffusionEstimator'));
+end
+
 %% Single diffusing population, estimating D as the slope of the MSD.
 % Simulate some trajectories.
 SimParams = smi_sim.SimSPT.defineDefaultParams();
@@ -35,6 +42,7 @@ DE.estimateDiffusionConstant();
 % Plot the MSD and fit results.
 DE.plotEnsembleMSD(axes(figure()), DE.MSDEnsemble, DE.DiffusionStruct, ...
     DE.DiffusionModel, DE.UnitFlag);
+saveas(gcf, fullfile(SaveDir, 'DE1.png'));
 
 %% Two diffusing populations, estimating D by fitting the CDF of jumps.
 % Simulate some trajectories.
@@ -69,6 +77,7 @@ DE.estimateDiffusionConstant();
 % Plot the CDF and fit results.
 DE.plotEnsembleCDFOfJumps(axes(figure()), ...
     DE.MSDEnsemble, DE.DiffusionStruct, DE.UnitFlag);
+saveas(gcf, fullfile(SaveDir, 'DE2.png'));
 
 %% Two diffusing populations, estimating D with an MLE for the jumps.
 % (If estimating standard errors, this is faster than fitting the CDF, and

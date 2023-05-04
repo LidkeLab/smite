@@ -12,9 +12,14 @@
 %% Simulate some fiducials to mimic format of real fiducial data.
 % NOTE: This will save the simulated fiducials in 'FiducialFileDir' as .mat
 %       files.
-SMITEPath = fileparts(which('setupSMITE.m'));
-FiducialFileDir = fullfile(SMITEPath, ...
-    'examples', 'example_data', 'channel_registration');
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'ChannelRegistration');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'ChannelRegistration'));
+end
+FiducialFileDir = fullfile(SaveDir, ...
+    'example_data', 'channel_registration');
 [~, FiducialFiles] = smi_core.ChannelRegistration.simFiducials(128, 8, ...
     FiducialFileDir);
 [~, FileNames, Extension] = fileparts(FiducialFiles);
@@ -76,6 +81,7 @@ ChannelReg.visualizeRegistrationResults(PlotFigure, ...
     ChannelReg.RegistrationTransform{2}, ...
     MovingCoordinates, FixedCoordinates, ...
     MovingImages, FixedImages);
+saveas(gcf, fullfile(SaveDir, 'CR1.png'));
 
 % Visualize the registration error.
 PlotFigure = figure();
@@ -83,6 +89,7 @@ PlotAxes = axes(PlotFigure);
 ChannelReg.visualizeRegistrationError(PlotAxes, ...
     ChannelReg.RegistrationTransform{2}, ...
     MovingCoordinates, FixedCoordinates);
+saveas(gcf, fullfile(SaveDir, 'CR2.png'));
 
 % Visualize the transform magnitude and gradient (this isn't usually useful
 % unless something went very wrong, in which case it might be obvious in
@@ -91,6 +98,7 @@ FiducialSize = diff(ChannelReg.FiducialROI([1, 2; 3, 4])) + 1;
 PlotFigure = figure();
 ChannelReg.visualizeCoordTransform(PlotFigure, ...
     ChannelReg.RegistrationTransform{2}, FiducialSize);
+saveas(gcf, fullfile(SaveDir, 'CR3.png'));
 
 % Visualize the transforms effect on images.
 % WARNING: This one hurts my eyes a bit... Also, it's not too useful unless
@@ -99,6 +107,7 @@ PlotFigure = figure();
 PlotAxes = axes(PlotFigure);
 ChannelReg.visualizeImageTransform(PlotAxes, ...
     ChannelReg.RegistrationTransform{2}, FiducialSize);
+saveas(gcf, fullfile(SaveDir, 'CR4.png'));
 
 % Apply the transform to an SMD structure.
 % NOTE: The important code is the call to ChannelReg.transformSMD().  The

@@ -1,9 +1,16 @@
 % Examples of how to call StatisticsClustering routines.
 
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'StatisticsClustering');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'StatisticsClustering'));
+end
+
 % --- 2D ---
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 SC = smi_cluster.StatisticsClustering(SMF);
 SC.BaseName = 'twoD';
 SC.Verbose = 2;
@@ -97,7 +104,7 @@ fprintf('Done 2D.\n');
 % --- 3D ---
 
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.ResultsDir = 'Results';
+SMF.Data.ResultsDir = SaveDir;
 SC = smi_cluster.StatisticsClustering(SMF);
 SC.BaseName = 'threeD';
 ROI = [0, 1000, 0, 1000, 0, 1000];   % nm

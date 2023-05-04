@@ -25,6 +25,13 @@ function success = unitTest()
 %    This is needed because DIPimage also has a smooth function which will
 %    typically shadow MATLAB's smooth.
 
+   SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'FRC');
+   if ~isfolder(SaveDir)
+      mkdir(fullfile(tempdir, 'smite'));
+      mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+      mkdir(fullfile(tempdir, 'smite', 'unitTest', 'FRC'));
+   end
+
    PixelSize = 100;   % nm
    SRZoom = 10;
 
@@ -72,6 +79,7 @@ function success = unitTest()
    title('Fourier Ring Correlation curve');
    legend({'posToFRC', 'posToResolution'}, 'Location', 'NorthEast');
    hold off
+   saveas(gcf, fullfile(SaveDir, 'FRCcurve.png'));
 
    %% ---------- compute uncorrected and corrected FRC curves and resolutions
    % Correction removes spurious correlations and is the recommended method to
@@ -104,6 +112,7 @@ function success = unitTest()
    title('Corrected Fourier Ring Correlation curve');
    legend({'corrected', 'uncorrected'}, 'Location', 'NorthEast');
    hold off
+   saveas(gcf, fullfile(SaveDir, 'correctedFRCcurve.png'));
    end
 
    success = 1;

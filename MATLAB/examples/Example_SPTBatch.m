@@ -14,9 +14,14 @@ SimParams.KOffToOn = 0.95;
 SimParams.KOnToOff = 0.05;
 SimParams.KOnToBleach = 1e-3;
 SimParams.Intensity = 1000;
-SMITEPath = fileparts(which('setupSMITE.m'));
-DataDir = fullfile(SMITEPath, ...
-    'examples', 'example_data', 'spt', smi_helpers.genTimeString());
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'SPTBatch');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'SPTBatch'));
+end
+DataDir = fullfile(SaveDir, ...
+    'example_data', 'spt', smi_helpers.genTimeString());
 if ~isfolder(DataDir)
     mkdir(DataDir)
 end

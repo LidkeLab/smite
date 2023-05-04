@@ -1,5 +1,12 @@
 %% Example of generating sythetic SMLM data
 
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'simSMLM');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'simSMLM'));
+end
+
 %Create sim object
 
 S=smi_sim.SimSMLM()
@@ -14,3 +21,5 @@ S.simStar(NWings)
 % Generate Noisy Coordinates
 [SMD_Noisy]=S.genNoisySMD()
 figure;scatter(SMD_Noisy.X,SMD_Noisy.Y)
+
+saveas(gcf, fullfile(SaveDir, 'sS1.png'));

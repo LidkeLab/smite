@@ -20,12 +20,21 @@ fprintf(['Running smi.SMLM.unitTest.\n', ...
 fprintf('Testing loading of various datatypes.\n')
 
 saveName = 'SMLM_testData';
+
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'SMLM');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SMLM'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SMLM', saveName));
+end
+
 file1 = [saveName, '1.mat'];
 file2 = [saveName, '2.mat'];
 
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.FileDir      = tempdir;
+SMF.Data.FileDir      = SaveDir;
 SMF.Data.DataVariable = 'Data';
 SMF.Data.CameraType   = 'EMCCD';
 SMF.Data.CameraGain   = 1;
@@ -41,9 +50,9 @@ SimData2 = smi_sim.GaussBlobs.genRandomBlobImage(64, 250);
 % Save datasets as mat files.
 fprintf('Saving data as mat files.\n')
 Data = SimData1;
-save(fullfile(tempdir, file1), 'Data');
+save(fullfile(SaveDir, file1), 'Data');
 Data = SimData2;
-save(fullfile(tempdir, file2), 'Data');
+save(fullfile(SaveDir, file2), 'Data');
 
 % Try running smi.SMLM.  If it fails, delete files before returning error.
 fprintf(['Loading and analyzing data saved as mat files.\n', ...
@@ -58,30 +67,30 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
-    delete(fullfile(tempdir, [saveName, '*.*']));
+    delete(fullfile(SaveDir, [saveName, '*.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier);
     disp(ME.message);
     Success(1) = 0;
 end
 fprintf('Loading and analyzing data saved as mat file done.\n');
-delete(fullfile(tempdir, [saveName, '*.*']));
+delete(fullfile(SaveDir, [saveName, '*.*']));
 
 %% ----------------------------------------------------------------------------
 
 Success(2) = 1;
 % Save datasets as h5 files.
 fprintf('\nSaving data as h5 files.\n')
-h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
-h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
-h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimData2));
-h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
+h5create(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
+h5write(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
+h5create(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimData2));
+h5write(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 % Try running smi.SMLM.  If it fails, delete files before returning error,
 fprintf(['Loading and analyzing data saved as h5 files.\n', ...
          '   (Only doing box finding and fitting.)\n']);
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
-SMF.Data.FileDir      = tempdir;
+SMF.Data.FileDir      = SaveDir;
 SMF.Data.FileName     = {[saveName '.h5']};
 SMF.Data.CameraType   = 'EMCCD';
 SMF.Data.CameraGain   = 1;
@@ -95,14 +104,14 @@ try
     SMLMobj.analyzeAll();
     clear SMLMobj
 catch ME
-    delete(fullfile(tempdir, [saveName '.*']));
+    delete(fullfile(SaveDir, [saveName '.*']));
     fprintf('Caught following error during smi.SMLM.unitTest:\n')
     disp(ME.identifier)
     disp(ME.message);
     Success(2) = 0;
 end
 fprintf('Loading and analyzing data saved as h5 file done.\n');
-delete(fullfile(tempdir, [saveName, '.*']));
+delete(fullfile(SaveDir, [saveName, '.*']));
 
 %% ----------------------------------------------------------------------------
 
@@ -114,20 +123,20 @@ SimData1 = smi_sim.GaussBlobs.genRandomBlobImage(256, 1000);
 SimData2 = smi_sim.GaussBlobs.genRandomBlobImage(256, 1000);
 fprintf('Saving realistic SMSR data.\n');
 saveName = 'SMLM_testData';
-h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
-h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
-h5create(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimData2));
-h5write(fullfile(tempdir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
+h5create(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0001',size(SimData1));
+h5write(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0001',SimData1);
+h5create(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0002',size(SimData2));
+h5write(fullfile(SaveDir,[saveName '.h5']),'/Data/Channel01/Data0002',SimData2);
 
 % Test complete data flow
 fprintf('Testing 2D analysis.\n');
 % Create SMF structure.
 SMF = smi_core.SingleMoleculeFitting();
-% Cannot save in folders inside tempdir, so everything must be saved in tempdir
+% Cannot save in folders inside SaveDir, so everything must be saved in SaveDir
 % directly.
-SMF.Data.FileDir          = tempdir;
+SMF.Data.FileDir          = SaveDir;
 SMF.Data.FileName         = {[saveName, '.h5']};
-SMF.Data.ResultsDir       = tempdir;
+SMF.Data.ResultsDir       = SaveDir;
 SMF.Data.CameraType       = 'EMCCD';
 SMF.Data.CameraGain       = 1;
 SMF.Data.CameraOffset     = 0;
@@ -159,9 +168,9 @@ try
 %  SMLMobj.exportFileType='txt';
 %  SMLMobj.exportResults();
 catch ME
-   delete(fullfile(tempdir, saveName, '*.*'));
-   rmdir(fullfile(tempdir, saveName));
-   delete(fullfile(tempdir, [saveName, '*.*']));
+   delete(fullfile(SaveDir, saveName, '*.*'));
+   rmdir(fullfile(SaveDir, saveName));
+   delete(fullfile(SaveDir, [saveName, '*.*']));
    fprintf('Caught following error during smi.SMLM.unitTest:\n')
    disp(ME.identifier)
    disp(ME.message);
@@ -169,7 +178,7 @@ catch ME
 end
 % delete object and data
 %clear SMLMobj
-%delete(fullfile(tempdir, saveName, '*.*'));
-%rmdir(fullfile(tempdir, saveName));
-%delete(fullfile(tempdir, [saveName, '*.*']));
+%delete(fullfile(SaveDir, saveName, '*.*'));
+%rmdir(fullfile(SaveDir, saveName));
+%delete(fullfile(SaveDir, [saveName, '*.*']));
 fprintf('Done.\n');

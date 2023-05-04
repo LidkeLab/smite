@@ -18,6 +18,12 @@ function [Success] = unitTest()
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'LocalizeData');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'LocalizeData'));
+end
 
 % Seed the random number generator so that we always get the same results.
 rng(1234)
@@ -45,6 +51,7 @@ SMF.Fitting.PSFSigma = SMD.PSFSigma;
 % Attempt to generate localizations from the simulated data.
 LD = smi_core.LocalizeData(ScaledData, SMF, 3);
 [SMDout, SMDPreThresh] = LD.genLocalizations();
+saveas(gcf, fullfile(SaveDir, 'LD1.png'));
 
 % Check that SMD and SMDPreThresh make sense and are consistent with each
 % other (this isn't meant to be an exact check of individual fields).

@@ -37,6 +37,14 @@ success = 0;
 
 close all
 
+
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'DriftCorrection');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'DriftCorrection'));
+end
+
 SIM = smi_sim.SimSMLM();
 SIM.SZ = 256;
 SIM.Rho = 10;
@@ -82,6 +90,7 @@ P = prctile(TrueIm(TrueIm > 0), 99.9);
 TrueIm(TrueIm > P) = P;
 TrueIm = 255 * TrueIm / P;
 figure; imagesc(TrueIm); colormap(gray); % what we should get afterwards
+saveas(gcf, fullfile(SaveDir, 'TrueIm.png'));
 
 X_True = single(SMDin.X);
 Y_True = single(SMDin.Y);
@@ -105,6 +114,7 @@ P = prctile(DriftIm(DriftIm > 0), 99.9);
 DriftIm(DriftIm > P) = P;
 DriftIm = 255 * DriftIm / P;
 figure; imagesc(DriftIm); colormap(gray);  %synthetic drift image
+saveas(gcf, fullfile(SaveDir, 'DriftIm.png'));
 %GaussIm = smi_vis.GenerateImages.gaussianImage(SMDin, SRImageZoom);
 %figure; imagesc(GaussIm); colormap(gray);
 
@@ -158,10 +168,12 @@ P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
 correctedDriftIm = 255 * correctedDriftIm / P;
 figure; imagesc(correctedDriftIm); colormap(gray);
+saveas(gcf, fullfile(SaveDir, 'correctedDriftIm.png'));
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
 figure(DC_fig);
+saveas(gcf, fullfile(SaveDir, 'DC_fig.png'));
 
 % Compute absolute drift in pixels per frame.
 x_drift_true = PpFX .* (1 : n_frames);
@@ -300,10 +312,12 @@ P = prctile(correctedDriftIm(correctedDriftIm > 0), 99.9);
 correctedDriftIm(correctedDriftIm > P) = P;
 correctedDriftIm = 255 * correctedDriftIm / P;
 figure; imagesc(correctedDriftIm); colormap(gray);
+saveas(gcf, fullfile(SaveDir, 'correctedDriftIm2.png'));
 
 % Plot the drift correction as a function of time.
 DC_fig = DC.plotDriftCorrection(SMD);
 figure(DC_fig);
+saveas(gcf, fullfile(SaveDir, 'DC_fig2.png'));
 
 % Compute absolute drift in pixels per frame.
 x_drift_true = PpFX .* (1 : n_frames);

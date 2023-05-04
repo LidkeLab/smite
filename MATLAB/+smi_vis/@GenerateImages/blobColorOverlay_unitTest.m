@@ -4,6 +4,13 @@ function success = blobColorOverlay_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.blobColorOverlay...\n');
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'blobColorOverlay');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'blobColorOverlay'));
+end
+
 % create sequence and SMD
 SZ=256;
 NFrames = 100;
@@ -45,6 +52,7 @@ fprintf('Testing with output...\n');
 [BlobImage] = smi_vis.GenerateImages.blobColorOverlay(Sequence,SMD);
 fprintf('Check sequence if you like, it will close in 20 sec...\n');
 sliceViewer(BlobImage);
+saveas(gcf, fullfile(SaveDir, 'BlobImage.png'));
 pause(20)
 close all
 

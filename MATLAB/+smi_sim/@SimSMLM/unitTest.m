@@ -1,5 +1,12 @@
 function unitTest()
 
+   SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'SimSMLM');
+   if ~isfolder(SaveDir)
+      mkdir(fullfile(tempdir, 'smite'));
+      mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+      mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SimSMLM'));
+   end
+
    obj = smi_sim.SimSMLM();
    obj.SZ = 256;
    obj.Rho = 30;
@@ -23,10 +30,12 @@ function unitTest()
 
    % Display the blobs without noise:
    figure; imagesc(sum(Model, 3)); colormap(gca, gray(256));
+   saveas(gcf, fullfile(SaveDir, 'Model.png'));
    %dipshow(Model)
    
     % Display the blobs having Poisson noise:
    figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
+   saveas(gcf, fullfile(SaveDir, 'Data.png'));
    %dipshow(Data)
     
 end

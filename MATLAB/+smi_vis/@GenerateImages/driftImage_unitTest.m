@@ -4,6 +4,13 @@ function success = driftImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.driftImage...\n');
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'driftImage');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'driftImage'));
+end
+
 % create random input
 fprintf('Creating data...\n');
 rng('default')
@@ -30,6 +37,7 @@ SRImageZoom = 4;
 fprintf('Testing with no output...\n');
 smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 %diptruesize(gcf,200);
+saveas(gcf, fullfile(SaveDir, 'dI1.png'));
 pause(3);
 close gcf
 % test with single output variable
@@ -37,14 +45,17 @@ fprintf('Testing with single output variable...\n');
 [driftIm] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 h = figure; imshow(driftIm);
 %diptruesize(h,200);
+saveas(gcf, fullfile(SaveDir, 'dI2.png'));
 pause(3)
 close(h)
 % test with 2 output variables
 fprintf('Testing with two output variables...\n');
 [driftIm,driftImRGB] = smi_vis.GenerateImages.driftImage(SMR,SRImageZoom);
 h1 = figure; imshow(driftIm);
+saveas(gcf, fullfile(SaveDir, 'dI3.png'));
 %diptruesize(h1,200);
 h2 = figure; imshow(driftImRGB);
+saveas(gcf, fullfile(SaveDir, 'dI4.png'));
 %diptruesize(h2,200);
 %pos = h2.Position;
 %pos(2) = pos(2)-300;

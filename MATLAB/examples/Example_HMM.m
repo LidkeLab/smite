@@ -19,9 +19,14 @@ SimParams.Intensity = 1000;
 SimParams.KDisconnect = 0.05;
 SimParams.InteractionDistance = 0.5; % pixels
 SimParams.InteractionProb = 0.5;
-SMITEPath = fileparts(which('setupSMITE.m'));
-DataDir = fullfile(SMITEPath, ...
-    'examples', 'example_data', 'spt', smi_helpers.genTimeString());
+SaveDir = fullfile(tempdir, 'smite', 'examples', 'HMM');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'examples'));
+   mkdir(fullfile(tempdir, 'smite', 'examples', 'HMM'));
+end
+DataDir = fullfile(SaveDir, ...
+    'example_data', 'spt', smi_helpers.genTimeString());
 if ~isfolder(DataDir)
     mkdir(DataDir)
 end

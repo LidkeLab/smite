@@ -4,6 +4,13 @@ function success = histogramImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.histogramImage...\n');
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'histogramImage');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'histogramImage'));
+end
+
 % setting display options
 %TrueSize = dipgetpref('TrueSize');
 %dipsetpref('TrueSize',true)
@@ -21,13 +28,16 @@ ColorMap = 'jet';
 % test with no output
 fprintf('Testing with no output...\n');
 smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
+saveas(gcf, fullfile(SaveDir, 'hI1.png'));
 pause(3)
 close all
 % test with output
 fprintf('Testing with output and all input...\n');
 [histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom,ColorMap);
 imshow(histIm)
+saveas(gcf, fullfile(SaveDir, 'hI2.png'));
 h = imshow(RGBim);
+saveas(gcf, fullfile(SaveDir, 'hI3.png'));
 % DIPimage:
 %pos = h.Position;
 %pos(2) = pos(2)-300;
@@ -38,7 +48,9 @@ close all
 fprintf('Testing with output and no colormap input...\n');
 [histIm,RGBim] = smi_vis.GenerateImages.histogramImage(SMR,SRImageZoom);
 imshow(histIm)
+saveas(gcf, fullfile(SaveDir, 'hI4.png'));
 h = imshow(RGBim);
+saveas(gcf, fullfile(SaveDir, 'hI5.png'));
 % DIPimage:
 %pos = h.Position;
 %pos(2) = pos(2)-300;
