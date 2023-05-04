@@ -15,8 +15,10 @@ authors:
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
     equal-contrib: true
   - name: Mohamadreza Fazel
+    orcid: 0000-0002-6215-1336
     affiliation: 1
   - name: Sajjad Khan
+    orcid: 0000-0002-6910-5199
     affiliation: 1
   - name: Hanieh Mazloom-Farsibaf
     orcid: 0000-0002-2571-0418
@@ -24,14 +26,18 @@ authors:
   - name: Sandeep Pallikkuth
     affiliation: 1
   - name: Marjolein B. M. Meddens
+    orcid: 0000-0002-9965-1342
     affiliation: 1
   - name: Farzin Farzam
     affiliation: 1
-  - name: Eric Burns
+  - name: Eric A. Burns
+    orcid: 0000-0002-1625-2400
     affliation: 3
   - name: William K. Kanagy
+    orcid: 0000-0002-5756-9965
     affiliation: 3
   - name: Derek A. Rinaldi
+    orcid: 0009-0000-8394-3626
     affiliation: 3
   - name: Elton Jhamba
     orcid: 0000-0002-5272-6466
