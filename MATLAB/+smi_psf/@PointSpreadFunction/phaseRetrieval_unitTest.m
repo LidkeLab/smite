@@ -7,6 +7,13 @@ function [PSFStruct]=phaseRetrieval_unitTest()
 %%
 %close all
 
+SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'phaseRetrieval');
+if ~isfolder(SaveDir)
+   mkdir(fullfile(tempdir, 'smite'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
+   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'phaseRetrieval'));
+end
+
 %Create a noise defocus stack with offset
 P=smi_psf.PointSpreadFunction.createPSFStruct();
 P.OSZ=64*3; %Factor 3 to match padding done in PR
@@ -37,6 +44,7 @@ PupilRadius=(P_Out.NA/P_Out.Lambda)/KPixelSize;
 ZS=smi_psf.PointSpreadFunction.createZernikeStruct(P_Out.OSZ,PupilRadius,21);
 P_Out.ZC_Phase=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P.Pupil(:,:,2),ZS));
 P_Out.ZC_Phase
+saveas(gcf, fullfile(SaveDir, 'pR1.png'));
 
 return
 %% Trying with some real data
