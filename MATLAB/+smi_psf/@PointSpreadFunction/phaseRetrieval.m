@@ -35,6 +35,12 @@ function [PSFStruct,PSF]=phaseRetrieval(PSFStruct,Data,MaxZCMag,MaxZCPhase)
 %     gpuArray=@(x)x;
 % end
 
+if ~exist('MaxZCMag', 'var')
+   MaxZCMag = 22;
+end
+if ~exist('MaxZCPhase', 'var')
+   MaxZCPhase = 81;
+end
 
 NMax_Mag = MaxZCMag;  %Zernike Expansion of Magnitude
 NMax_Phase=MaxZCPhase;

@@ -10,6 +10,7 @@ function FitFrame = fitsPerFrame(SMD, DatasetIndex)
 %    FitFrame       fits per frame discovered for this/these dataset/s
 
    Nloc_frame = [];
+   FitFrame = [];
    % Number of localizations per frame
    if ~exist('DatasetIndex', 'var')
        range = 1:max(SMD.DatasetNum);
@@ -22,9 +23,11 @@ function FitFrame = fitsPerFrame(SMD, DatasetIndex)
            Nloc_frame{jj}(ii)=length(idx);
        end
    end
-   FitFrame = Nloc_frame{1};
-   for ii=2:length(Nloc_frame)
-       FitFrame=cat(2, FitFrame, Nloc_frame{ii});
+   if ~isempty(Nloc_frame)
+       FitFrame = Nloc_frame{1};
+       for ii=2:length(Nloc_frame)
+           FitFrame=cat(2, FitFrame, Nloc_frame{ii});
+       end
    end
 
 end

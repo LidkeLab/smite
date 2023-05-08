@@ -41,15 +41,15 @@ SMITE unit tests:
    smi_core.ChannelRegistration.unitTest
    smi_core.DataToPhotons.unitTest
    smi_core.DriftCorrection.unitTest
-   smi_core.FRC.unitTest
+   smi_core.FRC.unitTest [DIPimage needed]
    smi_core.FrameConnection.unitTest
    smi_core.LocalizeData.unitTest
    smi_core.Threshold.unitTest
    smi_psf.PointSpreadFunction.unitTest (does the following unit tests)
       smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest
       smi_psf.PointSpreadFunction.optimPSFZernike_unitTest
-      smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest
-      smi_psf.PointSpreadFunction.phaseRetrieval_unitTest
+      smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest [DIPimage needed]
+      smi_psf.PointSpreadFunction.phaseRetrieval_unitTest [DIPimage needed]
       smi_psf.PointSpreadFunction.psfROIStack_unitTest
       smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest
       smi_psf.PointSpreadFunction.zernikeImage_unitTest

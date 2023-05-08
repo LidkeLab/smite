@@ -85,9 +85,9 @@ unit tests:
 - **[optimPSFZernike_unitTest](optimPSFZernike_unitTest.m)**:
   Tests optimPSFZernike functionality
 - **[oversamplePSFPupil_unitTest](oversamplePSFPupil_unitTest.m)**:
-  Test and Demonstrate oversamplePFSPupil
+  Test and Demonstrate oversamplePFSPupil [DIPimage needed]
 - **[phaseRetrieval_unitTest](phaseRetrieval_unitTest.m)**:
-  Tests phaseRetrieval using GS Algorithm
+  Tests phaseRetrieval using GS Algorithm [DIPimage needed]
 - **[psfROIStack_unitTest](psfROIStack_unitTest.m)**:
   Tests psfROIStack functionality
 - **[scalarPSFPrasadZone_unitTest](scalarPSFPrasadZone_unitTest.m)**:

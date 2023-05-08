@@ -1,5 +1,8 @@
 function [Report] = oversamplePFSPupil_unitTest(PSFStruct,Sampling)
 %oversamplePFSPupil_unitTest Test and Demonstrate oversamplePFSPupil.
+%
+% REQUIRES:
+%    DIPimage (https://diplib.org/DIPimage.html)
 
 Report = 0;
 

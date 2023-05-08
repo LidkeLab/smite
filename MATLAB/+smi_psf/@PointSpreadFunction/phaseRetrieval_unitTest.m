@@ -1,5 +1,8 @@
 function [PSFStruct]=phaseRetrieval_unitTest()
 %phaseRetrieval_unitTest Tests phaseRetrieval using GS Algorithm.
+%
+% REQUIRES:
+%    DIPimage (https://diplib.org/DIPimage.html)
 
 %%
 %close all
@@ -35,7 +38,7 @@ ZS=smi_psf.PointSpreadFunction.createZernikeStruct(P_Out.OSZ,PupilRadius,21);
 P_Out.ZC_Phase=gather(smi_psf.PointSpreadFunction.zernikeExpansion(P.Pupil(:,:,2),ZS));
 P_Out.ZC_Phase
 
-
+return
 %% Trying with some real data
 
 close all
