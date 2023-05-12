@@ -32,7 +32,7 @@ SMITE code templates requiring user-supplied data:
                                 experimental conditions for 1-label data
    spt_resolft_track_demo	SPT-RESOLFT example
 
-SMITE unit tests:
+SMITE unit tests (see also ExpectedResults):
    smi.SMLM.unitTest
    smi.SPT.unitTestFFGC (frame-to-frame and gap closing processes)
    smi_cluster.Clustering.unitTest
