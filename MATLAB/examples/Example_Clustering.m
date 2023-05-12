@@ -5,12 +5,7 @@ Saving = false;
 
 % --- 2D ---
 
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'Clustering');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'Clustering'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'Clustering');
 
 SMF = smi_core.SingleMoleculeFitting();
 SMF.Data.ResultsDir = SaveDir;

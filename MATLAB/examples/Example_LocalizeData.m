@@ -1,11 +1,6 @@
 %% Demonstrates LocalizeData Class
 
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'LocalizeData');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'LocalizeData'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'LocalizeData');
 
 %create a test dataset
 B = smi_sim.GaussBlobs.genRandomBlobImage();

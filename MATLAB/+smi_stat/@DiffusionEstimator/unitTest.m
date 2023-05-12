@@ -3,12 +3,7 @@ function success = unitTest()
 
 success = 0;
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'DiffusionEstimator');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'DiffusionEstimator'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'DiffusionEstimator');
 
 % This script demonstrates the usage of smi_stat.DiffusionEstimator.
 

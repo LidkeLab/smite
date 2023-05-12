@@ -7,8 +7,6 @@
   convert raw data to photons
 - [@DriftCorrection](@DriftCorrection/README.md):
   drift correction on 2D/3D data
-- [@FRC](@FRC/README.md):
-  Fourier Ring Correlation for image resolution
 - [@FindROI](@FindROI/README.md):
   find/collate subregions from a 2D image stack
 - [@FrameConnection](@FrameConnection/README.md):

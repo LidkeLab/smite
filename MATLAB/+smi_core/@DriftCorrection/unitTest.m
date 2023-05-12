@@ -38,12 +38,7 @@ success = 0;
 close all
 
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'DriftCorrection');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'DriftCorrection'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'DriftCorrection');
 
 SIM = smi_sim.SimSMLM();
 SIM.SZ = 256;

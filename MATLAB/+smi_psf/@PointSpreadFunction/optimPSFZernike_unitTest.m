@@ -9,12 +9,7 @@ function [Report]=optimPSFZernike_unitTest()
 %   NVidia GPU
 %
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'optimPSFZernike');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'optimPSFZernike'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'optimPSFZernike');
 
 Report = 0;
  

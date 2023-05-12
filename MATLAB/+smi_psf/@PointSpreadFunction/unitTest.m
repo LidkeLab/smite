@@ -11,15 +11,15 @@ function unitTest()
       [Report]=smi_psf.PointSpreadFunction.optimPSFZernike_unitTest();
    end
 
-   fprintf('oversamplePSFPupil_unitTest (DIPimage needed) ...\n');
-   try
-      [Report]=smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest();
-   end
+%  fprintf('oversamplePSFPupil_unitTest (DIPimage needed) ...\n');
+%  try
+%     [Report]=smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest();
+%  end
 
-   fprintf('phaseRetrieval_unitTest  (DIPimage needed)...\n');
-   try
-      [PSFStruct]=smi_psf.PointSpreadFunction.phaseRetrieval_unitTest();
-   end
+%  fprintf('phaseRetrieval_unitTest  (DIPimage needed)...\n');
+%  try
+%     [PSFStruct]=smi_psf.PointSpreadFunction.phaseRetrieval_unitTest();
+%  end
 
    fprintf('scalarPSFPrasadZone_unitTest ...\n');
    try

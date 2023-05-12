@@ -18,12 +18,7 @@ function [Success] = unitTest()
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'LocalizeData');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'LocalizeData'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'LocalizeData');
 
 % Seed the random number generator so that we always get the same results.
 rng(1234)

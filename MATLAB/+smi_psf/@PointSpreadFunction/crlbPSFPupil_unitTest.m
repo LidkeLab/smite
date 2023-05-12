@@ -6,12 +6,7 @@ function  [CRLB]=crlbPSFPupil_unitTest()
 %   NVidia GPU
 %
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'crlbPSFPupil');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'crlbPSFPupil'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'crlbPSFPupil');
 
 %% Astigmatism PSF
 PSFStruct=smi_psf.PointSpreadFunction.createPSFStruct()

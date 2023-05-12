@@ -5,12 +5,7 @@ success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.colorImage...\n');
 fprintf('Creating image...\n');
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'colorImage');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'colorImage'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'colorImage');
 
 % create image
 SZ = 256;

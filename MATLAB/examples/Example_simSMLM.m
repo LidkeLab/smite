@@ -1,11 +1,6 @@
 %% Example of generating sythetic SMLM data
 
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'simSMLM');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'simSMLM'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'simSMLM');
 
 %Create sim object
 

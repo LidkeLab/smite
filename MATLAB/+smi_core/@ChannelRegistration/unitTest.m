@@ -25,7 +25,7 @@ function [Success] = unitTest()
 
 
 % Initialize the Success output.
-Success = zeros(7, 1, 'logical');
+Success = zeros(1, 7, 'logical');
 
 % Seed the random number generator so that the simulated SMD is predictable
 % NOTE: If this is changed, there will almost certainly be entries of

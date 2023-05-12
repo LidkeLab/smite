@@ -1,0 +1,1 @@
+Condition1: k_off = (0.0449+-0.0082) / frame, 41 dimer events

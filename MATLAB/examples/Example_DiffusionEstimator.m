@@ -1,11 +1,6 @@
 % This script demonstrates the usage of smi_stat.DiffusionEstimator.
 
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'DiffusionEstimator');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'DiffusionEstimator'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'DiffusionEstimator');
 
 %% Single diffusing population, estimating D as the slope of the MSD.
 % Simulate some trajectories.

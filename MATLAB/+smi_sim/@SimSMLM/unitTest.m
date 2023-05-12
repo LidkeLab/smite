@@ -1,11 +1,6 @@
 function unitTest()
 
-   SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'SimSMLM');
-   if ~isfolder(SaveDir)
-      mkdir(fullfile(tempdir, 'smite'));
-      mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-      mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SimSMLM'));
-   end
+   SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'SimSMLM');
 
    obj = smi_sim.SimSMLM();
    obj.SZ = 256;

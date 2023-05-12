@@ -5,12 +5,7 @@ success = 0;
 
 %% Demonstrate how to call the smi_cluster.PairCorrelation class.
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'PairCorrelation');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'PairCorrelation'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'PairCorrelation');
 
 PC = smi_cluster.PairCorrelation();
 PC.ResultsDir = SaveDir;

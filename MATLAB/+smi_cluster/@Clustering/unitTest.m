@@ -3,12 +3,7 @@ function success = unitTest()
 
 success = 0;
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'Clustering');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'Clustering'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'Clustering');
 
 % Examples of how to call Clustering routines.
 

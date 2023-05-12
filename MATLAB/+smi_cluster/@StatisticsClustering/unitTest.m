@@ -3,12 +3,7 @@ function success = unitTest()
 
 success = 0;
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'StatisticsClustering');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'StatisticsClustering'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'StatisticsClustering');
 
 % Examples of how to call StatisticsClustering routines.
 

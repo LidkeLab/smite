@@ -18,6 +18,7 @@ if ~isfolder(SaveDir)
    mkdir(fullfile(tempdir, 'smite', 'examples'));
    mkdir(fullfile(tempdir, 'smite', 'examples', 'ChannelRegistration'));
 end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'ChannelRegistration');
 FiducialFileDir = fullfile(SaveDir, ...
     'example_data', 'channel_registration');
 [~, FiducialFiles] = smi_core.ChannelRegistration.simFiducials(128, 8, ...

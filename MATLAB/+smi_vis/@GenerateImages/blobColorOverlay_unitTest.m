@@ -4,12 +4,7 @@ function success = blobColorOverlay_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.blobColorOverlay...\n');
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'blobColorOverlay');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'blobColorOverlay'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'blobColorOverlay');
 
 % create sequence and SMD
 SZ=256;

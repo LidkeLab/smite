@@ -4,12 +4,7 @@ function success = histogramImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.histogramImage...\n');
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'histogramImage');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'histogramImage'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'histogramImage');
 
 % setting display options
 %TrueSize = dipgetpref('TrueSize');

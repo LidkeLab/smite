@@ -25,12 +25,7 @@ function success = unitTest()
 %    This is needed because DIPimage also has a smooth function which will
 %    typically shadow MATLAB's smooth.
 
-   SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'FRC');
-   if ~isfolder(SaveDir)
-      mkdir(fullfile(tempdir, 'smite'));
-      mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-      mkdir(fullfile(tempdir, 'smite', 'unitTest', 'FRC'));
-   end
+   SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'FRC');
 
    PixelSize = 100;   % nm
    SRZoom = 10;

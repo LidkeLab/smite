@@ -89,7 +89,7 @@ SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraGain = CameraGain;
 SMF.Data.CameraOffset = CameraOffset;
 SMF.Data.CameraReadNoise = CameraReadNoise;
-Success = zeros(5, 1, 'logical');
+Success = zeros(1, 5, 'logical');
 try
     DTP = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
         ROIBottomRight, CalibrationROI, true);

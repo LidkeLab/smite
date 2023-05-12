@@ -8,12 +8,7 @@ function [Success] =  circleImage_unitTest()
 % Created by:
 %   David J. Schodt (Lidke lab, 2021)
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'circleImage');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'circleImage'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'circleImage');
 
 % Seed the random number generator so that the simulated SMD is predictable
 % NOTE: If this is changed, there will almost certainly be entries of

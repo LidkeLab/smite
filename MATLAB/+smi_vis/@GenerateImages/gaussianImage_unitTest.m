@@ -4,12 +4,7 @@ function success = gaussianImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.gaussianImage...\n');
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'gaussianImage');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'gaussianImage'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'gaussianImage');
 
 % setting display options
 %TrueSize = dipgetpref('TrueSize');

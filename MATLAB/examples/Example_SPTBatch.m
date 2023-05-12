@@ -14,12 +14,7 @@ SimParams.KOffToOn = 0.95;
 SimParams.KOnToOff = 0.05;
 SimParams.KOnToBleach = 1e-3;
 SimParams.Intensity = 1000;
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'SPTBatch');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'SPTBatch'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'SPTBatch');
 DataDir = fullfile(SaveDir, ...
     'example_data', 'spt', smi_helpers.genTimeString());
 if ~isfolder(DataDir)

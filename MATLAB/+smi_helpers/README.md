@@ -30,6 +30,8 @@ functions:
   generates directory names matching a NameString
 - **[getFileNames](getFileNames.m)**:
   creates a list of filenames in FileDir
+- **[mkSMITETmpDir](mkSMITETmpDir.m)**:
+  Create full pathnames and temporary directories for SMITE testing/examples
 - **[nMODm](nMODm.m)**:
   modulus such that r is in [1, m] rather than [0, m - 1]
 - **[padStruct](padStruct.m)**:

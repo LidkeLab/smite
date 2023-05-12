@@ -3,12 +3,7 @@ function success = unitTest()
 
 success = 0;
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'ChangeDetection');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'ChangeDetection'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'ChangeDetection');
 
 % This script demonstrates the basic usage of the smi_stat.ChangeDetection class.
 

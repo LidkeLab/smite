@@ -48,8 +48,6 @@ SMITE unit tests:
    smi_psf.PointSpreadFunction.unitTest (does the following unit tests)
       smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest
       smi_psf.PointSpreadFunction.optimPSFZernike_unitTest
-      smi_psf.PointSpreadFunction.oversamplePSFPupil_unitTest [DIPimage needed]
-      smi_psf.PointSpreadFunction.phaseRetrieval_unitTest [DIPimage needed]
       smi_psf.PointSpreadFunction.psfROIStack_unitTest
       smi_psf.PointSpreadFunction.scalarPSFPrasadZone_unitTest
       smi_psf.PointSpreadFunction.zernikeImage_unitTest

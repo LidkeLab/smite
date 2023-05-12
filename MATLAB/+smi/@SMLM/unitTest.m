@@ -21,13 +21,8 @@ fprintf('Testing loading of various datatypes.\n')
 
 saveName = 'SMLM_testData';
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'SMLM');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SMLM'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'SMLM', saveName));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'SMLM');
+mkdir(fullfile(SaveDir, saveName));
 
 file1 = [saveName, '1.mat'];
 file2 = [saveName, '2.mat'];

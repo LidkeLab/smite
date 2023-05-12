@@ -1,11 +1,6 @@
 % This script demonstrates the basic usage of the smi_stat.ChangeDetection class.
 
-SaveDir = fullfile(tempdir, 'smite', 'examples', 'ChangeDetection');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'examples'));
-   mkdir(fullfile(tempdir, 'smite', 'examples', 'ChangeDetection'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'ChangeDetection');
 
 %% simulate data
 NObservations = 50;  % Scalar integer: length of data sequence

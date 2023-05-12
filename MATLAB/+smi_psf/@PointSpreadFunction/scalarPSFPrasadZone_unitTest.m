@@ -3,12 +3,7 @@ function [Report]=scalarPSFPrasadZone_unitTest()
 
 Report = 0;
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'scalarPSFPrasadZone');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'scalarPSFPrasadZone'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'scalarPSFPrasadZone');
 
 L=5;
 Photons=500;

@@ -4,12 +4,7 @@ function success = driftImage_unitTest()
 success = 0;
 fprintf('\nTesting smi_vis.GenerateImages.driftImage...\n');
 
-SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'driftImage');
-if ~isfolder(SaveDir)
-   mkdir(fullfile(tempdir, 'smite'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest'));
-   mkdir(fullfile(tempdir, 'smite', 'unitTest', 'driftImage'));
-end
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'driftImage');
 
 % create random input
 fprintf('Creating data...\n');

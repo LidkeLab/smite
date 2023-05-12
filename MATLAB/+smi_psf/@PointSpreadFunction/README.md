@@ -52,8 +52,6 @@ methods:
   The beginnings of a GUI for dealing with PSF data
 - **[optimPSFZernike](optimPSFZernike.m)**:
   Optimize PSF via Zernike Coef search
-- **[oversamplePSFPupil](oversamplePSFPupil.m)**:
-  Resamples a PSF to smaller pixels
 - **[phaseRetrieval](phaseRetrieval.m)**:
   Phase retrieval using GS Algorithm
 - **[phaseRetrievalEM](phaseRetrievalEM.m)**:
@@ -84,10 +82,6 @@ unit tests:
   Tests crlbPSFPupil functionality
 - **[optimPSFZernike_unitTest](optimPSFZernike_unitTest.m)**:
   Tests optimPSFZernike functionality
-- **[oversamplePSFPupil_unitTest](oversamplePSFPupil_unitTest.m)**:
-  Test and Demonstrate oversamplePFSPupil [DIPimage needed]
-- **[phaseRetrieval_unitTest](phaseRetrieval_unitTest.m)**:
-  Tests phaseRetrieval using GS Algorithm [DIPimage needed]
 - **[psfROIStack_unitTest](psfROIStack_unitTest.m)**:
   Tests psfROIStack functionality
 - **[scalarPSFPrasadZone_unitTest](scalarPSFPrasadZone_unitTest.m)**:

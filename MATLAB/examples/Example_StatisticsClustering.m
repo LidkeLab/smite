@@ -6,6 +6,7 @@ if ~isfolder(SaveDir)
    mkdir(fullfile(tempdir, 'smite', 'examples'));
    mkdir(fullfile(tempdir, 'smite', 'examples', 'StatisticsClustering'));
 end
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'StatisticsClustering');
 
 % --- 2D ---
 
