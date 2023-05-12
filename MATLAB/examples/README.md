@@ -34,7 +34,7 @@ SMITE code templates requiring user-supplied data:
 [singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
 [spt_resolft_track_demo](spt_resolft_track_demo.m)                              | SPT-RESOLFT example
 
-SMITE unit tests:
+SMITE unit tests (see also [ExpectedResults](../ExpectedResults/README.md):
 - [smi.SMLM.unitTest](../+smi/@SMLM/unitTest.m)
 - [smi.SPT.unitTestFFGC](../+smi/@SPT/unitTestFFGC.m) (frame-to-frame and gap closing processes)
 - [smi_cluster.Clustering.unitTest](../+smi_cluster/@Clustering/unitTest.m)
