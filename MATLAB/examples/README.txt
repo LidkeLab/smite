@@ -11,7 +11,7 @@ G  Example_HMM			hidden Markov model for dimer detection
 G  Example_LocalizeData		find localizations in an image stack
    Example_PairCorrelation	compute auto- and cross-correlations of data
 G  Example_SPT			single particle tracking
-G  Example_SPTBatch		single particle tracking using channel reg.
+G  Example_SPTBatch		single particle tracking via batch processing
    Example_StatisticsClustering	various statistical measures of clustering
    Example_simSMLM		generate synthetic data for a Siemen's star
 

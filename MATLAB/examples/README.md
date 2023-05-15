@@ -13,7 +13,7 @@ G     | [Example_HMM](Example_HMM.m)                                            
 G     | [Example_LocalizeData](Example_LocalizeData.m)                          | find localizations in an image stack
 &nbsp;  | [Example_PairCorrelation](Example_PairCorrelation.m)                  | compute auto- and cross-correlations of data
 G     | [Example_SPT](Example_SPT.m)                                            | single particle tracking
-G     | [Example_SPTBatch](Example_SPTBatch.m)                                  | single particle tracking using channel reg.
+G     | [Example_SPTBatch](Example_SPTBatch.m)                                  | single particle tracking via batch processing
 &nbsp;| [Example_StatisticsClustering](Example_StatisticsClustering.m)          | various statistical measures of clustering
 &nbsp;| [Example_simSMLM](Example_simSMLM.m)                                    | generate synthetic data for a Siemen's star
 

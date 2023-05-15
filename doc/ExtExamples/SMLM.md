@@ -31,9 +31,14 @@ of the GUI are briefly explained here:
     - **DatasetList**: Array specifying the dataset number(s) to be analyzed
     - **DatasetMods**: This drop-down menu allows you to include/exclude
       specific datasets from analysis
-    - **CameraType**: The type of a camera used to collect raw data. This
-      drop-down menu includes EMCCD or sCMOS cameras
-    - **CameraGain**: Gain of a camera used to collect raw data
+    - **CameraType**: The type of a camera used to collect raw data. The
+      drop-down menu includes *EMCCD* and *SCMOS* cameras.  **NOTE**: The next
+      3 quantities (**CameraGain**, **CameraOffset**, **CameraReadNoise**)
+      should be scalars if the **CameraType** is *EMCCD* while if *SCMOS*,
+      square arrays taken from the
+      [CalibrationFile](../FileFormats/CalibrationFile.md)
+      located at the **CalibrationFilePath**
+    - **CameraGain**: Gain of a camera used to collect raw data 
     - **CameraOffset**: Offset of a camera used to collect raw data
     - **CameraReadNoise**: Variance of the read-noise of a camera used to
       collect raw data

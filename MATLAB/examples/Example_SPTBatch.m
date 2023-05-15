@@ -1,6 +1,6 @@
-% This script demonstrates an example workflow for SPT batch processing
-% including the use of channel registration.  Simulated data and tracking
-% results will be saved in smite/MATLAB/examples/example_data/spt/
+% This script demonstrates an example workflow for SPT batch processing.
+% Simulated data and tracking results will be saved in
+% tempdir/smite/examples/SPTBatch/example_data/spt/
 
 %% Simulate and save some SPT data in the format expected for real data.
 % Simulate some diffusing blobs and save simulated raw data.
