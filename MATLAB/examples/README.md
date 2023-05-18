@@ -5,7 +5,7 @@ Self-contained examples of using SMITE code:
 || example code ||
 ---|---|---
 &nbsp;| [Example_ChangeDetection](Example_ChangeDetection.m)                    | change point detection
-G     | [Example_ChannelRegstration](Example_ChannelRegstration.m)              | 2-color channel registration
+G     | [Example_ChannelRegistration](Example_ChannelRegistration.m)              | 2-color channel registration
 &nbsp;| [Example_Clustering](Example_Clustering.m)                              | various ways to invoke clustering routines
 &nbsp;| [Example_DiffusionEstimator](Example_DiffusionEstimator.m)              | diffusion estimator
 G     | [Example_GaussBlobs](Example_GaussBlobs.m)                              | generate image stack of randomly located blobs

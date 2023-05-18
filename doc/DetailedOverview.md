@@ -38,13 +38,13 @@ used by SMLM (and hence Publish and SPT) as well.
 
 Corresponding examples/extended examples are presented in:
 - [\[SMLM\]](../MATLAB/examples/Example_SMLM_Basic.m)
-  [\[SMLM_ExtExample\]](ExtExamples/SMLM.md)
+  [\[SMLM_ExtendedExample\]](ExtExamples/SMLM.md)
 - [\[Publish\]](../MATLAB/examples/Example_Publish.m)
-  [\[Publish_ExtExample\]](ExtExamples/Publish.md)
+  [\[Publish_ExtendedExample\]](ExtExamples/Publish.md)
 - [\[SPT\]](../MATLAB/examples/Example_SPT.m)
-  [\[SPT_ExtExample\]](ExtExamples/SPT.md)
+  [\[SPT_ExtendedExample\]](ExtExamples/SPT.md)
 - BaGoL (see below)
-  [\[BaGoL_ExtExample\]](ExtExamples/BaGoL.md)
+  [\[BaGoL_ExtendedExample\]](ExtExamples/BaGoL.md)
 ```
   B=BaGoL()       % create object
   B.SMD=....      % set properties

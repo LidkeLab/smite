@@ -58,13 +58,13 @@ For full functionality, ***smite*** requires:
 - Linux, MacOS or Windows
 - MATLAB version R2021a or later
 - Nvidia GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
-- MATLAB Curve Fitting Toolbox [smi_cluster, smi_core.FRC,
+- MATLAB Curve Fitting Toolbox [ONLY smi_cluster, smi_core.FRC,
   smi_stat.DiffusionEstimator]
 - MATLAB Image Processing Toolbox
-- MATLAB Optimization Toolbox [smi_cluster.PairCorrelation,
+- MATLAB Optimization Toolbox [ONLY smi_cluster.PairCorrelation,
   smi_stat.DiffusionEstimator]
 - MATLAB Parallel Computing Toolbox
-- MATLAB Signal Processing Toolbox [smi_core.FRC]
+- MATLAB Signal Processing Toolbox [ONLY smi_core.FRC]
 - MATLAB Statistics and Machine Learning Toolbox
 - ffmpeg installed for Linux (https://ffmpeg.org)
   [smi_core.LocalizeData.genLocalizations for obj.Verbose >= 3]
@@ -129,7 +129,7 @@ Use the GUI to navigate to a test dataset such as available from
 - Pallikkuth, S., Martin, C., Farzam, F., Edwards, J. S., Lakin,
   M. R., Lidke, D. S., & Lidke, K. A. (2018). Supporting data for
   Sequential Super-Resolution Imaging using DNA Strand Displacement
-  [Data set]. University of New Mexicom
+  [Data set]. University of New Mexico
   [https://doi.org/10.25827/CS2A-DH13](https://digitalrepository.unm.edu/physics_data/3/#attach_additional_files).
 - Wester, Michael J., Mazloom-Farsibaf, Hanieh, Farzam, Farzin,
   Fazel, Mohamadreza, Meddens, Marjolein B. M., & Lidke, Keith A.

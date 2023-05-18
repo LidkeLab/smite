@@ -1,7 +1,8 @@
 ### +smi_helpers/@ROITools
 
 These are tools to select ROIs from an image and save them into a data
-structure.  The main interface function is getROI.  All other methods are
+structure.  The main interface function is [getROI](getROI.m).
+All other methods are
 called by this routine.  getROI can take many types of sources (src):
 
 - a BGL, SMA_SR or SMD data structure,
