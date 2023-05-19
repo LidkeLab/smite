@@ -149,13 +149,16 @@ or analyze all datasets.
   below to verify that ***smite*** has been properly installed.
 - Run some of the Code Examples linked to below which simulate data.
 - Obtain or generate a dataset (see the citations above) and try out
-  the core functionality.
+  the core functionality (see Overview section below).  The user can
+  also obtain a dataset by running
+  [the SMLM unitTest](MATLAB/+smi/@SMLM/unitTest.m), which will produce
+  the ~1 Gb `tempdir/smite/unitTest/SMLM/SMLM_testData.h5`.
 
 ### Testing
 [run_tests](MATLAB/run_tests.m) run a series of unit tests that
 cover major ***smite*** core functionality.  Much output will be
 saved in tempdir/smite/unitTest/name_of_test.
-[ExpectedResults](MATLAB/ExpectedResults/README,md) are provided
+[ExpectedResults](MATLAB/ExpectedResults/README.md) are provided
 in the `smite/MATLAB` directory in which `run_tests.m` resides,
 noting that very large files have been deleted so as to not bloat
 up the the ***smite*** distribution (these files are listed in the
