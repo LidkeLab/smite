@@ -1,4 +1,4 @@
-## Detailed Overview
+## Overview of Core Functionality
 
 ***smite*** (Single Molecule Imaging Toolbox Extraordinaire) is a
 collection of MATLAB tools developed to process, either through

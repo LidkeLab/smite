@@ -53,6 +53,9 @@ using `cuda_Make`:
 The compiled files will be placed in the `smite/MATLAB/mex` or
 `smite/MATLAB/ptx` directories, respectively.
 
+To verify that ***smite*** is running properly, see the Testing
+subsection below.
+
 ### Dependencies
 For full functionality, ***smite*** requires:
 - Linux, MacOS or Windows
@@ -69,7 +72,7 @@ For full functionality, ***smite*** requires:
 - ffmpeg installed for Linux (https://ffmpeg.org)
   [smi_core.LocalizeData.genLocalizations for obj.Verbose >= 3]
 
-## Examples
+## Simple Examples
 ### Working with SMF
 SMF is implemented as a class to enable a gui and to provide useful
 helper methods.  However, the most common use will be as a structure
@@ -140,16 +143,39 @@ Use the GUI to navigate to a test dataset such as available from
 Set SMF values from within the GUI and run either a test dataset
 or analyze all datasets.
 
-### [Additional Examples](MATLAB/examples/README.md)
+## Getting Started
+- Install ***smite*** as discussed above.
+- Run the collection of unit tests as discussed in the Testing section
+  below to verify that ***smite*** has been properly installed.
+- Run some of the Code Examples linked to below which simulate data.
+- Obtain or generate a dataset (see the citations above) and try out
+  the core functionality.
+
+### Testing
+[run_tests](MATLAB/run_tests.m) run a series of unit tests that
+cover major ***smite*** core functionality.  Much output will be
+saved in tempdir/smite/unitTest/name_of_test.
+[ExpectedResults](MATLAB/ExpectedResults/README,md) are provided
+in the `smite/MATLAB` directory in which `run_tests.m` resides,
+noting that very large files have been deleted so as to not bloat
+up the the ***smite*** distribution (these files are listed in the
+various `ExpectedResults` READMEs).  Also, the tests are frequently
+stochastic in nature, so outputs from run to run will not necessarily
+be identical, even on the same system, but the `ExpectedResults` will
+provide a flavor of what to expect.
+
+### [Code Examples](MATLAB/examples/README.md)
 Additional ***smite*** examples can be found in the examples
 subdirectory of MATLAB as well as the unitTests for some of the
 classes (see [here](MATLAB/examples/README.md) for a summary).  Some
 of the examples generate and analyze their own data, while others
 provide a template for how to run the example given supplied data.
+(The unit tests always generate their own data if any is needed.)
 
-### [Additional Details](doc/DetailedOverview.md)
-Additional details on ***smite*** can be found
-[here](doc/DetailedOverview.md).
+### [Overview of Core Functionality](doc/CoreOverview.md)
+Additional details on the core functionality of ***smite*** can be
+found [here](doc/CoreOverview.md), including both simple and
+extended examples of usage.
 
 ## Contributions/Support
 Issues or problems and people seeking support with the software
