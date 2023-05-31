@@ -6,7 +6,9 @@ returning an updated structure with drift corrected coordinates.  Plots of
 the drift estimates can be produced with plotDriftCorrection and some
 additional measures with calcDCResidual.
 
+```
 EXAMPLE USAGE (see also unitTest):
+
    DC = smi_core.DriftCorrection(SMF, SMDin);
    SMDIntra = [];
    for i = 1 : NDatasets
@@ -15,6 +17,7 @@ EXAMPLE USAGE (see also unitTest):
    end
    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
    SMDout = SMDInter;
+```
 
 ---
 
