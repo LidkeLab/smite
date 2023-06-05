@@ -25,8 +25,8 @@ REQUIRES:
 CITATION:
    David J. Schodt and Keith A. Lidke, "Spatiotemporal Clustering of
    Repeated Super-Resolution Localizations via Linear Assignment
-   Problem", Frontiers in Bioinformatics, 2021 
-   https://doi.org/10.3389/fbinf.2021.724325
+   Problem", *Frontiers in Bioinformatics*, 2021 
+   [https://doi.org/10.3389/fbinf.2021.724325](https://doi.org/10.3389/fbinf.2021.724325)
 
 ---
 

@@ -4,6 +4,8 @@ This MATLAB-based toolbox provides analysis tools for fluorescence
 single molecule imaging with an emphasis on single molecule
 localization microscopy (SMLM) and single particle tracking (SPT).
 
+---
+
 ## Overview
 
 ### Workflow concept
@@ -27,6 +29,8 @@ Image arrays follow MATLAB's column-major format.  An image coordinate
 of (1,1) means the center of the top-left pixel, whereas (2,1) would
 indicate the center of the pixel that is one down from the top, but
 in the left-most column.
+
+---
 
 ## Installation
 Clone (Linux/MacOS example; similar for Windows) into `~/Documents/MATLAB`
@@ -71,6 +75,8 @@ For full functionality, ***smite*** requires:
 - MATLAB Statistics and Machine Learning Toolbox
 - ffmpeg installed for Linux (https://ffmpeg.org)
   [smi_core.LocalizeData.genLocalizations for obj.Verbose >= 3]
+
+---
 
 ## Simple Examples
 ### Working with SMF
@@ -143,6 +149,8 @@ Use the GUI to navigate to a test dataset such as available from
 Set SMF values from within the GUI and run either a test dataset
 or analyze all datasets.
 
+---
+
 ## Getting Started
 - Install ***smite*** as discussed above.
 - Run the collection of unit tests as discussed in the Testing section
@@ -180,12 +188,16 @@ Additional details on the core functionality of ***smite*** can be
 found [here](doc/CoreOverview.md), including both simple and
 extended examples of usage.
 
+---
+
 ## Contributions/Support
 Issues or problems and people seeking support with the software
 should be reported via the Issues tab of the ***smite*** GitHub
 repository.  Contributions to ***smite*** should be performed on
 new branches which are then requested to merge with the main branch
 via Pull Requests.
+
+---
 
 ## Related Software
 Please note the related software: MATLAB Instrument Control

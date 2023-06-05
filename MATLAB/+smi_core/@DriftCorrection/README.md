@@ -6,7 +6,9 @@ returning an updated structure with drift corrected coordinates.  Plots of
 the drift estimates can be produced with plotDriftCorrection and some
 additional measures with calcDCResidual.
 
+```
 EXAMPLE USAGE (see also unitTest):
+
    DC = smi_core.DriftCorrection(SMF, SMDin);
    SMDIntra = [];
    for i = 1 : NDatasets
@@ -15,6 +17,17 @@ EXAMPLE USAGE (see also unitTest):
    end
    [SMDInter, StatisticsInter] = DC.driftCorrectKNNInter(SMDIntra);
    SMDout = SMDInter;
+```
+
+---
+
+CITATION:
+Michael J. Wester, David J. Schodt, Hanieh Mazloom-Farsibaf, Mohamadreza
+Fazel, Sandeep Pallikkuth and Keith A. Lidke, "Robust, fiducial-free drift
+correction for super-resolution imaging", *Scientific Reports*, Volume 11,
+Article 23672, December 8, 2021, 1-14,
+[https://www.nature.com/articles/s41598-021-02850-7](https://www.nature.com/articles/s41598-021-02850-7)
+(DOI: 10.1038/s41598-021-02850-7).
 
 ---
 
