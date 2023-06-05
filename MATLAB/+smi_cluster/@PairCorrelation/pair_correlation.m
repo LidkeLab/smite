@@ -155,7 +155,8 @@ function results = pair_correlation(obj, SMD1, SMD2)
 
    [estimates, errors, model] = ...
       smi_cluster.PairCorrelation.pc_GaussFit(paircorr{2}(:,1), ...
-         paircorr{2}(:,2), rmax, paircorr{3});
+         paircorr{2}(:,2), rmax*obj.RmaxFitFactor, paircorr{3});
+%        paircorr{2}(:,2), rmax, paircorr{3});
    estimates = abs(estimates);
 
    if ~isempty(obj.Fig_ext)

@@ -101,7 +101,11 @@ properties
    % Pixel size (nm) used for the internal images to be correlated.
    HistBinSize = 100;
    PixelSize = 100;   % Actual camera pixel size (nm).
-   Rmax_axis = -1;   % Sets plotting limit if > 0 (nm)
+   Rmax_axis = -1;    % Sets plotting limit if > 0 (nm)
+   % Factor to multiply rmax by when fitting a curve to the pair correlation
+   % data.  This changes the max limits of the pair correlation data used in
+   % the fitting, which may change the fitting curve.  Must be <= 1!
+   RmaxFitFactor = 1;
    % Default fit model for pair_correlation_Veatch.  This can also be supplied
    % as the optional last (4th) argument to this function.  Possible choices:
    %    'exponential_and_gaussian', 'exponential_and_cosine', 'exponential'
