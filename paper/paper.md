@@ -32,7 +32,7 @@ authors:
     affiliation: 1
   - name: Eric A. Burns
     orcid: 0000-0002-1625-2400
-    affliation: 3
+    affiliation: 3
   - name: William K. Kanagy
     orcid: 0000-0002-5756-9965
     affiliation: 3
