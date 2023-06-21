@@ -104,7 +104,7 @@ filter.maxLocROI = 500;   % maximum number of localizations allowed in a ROI
 
 % keep_numbering retains the ROI numbering even if there are missing ROIs
 % (which will be treated as empty).  See combineBaGoLROIs.
-keep_numbering = true;
+keep_numbering = false;
 
 fprintf('Done set parameters.\n');
 

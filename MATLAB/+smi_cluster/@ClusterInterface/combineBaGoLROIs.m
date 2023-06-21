@@ -33,7 +33,7 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 %    MAPNfile    if false, assume BaGoL_Results_*_Results*.mat files,
 %                otherwise if true, assume MAPN_*.mat files
 %    keep_numbering retain the ROI numbering even if there are missing ROIs
-%                (which will be treated as empty) [default: true]
+%                (which will be treated as empty) [default: false]
 %
 % OUTPUTS:
 %    Saves pathnameB/Analysis/*_BaGoL_ROIs.mat
@@ -42,7 +42,7 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 %    Michael J. Wester (2022)
 
    if ~exist('keep_numbering', 'var')
-      keep_numbering = true;
+      keep_numbering = false;
    end
 
    results_dir = pathnameB;
