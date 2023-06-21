@@ -128,6 +128,10 @@ DataROI = [];
 %ROIs = true;
 ROIs = false;
 
+% If includeROIs is set to a list of integers, then only those ROIs will be
+% processed when ROIs is set to true.
+includeROIs = [];
+
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 %start_DataDir = '.';
@@ -171,8 +175,17 @@ if numel(Files) == 1 && ROIs
    ROIsFile = load([filename, '_ROIs.mat']);
    n_ROIs = numel(ROIsFile.RoI);
    DataROI = zeros(n_ROIs, 4);
-   for i = 1 : n_ROIs
-      DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+   % Do all the ROIs when includeROIs is empty (the default),
+   if isempty(includeROIs)
+      for i = 1 : n_ROIs
+         DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+      end
+   else
+      for i = 1 : n_ROIs
+         if ismember(i, includeROIs)
+            DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+         end
+      end
    end
 
    Files = cell(n_ROIs, 1);
@@ -185,6 +198,7 @@ end
 % ----------------------------------------------------------------------
 
 % Run the BaGoL analyses.
-smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
+%smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
+hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
 
 fprintf('Done BaGoL.\n');

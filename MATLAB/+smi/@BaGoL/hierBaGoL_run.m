@@ -31,7 +31,20 @@ if ~iscell(Files)
    Files = { Files };
 end
 n_files = numel(Files);
-fprintf('Files to analyze = %d\n', n_files);
+
+if ROIs
+   % May be only (re)running a partial set.
+   n_files_included = 0;
+   for i = 1 : n_files
+      if any(DataROI(i, :))
+         n_files_included = n_files_included + 1;
+      end
+   end
+else
+   n_files_included = n_files;
+end
+
+fprintf('Files to analyze = %d\n', n_files_included);
 
 if ~isempty(DataROI) && size(DataROI, 1) ~= n_files
    error('DataROI must either be [] or contain %d rows!', n_files);
@@ -72,10 +85,12 @@ if n_files > 0
       delete(gcp('nocreate'));
       MachineInfo = parcluster();
       NumWorkers = MachineInfo.NumWorkers;
-      parpool('local', min(NumWorkers, n_files));
+      parpool('local', min(NumWorkers, n_files_included));
 
       parfor i = 1 : n_files
-         fprintf('(%d) %s ...\n', i, Files{i});
+         if ~ROIs || (ROIs && any(DataROI(i, :)))
+            fprintf('(%d) %s ...\n', i, Files{i});
+         end
          [DataDir, File, Ext] = fileparts(Files{i});
          SaveDir = fullfile(DataDir, Results_BaGoL);
 
@@ -85,12 +100,16 @@ if n_files > 0
          % Run hierBaGoL_analysis.
          try
             if ROIs
-               filename = regexprep(Files{i}, '_ROI_[0-9][0-9]\.', '.');
-               filename = regexprep(filename, ['Analysis', filesep], '');
-               % Assume SMD files are of the form Cell_nn_Label_0n_Results.mat
-               % and RoI files are of the form
-               % Cell_nn_Label_01_Results_ROIs.mat
-               data = load(filename);
+               if any(DataROI(i, :))
+                  filename = regexprep(Files{i}, '_ROI_[0-9][0-9]\.', '.');
+                  filename = regexprep(filename, ['Analysis', filesep], '');
+                  % Assume SMD files are of the form
+                  % Cell_nn_Label_0n_Results.mat and RoI files are of the form
+                  % Cell_nn_Label_01_Results_ROIs.mat
+                  data = load(filename);
+               else
+                  continue;
+               end
             else
                data = load(Files{i});
             end
@@ -127,7 +146,9 @@ if n_files > 0
 
    fprintf('BaGoL status by file (-1 PROBLEM, 0 NOT DONE, 1 DONE):\n');
    for i = 1 : n_files
-      fprintf('[%2d] %2d   %s\n', i, status(i), Files{i});
+      if ~ROIs || (ROIs && any(DataROI(i, :)))
+         fprintf('[%2d] %2d   %s\n', i, status(i), Files{i});
+      end
    end
 end
 warning('ON', 'stats:kmeans:FailedToConvergeRep');
