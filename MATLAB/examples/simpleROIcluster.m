@@ -102,6 +102,10 @@ MAPNfile = true;
 %filter.maxLocROI = 0;     % minimum number of localizations allowed in a ROI
 filter.maxLocROI = 500;   % maximum number of localizations allowed in a ROI
 
+% keep_numbering retains the ROI numbering even if there are missing ROIs
+% (which will be treated as empty).  See combineBaGoLROIs.
+keep_numbering = true;
+
 fprintf('Done set parameters.\n');
 
 %% ----------- Define the ROIs
@@ -150,7 +154,8 @@ else
                             '*_Results_ROI_*.mat');
 end
 
-CI.combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile);
+CI.combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
+                    keep_numbering);
 
 %% ---------- Possibly, filter out some ROIs
 

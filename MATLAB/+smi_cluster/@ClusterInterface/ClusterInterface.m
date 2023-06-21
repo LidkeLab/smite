@@ -34,7 +34,8 @@ methods(Static)
    combinedStatistics1(SC, pathname, files, base_name, A_ROI, doHopkins)
    combinedStatistics2(SC, colors, line_type, pathname, files, ...
                        base_name, A_ROI, doHopkins)
-   combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
+   combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
+                    keep_numbering)
    defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
    defineROIs(pathname, files, Pixel2nm, RT, oneROI)
    [n_ROIs, RoI] = filterROIs(pathname, files, filter)
