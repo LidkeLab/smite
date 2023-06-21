@@ -130,8 +130,12 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
       n_ROIs = [n_ROIs, data.n_ROIs];
       RoI{j} = data.RoI;
       for i = 1 : data.n_ROIs
-         n = n + 1;
          nPts = numel(data.RoI{i}.X{1});
+         % Skip completely empty ROIs!
+         if nPts == 0
+            continue;
+         end
+         n = n + 1;
          XY_ROI = [data.RoI{i}.X{1}, data.RoI{i}.Y{1}];
          %ROIs{n}.XY1 = XY_ROI;
          ROIs{n}.X = { data.RoI{i}.X{1} };
