@@ -127,7 +127,7 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 
       % Eliminate empty ROIs.
       missing = setdiff(1 : n_ROIs, found);
-      if ~keep_numbering && missing
+      if ~keep_numbering && isempty(missing)
          RoI_new = cell(n_ROIs - numel(missing), 1);
          k = 1;
          for ii = 1 : n_ROIs
