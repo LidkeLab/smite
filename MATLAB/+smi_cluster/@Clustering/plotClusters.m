@@ -15,6 +15,8 @@ function clusterFig = plotClusters(obj, SMD, C, centers, ptsI, txt, options)
 %                 'O': outline each cluster
 %                 'P': print the size of each cluster
 %                 '1': use only one color for all clusters
+%                 'Y': reverse the y-axis of the plot (useful for comparison
+%                      with image plots where (0, 0) is at the upper left)
 % OUTPUT:
 %    clusterFig   figure handle
 
@@ -39,11 +41,13 @@ function clusterFig = plotClusters(obj, SMD, C, centers, ptsI, txt, options)
       outlines = strfind(options, 'O');
       printing = strfind(options, 'P');
       onecolor = strfind(options, '1');
+      reverseY = strfind(options, 'Y');
    else
       labeling = false;
       outlines = true;
       printing = false;
       onecolor = false;
+      reverseY = false;
    end
 
    colors = 'rgbcmy';
@@ -97,6 +101,9 @@ end
    if n_isolated > 0
       %plot(XY(ptsI, 1), XY(ptsI, 2), 'k.', 'MarkerSize', 12);
       plot(XY(ptsI, 1), XY(ptsI, 2), 'k.');
+   end
+   if reverseY
+      set(gca, 'YDir', 'reverse');
    end
    title(sprintf('%s (points = %d, clusters = %d, clustered %% = %.3f)', ...
                  regexprep(txt, '_', '\\_'), n_points, nC,               ...
