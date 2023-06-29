@@ -3,7 +3,7 @@
 |***SMITE*** classes|description|
 -------------|---
 [MATLAB/+smi](../MATLAB/+smi/README.md):
-&nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | (Bayesian Grouping of Localizations)[https://www.nature.com/articles/s41467-022-34894-2]
+&nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | [Bayesian Grouping of Localizations](https://www.nature.com/articles/s41467-022-34894-2)
 &nbsp;&nbsp;&nbsp;[@Publish/](../MATLAB/+smi/@Publish/README.md)                | batch processing of SR data
 &nbsp;&nbsp;&nbsp;[@SMLM/](../MATLAB/+smi/@SMLM/README.md)                      | single molecule localization microscopy
 &nbsp;&nbsp;&nbsp;[@SPT/](../MATLAB/+smi/@SPT/README.md)                        | single-particle tracking analysis
