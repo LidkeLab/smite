@@ -3,7 +3,7 @@
 |***SMITE*** classes|description|
 -------------|---
 [MATLAB/+smi](../MATLAB/+smi/README.md):
-&nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | Bayesian Grouping of Localizations
+&nbsp;&nbsp;&nbsp;[@BaGoL/](../MATLAB/+smi/@BaGoL/README.md)                    | (Bayesian Grouping of Localizations)[https://www.nature.com/articles/s41467-022-34894-2]
 &nbsp;&nbsp;&nbsp;[@Publish/](../MATLAB/+smi/@Publish/README.md)                | batch processing of SR data
 &nbsp;&nbsp;&nbsp;[@SMLM/](../MATLAB/+smi/@SMLM/README.md)                      | single molecule localization microscopy
 &nbsp;&nbsp;&nbsp;[@SPT/](../MATLAB/+smi/@SPT/README.md)                        | single-particle tracking analysis
@@ -16,17 +16,17 @@
 [MATLAB/+smi_core](../MATLAB/+smi_core/README.md):
 &nbsp;&nbsp;&nbsp;[@ChannelRegistration/](../MATLAB/+smi_core/@ChannelRegistration/README.md)      | channel registration
 &nbsp;&nbsp;&nbsp;[@DataToPhotons/](../MATLAB/+smi_core/@DataToPhotons/README.md)                  | convert raw data to photons
-&nbsp;&nbsp;&nbsp;[@DriftCorrection/](../MATLAB/+smi_core/@DriftCorrection/README.md)              | drift correction on 2D/3D data
+&nbsp;&nbsp;&nbsp;[@DriftCorrection/](../MATLAB/+smi_core/@DriftCorrection/README.md)              | [drift correction on 2D/3D data](https://www.nature.com/articles/s41598-021-02850-7)
 &nbsp;&nbsp;&nbsp;[@FRC/](../MATLAB/+smi_core/@FRC/README.md)                   | Fourier Ring Correlation for image resolution
 &nbsp;&nbsp;&nbsp;[@FindROI/](../MATLAB/+smi_core/@FindROI/README.md)           | find/collate subregions from a 2D image stack
-&nbsp;&nbsp;&nbsp;[@FrameConnection/](../MATLAB/+smi_core/@FrameConnection/README.md)              | frame connection
+&nbsp;&nbsp;&nbsp;[@FrameConnection/](../MATLAB/+smi_core/@FrameConnection/README.md)              | [frame connection](https://www.frontiersin.org/article/10.3389/fbinf.2021.724325)
 &nbsp;&nbsp;&nbsp;[@LoadData/](../MATLAB/+smi_core/@LoadData/README.md)         | load raw microscope data from .mat/.h5 files
 &nbsp;&nbsp;&nbsp;[@LocalizeData/](../MATLAB/+smi_core/@LocalizeData/README.md) | find localizations in raw data
 &nbsp;&nbsp;&nbsp;[@SingleMoleculeData/](../MATLAB/+smi_core/@SingleMoleculeData/README.md)        | define SMD structure
 &nbsp;&nbsp;&nbsp;[@SingleMoleculeFitting/](../MATLAB/+smi_core/@SingleMoleculeFitting/README.md)  | define SMF structure
 &nbsp;&nbsp;&nbsp;[@Threshold/](../MATLAB/+smi_core/@Threshold/README.md)       | threshold based on various SMLM properties
 &nbsp;&nbsp;&nbsp;[@TrackingResults/](../MATLAB/+smi_core/@TrackingResults/README.md)              | define Tracking Results (TR) structure
-&nbsp;&nbsp;&nbsp;[GaussMLE.m](../MATLAB/+smi_core/README_GaussMLE.md)        | max likelihood estimate of 2D Gaussian blobs
+&nbsp;&nbsp;&nbsp;[GaussMLE.m](../MATLAB/+smi_core/README_GaussMLE.md)        | [max likelihood estimate of 2D Gaussian blobs](https://www.nature.com/articles/nmeth.1449)
 [MATLAB/+smi_helpers](../MATLAB/+smi_helpers/README.md):
 &nbsp;&nbsp;&nbsp;[@Filters/](../MATLAB/+smi_helpers/@Filters/README.md)        | filters useful for BaGoL operating on SMDs
 &nbsp;&nbsp;&nbsp;[@ROITools/](../MATLAB/+smi_helpers/@ROITools/README.md)      | select ROIs from an image; save in a structure
@@ -45,3 +45,6 @@
 &nbsp;&nbsp;&nbsp;[@GenerateImages/](../MATLAB/+smi_vis/@GenerateImages/README.md)                 | general visualization of super-resolution data
 &nbsp;&nbsp;&nbsp;[@GenerateMovies/](../MATLAB/+smi_vis/@GenerateMovies/README.md)                 | generate movies
 &nbsp;&nbsp;&nbsp;[@InspectResults/](../MATLAB/+smi_vis/@InspectResults/README.md)                 | inspect super-resolution data
+
+See also the [Overview of Core Functionality](CoreOverview.md) for additional
+details was well as links to a number of examples.
