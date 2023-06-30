@@ -246,6 +246,38 @@ fprintf(out, 'P_clustered fraction per ROI =\n');
 fprintf(out, fmt, P_clustered_frac);
 fprintf(out, '\n');
 
+% Cluster areas.
+areas = cell(1, n_files);
+for j = 1 : n_files
+   areas{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      areas{j} = [areas{j}, rdata{j}.results{i}.areas];
+   end
+end
+P_areas = ...
+SC.plotCombined(areas, ...
+                5, 'cluster areas (nm^2)', ...
+                econd, 'areas');
+fprintf(out, 'P_cluster areas =\n');
+fprintf(out, fmt, P_areas);
+fprintf(out, '\n');
+
+% Cluster areas per ROI.
+areas_ROI = cell(1, n_files);
+for j = 1 : n_files
+   areas_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      areas_ROI{j} = [areas_ROI{j}, mean(rdata{j}.results{i}.areas)];
+   end
+end
+P_areas_ROI = ...
+SC.plotCombined(areas_ROI, ...
+                5, 'cluster areas per ROI (nm^2)', ...
+                econd, 'areas_ROI');
+fprintf(out, 'P_cluster areas per ROI =\n');
+fprintf(out, fmt, P_areas_ROI);
+fprintf(out, '\n');
+
 % Cluster compactness.
 compactness = cell(1, n_files);
 for j = 1 : n_files
