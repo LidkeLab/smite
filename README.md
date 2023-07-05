@@ -1,3 +1,5 @@
+[![MATLAB](https://github.com/LidkeLab/smite/actions/workflows/ci.yml/badge.svg)](https://github.com/LidkeLab/smite/actions/workflows/ci.yml)
+
 # ***smite***: Single Molecule Imaging Toolbox Extraordinaire
 
 This MATLAB-based toolbox provides analysis tools for fluorescence
