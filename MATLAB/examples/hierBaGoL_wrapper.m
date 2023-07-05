@@ -198,7 +198,7 @@ end
 % ----------------------------------------------------------------------
 
 % Run the BaGoL analyses.
-%smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
-hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
+smi.BaGoL.hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
+%hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs);
 
 fprintf('Done BaGoL.\n');

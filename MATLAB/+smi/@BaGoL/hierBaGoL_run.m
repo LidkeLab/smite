@@ -21,10 +21,8 @@ function BGL = hierBaGoL_run(Files, DataROI, Results_BaGoL, BaGoLParams, ROIs)
 %    BGL              BaGoL object containing the results of the analysis
 %    See hierBaGoL_analysis for details.
 
-if exist('ROIs', 'var')
-   ROIs = true;   % *_ROIs.mat file was input
-else
-   ROIs = false;
+if ~exist('ROIs', 'var')
+   ROIs = false;   % *_ROIs.mat file was NOT input
 end
 
 if ~iscell(Files)
