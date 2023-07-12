@@ -1,10 +1,12 @@
-function  [CRLB]=crlbPSFPupil_unitTest()
+function  [Report, CRLB]=crlbPSFPupil_unitTest()
 %crlbPSFPupil_unitTest Tests crlbPSFPupil functionality.
 %
 % REQUIRES:
 %   Parallel Procesing Toolbox
 %   NVidia GPU
 %
+
+Report = 0;
 
 SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'crlbPSFPupil');
 
@@ -50,3 +52,5 @@ sliceViewer(gather(PSF))
 [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil(PSFStruct)
 title('Spherical Abberation')
 saveas(gcf, fullfile(SaveDir, 'cPP4.png'));
+
+Report = 1;

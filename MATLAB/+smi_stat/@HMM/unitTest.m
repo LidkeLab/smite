@@ -7,6 +7,8 @@ function success = unitTest()
 % pipeline to search for dimers.  Simulated data and results will be saved
 % in freshly generated directories under smite/MATLAB/examples/spt/
 
+success = 0;
+
 %% Simulate and save some SPT data in the format expected for real data.
 % Simulate some diffusing blobs and save simulated raw data.
 rng(12)

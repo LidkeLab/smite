@@ -168,12 +168,12 @@ classdef PointSpreadFunction < handle
         [Model,Data]=psfROIStack(SZ,SMD,PSF,XYSamPerPix,ZSamPerUnit,NoiseIm)
 
         %Unit Tests
-        [CRLB]=crlbPSFPupil_unitTest()
+        [Report, CRLB]=crlbPSFPupil_unitTest()
         [Report]=optimPSFZernike_unitTest()
         [Report]=oversamplePSFPupil_unitTest()
-        [PSFStruct]=phaseRetrieval_unitTest()
+        [Report, PSFStruct]=phaseRetrieval_unitTest()
         [Report]=scalarPSFPrasadZone_unitTest()
-        psfROIStack_unitTest()
+        [Report] = psfROIStack_unitTest()
         [Report]=zernikeImage_unitTest()
         unitTest()   % overall unitTest
 

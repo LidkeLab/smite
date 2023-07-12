@@ -1,5 +1,7 @@
 function unitTest()
 
+   success = 0;
+
    SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'SimSMLM');
 
    obj = smi_sim.SimSMLM();
@@ -32,5 +34,7 @@ function unitTest()
    figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
    saveas(gcf, fullfile(SaveDir, 'Data.png'));
    %dipshow(Data)
+
+   success = 1;
     
 end

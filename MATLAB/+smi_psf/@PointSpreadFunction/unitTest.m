@@ -3,7 +3,7 @@ function unitTest()
 
    fprintf('crlbPSFPupil_unitTest ...\n');
    try
-      [CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest();
+      [Report, CRLB]=smi_psf.PointSpreadFunction.crlbPSFPupil_unitTest();
    end
 
    fprintf('optimPSFZernike_unitTest ...\n');
@@ -28,7 +28,7 @@ function unitTest()
 
    fprintf('psfROIStack_unitTest ...\n');
    try
-      smi_psf.PointSpreadFunction.psfROIStack_unitTest();
+      [Report]=smi_psf.PointSpreadFunction.psfROIStack_unitTest();
    end
 
    fprintf('zernikeImage_unitTest ...\n');

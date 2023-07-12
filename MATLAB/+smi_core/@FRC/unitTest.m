@@ -25,6 +25,8 @@ function success = unitTest()
 %    This is needed because DIPimage also has a smooth function which will
 %    typically shadow MATLAB's smooth.
 
+   success = 0;
+
    SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'FRC');
 
    PixelSize = 100;   % nm

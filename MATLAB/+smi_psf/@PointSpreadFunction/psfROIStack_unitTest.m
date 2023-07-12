@@ -1,5 +1,7 @@
-function psfROIStack_unitTest()
+function [Report] = psfROIStack_unitTest()
 %psfROIStack_unitTest Tests psfROIStack functionality.
+
+Report = 0;
 
 SMD.X = rand([1,100000])*5+5;
 SMD.Y = rand([1,100000])*5+5;
@@ -24,3 +26,5 @@ T = toc;
 fprintf('psfROIStack is successfully tested.\n');
 fprintf('%g blobs of 3D super-resolution data were generated in %g seconds.\n',size(SMD.X,2),T);
 end
+
+Report = 1;

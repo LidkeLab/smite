@@ -9,9 +9,9 @@ function [Report]=optimPSFZernike_unitTest()
 %   NVidia GPU
 %
 
-SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'optimPSFZernike');
-
 Report = 0;
+
+SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'optimPSFZernike');
  
 %% Blind start. Search for Astigmatism
 P=smi_psf.PointSpreadFunction.createPSFStruct();
