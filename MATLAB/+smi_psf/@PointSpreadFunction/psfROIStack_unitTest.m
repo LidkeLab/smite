@@ -25,6 +25,6 @@ tic;
 T = toc;
 fprintf('psfROIStack is successfully tested.\n');
 fprintf('%g blobs of 3D super-resolution data were generated in %g seconds.\n',size(SMD.X,2),T);
-end
 
 Report = 1;
+end

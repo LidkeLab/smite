@@ -1,4 +1,4 @@
-function unitTest()
+function success = unitTest()
 
    success = 0;
 

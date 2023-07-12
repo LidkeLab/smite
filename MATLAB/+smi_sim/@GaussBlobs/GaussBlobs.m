@@ -32,11 +32,12 @@ methods (Static)
     [BlobStack]=genRandomBlobImage(SZ,NFrames,Rho,Photons,PSFSigma,Bg)
     
     
-    function unitTest()
+    function success = unitTest()
     %unitTest Tests static methods using default parameters 
     % REQUIRES:
     %   DipImage
         fprintf('Testing gaussBlobROIStack...\n')
+        success = 0;
         SaveDir = fullfile(tempdir, 'smite', 'unitTest', 'GaussBlobs');
         if ~isfolder(SaveDir)
            mkdir(fullfile(tempdir, 'smite'));
@@ -48,6 +49,7 @@ methods (Static)
         saveas(gcf, fullfile(SaveDir, 'GB1.png'));
         figure; imagesc(sum(Data, 3)); colormap(gca, gray(256));
         saveas(gcf, fullfile(SaveDir, 'GB2.png'));
+        success = 1;
         %dipshow(Model)
         %dipshow(Data)
 %       fprintf('Testing gaussBlobImage...\n')

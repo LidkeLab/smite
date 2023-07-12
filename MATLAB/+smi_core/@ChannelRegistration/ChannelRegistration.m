@@ -261,7 +261,7 @@ classdef ChannelRegistration < handle
             RegistrationTransform, MovingCoordinates, FixedCoordinates, ...
             MovingImage, FixedImage);
         [RawData, Files] = simFiducials(ROISize, NRows, SaveDir);
-        unitTest()
+        [Success] = unitTest()
     end
     
     methods (Static, Hidden)
