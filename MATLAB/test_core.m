@@ -97,9 +97,10 @@ methods (Test)
    function test_FRC(testCase)
       fprintf( ...
        'smi_core.FRC.unitTest (Fourier Ring Correlation) [DIPimage needed]\n');
-      try
+      if exist('dipinit')
          results = smi_core.FRC.unitTest();
-      catch
+      else
+         fprintf('DIPimage needed!\n');
          results = 1;
       end
       testCase.verifyEqual(results, 1);
