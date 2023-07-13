@@ -44,6 +44,13 @@ authors:
     affiliation: 3
   - name: Sheng Liu
     affiliation: 1
+  - name: Peter K. Relich
+    orcid: 0000-0002-6063-6233
+    affiliation: 1
+  - name: Mark J. Olah
+    affiliation: 1
+  - name: Stanly L. Steinberg
+    affiliation: 2
   - name: Keith A. Lidke^[corresponding author]
     orcid: 0000-0002-9328-4318
     affiliation: 1
@@ -113,13 +120,19 @@ scripting.  See \autoref{fig:smite_overview} for several examples of SMITE
 GUIs.
 
 SMITE is a tool designed to be used by researchers and upper level students
-interested in fluorescence single molecule imaging and applications.  Parts of
-it have already been or are in the process of being published, e.g., frame
-connection [@Schodt_article:2021], drift correction [@Wester_article:2021],
-Bayesian grouping of localizations [@Fazel_article:2022a].  Applications are
-described in [@FrancoNitta_article:2021; @Mazloom-Farsibaf_article:2021;
-@Bailey_article:2022].  Typical raw image data can be found in
-[@Pallikkuth_data:2018].
+interested in fluorescence single molecule imaging and applications.
+Some of the algorithms have already been published: 2D Gaussian blob maximum
+likelihood estimate [@Smith_article:2010], frame connection
+[@Schodt_article:2021], drift correction [@Wester_article:2021], Bayesian
+grouping of localizations [@Fazel_article:2022a], diffusion estimation
+[@Relich_article:2016].  However, this is the first time that they have been
+integrated together, sharing common data structures.
+Applications are described in [@FrancoNitta_article:2021;
+@Mazloom-Farsibaf_article:2021; @Bailey_article:2022].
+Typical raw image data can be found in [@Pallikkuth_data:2018].
+A summary of the namespaces and classes in SMITE can be found in the online
+documentation at
+[https://github.com/LidkeLab/smite/blob/main/doc/SMITEclasses.md](https://github.com/LidkeLab/smite/blob/main/doc/SMITEclasses.md).
 
 SMAP [@Ries_article:2020], an alternative MATLAB integrated SMLM/SPT code, is
 GUI oriented, while SMITE was designed to be more focused on scripting
@@ -135,6 +148,29 @@ respectively.
 right) SMLM analysis, (lower left) channel registration, and (lower right)
 inspection of results contained in SMD
 structures.\label{fig:smite_overview}](smite_overview.pdf){ width=100% }
+
+# Author Contributions
+
+KAL conceived and supervised development of SMITE and its predecessors.
+DJS, MF, HMF, MBMM and KAL coded SR localization techniques.
+SP, MJW, MF and HMF implemented thresholding.
+DJS and HMF wrote frame connection.
+MJW, KAL and DJS developed drift correction based on an earlier version by FF.
+MF and KAL devloped BaGoL; MJW wrote the interface to SMITE.
+DJS, HMF, WKK, DAR and EJ designed and wrote code for single particle tracking
+based on ideas from PKR.
+DJS, MBMM, HMF and SP created visualizations.
+SK, MJW and DJS added SMLM and SPT simulations.
+KAL, SL and MJW developed Zernike polynomial point spread function engineering.
+MJW packaged clustering techniques, and
+SLS and MJW wrote code for various cluster statistics.
+DJS added channel registration, various statistics, dimer hidden Markov
+modeling and the batch Publish class.
+PKR and MJO developed the diffusion estimator, while MJO also contributed to
+the change detector.
+MJW, SK and EAB added GitHub documentation.
+MJW and DJS wrote the manuscript.
+All authors reviewed the manuscript.
 
 # Acknowledgements
 

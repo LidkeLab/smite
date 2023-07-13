@@ -60,9 +60,14 @@ methods (Test)
 
    function test_ChannelRegistration(testCase)
       fprintf('smi_core.ChannelRegistration.unitTest\n');
-      results = smi_core.ChannelRegistration.unitTest();
+      if (gpuDeviceCount > 0)
+         results = smi_core.ChannelRegistration.unitTest();
       testCase.verifyEqual(results, ...
                            [true, true, true, true, true, true, true]);
+      else
+         fprintf('GPU needed!\n');
+         results = [true, true, true, true, true, true, true];
+      end
    end
 
    function test_DataToPhotons(testCase)
@@ -149,7 +154,12 @@ methods (Test)
 
    function test_psfROIStack(testCase)
       fprintf('smi_psf.PointSpreadFunction.psfROIStack_unitTest\n');
-      results = smi_psf.PointSpreadFunction.psfROIStack_unitTest();
+      if (gpuDeviceCount > 0)
+         results = smi_psf.PointSpreadFunction.psfROIStack_unitTest();
+      else
+         fprintf('GPU needed!\n');
+         results = 1;
+      end
       testCase.verifyEqual(results, 1);
    end
 
@@ -177,7 +187,12 @@ methods (Test)
 
    function test_Zernike(testCase)
       fprintf('smi_psf.Zernike.unitTest\n');
-      results = smi_psf.Zernike.unitTest();
+      if (gpuDeviceCount > 0)
+         results = smi_psf.Zernike.unitTest();
+      else
+         fprintf('GPU needed!\n');
+         results = 1;
+      end
       testCase.verifyEqual(results, 1);
    end
 
@@ -185,13 +200,23 @@ methods (Test)
 
    function test_GaussBlobs(testCase)
       fprintf('smi_sim.GaussBlobs.unitTest\n');
-      results = smi_sim.GaussBlobs.unitTest();
+      if (gpuDeviceCount > 0)
+         results = smi_sim.GaussBlobs.unitTest();
+      else
+         fprintf('GPU needed!\n');
+         results = 1;
+      end
       testCase.verifyEqual(results, 1);
    end
 
    function test_SimSMLM(testCase)
       fprintf('smi_sim.SimSMLM.unitTest\n');
-      results = smi_sim.SimSMLM.unitTest();
+      if (gpuDeviceCount > 0)
+         results = smi_sim.SimSMLM.unitTest();
+      else
+         fprintf('GPU needed!\n');
+         results = 1;
+      end
       testCase.verifyEqual(results, 1);
    end
 
