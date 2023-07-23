@@ -29,6 +29,7 @@ jobs:
     - name: Commit Files
       run: |
         git checkout -B gh-pages main
+        git reset --hard origin/main
         git rm -rf .
         git checkout main -- README.md  # Explicitly checkout the latest README.md from main
         git add README.md all_source.txt
