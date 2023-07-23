@@ -1,3 +1,4 @@
+
 name: Concatentate Source and Readme
 
 on: 
@@ -13,7 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    
+    
     - name: Concatenate Files
       run: |
         cd ${{ github.workspace }}
@@ -25,13 +27,18 @@ jobs:
 
     - name: Setup Git  
       run: |
-        git config --global user.name 'Your Name'
-        git config --global user.email 'your-email@domain.com'
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
       
+    - name: Copy README
+      run: |
+        cp README.md ./README.md
+
     - name: Commit Files
       run: |
         git checkout -b gh-pages
         git rm -rf .
+        git add README.md
         git add all_source.txt
         git commit -m "Updating all source file"
         
