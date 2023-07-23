@@ -35,7 +35,7 @@ jobs:
         git commit -m "Updating all source and README"
 
     - name: Push Changes
-      uses: ad-m/github-push-action@v0.6 # Use a specific version instead of master for stability
+      uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
