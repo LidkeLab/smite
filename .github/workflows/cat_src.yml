@@ -1,5 +1,4 @@
-
-name: Concatentate Source and Readme
+name: Concatenate Source and Readme
 
 on: 
   push:
@@ -7,14 +6,11 @@ on:
       - main
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    
     
     - name: Concatenate Files
       run: |
@@ -28,22 +24,18 @@ jobs:
     - name: Setup Git  
       run: |
         git config user.name "GitHub Actions Bot"
-        git config user.email "<>"
+        git config user.email "actions@github.com"
       
-    - name: Copy README
-      run: |
-        cp README.md ./README.md
-
     - name: Commit Files
       run: |
-        git checkout -b gh-pages
+        git checkout -B gh-pages
         git rm -rf .
-        git add README.md
-        git add all_source.txt
-        git commit -m "Updating all source file"
-        
+        git checkout main -- README.md  # Explicitly checkout the latest README.md from main
+        git add README.md all_source.txt
+        git commit -m "Updating all source and README"
+
     - name: Push Changes
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@v2 # Use a specific version instead of master for stability
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
