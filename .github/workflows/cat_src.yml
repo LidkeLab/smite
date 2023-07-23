@@ -31,6 +31,7 @@ jobs:
     - name: Commit Files
       run: |
         git checkout -b gh-pages
+        git rm -rf .
         git add all_source.txt
         git commit -m "Updating all source file"
         
