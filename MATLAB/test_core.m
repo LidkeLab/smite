@@ -9,9 +9,9 @@ classdef test_core < matlab.unittest.TestCase
 %    testCase = test_core
 %    results = testCase.run
 
-% +smi
-
 methods (Test)
+
+% +smi
 
    function test_SMLM(testCase)
       fprintf('smi.SMLM.unitTest\n');

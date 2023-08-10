@@ -36,9 +36,12 @@ in the left-most column.
 
 ## Installation
 Clone (Linux/MacOS example; similar for Windows) into `~/Documents/MATLAB`
-the ***smite*** GitHub distribution
-(https://github.com/LidkeLab/smite.git).  Add to
-`~/Documents/MATLAB/startup.m` the following:
+the ***smite*** GitHub distribution (https://github.com/LidkeLab/smite.git)
+to obtain the development version.
+Otherwise, choose the latest release
+(https://github.com/LidkeLab/smite/releases) for the most recent stable
+version.
+Add to `~/Documents/MATLAB/startup.m` the following:
 ```
    addpath '~/Documents/MATLAB/smite/MATLAB'
    setupSMITE

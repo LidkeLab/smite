@@ -91,7 +91,7 @@ if oneROI
 end
 
 % Select the files starting from start_datadir.
-%start_datadir = 'Y:\Will K\BaGoL_Analysis_WTvsLynKO_DNPvsDF3\DNP24_1ug-mL_WT\Results_BaGoL';
+%start_datadir = 'NEEDS_TO_BE_SET!';
 start_datadir = '.';
 
 % If true, look for MAPN_*.mat, otherwise *_Results*.mat for BaGoL coordinates.

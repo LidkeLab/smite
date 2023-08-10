@@ -36,9 +36,8 @@ if oneROI
 end
 
 % Select the files starting from start_datadir.
-%start_datadir = '/mnt/nas/cellpath/Genmab/Data/20220426 CHOK1 HAEGFR initial AB testing/ROIs and DBscan';
-%start_datadir = '/mnt/nas/cellpath/Genmab/Publish+BaGoL+cluster/RGY';
-start_datadir = 'P:\Genmab\Publish+BaGoL+cluster';
+%start_datadir = 'NEEDS_TO_BE_SET!';
+start_datadir = '.';
 
 fprintf('Done set parameters.\n');
 

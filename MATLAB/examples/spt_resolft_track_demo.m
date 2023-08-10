@@ -1,10 +1,13 @@
+% offsetfile (the camera calibration file) needs to be defined below.
+
 %% here only need to select the data, other parameters will be set below
 SMF = smi_core.SingleMoleculeFitting;
 SMF.gui
 
 %% set path to dark frame file
 %offsetfile = 'Y:\sCMOS Calibrations\SPT\GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
-offsetfile = '/mnt/nas/lidkelab/sCMOS Calibrations/SPT/GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
+%offsetfile = '/mnt/nas/lidkelab/sCMOS Calibrations/SPT/GainCalibration_darkFrames_2022_10_26_18_02_10.mat';
+offsetfile = 'NEEDS_TO_BE_SET!';
 load(offsetfile)
 ccdoffset = mean(sequence,3);
 ccdvar = var(single(sequence),1,3);

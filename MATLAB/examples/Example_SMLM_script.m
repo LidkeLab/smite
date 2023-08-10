@@ -14,6 +14,9 @@ SMF = smi_core.SingleMoleculeFitting();
    % Results directory (char array)(Default='FileDir/Results')
 SMF.Data.ResultsDir = tempdir;
 
+   % Also, SMF.Data.FileDir and SMF.Data.Filename below need to be set with
+   % the input data location.
+
 if Saving
    if ~exist(SMF.Data.ResultsDir, 'dir')
       mkdir(SMF.Data.ResultsDir);
@@ -28,10 +31,9 @@ end
 % Set some Single Molecule Fitting (SMF) parameters:
 
    % File directory (char array)
-SMF.Data.FileDir           = ...
-   '\\rayleigh.phys.unm.edu\cell-path\Genmab\Data\10082020\Wien133_LQT_CD52_HexElect1\Cell_01\Label_01';
+SMF.Data.FileDir           = 'NEEDS_TO_BE_SET!';
    % File name (cell array of char array)
-SMF.Data.FileName         = 'Data_2020-10-8-17-58-54.h5';
+SMF.Data.FileName         = 'NEEDS_TO_BE_SET!';
    % ID tagged onto saved results (char array)(Default='')
 SMF.Data.AnalysisID       = 'ID';
    % 'EMCCD','SCMOS' (Default='EMCCD')

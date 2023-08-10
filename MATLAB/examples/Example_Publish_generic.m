@@ -9,8 +9,9 @@
 % NOTE: 'CoverslipDir' is the top-level directory which contains the
 %        sub-directories 'CoverslipDir'\Cell*\Label*, which themselves
 %        contain data in .h5 files 'CoverslipDir'\Cell*\Label*\Data*.h5
-CoverslipDir = '/mnt/nas/cellpath/Actin Asters/22-3-8/HeLa_GFP-GPI_Actin';
-SCMOSDir = '/mnt/nas/lidkelab/sCMOS Calibrations/Sequential SR/GainCalibration-2015-12-10-17-19-23.mat';
+%SCMOSDir = '/mnt/nas/lidkelab/sCMOS Calibrations/Sequential SR/GainCalibration-2015-12-10-17-19-23.mat';
+CoverslipDir = 'NEEDS_TO_BE_SET!';
+SCMOSDir = 'NEEDS_TO_BE_SET!';
 
 % Prepare the SMF structure.
 SMF = smi_core.SingleMoleculeFitting;
@@ -61,7 +62,7 @@ Publish.performFullAnalysis()
 
 % Additional directories to Publish can be done by the following lines.
 
-CoverslipDir = '/mnt/nas/cellpath/Actin Asters/22-3-8-b/HeLa_GFP-GPI_Actin';
+CoverslipDir = 'NEEDS_TO_BE_SET!';
 Publish = smi.Publish(SMF);
 Publish.CoverslipDir = CoverslipDir;
 Publish.Verbose = 1;
@@ -72,7 +73,7 @@ Publish.ShiftToReg = 0;% can be useful for color overlay data, use with caution!
 Publish.SRImageZoom = 20;
 Publish.performFullAnalysis()
 
-CoverslipDir = '/mnt/nas/cellpath/Actin Asters/22-3-8-b/HeLa_GFP-GPI_Actinb';
+CoverslipDir = 'NEEDS_TO_BE_SET!';
 Publish = smi.Publish(SMF);
 Publish.CoverslipDir = CoverslipDir;
 Publish.Verbose = 1;
@@ -83,7 +84,7 @@ Publish.ShiftToReg = 0;% can be useful for color overlay data, use with caution!
 Publish.SRImageZoom = 20;
 Publish.performFullAnalysis()
 
-CoverslipDir = '/mnt/nas/cellpath/Actin Asters/22-3-8-c/HeLa_GFP-GPI_Actin';
+CoverslipDir = 'NEEDS_TO_BE_SET!';
 Publish = smi.Publish(SMF);
 Publish.CoverslipDir = CoverslipDir;
 Publish.Verbose = 1;

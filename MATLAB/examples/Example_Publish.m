@@ -6,12 +6,14 @@
 % NOTE: 'CoverslipDir' is the top-level directory which contains the
 %        sub-directories 'CoverslipDir'\Cell*\Label*, which themselves
 %        contain data in .h5 files 'CoverslipDir'\Cell*\Label*\Data*.h5
-CoverslipDir = 'Y:\dschodt\analysis_test_directory\SMA_Publish_testing\21_5_4_HeLa_alpha_beta_tubulin';
+CoverslipDir = 'NEEDS_TO_BE_SET!';
+% Below, also set 'SMF.Data.CalibrationFilePath'.
 
 % Prepare the SMF structure.
 SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraType = 'SCMOS';
-SMF.Data.CalibrationFilePath = 'Y:\sCMOS Calibrations\Sequential SR\GainCalibration_medianGain_2022_05_26_14_51_08.mat';
+%SMF.Data.CalibrationFilePath = 'Y:\sCMOS Calibrations\Sequential SR\GainCalibration_medianGain_2022_05_26_14_51_08.mat';
+SMF.Data.CalibrationFilePath = 'NEEDS_TO_BE_SET!';
 SMF.Data.PixelSize = 0.0954; % microns
 SMF.BoxFinding.BoxSize = 8; % pixels
 SMF.Fitting.FitType = 'XYNBS';
