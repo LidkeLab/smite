@@ -1,6 +1,16 @@
 ### ***smite*** examples and unit tests
 
-Self-contained examples of using SMITE code:
+Self-contained examples generate the data they need and do not require user
+files.  Output goes to an appropriately named temporary directory under
+tempdir/'smite'/'examples'.
+Code templates provide examples of how to use ***smite***, but need user data
+paths (look for the string: 'NEEDS_TO_BE_SET!' to see what path and filename
+variables need to be assigned).
+Unit tests (all self-contained) can be invoked individually, or altogether via
+the upper level [run_tests.m](../run_tests.m).  Their output also goes to a
+temporary directory under tempdir/'smite'/'unitTest'.
+
+Self-contained examples of using ***smite*** code:
 
 || example code ||
 ---|---|---
@@ -19,7 +29,7 @@ G     | [Example_SPTBatch](Example_SPTBatch.m)                                  
 
 G indicates a GPU is used.
 
-SMITE code templates requiring user-supplied data:
+***smite*** code templates requiring user-supplied data:
 
 | example code ||
 ---|---
@@ -34,7 +44,8 @@ SMITE code templates requiring user-supplied data:
 [singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
 [spt_resolft_track_demo](spt_resolft_track_demo.m)                              | SPT-RESOLFT example
 
-SMITE unit tests (see also [ExpectedResults](../ExpectedResults/README.md)):
+***smite*** unit tests
+(see also [ExpectedResults](../ExpectedResults/README.md)):
 - [smi.SMLM.unitTest](../+smi/@SMLM/unitTest.m)
 - [smi.SPT.unitTestFFGC](../+smi/@SPT/unitTestFFGC.m) (frame-to-frame and gap closing processes)
 - [smi_cluster.Clustering.unitTest](../+smi_cluster/@Clustering/unitTest.m)
