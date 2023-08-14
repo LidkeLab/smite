@@ -39,28 +39,20 @@ Clone (Linux/MacOS example; similar for Windows) into `~/Documents/MATLAB`
 the ***smite*** GitHub distribution (https://github.com/LidkeLab/smite.git)
 to obtain the development version.
 Otherwise, choose the latest release
-(https://github.com/LidkeLab/smite/releases) for the most recent stable
+(https://github.com/LidkeLab/smite/releases) for the most recent frozen
 version.
 Add to `~/Documents/MATLAB/startup.m` the following:
 ```
    addpath '~/Documents/MATLAB/smite/MATLAB'
    setupSMITE
 ```
-In addition, depending on the machine's architecture, you may need to
-compile the mex files in `~/Documents/MATLAB/smite/MATLAB/source/c`
-using `mex_Make`:
-```
-   cd ~/Documents/MATLAB/smite/MATLAB/source/c
-   mex_Make
-```
-and the CUDA files in `~/Documents/MATLAB/smite/MATLAB/source/cuda`
-using `cuda_Make`:
-```
-   cd ~/Documents/MATLAB/smite/MATLAB/source/cuda
-   cuda_Make
-```
-The compiled files will be placed in the `smite/MATLAB/mex` or
-`smite/MATLAB/ptx` directories, respectively.
+Now, ***smite*** contains some mex and CUDA files.  Precompiled files for
+64-bit Linux, MacOS and Windows (mex extensions: mexa64, mexmaci64, mexw64,
+respectively; CUDA extension: ptx) come with the repository, so often no
+further installation will be needed.
+However, if for some reason (for example, the user modifies a mex or CUDA
+source file), recompilation of the appropriate file is necessary, then see
+[mex+CUDA](doc/mex+CUDA.md) for details.
 
 To verify that ***smite*** is running properly, see the Testing
 subsection below.
@@ -69,7 +61,7 @@ subsection below.
 For full functionality, ***smite*** requires:
 - Linux, MacOS or Windows
 - MATLAB version R2021a or later
-- Nvidia GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
+- NVIDIA GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
 - MATLAB Curve Fitting Toolbox [ONLY smi_cluster, smi_core.FRC,
   smi_stat.DiffusionEstimator]
 - MATLAB Image Processing Toolbox
