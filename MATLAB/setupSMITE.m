@@ -15,6 +15,6 @@ addpath(fullfile(SMITEPath,'ptx'))
 
 ExtSoftPath = fileparts(SMITEPath);
 run(fullfile(ExtSoftPath, 'ExternalSoftware', 'setupExternalSoftware'));
+fprintf('SMITE version: %s\n', smi_helpers.versionSMITE());
 
 end
-
