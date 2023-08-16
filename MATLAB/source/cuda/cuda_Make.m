@@ -11,13 +11,18 @@
 
 clc
 
-if ispc
-   % Adding system path for nvcc to compile with nvcc
+if ispc % Windows
+   % Adding system path for the NVIDIA GPU Computing Toolkit binaries to
+   % compile with nvcc.  Update with the correct path for newer versions
+   % of the toolkit.
    setenv('PATH', [getenv('PATH') ';C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin']);
-   % Adding system path for VS2013 to compile with cl
+   % Adding system path for VS2013 (Visual Studio) binaries to compile with
+   % cl.  Update with the correct path for newer versions of Visual Studio.
    setenv('PATH', [getenv('PATH') ';C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin']);
 else % Linux/MacOS
-   % Adding system path for nvcc to compile with nvcc
+   % Adding system path for the NVIDIA GPU Computing Toolkit binaries to
+   % compile with nvcc.  Update with the correct path for newer versions
+   % of the toolkit.
    setenv('PATH', [getenv('PATH') ':/usr/local/cuda-10.1/bin']);
 end
 

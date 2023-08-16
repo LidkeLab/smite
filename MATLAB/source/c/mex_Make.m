@@ -2,6 +2,7 @@
 
 % This should be run to generate mex files for each architecture.
 % mex_Make should be run while in the smite/MATLAB/source/c directory.
+% mex -setup   indicates if mex is configured to use a C/C++ compiler.
 
 %% get path
 
