@@ -47,7 +47,7 @@ To generate CUDA files, the `nvcc` compiler (part of the NVIDIA GPU
 Computing Toolkit installation), and in addition for Windows, the `cl.exe`
 compiler from Visual Studio, must be on the user's `PATH` (see the
 `setenv` lines at the top of the
-(cuda_Make.m)[../MATLAB/source/cuda/cuda_Make.m] file).  The user may need
+[cuda_Make.m](../MATLAB/source/cuda/cuda_Make.m) file).  The user may need
 to modify the line(s) here to `cuda_Make` of the form:
 ```
    setenv('PATH', [getenv('PATH') ':nvcc_PATH']);
