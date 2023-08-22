@@ -16,6 +16,7 @@ if ispc % Windows
    % compile with nvcc.  Update with the correct path for newer versions
    % of the toolkit.
    setenv('PATH', [getenv('PATH') ';C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin']);
+
    % Adding system path for VS2013 (Visual Studio) binaries to compile with
    % cl.  Update with the correct path for newer versions of Visual Studio.
    setenv('PATH', [getenv('PATH') ';C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin']);

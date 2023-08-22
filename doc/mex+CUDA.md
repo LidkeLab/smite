@@ -5,6 +5,10 @@
 To compile ***smite*** mex files, mex must have been set up in MATLAB with
 an installed C/C++ compiler (type `mex -setup` to MATLAB to see if this is
 the case).
+[Supported compilers for MATLAB](https://www.mathworks.com/support/requirements/supported-compilers.html)
+include the Windows Add-On MinGW-w64 C/C++ compiler that can be used for mex
+compilation if no other C++ compiler is already installed (see `mex -setup`).
+
 To compile CUDA files, the NVIDIA GPU Computing Toolkit needs to be installed,
 with the `nvcc` compiler located on the file PATH.  (For Windows, `cl.exe`
 from a Visual Studio installation [freely available] also needs to be on
