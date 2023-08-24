@@ -54,12 +54,12 @@ compiler from Visual Studio, must be on the user's `PATH` (see the
 [cuda_Make.m](../MATLAB/source/cuda/cuda_Make.m) file).  The user may need
 to modify the line(s) here to `cuda_Make` of the form:
 ```
-   setenv('PATH', [getenv('PATH') ':nvcc_PATH']);
+   setenv('PATH', ['nvcc_PATH:' getenv('PATH')]);
 ```
 (MacOS/Linux), or
 ```
-   setenv('PATH', [getenv('PATH') ';nvcc_PATH']);
-   setenv('PATH', [getenv('PATH') ';cl_PATH']);
+   setenv('PATH', ['nvcc_PATH;' getenv('PATH')]);
+   setenv('PATH', ['cl_PATH;' getenv('PATH')]);
 ```
 (Windows)
 where `nvcc_PATH` should be replaced by the actual path to where the

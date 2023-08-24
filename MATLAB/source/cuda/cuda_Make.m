@@ -12,23 +12,29 @@
 clc
 
 if ispc % Windows
-   % Adding system path for the NVIDIA GPU Computing Toolkit binaries to
-   % compile with nvcc.  Update with the correct path for newer versions
-   % of the toolkit.
-%  setenv('PATH', [getenv('PATH') ';C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin']);
-   setenv('PATH', [getenv('PATH') ';C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\bin']);
+   % Prepend the system path with the NVIDIA GPU Computing Toolkit binaries
+   % directory for compiling with nvcc.  Prepend (rather than append) in case
+   % multiple versions of the toolkit are installed (which automatically are
+   % added to the system path on installation).  Update with the correct path
+   % for newer versions of the toolkit.
+%  setenv('PATH', ['C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin;' getenv('PATH')]);
+   setenv('PATH', ['C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2\bin;' getenv('PATH')]);
 
-   % Adding system path for VS2013 (Visual Studio) binaries to compile with
-   % cl.  Update with the correct path for newer versions of Visual Studio.
-%  setenv('PATH', [getenv('PATH') ';C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin']);
-   setenv('PATH', [getenv('PATH') ';C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64']);
+   % Prepend the system path with the Visual Studio binaries directory for
+   % compiling with cl.  See comment above about prepend versus append.
+   % Update with the correct path for newer versions of Visual Studio.
+   % [VS2013]
+%  setenv('PATH', ['C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin;' getenv('PATH')]);
+   % [VS2019]
+   setenv('PATH', [';C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64;' getenv('PATH')]);
 else % Linux/MacOS
-   % Adding system path for the NVIDIA GPU Computing Toolkit binaries to
-   % compile with nvcc.  Update with the correct path for newer versions
-   % of the toolkit.
-   setenv('PATH', [getenv('PATH') ':/usr/local/cuda-10.1/bin']);
+   % Prepend the system path with the NVIDIA GPU Computing Toolkit binaries
+   % directory for compiling with nvcc.  Update with the correct path for
+   % newer versions of the toolkit.  The toolkit is compatible with gcc.
+   setenv('PATH', ['/usr/local/cuda-10.1/bin:' getenv('PATH')]);
 end
 
+% -arch=sm_50 says build for GPUs with computing capability at least 5.0 .
 nvcc_cmd = 'nvcc -arch=sm_50 -ptx %s -o %s\n';
 
 %% smi_cuda_gaussMLEv2

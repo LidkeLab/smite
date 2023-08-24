@@ -49,7 +49,8 @@ Add to `~/Documents/MATLAB/startup.m` the following:
 Now, ***smite*** contains some mex and CUDA files.  Precompiled files for
 64-bit Linux, MacOS and Windows (mex extensions: mexa64, mexmaci64, mexw64,
 respectively; CUDA extension: ptx) come with the repository, so often no
-further installation will be needed.
+further installation will be needed.  Note that the GPU compute capability
+is assumed to be 5.0 or greater.
 However, if for some reason (for example, the user modifies a mex or CUDA
 source file), recompilation of the appropriate file is necessary, then see
 [mex+CUDA](doc/mex+CUDA.md) for details.
@@ -61,7 +62,7 @@ subsection below.
 For full functionality, ***smite*** requires:
 - Linux, MacOS or Windows
 - MATLAB version R2021a or later
-- NVIDIA GPU with CUDA compute capability [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
+- NVIDIA GPU with CUDA compute capability (>= 5.0) [supported by your version of MATLAB](https://www.mathworks.com/help/parallel-computing/gpu-support-by-release.html)
 - MATLAB Curve Fitting Toolbox [ONLY smi_cluster, smi_core.FRC,
   smi_stat.DiffusionEstimator]
 - MATLAB Image Processing Toolbox
@@ -163,6 +164,9 @@ or analyze all datasets.
 [run_tests](MATLAB/run_tests.m) run a series of unit tests that
 cover major ***smite*** core functionality.  Much output will be
 saved in tempdir/smite/unitTest/name_of_test.
+Note that the first two tests (smi.SMLM.unitTest and
+smi.SPT.unitTestFFGC) test a great deal of functionality all at once,
+and so their success is a good indicator that ***smite*** is working.
 [ExpectedResults](MATLAB/ExpectedResults/README.md) are provided
 in the `smite/MATLAB` directory in which `run_tests.m` resides,
 noting that very large files have been deleted so as to not bloat
