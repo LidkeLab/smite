@@ -24,11 +24,13 @@ authors:
     orcid: 0000-0002-2571-0418
     affiliation: 1
   - name: Sandeep Pallikkuth
+    orcid: 0009-0003-0400-6389
     affiliation: 1
   - name: Marjolein B. M. Meddens
     orcid: 0000-0002-9965-1342
     affiliation: 1
   - name: Farzin Farzam
+    orcid:  0000-0002-9939-1923
     affiliation: 1
   - name: Eric A. Burns
     orcid: 0000-0002-1625-2400
@@ -43,6 +45,7 @@ authors:
     orcid: 0000-0002-5272-6466
     affiliation: 3
   - name: Sheng Liu
+    orcid: 0000-0003-1225-0763
     affiliation: 1
   - name: Peter K. Relich
     orcid: 0000-0002-6063-6233
@@ -128,7 +131,7 @@ grouping of localizations [@Fazel_article:2022a], diffusion estimation
 [@Relich_article:2016].  However, this is the first time that they have been
 integrated together, sharing common data structures.
 Applications are described in [@FrancoNitta_article:2021;
-@Mazloom-Farsibaf_article:2021; @Bailey_article:2022].
+@Mazloom-Farsibaf_article:2021; @Bailey_article:2022; @Schodt_article:2023].
 Typical raw image data can be found in [@Pallikkuth_data:2018].
 A summary of the namespaces and classes in SMITE can be found in the online
 documentation at
