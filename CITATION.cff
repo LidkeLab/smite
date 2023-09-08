@@ -1,0 +1,82 @@
+cff-version: 1.0.0
+message: If you use this software, please cite it as below.
+references:
+  - type: software
+    authors:
+      - family-names: Schodt
+        given-names: David J.
+        orcid: 0000-0002-8986-2736
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Wester
+        given-names: Michael J.
+        orcid: 0000-0002-3520-7605
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Fazel
+        given-names: Mohamadreza
+        orcid: 0000-0002-6215-1336
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Khan
+        given-names: Sajjad
+        orcid: 0000-0002-6910-5199
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Mazloom-Farsibaf
+        given-names: Hanieh
+        orcid: 0000-0002-2571-0418
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Pallikkuth
+        given-names: Sandeep
+        orcid: 0009-0003-0400-6389
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Meddens
+        given-names: Marjolein B. M.
+        orcid: 0000-0002-9965-1342
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Farzam
+        given-names: Farzin
+        orcid:  0000-0002-9939-1923
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Burns
+        given-names: Eric A.
+        orcid: 0000-0002-1625-2400
+        affiliation: "Department of Pathology, University of New Mexico Health Sciences Center"
+      - family-names: Kanagy
+        given-names: William K.
+        orcid: 0000-0002-5756-9965
+        affiliation: "Department of Pathology, University of New Mexico Health Sciences Center"
+      - family-names: Rinaldi
+        given-names: Derek A.
+        orcid: 0009-0000-8394-3626
+        affiliation: "Department of Pathology, University of New Mexico Health Sciences Center"
+      - family-names: Jhamba
+        given-names: Elton
+        orcid: 0000-0002-5272-6466
+        affiliation: "Department of Pathology, University of New Mexico Health Sciences Center"
+      - family-names: Liu
+        given-names: Sheng
+        orcid: 0000-0003-1225-0763
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Relich
+        given-names: Peter K.
+        orcid: 0000-0002-6063-6233
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Olah
+        given-names: Mark J.
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+      - family-names: Steinberg
+        given-names: Stanly L.
+        affiliation: "Department of Mathematics and Statistics, University of New Mexico"
+      - family-names: Lidke
+        given-names: Keith A.
+        orcid: 0000-0002-9328-4318
+        affiliation: "Department of Physics and Astronomy, University of New Mexico"
+  title: "SMITE: Single Molecule Imaging Toolbox Extraordinaire (MATLAB)"
+  version: 1.0.0
+  doi: 10.5281/zenodo.8327410
+  date-released: 2023-09-08
+  keywords:
+    - "MATLAB"
+    - "single molecule localization microscopy (SMLM)"
+    - "single particle tracking (SPT)"
+    - "super resolution"
+  license: MIT
+  url: "https://github.com/LidkeLab/smite"

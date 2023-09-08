@@ -2,6 +2,8 @@
 
 # ***smite***: Single Molecule Imaging Toolbox Extraordinaire
 
+This work was supported by the following [grants](doc/grants.md).
+
 This MATLAB-based toolbox provides analysis tools for fluorescence
 single molecule imaging with an emphasis on single molecule
 localization microscopy (SMLM) and single particle tracking (SPT).
