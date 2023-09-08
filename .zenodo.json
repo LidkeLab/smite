@@ -1,7 +1,6 @@
 	"version": "v1.0.0",
 	"title": "SMITE: Single Molecule Imaging Toolbox Extraordinaire (MATLAB)",
 	"description": "This MATLAB-based toolbox provides analysis tools for fluorescence single molecule imaging with an emphasis on single molecule localization microscopy (SMLM) and single particle tracking (SPT).",
-",
 	"keywords": [
 		"MATLAB",
 		"single molecule localization microscopy (SMLM)",
@@ -88,7 +87,7 @@
 		"affiliation": "Department of Mathematics and Statistics, University of New Mexico"
 		},
 		{
-"name": "Lidke, Keith A.",
+		"name": "Lidke, Keith A.",
 		"orcid": "0000-0002-9328-4318",
 		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
 	],
