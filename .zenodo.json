@@ -1,0 +1,104 @@
+	"version": "v1.0.0",
+	"title": "SMITE: Single Molecule Imaging Toolbox Extraordinaire (MATLAB)",
+	"description": "This MATLAB-based toolbox provides analysis tools for fluorescence single molecule imaging with an emphasis on single molecule localization microscopy (SMLM) and single particle tracking (SPT).",
+",
+	"keywords": [
+		"MATLAB",
+		"single molecule localization microscopy (SMLM)",
+		"single particle tracking (SPT)",
+		"super resolution"
+	],
+	"creators": [
+		{
+		"name": "Schodt, David J.",
+		"orcid": "0000-0002-8986-2736",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Wester, Michael J.",
+		"orcid": "0000-0002-3520-7605",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Fazel, Mohamadreza",
+		"orcid": "0000-0002-6215-1336",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Khan, Sajjad",
+		"orcid": "0000-0002-6910-5199",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Mazloom-Farsibaf, Hanieh",
+		"orcid": "0000-0002-2571-0418",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Pallikkuth, Sandeep",
+		"orcid": "0009-0003-0400-6389",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Meddens, Marjolein B. M.",
+		"orcid": "0000-0002-9965-1342",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Farzam, Farzin",
+		"orcid": "0000-0002-9939-1923",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Burns, Eric A.",
+		"orcid": "0000-0002-1625-2400",
+		"affiliation": "Department of Pathology, University of New Mexico Health Sciences Center"
+		},
+		{
+		"name": "Kanagy, William K.",
+		"orcid": "0000-0002-5756-9965",
+		"affiliation": "Department of Pathology, University of New Mexico Health Sciences Center"
+		},
+		{
+		"name": "Rinaldi, Derek A.",
+		"orcid": "0009-0000-8394-3626",
+		"affiliation": "Department of Pathology, University of New Mexico Health Sciences Center"
+		},
+		{
+		"name": "Jhamba, Elton",
+		"orcid": "0000-0002-5272-6466",
+		"affiliation": "Department of Pathology, University of New Mexico Health Sciences Center"
+		},
+		{
+		"name": "Liu, Sheng",
+		"orcid": "0000-0003-1225-0763",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Relich, Peter K.",
+		"orcid": "0000-0002-6063-6233",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Olah, Mark J.",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+		},
+		{
+		"name": "Steinberg, Stanly L.",
+		"affiliation": "Department of Mathematics and Statistics, University of New Mexico"
+		},
+		{
+"name": "Lidke, Keith A.",
+		"orcid": "0000-0002-9328-4318",
+		"affiliation": "Department of Physics and Astronomy, University of New Mexico"
+	],
+	"upload_type": "software",
+	"access_right": "open",
+	"license": "MIT",
+	"notes": "",
+	"contributors": [
+		{"name":"University of New Mexico",
+		 "type":"HostingInstitution"}
+		]
+	"license": "MIT"
+}
