@@ -1,3 +1,4 @@
+{
 	"version": "v1.0.0",
 	"title": "SMITE: Single Molecule Imaging Toolbox Extraordinaire (MATLAB)",
 	"description": "This MATLAB-based toolbox provides analysis tools for fluorescence single molecule imaging with an emphasis on single molecule localization microscopy (SMLM) and single particle tracking (SPT).",
@@ -97,8 +98,7 @@
 	"license": "MIT",
 	"notes": "",
 	"contributors": [
-		{"name":"University of New Mexico",
-		 "type":"HostingInstitution"}
+		{"name": "University of New Mexico",
+		 "type": "HostingInstitution"}
 		]
-	"license": "MIT"
 }
