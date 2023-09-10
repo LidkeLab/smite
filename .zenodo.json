@@ -99,6 +99,16 @@
 	"notes": "",
 	"contributors": [
 		{"name": "University of New Mexico",
-		 "type": "HostingInstitution"}
+		 "type": "HostingInstitution"},
+		{"name": "National Institutes of Health",
+		 "type": "Sponsor"},
+		{"name": "National Science Foundation",
+		 "type": "Sponsor"},
+		{"name": "Department of Energy",
+		 "type": "Sponsor"},
+		{"name": "University of New Mexico Office of the Vice President for Research",
+		 "type": "Sponsor"},
+		{"name": "NVIDIA",
+		 "type": "Sponsor"}
 		]
 }
