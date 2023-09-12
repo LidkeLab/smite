@@ -96,7 +96,7 @@
 	"upload_type": "software",
 	"access_right": "open",
 	"license": "MIT",
-	"notes": "",
+	"notes": "The first two authors contributed equally.  The last author is the main contact.",
 	"contributors": [
 		{"name": "University of New Mexico",
 		 "type": "HostingInstitution"},
