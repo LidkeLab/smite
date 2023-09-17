@@ -30,7 +30,7 @@ authors:
     orcid: 0000-0002-9965-1342
     affiliation: 1
   - name: Farzin Farzam
-    orcid:  0000-0002-9939-1923
+    orcid: 0000-0002-9939-1923
     affiliation: 1
   - name: Eric A. Burns
     orcid: 0000-0002-1625-2400
