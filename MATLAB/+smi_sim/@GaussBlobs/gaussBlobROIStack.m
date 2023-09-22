@@ -119,7 +119,7 @@ for ii = 1:Nloops
         xSigma = single(SMD.PSFSigma(startFr:endFr,2));
         ySigma = single(SMD.PSFSigma(startFr:endFr,1));
     elseif ~isempty(SMD.PSFSigmaX) && ~isempty(SMD.PSFSigmaY)
-        xSigma = single(SMD.PSFSigmaX(startFr:endFr,2));
+        xSigma = single(SMD.PSFSigmaX(startFr:endFr,1));
         ySigma = single(SMD.PSFSigmaY(startFr:endFr,1));
     else
         error('SMD.PSFSigma and (SMD.PSFSigmaX and/or Y) are empty!');
