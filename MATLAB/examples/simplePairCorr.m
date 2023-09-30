@@ -82,15 +82,17 @@ if ~isempty(ExcludeROI)
 end
 
 % Set up the results directory.
-results_top = uigetdir(start_datadir, 'Directory to hold results directory');
+results_top = uigetdir(start_datadir, 'Directory to hold Analysis directory');
 results_dir = fullfile(results_top, Analysis);
-data_dir = results_top;
-%data_dir = results_dir;   % TESTING
-property.Results = results_dir;
 % Create results_dir if it does not already exist.
 if ~isdir(results_dir)
    mkdir(results_dir);
 end
+%data_dir = ...
+%   uigetdir(start_datadir, 'Data directory (containing *_ROis.mat files)');
+%data_dir = results_top;
+data_dir = results_dir;
+property.Results = results_dir;
 
 % If true, look for MAPN_*.mat, otherwise *_Results*.mat for BaGoL coordinates.
 MAPNfile = false;
@@ -113,7 +115,7 @@ PlotNonOverlap = false;
 %    'Plot2'       2D plot per ROI
 options = ["BiStats", "Clustering", "Clustering2", "LocSep2", ...
            "Overlap1", "Overlap2", "PairCorr", "Plot2"];
-options = ["BiStats", "Clustering", "LocSep2", "Overlap2", "PairCorr"];
+%options = ["BiStats", "Clustering", "LocSep2", "Overlap2", "PairCorr"];
 %options = ["PairCorr"];
 
 fprintf('Done set parameters.\n');
