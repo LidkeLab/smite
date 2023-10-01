@@ -80,7 +80,7 @@ microscopes.  These methodologies are widely used to image biological
 structures at the nanometer scale by fluorescently tagging the structures of
 interest, elucidating details of the biological behavior observed.
 
-Two common techniques are single-molecule localization microscropy (SMLM),
+Two common techniques are single-molecule localization microscopy (SMLM),
 [@Lidke_article:2005; @Betzig_article:2006; @Rust_article:2006;
 @Hell_article:2007; @vandeLinde_article:2011; @Fazel_article:2022]
 which is used to produce 2D or 3D super-resolution images of static or nearly
@@ -159,7 +159,7 @@ DJS, MF, HMF, MBMM and KAL coded SR localization techniques.
 SP, MJW, MF and HMF implemented thresholding.
 DJS and HMF wrote frame connection.
 MJW, KAL and DJS developed drift correction based on an earlier version by FF.
-MF and KAL devloped BaGoL; MJW wrote the interface to SMITE.
+MF and KAL developed BaGoL; MJW wrote the interface to SMITE.
 DJS, HMF, WKK, DAR and EJ designed and wrote code for single particle tracking
 based on ideas from PKR.
 DJS, MBMM, HMF and SP created visualizations.
