@@ -59,11 +59,11 @@ authors:
     affiliation: 1
     corresponding: true
 affiliations:
- - name: Department of Physics and Astronomy, University of New Mexico
+ - name: Department of Physics and Astronomy, University of New Mexico, Albuquerque, United States of America
    index: 1
- - name: Department of Mathematics and Statistics, University of New Mexico
+ - name: Department of Mathematics and Statistics, Albuquerque, University of New Mexico, United States of America
    index: 2
- - name: Department of Pathology, University of New Mexico Health Sciences Center
+ - name: Department of Pathology, University of New Mexico Health Sciences Center, Albuquerque, United States of America
    index: 3
 date: 29 September 2022
 bibliography: paper.bib
