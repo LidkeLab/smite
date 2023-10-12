@@ -145,6 +145,7 @@ classdef DiffusionEstimator < handle
             MSDEnsemble, DiffusionStruct, DiffusionModel, UnitFlag);
         [PlotAxes] = plotEnsembleCDFOfJumps(PlotAxes, ...
             MSDEnsemble, DiffusionStruct, UnitFlag);
+        [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose);
         success = unitTest();
     end
     
@@ -154,7 +155,6 @@ classdef DiffusionEstimator < handle
         % want to distract the user with these options, but if they need
         % them they are still accessible).
         
-        [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose);
         [FitParams, FitParamsSE] = ...
             fitMSDBrownian(FrameLags, MSD, NPoints, FitMethod);
         [FitParams, FitParamsSE] = ...

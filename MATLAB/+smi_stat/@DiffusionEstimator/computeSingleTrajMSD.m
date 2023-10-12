@@ -36,6 +36,8 @@ function [MSDSingleTraj] = computeSingleTrajMSD(TR, FrameLagRange, Verbose)
 %                            output this if requested).  Each row
 %                            corresponds to a single localization, and each
 %                            column to a frame lag. (pixel^2)
+%       StartFrame: The start frame used to compute displacements.  This is
+%                   organized by FrameLag.
 
 % Created by:
 %   David J. Schodt (Lidke lab, 2021) 
@@ -66,11 +68,13 @@ NFrameLags = numel(FrameLags);
 SquaredDisplacement = zeros(NLocalizations-1, NFrameLags);
 SquaredDisplacementMask = zeros(NLocalizations-1, NFrameLags, 'logical');
 LocVarianceSum = SquaredDisplacement;
+StartFrame = cell(NFrameLags, 1);
 for ff = 1:NFrameLags
     % Start with the first localization and find the distance to the
     % localization ff frames away.
     Index1 = 1;
     Index2 = 2;
+    StartFrame{ff} = [];
     while (Index2 <= NLocalizations)
         % Check if the current frame gap is that desired.
         FrameDiff = FrameNum(Index2) - FrameNum(Index1);
@@ -84,6 +88,7 @@ for ff = 1:NFrameLags
                 (Coordinates(Index1, 1)-Coordinates(Index2, 1))^2 ...
                 + (Coordinates(Index1, 2)-Coordinates(Index2, 2))^2;
             SquaredDisplacementMask(Index1, ff) = true;
+            StartFrame{ff} = [StartFrame{ff}, FrameNum(Index1)];
             
             % Store the sum of the localization variances.
             LocVarianceSum(Index1, ff) = ...
@@ -119,6 +124,7 @@ MSDSingleTraj.NPoints = NPoints;
 MSDSingleTraj.SquaredDisplacement = ...
     SquaredDisplacement(SquaredDisplacementMask);
 MSDSingleTraj.LocVarianceSum = LocVarianceSum(SquaredDisplacementMask);
+MSDSingleTraj.StartFrame = StartFrame;
 
 
 end
