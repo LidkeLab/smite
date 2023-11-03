@@ -37,6 +37,7 @@ classdef TrackingResults
         [TR] = threshTrajLength(TR, MinTrackLength);
         [TR] = padTR(TR, TRPadding);
         [TR] = catTR(TR1, TR2, CheckDims);
+        [TRWindowed] = windowTR(TR, MinFrameNum, MaxFrameNum, Verbose);
         
     end
 
