@@ -31,6 +31,13 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
 
    fprintf('Fits = %d\n', numel(SMD.X));
    fprintf('Accepted = %d\n', sum(SMD.ThreshFlag == 0));
+   if ~isempty(SaveDir)
+      out = fopen(fullfile(SaveDir, 'reject.txt'), 'w');
+      fprintf(out, 'Fits = %d\n', numel(SMD.X));
+      fprintf(out, 'Accepted = %d\n', sum(SMD.ThreshFlag == 0));
+   else
+      out = -1;
+   end
 
    % Threshold Flag for the fields or groups of fields named below.
    TF = false(numel(SMD.X), numel(obj.Fields) - 2 - 2);
@@ -42,30 +49,31 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
    field_bits = [strmatch('X', obj.Fields, 'exact'), ...
                  strmatch('Y', obj.Fields, 'exact'), ...
                  strmatch('Z', obj.Fields, 'exact')];
-   TF(:, 1) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, 'X,Y,Z');
+   TF(:, 1) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, 'X,Y,Z');
 
    % Rejection due to Photons
    field_bits = strmatch('Photons', obj.Fields, 'exact');
-   TF(:, 2) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, 'Photons');
+   TF(:, 2) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, 'Photons');
 
    % Rejection due to Bg
    field_bits = strmatch('Bg', obj.Fields, 'exact');
-   TF(:, 3) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, 'Bg');
+   TF(:, 3) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, 'Bg');
 
    % Rejection due to PSFSigma
    field_bits = strmatch('PSFSigma',  obj.Fields, 'exact');
-   TF(:, 4) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, ...
+   TF(:, 4) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, ...
                                                      'PSFSigma{,X,Y}');
 
    % Rejection due to {X,Y,Z}_SE
    field_bits = [strmatch('X_SE', obj.Fields, 'exact'), ...
                  strmatch('Y_SE', obj.Fields, 'exact'), ...
                  strmatch('Z_SE', obj.Fields, 'exact')];
-   TF(:, 5) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, '{X,Y,Z}_SE');
+   TF(:, 5) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, ...
+                                                     '{X,Y,Z}_SE');
 
    % Rejection due to PValue
    field_bits = strmatch('PValue', obj.Fields, 'exact');
-   TF(:, 6) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, 'PValue');
+   TF(:, 6) = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, 'PValue');
 
    % Combined plot for number of reasons a fit was rejected.
    color = ['b', 'c', 'g', 'y', 'm', 'r'];
@@ -182,11 +190,15 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
       end
    end
 
+   if ~isempty(SaveDir)
+      fclose(out);
+   end
+
 end % rejectedLocalizations
 
 % -----------------------------------------------------------------------------
 
-function TF = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, reason)
+function TF = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, reason)
 % Make an accept/reject plot for a particular specified reason,
 % but only if the number of rejections is nonzero.
 %
@@ -200,6 +212,7 @@ function TF = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, reason)
 %    field_bits   bit numbers corresponding to combined fields
 %    Rplot        if true, produce a plot
 %    SaveDir      directory in which to save the plot produced
+%    out          file identifier used to print supplementary text
 %    reason       string describing the reason that the fits were rejected for
 %                 the given set of field_bits
 %
@@ -219,6 +232,9 @@ function TF = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, reason)
    STF = sum(TF);
    if STF > 0
       fprintf('Rejected due to %s = %d\n', reason, STF);
+      if out > 0
+         fprintf(out, 'Rejected due to %s = %d\n', reason, STF);
+      end
 
       if Rplot
          figure;
