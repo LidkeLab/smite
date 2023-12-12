@@ -217,8 +217,12 @@ methods
         % Produce some statistics on rejected localizations.
         THR = smi_core.Threshold;
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
-           THR.rejectedLocalizations(obj.SMDPreThresh, 'MN', ...
-                                     obj.ResultsSubDir);
+           if obj.FullvsTest
+              THR.rejectedLocalizations(obj.SMDPreThresh, 'MN', ...
+                                        obj.ResultsSubDir);
+           else
+              THR.rejectedLocalizations(obj.SMDPreThresh, 'MN');
+           end
         end
 
         % Localizations are eliminated if they do not have MinNumNeighbors

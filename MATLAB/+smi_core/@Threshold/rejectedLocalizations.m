@@ -121,7 +121,8 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
       hold off
       clear lgd
       if ~isempty(SaveDir)
-         saveas(gcf, fullfile(SaveDir, reason), 'png');
+         %saveas(gcf, fullfile(SaveDir, reason), 'png');
+         print(gcf, fullfile(SaveDir, reason), '-dpng', '-r600');
       end
    end
 
@@ -186,7 +187,7 @@ function rejectedLocalizations(obj, SMD, options, SaveDir)
       legend(lgd, 'Location', 'Best');
       hold off
       if ~isempty(SaveDir)
-         saveas(gcf, fullfile(SaveDir, reason), 'png');
+         print(gcf, fullfile(SaveDir, reason), '-dpng', '-r600');
       end
    end
 
@@ -256,7 +257,7 @@ function TF = rejected2DPlot(SMD, field_bits, Rplot, SaveDir, out, reason)
          hold off
 
          if ~isempty(SaveDir)
-            saveas(gcf, fullfile(SaveDir, reason), 'png');
+            %saveas(gcf, fullfile(SaveDir, reason), 'png');
          end
       end
    end
