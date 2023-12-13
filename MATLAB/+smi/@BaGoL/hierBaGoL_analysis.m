@@ -409,6 +409,40 @@ catch ME
    fprintf('%s\n', ME.message);
 end
 
+if numel(Xi) == 2
+   fprintf('kChain ...\n');
+   try
+      plot(BGL.XiChain(:, 1), 'k.');
+      hold on
+      title('k chain');
+      xlabel(sprintf('RJMCMC jumps sampled every %d', BaGoLParams.NSamples));
+      ylabel('k in gamma(k, \theta)');
+      hold off
+      saveas(gcf, fullfile(SaveDirLong, 'kChain'), 'png');
+   catch ME
+      fprintf('### PROBLEM with kChain ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
+end
+
+if numel(Xi) == 2
+   fprintf('thetaChain ...\n');
+   try
+      plot(BGL.XiChain(:, 2), 'k.');
+      hold on
+      title('\theta chain');
+      xlabel(sprintf('RJMCMC jumps sampled every %d', BaGoLParams.NSamples));
+      ylabel('\theta in gamma(k, \theta)');
+      hold off
+      saveas(gcf, fullfile(SaveDirLong, 'thetaChain'), 'png');
+   catch ME
+      fprintf('### PROBLEM with thetaChain ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
+end
+
 fprintf('MAPN_NmeanHistogram ...\n');
 try
    h = histogram(MAPN.Nmean);
