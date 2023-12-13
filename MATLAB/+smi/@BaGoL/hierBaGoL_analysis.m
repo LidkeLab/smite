@@ -465,6 +465,23 @@ catch ME
    fprintf('%s\n', ME.message);
 end
 
+% Visualize Precluster Results
+fprintf('Preclusters ...\n');
+try
+   figure;
+   hold on
+   for i = 1 : numel(BGL.ClusterSMD)
+      plot(BGL.ClusterSMD(i).X, BGL.ClusterSMD(i).Y, '.');
+   end
+   axis equal
+   hold off
+   saveas(gcf, fullfile(SaveDirLong, 'Preclusters'), 'png');
+catch ME
+   fprintf('### PROBLEM with Preclusters ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
+end
+
 close all
 
 fprintf('Producing prior.txt ...\n');
