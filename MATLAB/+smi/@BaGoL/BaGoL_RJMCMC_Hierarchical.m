@@ -248,7 +248,11 @@ for nn=1:NSamples
                         
     end    
     
-    DEBUG = 0;
+    if K > 20
+        DEBUG = 0;
+    else
+        DEBUG = 0;
+    end
     if DEBUG==1 %for testing
         figure(1111)
         scatter(SMD.X,SMD.Y,[],Z)

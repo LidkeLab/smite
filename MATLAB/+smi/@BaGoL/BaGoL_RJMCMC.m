@@ -332,7 +332,12 @@ for nn=1:NChain+NBurnin
             
     end    
     
-    %DEBUG = 0;
+    if K > 20
+        DEBUG = 1;
+    else
+        DEBUG = 0;  
+    end
+
     if DEBUG==1 %for testing
         figure(1111)
         scatter(SMD.X,SMD.Y,[],Z)
