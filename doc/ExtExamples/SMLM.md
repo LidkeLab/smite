@@ -1,7 +1,7 @@
 ### SMLM GUI
 
 A comprehensive software platform for single-molecule localization
-microscopy's raw data fitting and subsequent analysis. 
+microscopy's raw data fitting and subsequent analysis. 
 
 #### Graphical User Interface (GUI) Parameters:
 
@@ -66,7 +66,7 @@ of the GUI are briefly explained here:
 2. **BoxFinding:** Box finding finds and collates subregions of local
    maxima from a stack of 2D images. Local maxima are used as the center
    of ROIs if the estimated single molecule intensity is greater than
-   MinPhotons. The fields are:
+   MinPhotons. The fields are:
 
     - **BoxSize**: Linear box size for fitting (pixels)
     - **BoxOverlap**: Overlap of boxes (pixels)
