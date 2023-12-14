@@ -49,17 +49,17 @@ title('Unmixed from Correct Mapping')
 
 % Now try mixing them up
 ChainMixed = Chain;
-NSwaps = ceil(N/10)
+NSwaps = ceil(N/10);
 for ii = 2: ChainLength
     % draw 2 ID to swap 
     for jj=1:NSwaps
-    ID1 = randi(N)
-    ID2 = randi(N)
-    IDVec = 1:N 
-    IDVec(ID1) = ID2
-    IDVec(ID2)  = ID1
-    ChainMixed(ii).X = ChainMixed(ii).X(IDVec)
-    ChainMixed(ii).Y = ChainMixed(ii).Y(IDVec)
+    ID1 = randi(N);
+    ID2 = randi(N);
+    IDVec = 1:N ;
+    IDVec(ID1) = ID2;
+    IDVec(ID2)  = ID1;
+    ChainMixed(ii).X = ChainMixed(ii).X(IDVec);
+    ChainMixed(ii).Y = ChainMixed(ii).Y(IDVec);
     end
 end
 % Check 
@@ -86,12 +86,32 @@ for ii = 2:ChainLength
     ChainUnmixed(ii).X(AssignIDs) = ChainUnmixed(ii).X;
     ChainUnmixed(ii).Y(AssignIDs) = ChainUnmixed(ii).Y;
 end
+
+% Second pass aligning to everything else
+for ii = 2:ChainLength
+    X = [ChainUnmixed(:).X];
+    Y = [ChainUnmixed(:).Y];
+    for jj = 1:N
+            CostMatrix(:,jj) = mean( (X - ChainUnmixed(ii).X(jj)).^2 ,2) + ... 
+                mean( (Y - ChainUnmixed(ii).Y(jj)).^2 ,2);
+    end
+    [AssignIDs, Cost] = smi.SPT.solveLAP(CostMatrix);
+    sum(Cost)
+    ChainUnmixed(ii).X(AssignIDs) = ChainUnmixed(ii).X;
+    ChainUnmixed(ii).Y(AssignIDs) = ChainUnmixed(ii).Y;
+end
+
+
+
+
 figure; plot([ChainUnmixed(:).X]', [ChainUnmixed(:).Y]','+')
 hold on 
 plot(TruePositions(:,1),TruePositions(:,2),'ko','MarkerSize',16,'LineWidth',3)
 MAPN =  [mean([ChainUnmixed(:).X],2), mean([ChainUnmixed(:).Y],2)];
 plot(MAPN(:,1), MAPN(:,2), 'rx','MarkerSize',16,'LineWidth',3)
 title('Unmixed from Mixed')
+
+
 
 % kmeans on mixed: 
 A = [ChainMixed(:).X]

@@ -332,14 +332,9 @@ for nn=1:NChain+NBurnin
             
     end    
     
-    if K > 20
-        DEBUG = 1;
-    else
-        DEBUG = 0;  
-    end
-
     if DEBUG==1 %for testing
         figure(1111)
+        axis equal
         scatter(SMD.X,SMD.Y,[],Z)
         hold on
         plot(Mu_X,Mu_Y,'ro','linewidth',4)
