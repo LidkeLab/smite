@@ -82,7 +82,7 @@ end
     XChain,YChain,AlphaX_Chain, AlphaY_Chain);
 
 % Cut burnin
-TChain = TChain(end-N_Trials+1:end)
+TChain = TChain(end-N_Trials+1:end);
 TailSZ = 10;
 MAPN =  [mode([TChain(end-TailSZ:end).X],2), mean([TChain(end-TailSZ:end).Y],2)];
 
