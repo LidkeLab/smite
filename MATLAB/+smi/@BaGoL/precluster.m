@@ -53,6 +53,7 @@ for iy = 1:Ys
             % Try DBSCAN instead of hierarchical clustering.
             IndClust = dbscan(Coords, obj.Cutoff, 1);
         catch
+            Dist = pdist(Coords,'euclid');
             IndClust = ones(size(Dist(:,1)),'single');
         end
                     
