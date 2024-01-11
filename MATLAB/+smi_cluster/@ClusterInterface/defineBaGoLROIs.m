@@ -37,7 +37,9 @@ function defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
       else
          dataB_MAPN = dataB.BGL.MAPN;
       end
-      [~, fileB, ~] = fileparts(dataR.ResultsFile);
+      %[~, fileB, ~] = fileparts(dataR.ResultsFile);
+      % dataR.ResultsFile cannot be relied on for old runs, so this is safer.
+      [~, fileB, ~] = fileparts(filesR{l});
       short = regexprep(fileB, '.mat$', '');
       ResultsFile = dataR.ResultsFile;
       Pixel2nm = dataR.Pixel2nm;
