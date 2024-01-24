@@ -42,7 +42,7 @@ methods(Static)
    % Called by singleConditionDriver.
    singleCondition(pathname, files, algorithm_range, E_range, ...
                    minPts_range, Pixel2nm, base_name, A_ROI,  ...
-                   doHopkins, doSigmaActual)
+                   doHopkins, doSigmaActual, Alpha)
 
    % Called by plotROIDriver.
    plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
