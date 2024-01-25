@@ -226,8 +226,9 @@ fprintf(out, 'P_nn localization distances within clusters =\n');
 fprintf(out, fmt, P_nn_withinC);
 fprintf(out, '\n');
 
+% ------------------------------------------------
 % How to add additional plots using rdata.results:
-%
+% ------------------------------------------------
 % Clustered fraction per ROI.
 clustered_frac = cell(1, n_files);
 for j = 1 : n_files
@@ -322,6 +323,40 @@ SC.plotCombined(n_pts_ROI, 1, 'localizations per cluster per ROI', ...
                 econd, 'npts_per_clust_ROI');
 fprintf(out, 'P_n points per cluster per ROI =\n');
 fprintf(out, fmt, P_npts_per_clust_ROI);
+fprintf(out, '\n');
+
+% Number of points per cluster per cluster area.
+npts_per_clust_per_area = cell(1, n_files);
+for j = 1 : n_files
+   n_pts_per_clust_per_area{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      n_pts_per_clust_per_area{j} = [n_pts_per_clust_per_area{j}, ...
+         rdata{j}.results{i}.n_pts ./ rdata{j}.results{i}.areas];
+   end
+end
+P_n_pts_per_clust_per_area = ...
+SC.plotCombined(n_pts_per_clust_per_area, 1,             ...
+                'cluster points / area (1/nm^2)', econd, ...
+                'npts_per_clust_per_area');
+fprintf(out, 'P_cluster points / area =\n');
+fprintf(out, fmt, P_n_pts_per_clust_per_area);
+fprintf(out, '\n');
+
+% Number of points per cluster per cluster area per ROI.
+npts_per_clust_per_area_ROI = cell(1, n_files);
+for j = 1 : n_files
+   n_pts_per_clust_per_area_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      n_pts_per_clust_per_area_ROI{j} = [n_pts_per_clust_per_area_ROI{j}, ...
+         mean(rdata{j}.results{i}.n_pts ./ rdata{j}.results{i}.areas)];
+   end
+end
+P_n_pts_per_clust_per_area_ROI = ...
+SC.plotCombined(n_pts_per_clust_per_area_ROI, 1,                 ...
+                'cluster points / area (1/nm^2) per ROI', econd, ...
+                'npts_per_clust_per_area_ROI');
+fprintf(out, 'P_cluster points / area per ROI =\n');
+fprintf(out, fmt, P_n_pts_per_clust_per_area_ROI);
 fprintf(out, '\n');
 
 % Cluster sizes (equivalent radii corresponding to the cluster areas) per ROI.

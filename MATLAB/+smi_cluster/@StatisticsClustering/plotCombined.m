@@ -188,7 +188,14 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       if ~isempty(obj.Fig_ext)
          saveas(gcf, name, obj.Fig_ext)
       end
-      saveas(gcf, name, 'fig');
+      try
+         saveas(gcf, name, 'fig');
+      catch ME
+         fprintf('### plotCombined: PROBLEM saving %s ###\n', name);
+         fprintf('%s\n', ME.identifier);
+         fprintf('%s\n', ME.message);
+         return;
+      end
       close
    end
 

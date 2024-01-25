@@ -204,9 +204,11 @@ minPts_range = [3];
 % Clustering algorithm.
 %algorithm_range = {'DBSCAN', 'Hierarchical', 'Voronoi'};
 algorithm_range = {'DBSCAN'};
+% Ratio of local density / overall density for Voronoi clustering.
+Alpha = 2;
 
 CI.singleCondition(pathname, files, algorithm_range, E_range, minPts_range, ...
-                   Pixel2nm, base_name, A_ROI, doHopkins, doSigmaActual);
+                   Pixel2nm, base_name, A_ROI, doHopkins, doSigmaActual, Alpha);
 
 %% ---------- Combine results from 1 or more conditions for further processing
 

@@ -1,6 +1,6 @@
 function singleCondition(pathname, files, algorithm_range, E_range, ...
                          minPts_range, Pixel2nm, base_name, A_ROI,  ...
-                         doHopkins, doSigmaActual)
+                         doHopkins, doSigmaActual, Alpha)
 % ---------- Statistics for a single condition
 % Perform cluster analysis for comparison of experimental conditions.  This is
 % useful for performing parameter studies, especially over a range of E's
@@ -21,6 +21,9 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
 %                      dense ROIs
 %    doSigmaActual     [DEFAULT = true] set to false for very dense ROIs to
 %                      avoid crashes due to lack of memory
+%    Alpha             [DEFAULT = 2] ratio of local density / overall density
+%                      for Voronoi clustering
+%                     
 %
 % OUTPUTS:
 %    A variety of plots are produced and are placed in a subdirectory of
@@ -44,6 +47,9 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
    if ~exist('doSigmaActual', 'var')
       doSigmaActual = true;
    end
+   if ~exist('Alpha', 'var')
+      Alpha = [];
+   end
 
    c  = smi_cluster.Clustering();
    SC = smi_cluster.StatisticsClustering();
@@ -58,6 +64,11 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
 
    % Set to false for very dense ROIs to avoid crashes due to lack of memory.
    c.DoSigmaActual = doSigmaActual;
+   if ~isempty(Alpha)
+      c.Alpha = Alpha;
+   else
+      c.Alpha = 2;
+   end
    %c.Alpha = 800;   c.Plotting = true;
 
    LoS = 0.01;   % level of significance for H-SET
@@ -76,7 +87,8 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
    % Make a subdirectory for this particular analysis.
    switch algorithm
    case 'Voronoi'
-      Run = sprintf('%s_N=%d,Alpha=%0.1g', algorithm, minPts, c.Alpha);
+      Run = sprintf('%s_N=%d,Alpha=%g', algorithm, minPts, c.Alpha);
+      Run = regexprep(Run, '\.', '_');
    case 'H-SET'
       %Run = sprintf('%s_N=%d,LoS=%0.2f', algorithm, minPts, c.LoS);
       Run = sprintf('%s_N=%d,LoS=%g,SReg=%d', ...
