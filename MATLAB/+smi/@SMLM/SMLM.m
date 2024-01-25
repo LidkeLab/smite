@@ -27,6 +27,7 @@ properties
     FullvsTest        % Logical value set by fullAnalysis or testFit to tell
                       % saveResults to make the proper call to generatePlots
     CalledByGUI=false % Keeps track of how fitting is called
+    FCCount = 0       % Number of frame connected localizations eliminated
 end
 % =========================================================================
 
@@ -214,23 +215,42 @@ methods
             end
         end
 
-        % Produce some statistics on rejected localizations.
+        % Produce some statistics on rejected localizations (and frame
+        % connections).
         THR = smi_core.Threshold;
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
-           if obj.FullvsTest
-              THR.rejectedLocalizations(obj.SMDPreThresh, 'MN', ...
-                                        obj.ResultsSubDir);
-           else
-              THR.rejectedLocalizations(obj.SMDPreThresh, 'MN');
-           end
+           THR.rejectedLocalizations(obj.SMDPreThresh, 'MN', ...
+                                     obj.ResultsSubDir);
+        end
+        if obj.Verbose >= 1 && obj.SMF.FrameConnection.On
+           fprintf('Frame connections = %d\n', obj.FCCount);
+           out = fopen(fullfile(obj.ResultsSubDir, 'reject.txt'), 'a');
+           fprintf(out, 'Frame connections = %d\n', obj.FCCount);
+           fclose(out);
         end
 
         % Localizations are eliminated if they do not have MinNumNeighbors
         % neighbors that are within MedianMultiplier times the localization
         % sigma median.  Do not use on dSTORM data.
+        n_prefilterNN = numel(obj.SMD.X);
         obj.SMD = smi_helpers.Filters.filterNN(obj.SMD, obj.Verbose, ...
                  obj.SMF.Thresholding.MinNumNeighbors, ...
                  obj.SMF.Thresholding.NNMedianMultiplier);
+        n_postfilterNN = numel(obj.SMD.X);
+        if obj.Verbose >= 1 && n_postfilterNN ~= n_prefilterNN
+           n_filterNN = n_postfilterNN - n_prefilterNN;
+           fprintf('filterNN = %d\n', n_filterNN);
+           out = fopen(fullfile(obj.ResultsSubDir, 'reject.txt'), 'a');
+           fprintf(out, 'filterNN = %d\n', n_filterNN);
+           fclose(out);
+        end
+
+        if obj.Verbose >= 1
+           fprintf('Final localizations = %d\n', numel(obj.SMD.X));
+           out = fopen(fullfile(obj.ResultsSubDir, 'reject.txt'), 'a');
+           fprintf(out, 'Final localizations = %d\n', numel(obj.SMD.X));
+           fclose(out);
+        end
 
         % Copy PixelSize from SMF to SMD.
         obj.SMD.PixelSize = obj.SMF.Data.PixelSize;
@@ -284,8 +304,11 @@ methods
         % Perform frame-connection on localizations in SMD.
         obj.FitFramePreFC{DatasetIndex} = obj.fitsPerFrame(SMD, DatasetIndex);
         if obj.SMF.FrameConnection.On
+            nLoc_preFC = numel(SMD.X);
             FC = smi_core.FrameConnection(SMD, obj.SMF, obj.Verbose);
             SMD = FC.performFrameConnection();
+            % Number of localizations eliminated by frame connection.
+            obj.FCCount = obj.FCCount + nLoc_preFC - numel(SMD.X);
 
             % Filter out localizations representing fewer than MinNFrameConns
             % frame connections.  This filter should not be used for dSTORM
