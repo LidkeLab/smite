@@ -5,7 +5,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 %    opt         data characteristics and types of plots to produce if true
 %       SR          SR Results file
 %       BaGoL       BaGoL Results file (BGL.SMD)
-%       MAPN        BaGoL Results file (BGL.MAPN)
+%       MAPN        BaGoL MAPN file
 %       Dot         Dot plot
 %       Gaussian    Gaussian plot
 %       Circle      Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
@@ -15,7 +15,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 %    filesC      cluster data per ROI per cell for a single condition; this
 %                will be a single *_results.mat file
 %    pathnameB   path to filesB
-%    filesB      Results files (SR or BaGoL) defining SMD-like structures,
+%    filesB      Results files (SR, BaGoL or MAPN) defining SMD-like structures,
 %                typically representing several cell images collected under a
 %                single experimental condition and clustered together
 %    PixelSize   conversion factor from pixels to nm
@@ -48,6 +48,9 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       if opt.SR
          SMD = dataB.SMD;
       end
+      if opt.MAPN
+         MAPN = dataB.MAPN;
+      end
       % Remove extraneous material from the filenames.
       short = regexprep(fileB, '.mat$', '');
       short = regexprep(short, '_ResultsStruct$', '');
@@ -58,10 +61,12 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       % Display a quick summary of the upcoming analysis.
       if opt.SR
          fprintf('%s: SMD = %d\n', short, numel(SMD.X));
-      elseif opt.BaGoL || opt.MAPN || opt.Circle
+      elseif opt.BaGoL || opt.Circle
          BGL = dataB.BGL;
          fprintf('%s: SMD = %d, MAPN = %d\n', ...
                  short, numel(BGL.SMD.X), numel(BGL.MAPN.X));
+      elseif opt.MAPN
+         fprintf('%s: MAPN = %d\n', short, numel(MAPN.X));
       end
 
       % Plot ROIs individually.
@@ -70,7 +75,8 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       elseif opt.BaGoL
          SMDsave = BGL.SMD;
       elseif opt.MAPN
-         SMDsave = BGL.MAPN;
+         %SMDsave = BGL.MAPN;
+         SMDsave = MAPN;
       elseif opt.Circle
          SMDsave  = BGL.SMD;
          MAPNsave = BGL.MAPN;
@@ -93,6 +99,9 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             plot(SMD.X, SMD.Y, 'k.');
             hold on
          elseif opt.Gaussian
+            if opt.MAPN
+               BGL.MAPN = SMD;
+            end
             % Gaussian image plot of SR localizations.
             BGL.PixelSize = 1;
             %if GaussianImageKludge > 0
@@ -110,16 +119,27 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                BGL.SMD = SMD;
                MapIm = CI.genMAPNIm1(BGL, 2);
             elseif opt.MAPN
-               BGL.MAPN = SMD;
+               BGL.PImageSize = dataB.PImageSize;
+               BGL.XStart = dataB.XStart;
+               BGL.YStart = dataB.YStart;
+               if GaussianImageKludge > 0
+                  BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
+               end
                MapIm = CI.genMAPNIm1(BGL, 1);
             end
-            MapIm = BGL.scaleIm(MapIm, 98);
+            %MapIm = BGL.scaleIm(MapIm, 98);
+            MapIm = smi.BaGoL.scaleIm(MapIm, 98);
          end
 
          % Gaussian image plot of SR localizations.
          ScaleBarLength = 100;  % nm
          ScaleBarWidth  = 25;   % nm
          if opt.Gaussian
+            if j == 1
+               fprintf('ScaleBar = %d nm\n', ScaleBarLength);
+               fprintf('ROI (%d):', dataC.n_ROIs(i));
+            end
+            fprintf(' %d', j);
             % Add in a scale bar (lower right).
             Xoffset = 100;
             Yoffset = 100;
@@ -252,6 +272,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 
          % Use imwrite rather than print for good resolution, but only for the
          % basic bitmap image.
+         fprintf('\nSaving %s ...\n', SaveFile);
          if (opt.Gaussian || opt.Circle) && ~opt.Boundary && ~opt.Cluster
             imwrite(MapIm, [SaveFile, '.png']);
          else

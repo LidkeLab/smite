@@ -46,6 +46,7 @@ methods(Static)
 
    % Called by plotROIDriver.
    plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
+   plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    [SRIm] = genMAPNIm1(obj, ImFlag)
    OverlayImageCircle = genSRMAPNOverlay1(SMD, MAPN, XSize, YSize, ...
       PixelSize, SaveDir, Xstart, Ystart, RadiusScale, ScaleBarLength)
