@@ -1,4 +1,5 @@
-function defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
+function defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
+                         OriginLLvsUL)
 % ---------- Possibly, define BaGoL ROIs from previous ROIs and BaGoL results
 % Often, ROIs are defined from SR data, then need to be transferred to BaGoL
 % (MAPN) processing of that SR data.  The BaGoL coordinates will replace the
@@ -12,12 +13,18 @@ function defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
 %    filesB      BaGoL files to collect ROI coordinate info from
 %    MAPNfile    if false, assume BaGoL_Results_*_Results*.mat files,
 %                otherwise if true, assume MAPN_*.mat files
+%    OriginLLvsUL [DEFAULT: true] true says to use lower left origin
+%                coordinates rather than upper left origin coordinates for ROIs
 %
 % OUTPUTS:
 %    Saves pathnameB/Analysis/*_BaGoL_ROIs.mat
 
 % Created by
 %    Michael J. Wester (2022)
+
+   if ~exist('OriginLLvsUL', 'var')
+      OriginLLvsUL = true;
+   end
 
    n_files = numel(filesR);
    if n_files ~= numel(filesB)
@@ -50,6 +57,11 @@ function defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
          ROI = dataR.RoI{i}.ROI;
          RoI{i}.ROI = ROI;
          xmin = ROI(1);   xmax = ROI(2);   ymin = ROI(3);   ymax = ROI(4);
+         if ~OriginLLvsUL   % ROI obtained from Gaussian image
+            ymin = XYsize(2) - ROI(4);
+            ymax = XYsize(2) - ROI(3);
+            RoI{i}.ROI = [xmin, xmax, ymin, ymax];
+         end
          n_labels = numel(dataR.RoI{1}.X);
          for j = 1 : n_labels
             Xnm = dataB_MAPN.X; % * Pixel2nmGlobal;

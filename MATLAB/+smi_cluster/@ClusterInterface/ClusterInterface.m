@@ -36,7 +36,8 @@ methods(Static)
                        base_name, A_ROI, doHopkins)
    combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
                     keep_numbering)
-   defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile)
+   defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
+                   OriginLLvsUL)
    defineROIs(pathname, files, Pixel2nm, RT, oneROI)
    [n_ROIs, RoI] = filterROIs(pathname, files, filter)
    % Called by singleConditionDriver.
