@@ -12,22 +12,25 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
 %                    options [DEFAULT = {'BaGoL', 'Gaussian', 'Cluster'}]:
 %       SR              SR Results file
 %       BaGoL           BaGoL Results file (BGL.SMD)
-%       MAPN            BaGoL Results file (BGL.MAPN)
+%       MAPN            BaGoL MAPN file
 %       Dot             Dot plot
 %       Gaussian        Gaussian plot
 %       Circle          Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
 %       Boundary        Include ROI boundaries
 %       Cluster         Include ROI clusters
+%       ROIImages       produce one image per ROI
+%       OneImage        produce one image displaying all ROIs
+%       NoSave          do not save the output of OneImage
 %    start_datadir   starting data directory from which SaveDir will be made a
 %                    subdirectory of by default if SaveDir not provided
 %                    [DEFAULT = '.']
 %    SaveDir         directory in which to save images
 %                    [DEFAULT = fullfile(start_datadir, 'ROIClusterAnalysis')]
 
-%  PixelSize = 97.8; % nm   % pixel length (nm)
+%  PixelSize = 97.3; % nm   % pixel length (nm)
 
    if ~exist('options', 'var')
-      options = {'BaGoL', 'Gaussian', 'Cluster'};
+      options = {'MAPN', 'Gaussian', 'Cluster', 'ROIImages'};
    end
 
    opt.SR = false;
@@ -38,6 +41,9 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
    opt.Circle = false;
    opt.Boundary = false;
    opt.Cluster = false;
+   opt.ROIImages = false;
+   opt.OneImage = false;
+   opt.NoSave = false;
 
    if contains('SR', options)
       opt.SR = true;
@@ -63,6 +69,15 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
    if contains('Cluster', options)
       opt.Cluster = true;
    end
+   if contains('ROIImages', options)
+      opt.ROIImages = true;
+   end
+   if contains('OneImage', options)
+      opt.OneImage = true;
+   end
+   if contains('NoSave', options)
+      opt.NoSave = true;
+   end
 
    CI = smi_cluster.ClusterInterface();
 
@@ -86,9 +101,20 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
       % BaGoL Result/ResultStruct files.
       [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
          'MF BaGoL _Results*.mat files', 'BaGoL_Results_*_Results*.mat');
+   elseif opt.MAPN
+      % BaGoL MAPN files.
+      [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
+         'MAPN*.mat files', 'MAPN_*.mat');
    end
 
-   CI.plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir);
+   if opt.OneImage
+      CI.plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
+                  SaveDir);
+   end
+   if opt.ROIImages
+      CI.plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
+                 SaveDir);
+   end
 
    fprintf('Done.\n');
 

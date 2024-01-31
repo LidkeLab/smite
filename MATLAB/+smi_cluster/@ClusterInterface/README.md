@@ -42,5 +42,7 @@ methods:
   series of concentric rings for each localization
 - **[plotROI](plotROI.m)**:
   Plot dot, Gaussian or circle images of SMD/MAPN coordinates per ROI per cell
+- **[plotROI1](plotROI1.m)**:
+  As above, but make a single image per cell of all ROIs
 - **[singleCondition](singleCondition.m)**:
   Perform cluster analysis for comparison of experimental conditions

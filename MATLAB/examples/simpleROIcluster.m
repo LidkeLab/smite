@@ -136,7 +136,8 @@ else
                             '*_Results*.mat files', '*_Results*.mat');
 end
 
-CI.defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile);
+CI.defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
+                   RT.OriginLLvsUL);
 
 %% ---------- Possibly, combine individually processed BaGoL ROIs into a single
 %%            _ROIs.mat file using the _ROIs.mat file that was used to define

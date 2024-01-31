@@ -48,8 +48,10 @@ function defineROIs(pathname, files, Pixel2nm, RT, oneROI)
          saveas(gcf, fullfile(results_dir, sprintf('%s_ROIs.fig', short)));
          saveas(gcf, fullfile(results_dir, sprintf('%s_ROIs.png', short)));
       end
+      OriginLLvsUL = RT.OriginLLvsUL;
       save(fullfile(results_dir, [short, '_ROIs.mat']), ...
-           'ResultsFile', 'Pixel2nm', 'XYsize', 'n_ROIs', 'RoI');
+           'ResultsFile', 'Pixel2nm', 'XYsize', 'n_ROIs', 'RoI', ...
+           'OriginLLvsUL');
       close
       fid = fopen(fullfile(results_dir, [short, '_ROIs.txt']), 'w');
       for i = 1 : n_ROIs

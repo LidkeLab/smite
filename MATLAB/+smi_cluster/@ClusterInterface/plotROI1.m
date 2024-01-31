@@ -1,5 +1,7 @@
-function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
+function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
+                  SaveDir)
 % Plot dot, Gaussian or circle images of SMD/MAPN coordinates per ROI per cell.
+% Just one image is produced per cell displaying all the ROIs.
 %
 % INPUTS:
 %    opt         data characteristics and types of plots to produce if true
@@ -69,7 +71,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
          fprintf('%s: MAPN = %d\n', short, numel(MAPN.X));
       end
 
-      % Plot ROIs individually.
+      % Plot ROIs on top of one base image.
       if opt.SR
          SMDsave = SMD;
       elseif opt.BaGoL
@@ -81,6 +83,23 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
          SMDsave  = BGL.SMD;
          MAPNsave = BGL.MAPN;
       end
+
+      % Moved out of the j loop.
+      if opt.MAPN
+         BGL.MAPN = SMDsave;
+         if opt.Gaussian
+            BGL.PixelSize = 1;
+         end
+         BGL.PImageSize = dataB.PImageSize;
+         BGL.XStart = dataB.XStart;
+         BGL.YStart = dataB.YStart;
+         if GaussianImageKludge > 0
+            BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
+         end
+         MapIm = CI.genMAPNIm1(BGL, 1);
+         MapIm = smi.BaGoL.scaleIm(MapIm, 98);
+      end
+
       j_ROI = sum(dataC.n_ROIs(1 : i - 1));
       for j = 1 : dataC.n_ROIs(i)
          j_ROI = j_ROI + 1;
@@ -99,9 +118,9 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             plot(SMD.X, SMD.Y, 'k.');
             hold on
          elseif opt.Gaussian
-            if opt.MAPN
-               BGL.MAPN = SMD;
-            end
+%           if opt.MAPN
+%              BGL.MAPN = SMD;
+%           end
             % Gaussian image plot of SR localizations.
             BGL.PixelSize = 1;
             %if GaussianImageKludge > 0
@@ -118,39 +137,60 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             if opt.BaGoL
                BGL.SMD = SMD;
                MapIm = CI.genMAPNIm1(BGL, 2);
-            elseif opt.MAPN
-               BGL.PImageSize = dataB.PImageSize;
-               BGL.XStart = dataB.XStart;
-               BGL.YStart = dataB.YStart;
-               if GaussianImageKludge > 0
-                  BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
-               end
-               MapIm = CI.genMAPNIm1(BGL, 1);
+%           elseif opt.MAPN
+%              BGL.PImageSize = dataB.PImageSize;
+%              BGL.XStart = dataB.XStart;
+%              BGL.YStart = dataB.YStart;
+%              if GaussianImageKludge > 0
+%                 BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
+%              end
+%              MapIm = CI.genMAPNIm1(BGL, 1);
             end
-            %MapIm = BGL.scaleIm(MapIm, 98);
-            MapIm = smi.BaGoL.scaleIm(MapIm, 98);
+            if ~opt.MAPN   % done above just once
+               %MapIm = BGL.scaleIm(MapIm, 98);
+               MapIm = smi.BaGoL.scaleIm(MapIm, 98);
+            end
          end
 
          % Gaussian image plot of SR localizations.
-         ScaleBarLength = 100;  % nm
-         ScaleBarWidth  = 25;   % nm
+         ScaleBarLength = 500;  % nm
+         ScaleBarWidth  = 100;   % nm
          if opt.Gaussian
             if j == 1
                fprintf('ScaleBar = %d nm\n', ScaleBarLength);
+               % Add in a scale bar (lower right).
+               Xoffset = 500;
+               Yoffset = 250;
+               %Xstart = ROI(2) - Xoffset - ScaleBarLength;
+               %Ystart = ...
+               %   GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
+               Xstart = dataB.PImageSize - Xoffset - ScaleBarLength;
+               Ystart = ...
+                  GaussianImageKludge - (0 + Yoffset + ScaleBarWidth);
+               X = round(Xstart) : round(Xstart + ScaleBarLength);
+               Y = round(Ystart) : round(Ystart + ScaleBarWidth);
+               MapIm(Y, X) = 255;
+
                fprintf('ROI (%d):', dataC.n_ROIs(i));
+               % MATLAB is acting weird here.  I can display interactively
+               % multiple figures with the code below, but it screws up when
+               % saving the images (hence the opt.NoSave).  However, saving the
+               % images correctly does not produce multiple interactive figures
+               % (just the last one).  So one has choose interactive figures vs
+               % saved images (which don't look that great anyway because I
+               % cannot save an image overlayed with points and lines at a high
+               % resolution, however, it displays just fine.  In short, images
+               % and plot figures don't play well together!
+               if i > 1 && opt.NoSave
+                  figure
+               end
+               imshow(MapIm, hot);
+               hold on
             end
             fprintf(' %d', j);
-            % Add in a scale bar (lower right).
-            Xoffset = 100;
-            Yoffset = 100;
-            Xstart = ROI(2) - Xoffset - ScaleBarLength;
-            Ystart = GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
-            X = round(Xstart) : round(Xstart + ScaleBarLength);
-            Y = round(Ystart) : round(Ystart + ScaleBarWidth);
-            MapIm(Y, X) = 255;
-
-            imshow(MapIm, hot);
-            hold on
+            if j == dataC.n_ROIs(i)
+               fprintf('\n');
+            end
          elseif opt.Circle
             BGL.PixelSize = 1;
             SMD = SMDsave;
@@ -204,7 +244,8 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
          if  yExtra > 0
             % Add a label designating the ROI number.
             x_label = (ROI(1) + ROI(2))/2;
-            y_label = ROI(4) + yExtra/2;
+	    %y_label = ROI(4) + yExtra/2;
+            y_label = (ROI(3) + ROI(4))/2;
             if GaussianImageKludge > 0
                y_label = GaussianImageKludge - y_label;
             end
@@ -222,7 +263,8 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                end
                C = results.C;
                if numel(C{l}) <= 2
-                  plot(x(C{l}), y(C{l}), 'm.-', 'LineWidth', 2, ...
+                  %plot(x(C{l}), y(C{l}), 'm.-', 'LineWidth', 2, ...
+                  plot(x(C{l}), y(C{l}), 'm-', 'LineWidth', 1, ...
                        'MarkerSize', 12);
                else
                   % Determine cluster boundary indices from the cluster
@@ -230,60 +272,96 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                   k = boundary(double(x(C{l})), double(y(C{l})), ShrinkFactor);
                   k = C{l}(k);
                   k = [k, k(1)];
-                  plot(x(k), y(k), 'm.-', 'LineWidth', 2, 'MarkerSize', 12);
+                  %plot(x(k), y(k), 'm.-', 'LineWidth', 2, 'MarkerSize', 12);
+                  plot(x(k), y(k), 'm-', 'LineWidth', 1, 'MarkerSize', 12);
                end
             end % for l (cluster #)
          end % if opt.Cluster
 
-         % Circle plots already are the full ROI.
-         if ~opt.Circle
-            xlim([ROI(1) - xExtra, ROI(2) + xExtra]); 
-            ylim([ROI(3) - yExtra, ROI(4) + yExtra]); 
-            if GaussianImageKludge
-               ylim([GaussianImageKludge - ROI(4) - yExtra, ...
-                     GaussianImageKludge - ROI(3) + yExtra]); 
-            end
-         end
+% Axis limits no longer needed for the full image.
+%        % Circle plots already are the full ROI.
+%        if ~opt.Circle
+%           xlim([ROI(1) - xExtra, ROI(2) + xExtra]); 
+%           ylim([ROI(3) - yExtra, ROI(4) + yExtra]); 
+%           if GaussianImageKludge
+%              ylim([GaussianImageKludge - ROI(4) - yExtra, ...
+%                    GaussianImageKludge - ROI(3) + yExtra]); 
+%           end
+%        end
 
-         title(sprintf('%s ROI %d', shrt, j));
-         axis off
-         hold off
+%        title(sprintf('%s ROI %d', shrt, j));
+%        axis off
+%        hold off
 
-         if opt.SR
-            in_type = 'SR';
-         elseif opt.BaGoL
-            in_type = 'BaGoLSR';
-         elseif opt.MAPN
-            in_type = 'MAPN';
-         elseif opt.Circle
-            in_type = 'SR+MAPN';
-         end
+%        if opt.SR
+%           in_type = 'SR';
+%        elseif opt.BaGoL
+%           in_type = 'BaGoLSR';
+%        elseif opt.MAPN
+%           in_type = 'MAPN';
+%        elseif opt.Circle
+%           in_type = 'SR+MAPN';
+%        end
 
-         if opt.Dot
-            out_type = 'dot';
-         elseif opt.Gaussian
-            out_type = 'Gaussian';
-         elseif opt.Circle
-            out_type = 'circle';
-         end
+%        if opt.Dot
+%           out_type = 'dot';
+%        elseif opt.Gaussian
+%           out_type = 'Gaussian';
+%        elseif opt.Circle
+%           out_type = 'circle';
+%        end
 
-         SaveFile = fullfile(SaveDir, sprintf('%s_ROI%d_%s_%s', ...
-                                              short, j, in_type, out_type));
+%        SaveFile = fullfile(SaveDir, sprintf('%s_ROI%d_%s_%s', ...
+%                                             short, j, in_type, out_type));
 
-         % Use imwrite rather than print for good resolution, but only for the
-         % basic bitmap image.
-         fprintf('\nSaving %s ...\n', SaveFile);
-         if (opt.Gaussian || opt.Circle) && ~opt.Boundary && ~opt.Cluster
-            imwrite(MapIm, [SaveFile, '.png']);
-         else
-            print(gcf, SaveFile, '-dpng', '-r600');
-         end
-         if opt.Dot
-            saveas(gcf, SaveFile, 'fig');
-         end
-         close
+%        % Use imwrite rather than print for good resolution, but only for the
+%        % basic bitmap image.
+%        if (opt.Gaussian || opt.Circle) && ~opt.Boundary && ~opt.Cluster
+%           imwrite(MapIm, [SaveFile, '.png']);
+%        else
+%           print(gcf, SaveFile, '-dpng', '-r600');
+%        end
+%        if opt.Dot
+%           saveas(gcf, SaveFile, 'fig');
+%        end
+%        close
       end % for j (ROI #)
-      close all
+
+      title(shrt);
+      axis off
+      hold off
+
+      if opt.SR
+         in_type = 'SR';
+      elseif opt.BaGoL
+         in_type = 'BaGoLSR';
+      elseif opt.MAPN
+         in_type = 'MAPN';
+      elseif opt.Circle
+         in_type = 'SR+MAPN';
+      end
+
+      if opt.Dot
+         out_type = 'dot';
+      elseif opt.Gaussian
+         out_type = 'Gaussian';
+      elseif opt.Circle
+         out_type = 'circle';
+      end
+
+      if ~opt.NoSave
+         SaveFile = fullfile(SaveDir, sprintf('%s_%s_%s', ...
+                                              short, in_type, out_type));
+         fprintf('Saving %s ...\n', SaveFile);
+         print(gcf, SaveFile, '-dpng', '-noui', '-r1200');
+         %cdata = print(gcf, '-RGBImage', '-noui', '-r1200');
+         %imwrite(cdata, [SaveFile, '.png']);
+         %print(gcf, SaveFile, '-dpdf', '-noui', '-r600');
+      else
+         pause(3)
+      end
+
+%     close all
    end % for i (file #)
 
 end
