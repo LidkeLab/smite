@@ -268,7 +268,7 @@ BGL.analyze_all()
 % This file can be huge for many localizations, so only produce it if the
 % number of input localizations is not too large.  Most of the space is taken
 % up by the Chain.
-if numel(SMD.X) <= 100000
+if numel(SMD.X) <= 25000
    fprintf('Saving BGL ...\n');
    try
 %     BGL.Chain  = [];
