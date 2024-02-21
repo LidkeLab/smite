@@ -186,6 +186,15 @@ classdef BaGoL < handle
             end
             %obj.assignROIs(ROIs);
             obj.precluster(ROIs);
+
+            % Visualize Precluster Results
+            figure
+            hold on
+            for ii = 1:length(obj.ClusterSMD)
+                plot(obj.ClusterSMD(ii).X,obj.ClusterSMD(ii).Y,'.')
+            end
+            axis equal
+          
             obj.MAPN.X = [];
             obj.MAPN.Y = [];
             obj.MAPN.Z = [];
@@ -360,7 +369,7 @@ classdef BaGoL < handle
        saveMAPN(Directory,FileType,MAPN)
        errPlot(SMD);
        SMD=loadPICASSOh5(DataDir,FileName)
-       [Chain]=BaGoL_RJMCMC(SMD,Xi,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
+       [Chain]=BaGoL_RJMCMC(SMD,Xi,MaxAlpha,PMove,NChain,NBurnin,DEBUG,MuX,MuY,AlphaX,AlphaY)
        [K,X,Y,AlphaX,AlphaY,ID]=BaGoL_RJMCMC_Hierarchical(SMD,PDFgrid,AlphaSTD,P_Jumps,NSamples,Xi,MuX,MuY,AlphaX,AlphaY)
        [SRIm,MapIm]=makeIm(SMD,MAPN,SZ,PixSize,XStart,YStart)
        Xi = sampleGam(NPoints,K,Xi,Alpha,Beta);

@@ -183,16 +183,21 @@ for nn=1:NSamples
             [ZTest]=Gibbs_Z(SMD,K+1,Mu_XTest,Mu_YTest,Alpha_XTest,Alpha_YTest);
                         
             %Prior Raio
-            PR = Pk(K+1)/Pk(K);
+            if K > 0 % (MJW)
+                PR = Pk(K+1)/Pk(K);
             
-            LAlloc_Current = p_Alloc(SMD,Mu_X,Mu_Y,Alpha_X,Alpha_Y,ones(1,K)/K);
-            LAlloc_Test = p_Alloc(SMD,Mu_XTest,Mu_YTest,Alpha_XTest,Alpha_YTest,ones(1,K+1)/(K+1));
-            AllocR = exp(LAlloc_Test-LAlloc_Current);
+                LAlloc_Current = p_Alloc(SMD,Mu_X,Mu_Y,Alpha_X,Alpha_Y,ones(1,K)/K);
+                LAlloc_Test = p_Alloc(SMD,Mu_XTest,Mu_YTest,Alpha_XTest,Alpha_YTest,ones(1,K+1)/(K+1));
+                AllocR = exp(LAlloc_Test-LAlloc_Current);
             
-            %Posterior Ratio
-            A = PR*AllocR/(Area*PDFgrid(ID));
+                %Posterior Ratio
+                A = PR*AllocR/(Area*PDFgrid(ID));
             
-            Accept = isinf(LAlloc_Current) & LAlloc_Current < 0;
+                Accept = isinf(LAlloc_Current) & LAlloc_Current < 0;
+            else
+                A = 1.0;
+                Accept = true;
+            end
             
             if rand<A || Accept
                 Z=ZTest;
@@ -205,7 +210,8 @@ for nn=1:NSamples
             
         case 4  %Remove
             
-            if K==1 %Then update chain and return
+            %if K==1 %Then update chain and return
+            if K<=1 %Then update chain and return (MJW)
                 continue;
             end
             
@@ -248,7 +254,11 @@ for nn=1:NSamples
                         
     end    
     
-    DEBUG = 0;
+    if K > 20
+        DEBUG = 0;
+    else
+        DEBUG = 0;
+    end
     if DEBUG==1 %for testing
         figure(1111)
         scatter(SMD.X,SMD.Y,[],Z)

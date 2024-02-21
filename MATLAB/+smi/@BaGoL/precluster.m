@@ -47,10 +47,13 @@ for iy = 1:Ys
             continue; 
         end
         try
-            Dist = pdist(Coords,'euclid');
-            TC = linkage(Dist,'single');
-            IndClust = cluster(TC,'Cutoff',obj.Cutoff,'Criterion','distance');
+            %Dist = pdist(Coords,'euclid');
+            %TC = linkage(Dist,'single');
+            %IndClust = cluster(TC,'Cutoff',obj.Cutoff,'Criterion','distance');
+            % Try DBSCAN instead of hierarchical clustering.
+            IndClust = dbscan(Coords, obj.Cutoff, 1);
         catch
+            Dist = pdist(Coords,'euclid');
             IndClust = ones(size(Dist(:,1)),'single');
         end
                     

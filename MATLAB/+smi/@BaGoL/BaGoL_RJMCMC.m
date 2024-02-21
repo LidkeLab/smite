@@ -1,4 +1,5 @@
-function [Chain]=BaGoL_RJMCMC(SMD,Xi,SigAlpha,PMove,NChain,NBurnin,DEBUG)
+function [Chain]=BaGoL_RJMCMC(SMD,Xi,SigAlpha,PMove,NChain,NBurnin,DEBUG, ...
+    Mu_X, Mu_Y, Alpha_X, Alpha_Y)
 %BaGoL_RJMCMC BaGoL's core RJMCMC algorithm
 % [Chain]=BaGoL.BaGoL_RJMCMC(SMD,Xi,MaxAlpha,PMove,NChain,NBurnin,DEBUG)
 %
@@ -107,16 +108,22 @@ end
 %Storage of Chain
 N=length(SMD.X);
 
-%Intial K Guess
-K=ceil(N/prod(Xi));
 
 %Initial Locations
-Mu_X =SMD.X(randi(N,[1 K]))';
-Mu_Y =SMD.Y(randi(N,[1 K]))';
+if nargin < 8
+    %Intial K Guess
+    K=ceil(N/prod(Xi));
+    Mu_X =SMD.X(randi(N,[1 K]))';
+    Mu_Y =SMD.Y(randi(N,[1 K]))';
+else
+    K = length(Mu_X);
+end
 
 %Initial Alphas
-Alpha_X = zeros([1 K]);
-Alpha_Y = zeros([1 K]);
+if nargin < 10
+    Alpha_X = zeros([1 K]);
+    Alpha_Y = zeros([1 K]);
+end
 
 if N < 100
    LengN = 100; 
@@ -143,7 +150,9 @@ for nn=1:NChain+NBurnin
     JumpType=length(PMove)+1-sum(rand<cumsum(PMove));
     K = length(Mu_X);
     for ii = K:-1:1
-        if sum(Z==ii)==0
+
+        % Don't allow removal if we are doing MCMC (no add/remove)
+        if sum(Z==ii)==0 && PMove(4)>0
             Mu_X(ii)=[];
             Mu_Y(ii)=[];
             Alpha_X(ii)=[];
@@ -323,9 +332,9 @@ for nn=1:NChain+NBurnin
             
     end    
     
-    %DEBUG = 0;
     if DEBUG==1 %for testing
         figure(1111)
+        axis equal
         scatter(SMD.X,SMD.Y,[],Z)
         hold on
         plot(Mu_X,Mu_Y,'ro','linewidth',4)
@@ -367,9 +376,7 @@ function [ZTest]=Gibbs_Z(SMD,K,Mu_X,Mu_Y,Alpha_X,Alpha_Y)
     
     T=SMD.FrameNum;
     N=length(T);
-    PX=zeros(N,K);
-    PY=zeros(N,K);
-   
+  
     X=repmat(SMD.X,size(Mu_X));
     Y=repmat(SMD.Y,size(Mu_X));
     T=repmat(T,size(Mu_X));

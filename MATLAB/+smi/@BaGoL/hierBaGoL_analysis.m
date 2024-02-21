@@ -268,7 +268,7 @@ BGL.analyze_all()
 % This file can be huge for many localizations, so only produce it if the
 % number of input localizations is not too large.  Most of the space is taken
 % up by the Chain.
-if numel(SMD.X) <= 100000
+if numel(SMD.X) <= 25000
    fprintf('Saving BGL ...\n');
    try
 %     BGL.Chain  = [];
@@ -409,6 +409,40 @@ catch ME
    fprintf('%s\n', ME.message);
 end
 
+if numel(Xi) == 2
+   fprintf('kChain ...\n');
+   try
+      plot(BGL.XiChain(:, 1), 'k.');
+      hold on
+      title('k chain');
+      xlabel(sprintf('RJMCMC jumps sampled every %d', BaGoLParams.NSamples));
+      ylabel('k in gamma(k, \theta)');
+      hold off
+      saveas(gcf, fullfile(SaveDirLong, 'kChain'), 'png');
+   catch ME
+      fprintf('### PROBLEM with kChain ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
+end
+
+if numel(Xi) == 2
+   fprintf('thetaChain ...\n');
+   try
+      plot(BGL.XiChain(:, 2), 'k.');
+      hold on
+      title('\theta chain');
+      xlabel(sprintf('RJMCMC jumps sampled every %d', BaGoLParams.NSamples));
+      ylabel('\theta in gamma(k, \theta)');
+      hold off
+      saveas(gcf, fullfile(SaveDirLong, 'thetaChain'), 'png');
+   catch ME
+      fprintf('### PROBLEM with thetaChain ###\n');
+      fprintf('%s\n', ME.identifier);
+      fprintf('%s\n', ME.message);
+   end
+end
+
 fprintf('MAPN_NmeanHistogram ...\n');
 try
    h = histogram(MAPN.Nmean);
@@ -427,6 +461,23 @@ try
    saveas(gcf, fullfile(SaveDirLong, 'MAPN_NmeanHist'), 'png');
 catch ME
    fprintf('### PROBLEM with MAPN_NmeanHist ###\n');
+   fprintf('%s\n', ME.identifier);
+   fprintf('%s\n', ME.message);
+end
+
+% Visualize Precluster Results
+fprintf('Preclusters ...\n');
+try
+   figure;
+   hold on
+   for i = 1 : numel(BGL.ClusterSMD)
+      plot(BGL.ClusterSMD(i).X, BGL.ClusterSMD(i).Y, '.');
+   end
+   axis equal
+   hold off
+   saveas(gcf, fullfile(SaveDirLong, 'Preclusters'), 'png');
+catch ME
+   fprintf('### PROBLEM with Preclusters ###\n');
    fprintf('%s\n', ME.identifier);
    fprintf('%s\n', ME.message);
 end
