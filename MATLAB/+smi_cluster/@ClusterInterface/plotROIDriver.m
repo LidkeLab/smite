@@ -6,6 +6,8 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
 % and a few other pieces of information for each ROI in each Cell, putting the
 % results in SaveDir.
 %
+% This function is now incorporated in ClusterInterface.
+%
 % INPUTS:
 %    PixelSize       plxel length (nm)
 %    options         cell array of strings that are selected from the following
@@ -26,8 +28,6 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
 %                    [DEFAULT = '.']
 %    SaveDir         directory in which to save images
 %                    [DEFAULT = fullfile(start_datadir, 'ROIClusterAnalysis')]
-
-%  PixelSize = 97.3; % nm   % pixel length (nm)
 
    if ~exist('options', 'var')
       options = {'MAPN', 'Gaussian', 'Cluster', 'ROIImages'};

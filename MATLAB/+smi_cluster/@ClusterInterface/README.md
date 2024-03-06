@@ -44,5 +44,7 @@ methods:
   Plot dot, Gaussian or circle images of SMD/MAPN coordinates per ROI per cell
 - **[plotROI1](plotROI1.m)**:
   As above, but make a single image per cell of all ROIs
+- **[plotROIDriver](plotROIDriver.m)**:
+  Driver for plotROI and plotROI1
 - **[singleCondition](singleCondition.m)**:
   Perform cluster analysis for comparison of experimental conditions

@@ -18,12 +18,12 @@ G  Example_SPTBatch		single particle tracking via batch processing
 G indicates a GPU is used.
 
 SMITE code templates requiring user-supplied data:
+   Example_plotROIDriver        plot dot, Gaussian or circle images of ROIs
    Example_Publish		generate results for a microscope experiment
    Example_Publish_generic	as above for multiple directories of data
    Example_SMLM_Basic		demonstrate basic SMLM functionality
    Example_SMLM_script		example of SMLM analysis
    hierBaGoL_wrapper		wrapper used to call BaGoL routines
-   plotROIDriver                plot dot, Gaussian or circle images of ROIs
    simplePairCorr               step-by-step script to choose 2-label ROIs & do
                                 various analyses for ROIs separate or combined
    simpleROIcluster             step-by-step script to choose ROIs, cluster and

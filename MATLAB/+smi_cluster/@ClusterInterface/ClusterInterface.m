@@ -45,7 +45,8 @@ methods(Static)
                    minPts_range, Pixel2nm, base_name, A_ROI,  ...
                    doHopkins, doSigmaActual, Alpha)
 
-   % Called by plotROIDriver.
+   % Called by Example_plotROIDriver.
+   plotROIDriver(PixelSize, options, start_datadir, SaveDir)
    plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    [SRIm] = genMAPNIm1(obj, ImFlag)

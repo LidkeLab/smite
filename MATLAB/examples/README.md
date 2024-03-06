@@ -33,13 +33,13 @@ G indicates a GPU is used.
 
 | example code ||
 ---|---
+[Example_plotROIDriver](Example_plotROIDriver.m)                                | plot dot, Gaussian or circle images of ROIs
+[simplePairCorr](simplePairCorr.m)                                              | step-by-step script to choose 2-label ROIs & do various analyses for ROIs separate or combined
 [Example_Publish](Example_Publish.m)                                            | generate results for a microscope experiment
 [Example_Publish_generic](Example_Publish_generic.m)                            | as above for multiple directories of data
 [Example_SMLM_Basic](Example_SMLM_Basic.m)                                      | demonstrate basic SMLM functionality
 [Example_SMLM_script](Example_SMLM_script.m)                                    | example of SMLM analysis
 [hierBaGoL_wrapper](hierBaGoL_wrapper.m)                                        | wrapper used to call BaGoL routines
-[plotROIDriver](plotROIDriver.m)                                                | plot dot, Gaussian or circle images of ROIs
-[simplePairCorr](simplePairCorr.m)                                              | step-by-step script to choose 2-label ROIs & do various analyses for ROIs separate or combined
 [simpleROIcluster](simpleROIcluster.m)                                          | step-by-step script to choose ROIs, cluster and analyze/compare conditions for 1-label data
 [singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
 [spt_resolft_track_demo](spt_resolft_track_demo.m)                              | SPT-RESOLFT example
