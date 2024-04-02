@@ -29,12 +29,29 @@ function results = clusterStats(obj, SMD, C, centers)
 %                      standard deviation of the intracluster distances
 %    indices_hull      cell array of boundary hull indices relative to XY per
 %                      cluster
+%    indConvex         as indices_hull but for convex hull boundaries
+%    indCompact        as indices_hull but for the most compact boundaries
 %    areas             area of each cluster
+%    areasConvex       area of each cluster using the convex hull boundary
+%    areasCompact      area of each cluster using the most compact boundary
 %    equiv_radii       equivalent radius of each cluster
 %    n_pts_per_area    number of points per area for clusters containing 3 or
 %                      more points
 %    perimeters        perimeter of each cluster
+%    perimConvex       perimeter of each cluster using the convex hull boundary
+%    perimCompact      perimeter of each cluster using the most compact
+%                      boundary
 %    compactness       4 pi area / perimeter^2 of each cluster
+%                         [1 for a circle; 0 for a line segment]
+%    circularity       4 pi areaCompact / perimConvex^2 of each cluster
+%                         [1 for a circle; < 1 for non-circular, but relatively
+%                          insensitive to irregular boundaries]
+%    convexity         perimConvex / perimCompact of each cluster
+%                         [1 for a convex object; < 1 if non-convex, e.g., one
+%                          having an irregular boundary]
+%    solidity          areaCompact / areaConvex of each cluster
+%                         [1 for a solid object; < 1 if irregular boundary or
+%                          containing holes]
 %    min_c2c_dists     minimum center-to-center distances for each cluster
 %                      with respect to all the others
 %    min_e2e_dists     minimum edge-to-edge distances for each cluster convex
@@ -43,6 +60,9 @@ function results = clusterStats(obj, SMD, C, centers)
 %    min_e2e_dist      min(min_e2e_dists)
 %    nn_within_clust   nearest neighbor distances between points within
 %                      clusters only
+%
+% Reference:
+%    http://www.cyto.purdue.edu/cdroms/micro2/content/education/wirth10.pdf
 
 % Created by
 %    Michael J. Wester (2021)
@@ -79,11 +99,20 @@ function results = clusterStats(obj, SMD, C, centers)
    results.numclust     = zeros(1, 3);
    results.sigma_actual = zeros(1, nC);
    results.indices_hull = cell(1, nC);
+   results.indConvex    = cell(1, nC);
+   results.indCompact   = cell(1, nC);
    results.areas        = zeros(1, nC);
+   results.areasConvex  = zeros(1, nC);
+   results.areasCompact = zeros(1, nC);
    results.equiv_radii  = zeros(1, nC);
    results.n_pts_per_area = [];
    results.perimeters   = [];
+   results.perimConvex  = [];
+   results.perimCompact = [];
    results.compactness  = [];
+   results.circularity  = [];
+   results.convexity    = [];
+   results.solidity     = [];
    results.nn_within_clust = [];
    for i = 1 : nC
       xy = double(XY(C{i}, :));
@@ -94,16 +123,30 @@ function results = clusterStats(obj, SMD, C, centers)
          results.numclust(1) = results.numclust(1) + 1;
          results.sigma_actual(i) = 0;
          results.indices_hull{i} = 1;
+         results.indConvex{i}    = 1;
+         results.indCompact{i}   = 1;
          results.areas(i)        = 0;
+         results.areasConvex(i)  = 0;
+         results.areasCompact(i) = 0;
          results.equiv_radii(i)  = 0;
          results.compactness(i)  = 1;
+         results.circularity(i)  = 1;
+         results.convexity(i)    = 1;
+         results.solidity(i)     = 1;
       elseif n_pts == 2
          results.numclust(2) = results.numclust(2) + 1;
          results.sigma_actual(i) = std(pdist(xy));
          results.indices_hull{i} = [1, 2];
+         results.indConvex{i}    = [1, 2];
+         results.indCompact{i}   = [1, 2];
          results.areas(i)        = 0;
+         results.areasConvex(i)  = 0;
+         results.areasCompact(i) = 0;
          results.equiv_radii(i)  = pdist(xy) / 2;
          results.compactness(i)  = 0;
+         results.circularity(i)  = 0;
+         results.convexity(i)    = 1;
+         results.solidity(i)     = 1;
          results.nn_within_clust = [results.nn_within_clust, ...
                                     repmat(pdist(xy), 1, 2)];
       else % n_pts >= 3
@@ -120,23 +163,42 @@ function results = clusterStats(obj, SMD, C, centers)
          end
          try
             %[k, A] = convhull(xy(:, 1), xy(:, 2));
+            % ShrinkFactor in boundary [DEFAULT = 0.5]
+            %    = 0 gives the convex hull
+            %    = 1 gives a compact boundary that envelops the points
             if dim == 2
                [k, A] = boundary(xy(:, 1), xy(:, 2), obj.ShrinkFactor);
+               [kConvex,  AConvex]  = boundary(xy(:, 1), xy(:, 2), 0);
+               [kCompact, ACompact] = boundary(xy(:, 1), xy(:, 2), 1);
             else
                [k, A] = boundary(xy(:, 1), xy(:, 2), xy(:, 3), ...
                                  obj.ShrinkFactor);
+               [kConvex,  AConvex]  = ...
+                  boundary(xy(:, 1), xy(:, 2), xy(:, 3), 0);
+               [kCompact, ACompact] = ...
+                  boundary(xy(:, 1), xy(:, 2), xy(:, 3), 1);
             end
             if isempty(k)
                k = 1;
+               kConvex  = 1;
+               kCompact = 1;
             end
          catch
             fprintf('boundary collinear (n_points = %d)\n', n_pts);
             %xy
             k = 1;
+            kConvex  = 1;
+            kCompact = 1;
             A = 0;
+            AConvex  = 0;
+            ACompact = 0;
          end
          results.indices_hull{i} = k;
+         results.indConvex{i}    = kConvex;
+         results.indCompact{i}   = kCompact;
          results.areas(i)        = A;
+         results.areasConvex(i)  = AConvex;
+         results.areasCompact(i) = ACompact;
          if dim == 2
             % A = pi r^2
             results.equiv_radii(i)  = sqrt(A / pi);
@@ -148,12 +210,30 @@ function results = clusterStats(obj, SMD, C, centers)
             results.n_pts_per_area  = [results.n_pts_per_area, n_pts / A];
             if dim == 2
                perim = 0;
+               perimConvex  = 0;
+               perimCompact = 0;
                for j = 1 : length(k) - 1
                   perim = perim + pdist([xy(k(j), :); xy(k(j + 1), :)]);
                end
+               for j = 1 : length(kConvex) - 1
+                  perimConvex = perimConvex + ...
+                     pdist([xy(kConvex(j), :); xy(kConvex(j + 1), :)]);
+               end
+               for j = 1 : length(kCompact) - 1
+                  perimCompact = perimCompact + ...
+                     pdist([xy(kCompact(j), :); xy(kCompact(j + 1), :)]);
+               end
                results.perimeters      = [results.perimeters, perim];
+               results.perimConvex     = [results.perimConvex,  perimConvex];
+               results.perimCompact    = [results.perimCompact, perimCompact];
                results.compactness     = [results.compactness, ...
                                           4*pi*A / perim^2];
+               results.circularity     = [results.circularity, ...
+                                          4*pi*ACompact / perimConvex^2];
+               results.convexity       = [results.convexity,   ...
+                                          perimConvex / perimCompact];
+               results.solidity        = [results.solidity ,   ...
+                                          ACompact / AConvex];
             end
          end
       end

@@ -118,7 +118,7 @@ if doHopkins
                             'UniformOutput', false),                    ...
                    0.01, 'Hopkins per ROI', econd, 'hopkins_ROI');
    %SC.CSV = false;
-   fprintf(out, 'P_hopkins per ROI =\n');
+   fprintf(out, 'P_Hopkins per ROI =\n');
    fprintf(out, fmt, P_hopkins_ROI);
    fprintf(out, '\n');
 end
@@ -288,8 +288,9 @@ for j = 1 : n_files
    end
 end
 P_compactness = ...
-SC.plotCombined(compactness,                        ...
-                0.05, 'cluster compactness', econd, 'compactness');
+SC.plotCombined(compactness, ...
+                0.05, 'cluster compactness (4\pi A/P^2)', ...
+                econd, 'compactness');
 fprintf(out, 'P_cluster compactness =\n');
 fprintf(out, fmt, P_compactness);
 fprintf(out, '\n');
@@ -305,9 +306,116 @@ for j = 1 : n_files
 end
 P_compactness_ROI = ...
 SC.plotCombined(compactness_ROI, ...
-                0.05, 'cluster compactness per ROI', econd, 'compactness_ROI');
+                0.05, 'cluster compactness (4\pi A/P^2) per ROI', ...
+                econd, 'compactness_ROI');
 fprintf(out, 'P_cluster compactness per ROI =\n');
 fprintf(out, fmt, P_compactness_ROI);
+fprintf(out, '\n');
+
+% Cluster circularity.
+if isfield(rdata{1}.results{1}, 'circularity')
+circularity = cell(1, n_files);
+for j = 1 : n_files
+   circularity{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      circularity{j} = [circularity{j}, rdata{j}.results{i}.circularity];
+   end
+end
+P_circularity = ...
+SC.plotCombined(circularity, ...
+                0.05, 'cluster circularity (4\pi Acompact/Pconvex^2)', ...
+                econd, 'circularity');
+fprintf(out, 'P_cluster circularity =\n');
+fprintf(out, fmt, P_circularity);
+fprintf(out, '\n');
+
+% Cluster circularity per ROI.
+circularity_ROI = cell(1, n_files);
+for j = 1 : n_files
+   circularity_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      circularity_ROI{j} = [circularity_ROI{j}, ...
+                            mean(rdata{j}.results{i}.circularity)];
+   end
+end
+P_circularity_ROI = ...
+SC.plotCombined(circularity_ROI, ...
+                0.05, ...
+                'cluster circularity (4\pi Acompact/Pconvex^2) per ROI', ...
+                econd, 'circularity_ROI');
+fprintf(out, 'P_cluster circularity per ROI =\n');
+fprintf(out, fmt, P_circularity_ROI);
+fprintf(out, '\n');
+end
+
+% Cluster convexity.
+if isfield(rdata{1}.results{1}, 'convexity')
+convexity = cell(1, n_files);
+for j = 1 : n_files
+   convexity{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      convexity{j} = [convexity{j}, rdata{j}.results{i}.convexity];
+   end
+end
+P_convexity = ...
+SC.plotCombined(convexity, ...
+                0.05, 'cluster convexity (Pconvex/Pcompact)', ...
+                econd, 'convexity');
+fprintf(out, 'P_cluster convexity =\n');
+fprintf(out, fmt, P_convexity);
+fprintf(out, '\n');
+
+% Cluster convexity per ROI.
+convexity_ROI = cell(1, n_files);
+for j = 1 : n_files
+   convexity_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      convexity_ROI{j} = [convexity_ROI{j}, ...
+                          mean(rdata{j}.results{i}.convexity)];
+   end
+end
+P_convexity_ROI = ...
+SC.plotCombined(convexity_ROI, ...
+                0.05, 'cluster convexity (Pconvex/Pcompact) per ROI', ...
+                econd, 'convexity_ROI');
+fprintf(out, 'P_cluster convexity per ROI =\n');
+fprintf(out, fmt, P_convexity_ROI);
+fprintf(out, '\n');
+end
+
+% Cluster solidity.
+if isfield(rdata{1}.results{1}, 'solidity')
+solidity = cell(1, n_files);
+for j = 1 : n_files
+   solidity{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      solidity{j} = [solidity{j}, rdata{j}.results{i}.solidity];
+   end
+end
+P_solidity = ...
+SC.plotCombined(solidity, ...
+                0.05, 'cluster solidity (Acompact/Aconvex)', ...
+                econd, 'solidity');
+fprintf(out, 'P_cluster solidity =\n');
+fprintf(out, fmt, P_solidity);
+fprintf(out, '\n');
+end
+
+% Cluster solidity per ROI.
+solidity_ROI = cell(1, n_files);
+for j = 1 : n_files
+   solidity_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      solidity_ROI{j} = [solidity_ROI{j}, ...
+                         mean(rdata{j}.results{i}.solidity)];
+   end
+end
+P_solidity_ROI = ...
+SC.plotCombined(solidity_ROI, ...
+                0.05, 'cluster solidity (Acompact/Aconvex) per ROI', ...
+                econd, 'solidity_ROI');
+fprintf(out, 'P_cluster solidity per ROI =\n');
+fprintf(out, fmt, P_solidity_ROI);
 fprintf(out, '\n');
 
 % Number of points per cluster per ROI.

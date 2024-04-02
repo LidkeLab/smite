@@ -103,7 +103,8 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_freq']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         %saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -153,7 +154,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_normalized']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -186,7 +187,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_PDF']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       try
          saveas(gcf, name, 'fig');
@@ -233,7 +234,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       %Y1 = h1.Values;
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_CDF']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -321,7 +322,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_CDF2']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -371,7 +372,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_PS']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -412,7 +413,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_PSMM']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -444,7 +445,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_box']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -469,7 +470,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       hold off
       name = fullfile(obj.ResultsDir, [base_name, x_abbrev, '_bar']);
       if ~isempty(obj.Fig_ext)
-         saveas(gcf, name, obj.Fig_ext)
+         print(gcf, name, ['-d', obj.Fig_ext], '-noui')
       end
       saveas(gcf, name, 'fig');
       close
@@ -490,6 +491,8 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
       end
    end
 
+   % Various statistics like mean, stdev, median, mode
+   printStats(y, x_label, legend_labels, obj.ResultsDir);
 end
 
 function produceCSVfile(y, ResultsDir, base_name, x_label, legend_labels, ...
@@ -533,5 +536,41 @@ function produceCSVfile(y, ResultsDir, base_name, x_label, legend_labels, ...
       end
    end
    fclose(out);
+
+end
+
+function printStats(y, x_label, legend_labels, ResultsDir)
+%
+% Print various statistics (mean, stdev, median, mode) for each array of y.
+%
+% INPUTS:
+%    y               cell array of data arrays (need not be the same length)
+%    x_label         text for the x-label
+%    legend_labels   {legend_label1, legend_label2, ...}
+%    ResultsDir      directory to store results
+
+   out_s = fopen(fullfile(ResultsDir, 'stats.txt'), 'a');
+
+   n = numel(y);
+   fprintf(out_s, '%s: mean +/- stdev, median, mode [interval] =\n', x_label);
+   for i = 1 : n
+      hedge_min = 0;
+      hedge_max = -1;
+      [hcounts, hedges] = histcounts(y{i});
+      if hedges(end) > hedge_max;
+         hedge_min = hedges(1);
+         hedge_max = hedges(end);
+         delta = hedges(2) - hedges(1);
+      end
+      edges = hedge_min : delta : hedge_max;
+      bin = discretize(y{i}, edges);
+      m = mode(bin);
+      e = edges([m, m + 1]);
+
+      fprintf(out_s, '%2d: %f +/- %f, %f, [%f, %f] %s\n', ...
+              i, mean(y{i}), std(y{i}), median(y{i}), e, legend_labels{i});
+   end
+   fprintf(out_s, '\n');
+   fclose(out_s);
 
 end
