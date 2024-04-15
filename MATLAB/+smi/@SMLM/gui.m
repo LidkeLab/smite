@@ -25,6 +25,9 @@ ControlPanel = uipanel(GUIFigure, 'Title', 'Controls', ...
 % Stick the SingleMoleculeFitting GUI inside of the SMFPanel.
 obj.SMF.gui(SMFPanel)
 
+% Prevent closing after a 'close' or 'close all'
+GUIFigure.HandleVisibility='off';
+
 % Add some controls to the ControlPanel.
 % NOTE: To anyone adding to this, I'm trying to follow the convention
 %       that the uicontrol handles have their type appended to the end
