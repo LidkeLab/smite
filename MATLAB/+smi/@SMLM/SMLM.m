@@ -148,6 +148,7 @@ methods
         %          LoadData           (load raw data)
         %          DataToPhotons      (gain and offset corrections)
         %          LocalizeData       (produce localizations for SMD structure)
+        %          (-> FindROI)       (finds/collates image stack subregions)
         %             Threshold       (thresholding of localizations generated)
         %          SingleMoleculeData (catSMD for SMDPreThresh)
         %          FrameConnection    (frame connection)
@@ -221,6 +222,8 @@ methods
         if obj.Verbose >= 1 && obj.SMF.Thresholding.On
            THR.rejectedLocalizations(obj.SMDPreThresh, 'MN', ...
                                      obj.ResultsSubDir);
+           % Close the rejected plots corresponding to 'MN'.
+           if ~obj.ShowPlots; close; close; end
         end
         if obj.Verbose >= 1 && obj.SMF.FrameConnection.On
            fprintf('Frame connections = %d\n', obj.FCCount);
@@ -286,7 +289,8 @@ methods
         else
            V = obj.VerboseTest;
         end
-        LD = smi_core.LocalizeData(ScaledDataset, obj.SMF, V);
+        LD = smi_core.LocalizeData(ScaledDataset, obj.SMF, V, ...
+                                   obj.ResultsSubDir);
         LD.ResultsDir = obj.ResultsSubDir;   % if saving the color overlay
         if obj.Verbose >= 1
             fprintf('Generating localizations ...\n');
@@ -351,6 +355,9 @@ methods
            obj.ShowPlots = false;   % Don't show, but rather save, plots.
         else   % testFit
            obj.ResultsDir = [];
+           % Show plots for a TestFit when called from the GUI or VerboseTest
+           % is >= 5 when testFit is called directly.  Note that sliceViewer
+           % plots of fits are produced when Verbose >= 3.
            if obj.CalledByGUI || obj.VerboseTest >= 5
               obj.ResultsSubDir = [];
               obj.ShowPlots = true;   % Show plots to the user in these cases.

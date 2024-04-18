@@ -26,8 +26,8 @@ MaxRange = max(maxData,maxModel);
 % unitTest).
 if MinRange == MaxRange
    minData = min(obj.ScaledData(:));
-   maxData = min(obj.ScaledData(:));
-   minModel = max(Model(:));
+   maxData = max(obj.ScaledData(:));
+   minModel = min(Model(:));
    maxModel = max(Model(:));
 
    MinRange = min(minData,minModel);

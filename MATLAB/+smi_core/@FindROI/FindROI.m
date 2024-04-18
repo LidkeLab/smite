@@ -36,6 +36,7 @@ classdef FindROI < handle
         LocalMaxIm      %Binary Image showing local maxima above the threshold
         PlotBoxFrame=1  %If Verbose >= 3, plot boxes for this frame (Default=1)
         Verbose=1       %Verbosity level
+        ResultsDir=[]   %Output directory
         IsSCMOS         %Is a SCMOS Camera and will use Variance image 
         Varim           %Variance Image (photons^2)
     end
@@ -213,7 +214,11 @@ classdef FindROI < handle
             if obj.Verbose >= 3
                 Params.PercentileFloor = 1;
                 Params.PercentileCeiling = 99;
-                obj.plotBoxStack(SMD, obj.Data, obj.BoxSize, Params)
+                ScaledData = obj.plotBoxStack(SMD, obj.Data, obj.BoxSize, Params);
+                if ~isempty(obj.ResultsDir)
+                    FileBaseName = 'RawDataFromSMD';
+                    smi_helpers.writeMPEG4(obj.ResultsDir, FileBaseName, ScaledData)
+                end
             end
         end
         
@@ -396,7 +401,7 @@ classdef FindROI < handle
         end
 
         plotBox(SMD, Data, Frame, BoxSize)
-        plotBoxStack(SMD, Data, BoxSize, Params)
+        Data = plotBoxStack(SMD, Data, BoxSize, Params)
         [ROIStack, CameraGain, CameraOffset, CameraReadNoise] = ...
             extractROIs(SMD, SMF, CorrectData);
     end

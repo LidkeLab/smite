@@ -33,7 +33,7 @@ classdef LocalizeData < handle
     
     methods
         function [obj, SMD, SMDPreThresh] = LocalizeData(...
-                ScaledData, SMF, Verbose, AutoRun)
+                ScaledData, SMF, Verbose, ResultsDir, AutoRun)
             %LocalizeData creates an instance of the LocalizeData class.
             % This method will prepare the LocalizeData class, setting
             % inputs to class properties if provided. This constructor can
@@ -60,6 +60,16 @@ classdef LocalizeData < handle
             % Set the verbosity level if provided.
             if (exist('Verbose', 'var') && ~isempty(Verbose))
                 obj.Verbose = Verbose;
+            end
+            if ((obj.Verbose>2) && (nargin()>0))
+                fprintf(['\tLocalizeData constructor: ', ...
+                    'Setting class properties based on constructor ', ...
+                    'inputs...\n'])
+            end
+                        
+            % Set the results directory if provided.
+            if (exist('ResultsDir', 'var') && ~isempty(ResultsDir))
+                obj.ResultsDir = ResultsDir;
             end
             if ((obj.Verbose>2) && (nargin()>0))
                 fprintf(['\tLocalizeData constructor: ', ...

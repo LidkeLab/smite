@@ -27,6 +27,7 @@ elseif (obj.Verbose > 0)
 end
 FindROI = smi_core.FindROI(obj.SMF, obj.ScaledData);
 FindROI.Verbose = obj.Verbose;
+FindROI.ResultsDir = obj.ResultsDir;
 [ROIStack, SMDCandidates] = FindROI.findROI();
 if (obj.Verbose > 2)
     fprintf(['\t\tLocalizeData.genLocalizations(): ', ...

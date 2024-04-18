@@ -1,4 +1,4 @@
-function plotBoxStack(SMD, Data, BoxSize, Params)
+function Data = plotBoxStack(SMD, Data, BoxSize, Params)
 %plotBoxStack plots the found boxes in Data/SMD structure.
 % This method extends plotBox() to allow slices through multiple frames by
 % interactive use of a slide bar.
@@ -14,6 +14,8 @@ function plotBoxStack(SMD, Data, BoxSize, Params)
 %            (see image related parameters in
 %            smi_vis.GenerateMovies.prepDefaults() as well as usage below). 
 %            (Default = smi_vis.GenerateMovies.prepDefaults())
+% OUTPUT
+%    Data: Scaled data images
 
 % Created by:
 %    David J. Schodt (Lidke Lab, 2022)
