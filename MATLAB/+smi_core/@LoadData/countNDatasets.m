@@ -49,7 +49,7 @@ function NDatasets = countNDatasets(SMF)
             % 0 indicates that all of the data exists in a single 
             % group, 1 indicates each dataset exists in its own 
             % group.
-            DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            %DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
             % Index of h5 file channel containing data.
             ChannelIdx = 1;
 
@@ -64,6 +64,8 @@ function NDatasets = countNDatasets(SMF)
                     break
                end
             end
+            DataStructFlag = isempty(DataGroup.Datasets);
+            
             for ii = 1 : numel(DataGroup.Groups)
                 if strcmp(DataGroup.Groups(ii).Name,['/Data/' ChannelName])
                     ChannelGroup = DataGroup.Groups(ii);

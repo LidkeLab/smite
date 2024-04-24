@@ -176,28 +176,8 @@ classdef LoadData < handle
             % Define a flag to indicate the .h5 file structure: 0 indicates
             % that all of the data exists in a single group, 1 indicates each
             % dataset exists in its own group.
-            DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            %DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
             
-            % setup directory into H5 file
-            for ii = 1 : numel(HD5Info.Groups)
-                if strcmp(HD5Info.Groups(ii).Name,'/Data')
-                    ChannelName = sprintf('Channel%02i',ChannelIdx);
-                    DataSetName = sprintf('Data%04i',DatasetIdx);
-                    DataName = sprintf('/Data/%s/%s',ChannelName,DataSetName);
-                elseif strcmp(HD5Info.Groups(ii).Name,'/Channel01')
-                    ChannelName = sprintf('Zposition%03i', ChannelIdx);
-                    DataSetName = sprintf('Data%04i', DatasetIdx);
-                    
-                    % Define the name (including path in .h5 file) to the data.
-                    if DataStructFlag % each dataset exists in its own group
-                        DataName = sprintf('/Channel01/%s/%s/%s', ...
-                            ChannelName, DataSetName, DataSetName);
-                    else % all of the datasets exist in a single group
-                        DataName = sprintf('/Channel01/%s/%s', ...
-                            ChannelName, DataSetName);
-                    end
-                end
-            end
             % check whether channel and dataset exist
             for ii = 1 : numel(HD5Info.Groups)
                 if strcmp(HD5Info.Groups(ii).Name,'/Data')
@@ -208,6 +188,29 @@ classdef LoadData < handle
                     break
                 end
             end
+            DataStructFlag = isempty(DataGroup.Datasets);
+
+            % setup directory into H5 file
+            for ii = 1 : numel(HD5Info.Groups)
+                if strcmp(HD5Info.Groups(ii).Name,'/Data')
+                    ChannelName = sprintf('Channel%02i',ChannelIdx);
+                    DataSetName = sprintf('Data%04i',DatasetIdx);
+                    DataName = sprintf('/Data/%s/%s',ChannelName,DataSetName);
+                elseif strcmp(HD5Info.Groups(ii).Name,'/Channel01')
+                    ChannelName = sprintf('Zposition%03i', ChannelIdx);
+                    DataSetName = sprintf('Data%04i', DatasetIdx);
+                                        
+                    % Define the name (including path in .h5 file) to the data.
+                    if DataStructFlag % each dataset exists in its own group
+                        DataName = sprintf('/Channel01/%s/%s/%s', ...
+                            ChannelName, DataSetName, DataSetName);
+                    else % all of the datasets exist in a single group
+                        DataName = sprintf('/Channel01/%s/%s', ...
+                            ChannelName, DataSetName);
+                    end
+                end
+            end
+
             % check channel input
             ChannelExists = 0;
             for ii = 1 : numel(DataGroup.Groups)

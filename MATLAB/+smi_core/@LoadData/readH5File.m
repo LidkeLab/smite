@@ -45,7 +45,7 @@ SaveAll = ~exist('GroupName', 'var');
 
 % Read in all of the information available about the structure of the h5
 % file using MATLAB's built-in h5info() method.
-CurrentGroups = h5info(FilePath);
+CurrentGroups = h5info(FilePath,'/Channel01');
 
 % Determine the .h5 file structure being used (i.e. is each
 % dataset in its own group or does one group contain all of
@@ -53,7 +53,7 @@ CurrentGroups = h5info(FilePath);
 % NOTE: DataFormat==1 means each dataset is in its own group,
 %       DataFormat==0 means each dataset is contained in one
 %       "supergroup" of all datasets.
-DataFormat = contains(CurrentGroups.Groups.Groups.Groups(1).Name, 'Data');
+DataFormat = contains(CurrentGroups.Groups.Groups(1).Name, 'Data');
 
 % Search the .h5 file for the desired groups and store their location
 % within the file for later extraction.
