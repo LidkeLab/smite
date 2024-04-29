@@ -10,6 +10,14 @@ classdef Publish < handle
     %       with the directory names following the scheme
     %       Cell*\Label*\Data*.h5
     %
+    % The flow of this class is as follows:
+    %    Publish
+    %    -> performFullAnalysis
+    %    -> for ii = 1:NCells
+    %          processCell(~ii~)
+    %    -> for jj = 1:NLabels
+    %          ProcessLabel(~jj~)
+    %
     % REQUIRES: MATLAB 2018a or later (for Publish.genAlignStats())
     %           Image Processing Toolbox
     %           Statistics and Machine Learning Toolbox
@@ -25,6 +33,19 @@ classdef Publish < handle
     properties
         % Structure of parameters (see smi_core.SingleMoleculeFitting)
         SMF
+
+        % Cell array of SMFs, one per label (Default = {}, use SMF above for
+        % all labels)
+        % NOTE: For Label i, SMF is set to SMFperLabel{i} if defined.  SMF
+        %       (= SMFperLabel{1}) should also be defined. The following
+        %       fields should be the same be the same throughout the SMFs:
+        %       SMF.Data.FileDir
+        %       SMF.Data.FileName
+        %       SMF.Data.ResultsDir
+        %       SMF.Data.AnalysisID
+        %       SMF.Data.PixelSize
+        %       SMF.Driftcorrection.On
+        SMFperLabel = {};
 
         % Directory containing the Cell*\Label*\Data*.h5 sub-directories.
         CoverslipDir
