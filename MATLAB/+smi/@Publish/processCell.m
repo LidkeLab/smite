@@ -44,6 +44,16 @@ for ii = 1:NLabels
 
     % Attempt to process the data for label ii.
     try
+        if ~isempty(obj.SMFperLabel) && numel(obj.SMFperLabel) >= ii
+            if obj.Verbose
+                fprintf('Using SMFperLabel{%d} for SMF\n', ii); 
+            end
+            obj.SMF = copy(obj.SMFperLabel{ii});
+            obj.SMLM = smi.SMLM(copy(obj.SMF));
+            obj.SMLM.Verbose = obj.Verbose;
+            obj.SMLM.SRImageZoom = obj.SRImageZoom;
+            obj.SMLM.SRCircImZoom = obj.SRCircleImageZoom;
+        end
         obj.processLabel(CellName, LabelNames{ii});
     catch MException
         if obj.Verbose
