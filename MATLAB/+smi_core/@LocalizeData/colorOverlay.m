@@ -14,10 +14,15 @@ if isempty(obj.SMF.Data.DataROI)
 end
 [Model] = smi_sim.GaussBlobs.gaussBlobImage(obj.SMD,obj.SMF,0,'SMF');
 
-minData = prctile(obj.ScaledData(:),1);
-maxData = prctile(obj.ScaledData(:),99);
-minModel = prctile(Model(:),1);
-maxModel = prctile(Model(:),99);
+%minPercentile  = 1;
+%maxPercentile  = 99;
+minPercentile  = 0.1;
+maxPercentile  = 99.9;
+
+minData = prctile(obj.ScaledData(:), minPercentile);
+maxData = prctile(obj.ScaledData(:), maxPercentile);
+minModel = prctile(Model(:), minPercentile);
+maxModel = prctile(Model(:), maxPercentile);
 
 MinRange = min(minData,minModel);
 MaxRange = max(maxData,maxModel);

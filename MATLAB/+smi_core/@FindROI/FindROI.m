@@ -212,8 +212,10 @@ classdef FindROI < handle
             SMD.NDims = 2;
 
             if obj.Verbose >= 3
-                Params.PercentileFloor = 1;
-                Params.PercentileCeiling = 99;
+                %Params.PercentileFloor = 1;
+                %Params.PercentileCeiling = 99;
+                Params.PercentileFloor = 0.1;
+                Params.PercentileCeiling = 99.9;
                 ScaledData = obj.plotBoxStack(SMD, obj.Data, obj.BoxSize, Params);
                 if ~isempty(obj.ResultsDir)
                     FileBaseName = 'RawDataFromSMD';
