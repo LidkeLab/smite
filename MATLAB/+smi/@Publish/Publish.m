@@ -93,6 +93,10 @@ classdef Publish < handle
         % Shift localizations based on brightfield results (Default = false)
         ShiftToReg = false;
 
+        % Shift localizations based on applying drift correction registration
+        % (Default = false)
+        ShiftToRegViaDC = false;
+
         % Verbosity of the main analysis workflow. (Default = 1)
         Verbose = 1;
 
@@ -103,6 +107,9 @@ classdef Publish < handle
     properties (SetAccess = 'protected', Hidden)
         % Instance of SMLM class (for internal use).
         SMLM
+
+        % Fixed SMD corresponding to LabelNumber 1.
+        SMDFixed
 
         % Log of errors encountered during analysis.
         ErrorLog = {};

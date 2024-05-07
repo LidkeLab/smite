@@ -200,6 +200,21 @@ for ii = 1:NDataFiles
                     RefImage, FocusImages);
             end
 
+            if obj.ShiftToRegViaDC
+                if obj.Verbose > 0
+                    fprintf('processLabel %d ShifTToRegViaDC\n', LabelNumber);
+                end
+                if LabelNumber == 1
+                    obj.SMDFixed = obj.SMLM.SMD;
+                else
+                    DC = smi_core.DriftCorrection();
+                    % delta = DC.regViaDC(SMDFixed, SMDmoving);
+                    delta = DC.regViaDC(obj.SMDFixed, obj.SMLM.SMD);
+                    pobj.SMLM.SMD.X = obj.SMLM.SMD.X - delta(1);
+                    obj.SMLM.SMD.Y = obj.SMLM.SMD.Y - delta(2);
+                end
+            end
+
             % Save the SR results.
             obj.SMLM.saveResults();
 
