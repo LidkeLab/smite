@@ -567,8 +567,13 @@ function printStats(y, x_label, legend_labels, ResultsDir)
       m = mode(bin);
       e = edges([m, m + 1]);
 
-      fprintf(out_s, '%2d: %f +/- %f, %f, [%f, %f] %s\n', ...
-              i, mean(y{i}), std(y{i}), median(y{i}), e, legend_labels{i});
+      if ~isempty(legend_labels)
+         fprintf(out_s, '%2d: %f +/- %f, %f, [%f, %f] %s\n', ...
+                 i, mean(y{i}), std(y{i}), median(y{i}), e, legend_labels{i});
+      else
+         fprintf(out_s, '%2d: %f +/- %f, %f, [%f, %f]\n', ...
+                 i, mean(y{i}), std(y{i}), median(y{i}), e);
+      end
    end
    fprintf(out_s, '\n');
    fclose(out_s);
