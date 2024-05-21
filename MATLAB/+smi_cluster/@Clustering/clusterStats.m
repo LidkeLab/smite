@@ -31,6 +31,7 @@ function results = clusterStats(obj, SMD, C, centers)
 %                      cluster
 %    indConvex         as indices_hull but for convex hull boundaries
 %    indCompact        as indices_hull but for the most compact boundaries
+%    clust_width       maximum distance between vertices in each cluster
 %    areas             area of each cluster
 %    areasConvex       area of each cluster using the convex hull boundary
 %    areasCompact      area of each cluster using the most compact boundary
@@ -101,6 +102,7 @@ function results = clusterStats(obj, SMD, C, centers)
    results.indices_hull = cell(1, nC);
    results.indConvex    = cell(1, nC);
    results.indCompact   = cell(1, nC);
+   results.clust_width  = zeros(1, nC);
    results.areas        = zeros(1, nC);
    results.areasConvex  = zeros(1, nC);
    results.areasCompact = zeros(1, nC);
@@ -125,6 +127,7 @@ function results = clusterStats(obj, SMD, C, centers)
          results.indices_hull{i} = 1;
          results.indConvex{i}    = 1;
          results.indCompact{i}   = 1;
+         results.clust_width(i)  = 0;
          results.areas(i)        = 0;
          results.areasConvex(i)  = 0;
          results.areasCompact(i) = 0;
@@ -139,6 +142,7 @@ function results = clusterStats(obj, SMD, C, centers)
          results.indices_hull{i} = [1, 2];
          results.indConvex{i}    = [1, 2];
          results.indCompact{i}   = [1, 2];
+         results.areas(i)        = pdist(xy);
          results.areas(i)        = 0;
          results.areasConvex(i)  = 0;
          results.areasCompact(i) = 0;
@@ -196,6 +200,8 @@ function results = clusterStats(obj, SMD, C, centers)
          results.indices_hull{i} = k;
          results.indConvex{i}    = kConvex;
          results.indCompact{i}   = kCompact;
+         results.clust_width(i)  = smi_cluster.Clustering.vertex2vertex( ...
+            xy(results.indices_hull{i}, :));
          results.areas(i)        = A;
          results.areasConvex(i)  = AConvex;
          results.areasCompact(i) = ACompact;

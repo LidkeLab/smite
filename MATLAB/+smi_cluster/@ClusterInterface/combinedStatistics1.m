@@ -279,6 +279,39 @@ fprintf(out, 'P_cluster areas per ROI =\n');
 fprintf(out, fmt, P_areas_ROI);
 fprintf(out, '\n');
 
+% Cluster widths..
+clust_width = cell(1, n_files);
+for j = 1 : n_files
+   clust_width{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      clust_width{j} = [clust_width{j}, rdata{j}.results{i}.clust_width];
+   end
+end
+P_clust_width = ...
+SC.plotCombined(clust_width, ...
+                1, 'cluster widths (nm)', ...
+                econd, 'clust_width');
+fprintf(out, 'P_cluster widths =\n');
+fprintf(out, fmt, P_clust_width);
+fprintf(out, '\n');
+
+% Cluster widths per ROI.
+clust_width_ROI = cell(1, n_files);
+for j = 1 : n_files
+   clust_width_ROI{j} = [];
+   for i = 1 : numel(rdata{j}.results)
+      clust_width_ROI{j} = [clust_width_ROI{j}, ...
+                            mean(rdata{j}.results{i}.clust_width)];
+   end
+end
+P_clust_width_ROI = ...
+SC.plotCombined(clust_width_ROI, ...
+                1, 'cluster widths per ROI (nm)', ...
+                econd, 'clust_width_ROI');
+fprintf(out, 'P_cluster widths per ROI =\n');
+fprintf(out, fmt, P_clust_width_ROI);
+fprintf(out, '\n');
+
 % Cluster compactness.
 compactness = cell(1, n_files);
 for j = 1 : n_files

@@ -116,6 +116,7 @@ methods(Static)
    plot_voronoi3(X, Y, Z, v, c, rho, str, dense, ptIDs)
    [Pvalue, X_Point, Sigma_Point] = singleLabelTest(X, Sigma, Sigma_Reg)
    success = unitTest()
+   max_d = vertex2vertex(hull)
 
 % =============================================================================
 end % methods(Static)
