@@ -42,6 +42,13 @@ function NDatasets = countNDatasets(SMF)
 
         case 'h5'
             FilePath = fullfile(SMF.Data.FileDir,SMF.Data.FileName{1});
+            [~, H5Version, NDatasets, ~, ~] = ...
+                smi_core.LoadData.seqH5Data(FilePath);
+            % NDatasets computed above is sufficient for datasets produced in
+            % the 2020s, but leave old code in for now for compatability with
+            % older H5 formats possibility not recognized by seqH5Data.
+            %return;
+
             % find number of datasets in h5 file
             HD5Info = h5info(FilePath);
             
@@ -49,7 +56,9 @@ function NDatasets = countNDatasets(SMF)
             % 0 indicates that all of the data exists in a single 
             % group, 1 indicates each dataset exists in its own 
             % group.
-            DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            if any(strcmp(H5Version, {'SEQv0', 'SEQv1'}))
+                DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            end
             % Index of h5 file channel containing data.
             ChannelIdx = 1;
 
@@ -63,6 +72,9 @@ function NDatasets = countNDatasets(SMF)
                     ChannelName = sprintf('Zposition%03i',ChannelIdx);
                     break
                end
+            end
+            if strcmp(H5Version, 'SEQv2') % NEW
+                DataStructFlag = isempty(DataGroup.Datasets);
             end
             for ii = 1 : numel(DataGroup.Groups)
                 if strcmp(DataGroup.Groups(ii).Name,['/Data/' ChannelName])

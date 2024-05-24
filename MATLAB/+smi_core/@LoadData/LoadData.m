@@ -105,6 +105,8 @@ classdef LoadData < handle
     end
     
     methods (Static)
+        [Channel01, Version, NDatasets, TopList, InstrList] = ...
+           seqH5Data(FilePath)
         function [Data]=loadDataMat(FullFileName,varargin)
             % static method for loading .mat file/s
             % INPUT
@@ -172,11 +174,28 @@ classdef LoadData < handle
                 FullFileName = FullFileName{1};
             end
             HD5Info = h5info(FullFileName);
+
+            [Channel01, H5Version, ~, ~, ~] = ...
+                smi_core.LoadData.seqH5Data(FullFileName);
             
             % Define a flag to indicate the .h5 file structure: 0 indicates
             % that all of the data exists in a single group, 1 indicates each
             % dataset exists in its own group.
-            DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            if any(strcmp(H5Version, {'SEQv0', 'SEQv1'}))
+                DataStructFlag = isempty(HD5Info.Groups.Groups.Datasets);
+            else % strcmp(H5Version, 'SEQv2')
+                % check whether channel and dataset exist
+                for ii = 1 : numel(HD5Info.Groups)
+                    if strcmp(HD5Info.Groups(ii).Name,'/Data')
+                        DataGroup = HD5Info.Groups(ii);
+                        break
+                    elseif strcmp(HD5Info.Groups(ii).Name,'/Channel01')
+                        DataGroup = HD5Info.Groups(ii);
+                        break
+                    end
+                end
+                DataStructFlag = isempty(DataGroup.Datasets);
+            end
             
             % setup directory into H5 file
             for ii = 1 : numel(HD5Info.Groups)
@@ -198,16 +217,19 @@ classdef LoadData < handle
                     end
                 end
             end
-            % check whether channel and dataset exist
-            for ii = 1 : numel(HD5Info.Groups)
-                if strcmp(HD5Info.Groups(ii).Name,'/Data')
-                    DataGroup = HD5Info.Groups(ii);
-                    break
-                elseif strcmp(HD5Info.Groups(ii).Name,'/Channel01')
-                    DataGroup = HD5Info.Groups(ii);
-                    break
+            if any(strcmp(H5Version, {'SEQv0', 'SEQv1'}))
+                % check whether channel and dataset exist
+                for ii = 1 : numel(HD5Info.Groups)
+                    if strcmp(HD5Info.Groups(ii).Name,'/Data')
+                        DataGroup = HD5Info.Groups(ii);
+                        break
+                    elseif strcmp(HD5Info.Groups(ii).Name,'/Channel01')
+                        DataGroup = HD5Info.Groups(ii);
+                        break
+                    end
                 end
             end
+
             % check channel input
             ChannelExists = 0;
             for ii = 1 : numel(DataGroup.Groups)

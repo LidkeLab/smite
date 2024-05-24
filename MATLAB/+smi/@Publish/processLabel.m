@@ -45,9 +45,10 @@ for ii = 1:NDataFiles
     % NOTE: This only works correctly if we have one file per label 
     %       (excluding 'bleaching' files).
     FilePath = fullfile(DataDir, DataFileNames{ii});
-    H5FileStruct = h5info(FilePath);
+    %H5FileStruct = h5info(FilePath);
     try
-        FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        %FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        [~, ~, ~, ~, FileGroupList] = smi_core.LoadData.seqH5Data(FilePath);
         FocusImagesPresent = any(contains(FileGroupList, 'FocusImages'));
     catch ME
         warning(['Publish,processLabel(): ', 'No Focus Images present: ', ...
@@ -99,9 +100,10 @@ for ii = 1:NDataFiles
     % Generate figures associated with the brightfield registration of the
     % cell (if that data exists).
     try
-        H5FileStruct = h5info(FilePath);
-        FileGroupList = ...
-            {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        %H5FileStruct = h5info(FilePath);
+        %FileGroupList = ...
+        %    {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        [~, ~, ~, ~, FileGroupList] = smi_core.LoadData.seqH5Data(FilePath);
     catch ME
         warning(['Publish.processLabel(): ', ...
                  'H5 file not of expected structure. ', ...

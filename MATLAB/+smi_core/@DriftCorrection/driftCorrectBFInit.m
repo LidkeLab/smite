@@ -31,8 +31,9 @@ function [RefImage, PreSeqImages, PostSeqImages, ParamStruct] = ...
 if (~exist('BFStruct', 'var') || isempty(BFStruct))
     try
         FilePath = fullfile(SMF.Data.FileDir, SMF.Data.FileName{1});
-        H5FileStruct = h5info(FilePath);
-        FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        %H5FileStruct = h5info(FilePath);
+        %FileGroupList = {H5FileStruct.Groups.Groups.Groups(1).Groups.Name};
+        [~, ~, ~, ~, FileGroupList] = smi_core.LoadData.seqH5Data(FilePath);
         FocusImagesPresent = any(contains(FileGroupList, 'FocusImages'));
         if FocusImagesPresent
            BFStruct = smi_core.LoadData.readH5File(FilePath, 'FocusImages');

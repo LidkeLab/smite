@@ -47,13 +47,22 @@ SaveAll = ~exist('GroupName', 'var');
 % file using MATLAB's built-in h5info() method.
 CurrentGroups = h5info(FilePath);
 
+[Channel01, H5Version, ~, ~, ~] = smi_core.LoadData.seqH5Data(FilePath);
+if strcmp(H5Version, 'SEQv2')
+    CurrentGroups = Channel01;
+end
+
 % Determine the .h5 file structure being used (i.e. is each
 % dataset in its own group or does one group contain all of
 % the datasets).
 % NOTE: DataFormat==1 means each dataset is in its own group,
 %       DataFormat==0 means each dataset is contained in one
 %       "supergroup" of all datasets.
-DataFormat = contains(CurrentGroups.Groups.Groups.Groups(1).Name, 'Data');
+if any(strcmp(H5Version, {'SEQv0', 'SEQv1'}))
+    DataFormat = contains(CurrentGroups.Groups.Groups.Groups(1).Name, 'Data');
+else % strcmp(H5Version, 'SEQv2')
+    DataFormat = contains(CurrentGroups.Groups.Groups(1).Name, 'Data');
+end
 
 % Search the .h5 file for the desired groups and store their location
 % within the file for later extraction.
