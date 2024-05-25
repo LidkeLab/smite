@@ -7,6 +7,6 @@ function version = versionSMITE()
    %version = '1.0.2';
    %version = '1.0.3';   % changed Hierarchal BaGoL
    %version = '1.0.4';   % added circularity, convexity, solidity statistics
-   version = '1.0.5';   % handling of SMLM gui and LocalizeData/FindROI movies
-
+   %version = '1.0.5';   % handling of SMLM gui and LocalizeData/FindROI movies
+   version = '1.1.0';   % new style HDF5 files allowed
 end
