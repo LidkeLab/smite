@@ -22,7 +22,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir)
 %       Cluster         Include ROI clusters
 %       ROIImages       produce one image per ROI
 %       OneImage        produce one image displaying all ROIs
-%       NoSave          do not save the output of OneImage
+%       NoSave          do not save outputs
 %    start_datadir   starting data directory from which SaveDir will be made a
 %                    subdirectory of by default if SaveDir not provided
 %                    [DEFAULT = '.']

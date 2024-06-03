@@ -13,6 +13,7 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
 %       Circle      Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
 %       Boundary    Include ROI boundaries
 %       Cluster     Include ROI clusters
+%       NoSave      Do not save outputs
 %    pathnameC   path to filesC
 %    filesC      cluster data per ROI per cell for a single condition; this
 %                will be a single *_results.mat file
@@ -40,6 +41,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
    % Boundary shrink factor (0 = convex hull, 1 = as concave as possible,
    % 0.5 = MATLAB default)
    ShrinkFactor = 0.5;
+   % Zoom factor for SR images
+   Zoom = 20;
+   ScaleBarLength = 500; % nm
+   ScaleBarWidth  = 100; % nm
 
    CI = smi_cluster.ClusterInterface();
 
@@ -69,6 +74,14 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                  short, numel(BGL.SMD.X), numel(BGL.MAPN.X));
       elseif opt.MAPN
          fprintf('%s: MAPN = %d\n', short, numel(MAPN.X));
+      end
+
+      % SR units conversion.
+      if opt.SR
+         SMD.X = SMD.X * PixelSize;
+         SMD.Y = GaussianImageKludge - SMD.Y * PixelSize;
+         SMD.X_SE = SMD.X_SE * PixelSize;
+         SMD.Y_SE = SMD.Y_SE * PixelSize;
       end
 
       % Plot ROIs on top of one base image.
@@ -126,14 +139,16 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
             %if GaussianImageKludge > 0
             %   BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
             %end
-            GIK = GaussianImageKludge;
-            indx = ROI(1) - xExtra <= SMD.X & SMD.X <= ROI(2) + yExtra & ...
-                   ROI(3) - yExtra <= GIK - SMD.Y &                      ...
-                   GIK - SMD.Y <= ROI(4) + yExtra;
-            SMD.X = SMD.X(indx);
-            SMD.Y = SMD.Y(indx);
-            SMD.X_SE = SMD.X_SE(indx);
-            SMD.Y_SE = SMD.Y_SE(indx);
+            if ~opt.SR
+               GIK = GaussianImageKludge;
+               indx = ROI(1) - xExtra <= SMD.X & SMD.X <= ROI(2) + yExtra & ...
+                      ROI(3) - yExtra <= GIK - SMD.Y &                      ...
+                      GIK - SMD.Y <= ROI(4) + yExtra;
+               SMD.X = SMD.X(indx);
+               SMD.Y = SMD.Y(indx);
+               SMD.X_SE = SMD.X_SE(indx);
+               SMD.Y_SE = SMD.Y_SE(indx);
+            end
             if opt.BaGoL
                BGL.SMD = SMD;
                MapIm = CI.genMAPNIm1(BGL, 2);
@@ -145,6 +160,17 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
 %                 BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
 %              end
 %              MapIm = CI.genMAPNIm1(BGL, 1);
+            elseif opt.SR && j == 1
+%              MapIm = BGL.makeIm(SMD, 256*PixelSize, PixelSize);
+               SMD_SR = SMD;
+               SMD_SR.X = SMD_SR.X ./ PixelSize;
+               SMD_SR.Y = SMD_SR.Y ./ PixelSize;
+               SMD_SR.X_SE = SMD_SR.X_SE ./ PixelSize;
+               SMD_SR.Y_SE = SMD_SR.Y_SE ./ PixelSize;
+               MapIm = smi_vis.GenerateImages.gaussianImage(SMD_SR, Zoom, ...
+                  ScaleBarLength/1000 * Zoom);
+               imshow(MapIm);
+               hold on
             end
             if ~opt.MAPN   % done above just once
                %MapIm = BGL.scaleIm(MapIm, 98);
@@ -153,23 +179,26 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
          end
 
          % Gaussian image plot of SR localizations.
-         ScaleBarLength = 500;  % nm
-         ScaleBarWidth  = 100;   % nm
+         %ScaleBarLength = 500;  % nm
+         %ScaleBarWidth  = 100;  % nm
          if opt.Gaussian
             if j == 1
                fprintf('ScaleBar = %d nm\n', ScaleBarLength);
-               % Add in a scale bar (lower right).
-               Xoffset = 500;
-               Yoffset = 250;
-               %Xstart = ROI(2) - Xoffset - ScaleBarLength;
-               %Ystart = ...
-               %   GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
-               Xstart = dataB.PImageSize - Xoffset - ScaleBarLength;
-               Ystart = ...
-                  GaussianImageKludge - (0 + Yoffset + ScaleBarWidth);
-               X = round(Xstart) : round(Xstart + ScaleBarLength);
-               Y = round(Ystart) : round(Ystart + ScaleBarWidth);
-               MapIm(Y, X) = 255;
+               if ~opt.SR
+                  % Add in a scale bar (lower right).
+                  Xoffset = 500;
+                  Yoffset = 250;
+                  %Xstart = ROI(2) - Xoffset - ScaleBarLength;
+                  %Ystart = ...
+                  %   GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
+                  Xstart = dataB.PImageSize - Xoffset - ScaleBarLength;
+                  Ystart = ...
+                     GaussianImageKludge - (0 + Yoffset + ScaleBarWidth);
+
+                  X = round(Xstart) : round(Xstart + ScaleBarLength);
+                  Y = round(Ystart) : round(Ystart + ScaleBarWidth);
+                  MapIm(Y, X) = 255;
+               end
 
                fprintf('ROI (%d):', dataC.n_ROIs(i));
                % MATLAB is acting weird here.  I can display interactively
@@ -184,8 +213,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                if i > 1 && opt.NoSave
                   figure
                end
-               imshow(MapIm, hot);
-               hold on
+               if ~opt.SR
+                  imshow(MapIm, hot);
+                  hold on
+               end
             end
             fprintf(' %d', j);
             if j == dataC.n_ROIs(i)
@@ -238,6 +269,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                   y = GaussianImageKludge - y;
                end
             end
+         if opt.SR && opt.Gaussian
+            x = x ./ PixelSize * Zoom;
+            y = y ./ PixelSize * Zoom;
+         end
             plot(x, y, 'g-', 'LineWidth', 2);
          end
 
@@ -248,6 +283,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
             y_label = (ROI(3) + ROI(4))/2;
             if GaussianImageKludge > 0
                y_label = GaussianImageKludge - y_label;
+            end
+            if opt.SR && opt.Gaussian
+               x_label = x_label ./ PixelSize * Zoom;
+               y_label = y_label ./ PixelSize * Zoom;
             end
             text(x_label, y_label, sprintf('%d', j), 'Color', 'green');
          end
@@ -260,6 +299,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                y = results.XY(:, 2);
                if GaussianImageKludge > 0
                   y = GaussianImageKludge - y;
+               end
+               if opt.SR && opt.Gaussian
+                  x = x ./ PixelSize * Zoom;
+                  y = y ./ PixelSize * Zoom;
                end
                C = results.C;
                if numel(C{l}) <= 2

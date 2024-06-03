@@ -11,6 +11,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 %       Circle      Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
 %       Boundary    Include ROI boundaries
 %       Cluster     Include ROI clusters
+%       NoSave      Do not save outputs
 %    pathnameC   path to filesC
 %    filesC      cluster data per ROI per cell for a single condition; this
 %                will be a single *_results.mat file
@@ -38,6 +39,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    % Boundary shrink factor (0 = convex hull, 1 = as concave as possible,
    % 0.5 = MATLAB default)
    ShrinkFactor = 0.5;
+   % Zoom factor for SR images
+   Zoom = 20;
+   ScaleBarLength = 500; % nm
+   ScaleBarWidth  = 100; % nm
 
    CI = smi_cluster.ClusterInterface();
 
@@ -67,6 +72,14 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                  short, numel(BGL.SMD.X), numel(BGL.MAPN.X));
       elseif opt.MAPN
          fprintf('%s: MAPN = %d\n', short, numel(MAPN.X));
+      end
+
+      % SR units conversion.
+      if opt.SR
+         SMD.X = SMD.X * PixelSize;
+         SMD.Y = GaussianImageKludge - SMD.Y * PixelSize;
+         SMD.X_SE = SMD.X_SE * PixelSize;
+         SMD.Y_SE = SMD.Y_SE * PixelSize;
       end
 
       % Plot ROIs individually.
@@ -107,6 +120,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             %if GaussianImageKludge > 0
             %   BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
             %end
+if ~opt.SR
             GIK = GaussianImageKludge;
             indx = ROI(1) - xExtra <= SMD.X & SMD.X <= ROI(2) + yExtra & ...
                    ROI(3) - yExtra <= GIK - SMD.Y &                      ...
@@ -115,6 +129,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             SMD.Y = SMD.Y(indx);
             SMD.X_SE = SMD.X_SE(indx);
             SMD.Y_SE = SMD.Y_SE(indx);
+end
             if opt.BaGoL
                BGL.SMD = SMD;
                MapIm = CI.genMAPNIm1(BGL, 2);
@@ -126,9 +141,21 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                   BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
                end
                MapIm = CI.genMAPNIm1(BGL, 1);
+            elseif opt.SR && j == 1
+               %MapIm = BGL.makeIm(SMD, 256*PixelSize, PixelSize);
+               SMD_SR = SMD;
+               SMD_SR.X = SMD_SR.X ./ PixelSize;
+               SMD_SR.Y = SMD_SR.Y ./ PixelSize;
+               SMD_SR.X_SE = SMD_SR.X_SE ./ PixelSize;
+               SMD_SR.Y_SE = SMD_SR.Y_SE ./ PixelSize;
+               MapIm = smi_vis.GenerateImages.gaussianImage(SMD_SR, Zoom, ...
+                  ScaleBarLength/1000*Zoom);
+               imshow(MapIm, hot);
+               hold on
             end
-            %MapIm = BGL.scaleIm(MapIm, 98);
-            MapIm = smi.BaGoL.scaleIm(MapIm, 98);
+            if ~opt.SR
+               MapIm = smi.BaGoL.scaleIm(MapIm, 98);
+            end
          end
 
          % Gaussian image plot of SR localizations.
@@ -140,16 +167,22 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                fprintf('ROI (%d):', dataC.n_ROIs(i));
             end
             fprintf(' %d', j);
-            % Add in a scale bar (lower right).
-            Xoffset = 100;
-            Yoffset = 100;
-            Xstart = ROI(2) - Xoffset - ScaleBarLength;
-            Ystart = GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
-            X = round(Xstart) : round(Xstart + ScaleBarLength);
-            Y = round(Ystart) : round(Ystart + ScaleBarWidth);
-            MapIm(Y, X) = 255;
+            if ~opt.SR
+               % Add in a scale bar (lower right).
+               Xoffset = 100;
+               Yoffset = 100;
+               Xstart = ROI(2) - Xoffset - ScaleBarLength;
+               Ystart = ...
+                  GaussianImageKludge - (ROI(3) + Yoffset + ScaleBarWidth);
+               X = round(Xstart) : round(Xstart + ScaleBarLength);
+               Y = round(Ystart) : round(Ystart + ScaleBarWidth);
+               MapIm(Y, X) = 255;
+               imshow(MapIm, hot);
+            end
 
-            imshow(MapIm, hot);
+            if opt.SR && j > 1
+               imshow(MapIm, hot);
+            end
             hold on
          elseif opt.Circle
             BGL.PixelSize = 1;
@@ -198,6 +231,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                   y = GaussianImageKludge - y;
                end
             end
+            if opt.SR && opt.Gaussian
+               x = x ./ PixelSize * Zoom;
+               y = y ./ PixelSize * Zoom;
+            end
             plot(x, y, 'g-', 'LineWidth', 2);
          end
 
@@ -207,6 +244,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             y_label = ROI(4) + yExtra/2;
             if GaussianImageKludge > 0
                y_label = GaussianImageKludge - y_label;
+            end
+            if opt.SR && opt.Gaussian
+               x_label = x_label ./ PixelSize * Zoom;
+               y_label = y_label ./ PixelSize * Zoom;
             end
             text(x_label, y_label, sprintf('%d', j), 'Color', 'green');
          end
@@ -219,6 +260,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
                y = results.XY(:, 2);
                if GaussianImageKludge > 0
                   y = GaussianImageKludge - y;
+               end
+               if opt.SR && opt.Gaussian
+                  x = x ./ PixelSize * Zoom;
+                  y = y ./ PixelSize * Zoom;
                end
                C = results.C;
                if numel(C{l}) <= 2
@@ -237,11 +282,21 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 
          % Circle plots already are the full ROI.
          if ~opt.Circle
-            xlim([ROI(1) - xExtra, ROI(2) + xExtra]); 
-            ylim([ROI(3) - yExtra, ROI(4) + yExtra]); 
-            if GaussianImageKludge
-               ylim([GaussianImageKludge - ROI(4) - yExtra, ...
-                     GaussianImageKludge - ROI(3) + yExtra]); 
+            if opt.SR
+               ff = 1 / PixelSize * Zoom;
+               xlim([ROI(1) - xExtra, ROI(2) + xExtra] * ff); 
+               ylim([ROI(3) - yExtra, ROI(4) + yExtra] * ff); 
+               if GaussianImageKludge
+                  ylim([GaussianImageKludge - ROI(4) - yExtra, ...
+                        GaussianImageKludge - ROI(3) + yExtra] * ff); 
+               end
+            else
+               xlim([ROI(1) - xExtra, ROI(2) + xExtra]); 
+               ylim([ROI(3) - yExtra, ROI(4) + yExtra]); 
+               if GaussianImageKludge
+                  ylim([GaussianImageKludge - ROI(4) - yExtra, ...
+                        GaussianImageKludge - ROI(3) + yExtra]); 
+               end
             end
          end
 
@@ -267,19 +322,23 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             out_type = 'circle';
          end
 
-         SaveFile = fullfile(SaveDir, sprintf('%s_ROI%d_%s_%s', ...
+         if ~opt.NoSave
+            SaveFile = fullfile(SaveDir, sprintf('%s_ROI%d_%s_%s', ...
                                               short, j, in_type, out_type));
 
-         % Use imwrite rather than print for good resolution, but only for the
-         % basic bitmap image.
-         fprintf('\nSaving %s ...\n', SaveFile);
-         if (opt.Gaussian || opt.Circle) && ~opt.Boundary && ~opt.Cluster
-            imwrite(MapIm, [SaveFile, '.png']);
+            % Use imwrite rather than print for good resolution, but only for
+            % the basic bitmap image.
+            fprintf('\nSaving %s ...\n', SaveFile);
+            if (opt.Gaussian || opt.Circle) && ~opt.Boundary && ~opt.Cluster
+               imwrite(MapIm, [SaveFile, '.png']);
+            else
+               print(gcf, SaveFile, '-dpng', '-r600');
+            end
+            if opt.Dot
+               saveas(gcf, SaveFile, 'fig');
+            end
          else
-            print(gcf, SaveFile, '-dpng', '-r600');
-         end
-         if opt.Dot
-            saveas(gcf, SaveFile, 'fig');
+            pause(3)
          end
          close
       end % for j (ROI #)
