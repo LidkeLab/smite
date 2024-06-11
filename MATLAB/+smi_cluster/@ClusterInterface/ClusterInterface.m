@@ -46,7 +46,7 @@ methods(Static)
                    doHopkins, doSigmaActual, Alpha)
 
    % Called by Example_plotROIDriver.
-   plotROIDriver(PixelSize, options, start_datadir, SaveDir)
+   plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    [SRIm] = genMAPNIm1(obj, ImFlag)

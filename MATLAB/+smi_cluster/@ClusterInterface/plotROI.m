@@ -12,6 +12,9 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 %       Boundary    Include ROI boundaries
 %       Cluster     Include ROI clusters
 %       NoSave      Do not save outputs
+%
+%       IncludeCell Cells to produce plots for [DEFAULT: 1 : numel(filesB)]
+%                   using the numbering in the list filesB
 %    pathnameC   path to filesC
 %    filesC      cluster data per ROI per cell for a single condition; this
 %                will be a single *_results.mat file
@@ -48,6 +51,13 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 
    dataC = load(fullfile(pathnameC, filesC{1}));
    for i = 1 : numel(filesB)
+      if ~ismember(i, opt.IncludeCell)
+         % Remember: j_ROI = sum(dataC.n_ROIs(1 : i - 1));
+         % Kind of kludgy, but consolidated ROIs use ALL the cells in filesB to
+         % determine their numbering.
+         continue;
+      end
+
       fileB = filesB{i};
       dataB = load(fullfile(pathnameB, fileB));
       if opt.SR
