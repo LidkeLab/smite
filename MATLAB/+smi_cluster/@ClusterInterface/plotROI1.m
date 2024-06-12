@@ -178,6 +178,7 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                SMD_SR.Y_SE = SMD_SR.Y_SE ./ PixelSize;
                MapIm = smi_vis.GenerateImages.gaussianImage(SMD_SR, Zoom, ...
                   ScaleBarLength/1000 * Zoom);
+               figure
                imshow(MapIm);
                hold on
             end
@@ -219,10 +220,10 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                % cannot save an image overlayed with points and lines at a high
                % resolution, however, it displays just fine.  In short, images
                % and plot figures don't play well together!
-               if i > 1 && opt.NoSave
-                  figure
-               end
                if ~opt.SR
+                  if i > 1 && opt.NoSave
+                     figure
+                  end
                   imshow(MapIm, hot);
                   hold on
                end

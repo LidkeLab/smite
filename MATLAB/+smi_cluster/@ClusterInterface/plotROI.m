@@ -130,16 +130,16 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             %if GaussianImageKludge > 0
             %   BGL.MAPN.Y = GaussianImageKludge - BGL.MAPN.Y;
             %end
-if ~opt.SR
+            if ~opt.SR
             GIK = GaussianImageKludge;
-            indx = ROI(1) - xExtra <= SMD.X & SMD.X <= ROI(2) + yExtra & ...
-                   ROI(3) - yExtra <= GIK - SMD.Y &                      ...
-                   GIK - SMD.Y <= ROI(4) + yExtra;
-            SMD.X = SMD.X(indx);
-            SMD.Y = SMD.Y(indx);
-            SMD.X_SE = SMD.X_SE(indx);
-            SMD.Y_SE = SMD.Y_SE(indx);
-end
+               indx = ROI(1) - xExtra <= SMD.X & SMD.X <= ROI(2) + yExtra & ...
+                      ROI(3) - yExtra <= GIK - SMD.Y &                      ...
+                      GIK - SMD.Y <= ROI(4) + yExtra;
+               SMD.X = SMD.X(indx);
+               SMD.Y = SMD.Y(indx);
+               SMD.X_SE = SMD.X_SE(indx);
+               SMD.Y_SE = SMD.Y_SE(indx);
+            end
             if opt.BaGoL
                BGL.SMD = SMD;
                MapIm = CI.genMAPNIm1(BGL, 2);
