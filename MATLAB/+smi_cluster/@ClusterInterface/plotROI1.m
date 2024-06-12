@@ -136,7 +136,7 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
             yExtra = 0;
          end
 
-         if opt.Dot
+         if opt.Dot && j == 1
             plot(SMD.X, SMD.Y, 'k.');
             hold on
          elseif opt.Gaussian
