@@ -109,9 +109,7 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
       % Moved out of the j loop.
       if opt.MAPN
          BGL.MAPN = SMDsave;
-         if opt.Gaussian
-            BGL.PixelSize = 1;
-         end
+         BGL.PixelSize = 1;
          BGL.PImageSize = dataB.PImageSize;
          BGL.XStart = dataB.XStart;
          BGL.YStart = dataB.YStart;
@@ -138,6 +136,7 @@ function plotROI1(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
 
          if opt.Dot && j == 1
             plot(SMD.X, SMD.Y, 'k.');
+            %set(gca, 'YDir', 'normal');
             hold on
          elseif opt.Gaussian
 %           if opt.MAPN
