@@ -50,6 +50,13 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
 
    n = numel(y);
 
+   % If the data contains an Inf, this will cause havoc, so skip plotting
+   if any(cellfun(@(yy) any(isinf(yy)), y))
+      warning('%s has Infs in its data---skipping plots!', x_abbrev);
+      P = zeros(n);
+      return;
+   end
+
    if ~exist('line_type', 'var')
       line_type = cell(1, n);
       for i = 1 : n
@@ -59,9 +66,10 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
    if ~exist('colors', 'var')
       colors = ['b', 'r', 'g', 'k', 'c', 'm'];
       if n > 6
-         colors = [colors, colors];
-         line_type = {'-', '-', '-', '-', '-', '-', ...
-                      '--', '--', '--', '--', '--', '--'};
+         colors = [colors, colors, colors];
+         line_type = {'-', '-', '-', '-', '-', '-',       ...
+                      '--', '--', '--', '--', '--', '--', ...
+                      ':', ':', ':', ':', ':', ':'};
       end
    end
 
@@ -242,6 +250,7 @@ function P = plotCombined(obj, y, bin_width, x_label, ...
 
    % CDF (alternative)
    if any(obj.PlotDo == 'C')
+      % Eliminate plots when confronted with completely empty data.
       isnull = all(cellfun(@isempty, y));
       figure;
       %axes(obj.Font_props{:})
