@@ -11,7 +11,7 @@ function [XY, XY_SE, XYsize, SMDimport] = import_XY(obj, src, pixel2nm, fmt)
 % INPUTS:
 %    src              (x, y) coordinate source
 %    pixel2nm         conversion factor from pixels to nm.
-%                        NOTE: overridden by existing value in SMD
+%                        NOTE: compared to existing value of PizelSize in SMF
 %    fmt              special data format (e.g., 'EM');
 %
 % OUTPUTS (units in nm):

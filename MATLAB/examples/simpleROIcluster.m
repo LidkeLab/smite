@@ -59,7 +59,7 @@ doHopkins = true;   % Hopkins' test can be time consuming for dense ROIs
 % Set to false for very dense ROIs to avoid crashes due to lack of memory.
 doSigmaActual = false;
 
-ROI_sizes = [2000, 2000];   % [delta_x, delta_y] (nm)
+ROI_sizes = [3000, 3000];   % [delta_x, delta_y] (nm)
 A_ROI = prod(ROI_sizes);    % ROI area (nm^2)
 %Pixel2nm = 16000/150;       % conversion factor from pixels to nm
 %Pixel2nm = 108.018;         % pixels to nm [TIRF]
@@ -100,7 +100,7 @@ MAPNfile = true;
 
 % Filtering parameters:
 %filter.maxLocROI = 0;     % minimum number of localizations allowed in a ROI
-filter.maxLocROI = 500;   % maximum number of localizations allowed in a ROI
+%filter.maxLocROI = 500;   % maximum number of localizations allowed in a ROI
 
 % keep_numbering retains the ROI numbering even if there are missing ROIs
 % (which will be treated as empty).  See combineBaGoLROIs.
