@@ -11,5 +11,6 @@ function version = versionSMITE()
    %version = '1.1.0';   % new style HDF5 files allowed
    %version = '1.1.1';   % plotROI can now handle SR files
    %version = '1.1.2';   % do NOT override (warn) if SMF.PixelSize != pixel2nm
-   version = '1.1.3';   % bugs in plotCombined fixed
+   %version = '1.1.3';   % bugs in plotCombined fixed
+   version = '1.1.4';   % windowTR generalized
 end
