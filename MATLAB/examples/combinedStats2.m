@@ -55,7 +55,7 @@ start_datadir = '/mnt/nas/cellpath/Genmab/Data/';
 
 fprintf('Done set parameters.\n');
 
-%% ---------- Combined statistics for one or more conditions
+%% ---------- Combined statistics for multiple conditions and experiments
 
 SC = smi_cluster.StatisticsClustering();
 % Make various plots:
@@ -68,11 +68,27 @@ SC = smi_cluster.StatisticsClustering();
 %    'S'   PlotSpread (bars for mean & median)
 %    'x'   box
 %    'b'   bar
-SC.PlotDo = 'fCSxp';
+SC.PlotDo = 'CSx';
 % Red mean, green median (2 only mean, 3 only median) for PlotSpread plots.
 SC.ShowMM = 1;
 % Options for CDF2 plots are: 'plot', 'semilogx', 'semilogy', 'loglog'.
 SC.LinLog = 'semilogx';
+SC.Ylim = [0.01, 1];
+
+% Use the same color for each experiment under the same condition, different
+% colors for different conditions.
+%colors = ['b', 'b', 'b', 'b', 'r', 'r', 'r', 'r', 'g', 'g', 'g', 'g']; %GFP
+%colors = ['b', 'r', 'g', 'b', 'r', 'g']; %CD277+parental
+%colors = ['b', 'b', 'r', 'r', 'g', 'g']; %GFP_exp1+2
+%colors = ['b', 'r', 'g']; %GFP3+4combined
+colors = ['b', 'r']; %EGFR
+
+% Use different line types to distingush same colored lines when desired.
+%line_type = {':', '-.', '-', '--', ':', '-.', '-', '--', ':', '-.', '-', '--'}; %GFP
+%line_type = {'-', '-', '-', '--', '--', '--'}; %CD277+parental
+%line_type = {'-', '--', '-', '--', '-', '--'}; %GFP_exp1+2
+%line_type = {'-', '-', '-'}; %GFP3+4combined
+line_type = {'-', '-'}; %EGFR
 
 %[pathname, files] = smi_helpers.selectFiles(start_datadir, ...
 %                       '_results.mat files', '*_results.mat');
@@ -96,4 +112,5 @@ sprintf('Prefix_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
 };
 base_name = 'CONSOLIDATED';
 
-CI.combinedStatistics1(SC, pathname, files, base_name, A_ROI, doHopkins);
+CI.combinedStatistics2(SC, colors, line_type, pathname, files, base_name, ...
+                       A_ROI, doHopkins);

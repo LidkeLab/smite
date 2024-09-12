@@ -175,7 +175,7 @@ fprintf(out, 'P_n points per cluster =\n');
 fprintf(out, fmt, P_npts_per_clust);
 fprintf(out, '\n');
 
-% Nearest neighbour center-to-center cluster distances.
+% Nearest neighbor center-to-center cluster distances.
 P_nn_dists = ...
 SC.plotCombined(arrayfun(@(i) rdata{i}.collected.nn_dists, 1 : n_files, ...
                          'UniformOutput', false),                       ...
@@ -279,7 +279,7 @@ fprintf(out, 'P_cluster areas per ROI =\n');
 fprintf(out, fmt, P_areas_ROI);
 fprintf(out, '\n');
 
-% Cluster widths..
+% Cluster widths.
 clust_width = cell(1, n_files);
 for j = 1 : n_files
    clust_width{j} = [];

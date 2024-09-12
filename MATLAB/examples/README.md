@@ -45,6 +45,7 @@ G indicates a GPU is used.
 [simpleROIcluster](simpleROIcluster.m)                                          | step-by-step script to choose ROIs, cluster and analyze/compare conditions for 1-label data
 [singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
 [combinedStats1](combinedStats1.m)                                              | batch cluster analysis for combining statistics
+[combinedStats2](combinedStats2.m)                                              | as above, also setting colors and line types
 [spt_resolft_track_demo](spt_resolft_track_demo.m)                              | SPT-RESOLFT example
 
 ***smite*** unit tests
