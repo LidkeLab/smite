@@ -38,8 +38,7 @@ classdef TrackingResults
         [TR] = padTR(TR, TRPadding);
         [TR] = catTR(TR1, TR2, CheckDims);
         [TRWindowed] = windowTR(TR, MinFrameNum, MaxFrameNum, Verbose);
-        
+        [TRWindowed] = windowStartTR(TR, MaxStartingFrameNum, Verbose);
     end
-
 
 end
