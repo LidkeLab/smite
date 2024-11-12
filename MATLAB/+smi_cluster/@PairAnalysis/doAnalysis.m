@@ -119,7 +119,8 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
    % Pairwise mutual distances and bivariate Ripley's per ROI and the latter
    % also combined over all ROIs.
    if any(contains(options, "BiStats"))
-      PA.doBiStats(n_ROIs, RoI, desc, particles, results_dir, combined);
+      results_bi = PA.doBiStats(n_ROIs, RoI, desc, particles, results_dir, ...
+                                combined);
    end
 
    % Clusters for each label per ROI.

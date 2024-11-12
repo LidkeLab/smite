@@ -23,7 +23,7 @@ classdef GenerateImages
     %    smi_core.FindROI.plotBox
     %    smi_core.Threshold.rejectedLocalizations
     
-    % Lidke Lab 2017, 2020
+    % Lidke Lab 2017, 2020, 2024
     
     properties
     end
@@ -36,6 +36,7 @@ classdef GenerateImages
         dispIm()
         [DriftIm, DriftImRGB] = driftImage(SMR, SRImageZoom)
         [GaussIm] = gaussianImage(SMR, SRImageZoom, ScalebarLength)
+        [GaussIm] = grayscaleImage(SMR, SRImageZoom, ScalebarLength)
         [CircleImage, CircleImageRGB, SRImageZoom] = ...
             circleImage(SMR, ColorMap, ...
             SRImageZoom, MinPixelsPerCircle, SEScaleFactor);
@@ -53,7 +54,7 @@ classdef GenerateImages
         [success] = driftImage_unitTest()
         [success] = gaussianImage_unitTest()
         [success] = histogramImage_unitTest()
-        [Success] =  circleImage_unitTest()
+        [Success] = circleImage_unitTest()
         
         function [success] = unitTest()
             %unitTest tests various class functionality.

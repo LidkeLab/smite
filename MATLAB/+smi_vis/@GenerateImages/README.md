@@ -26,6 +26,8 @@ methods:
   generates 2D histogram image from SR data.
 - **[gaussianImage](gaussianImage.m)**:
   creates gaussian-blob image from SR data.
+- **[grayscaleImage](grayscaleImage.m)**:
+  creates grayscale gaussian-blob image from SR data.
 - **[histogramImage](histogramImage.m)**:
   generates 2D histogram image from SR data.
 - **[plotHistogram](plotHistogram.m)**:

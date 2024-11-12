@@ -30,7 +30,9 @@ Functions:
   prepares a boolean mask defining a frequency cutoff
 - **[leastSquaresFit](leastSquaresFit.m)**:
   performs a least squares fit on the provided data
+- **[mandersOverlapCoef](mandersOverlapCoef.m)**:
+  computes the Mander's overlap coefficients between two SMDs
 - **[pearsonCorrCoef](pearsonCorrCoef.m)**:
-  pearsonCorrCoef finds the Pearson correlation coefficient between two SMDs
+  finds the Pearson correlation coefficient between two SMDs
 - **[shiftImage](shiftImage.m)**:
   shifts an image by the provided shift

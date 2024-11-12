@@ -1,4 +1,5 @@
-function doBiStats(n_ROIs, RoI, desc, particles, results_dir, combined)
+function results_bi = ...
+            doBiStats(n_ROIs, RoI, desc, particles, results_dir, combined)
 % Pairwise mutual distances and bivariate Ripley's statistics for each ROI.
 %
 % INPUTS:
@@ -20,8 +21,12 @@ function doBiStats(n_ROIs, RoI, desc, particles, results_dir, combined)
    SC = smi_cluster.StatisticsClustering();
    SC.ResultsDir = results_dir;
 
+   % Pearson Correlation Coefficient per ROI.
+   results = ...
+      smi.PairAnalyis.doPearsonCC(particles, n_ROIs, RoI, desc, results_dir);
+
    if ~combined
-      results_birip = cell(n_ROIs, 1);
+      %results_birip = cell(n_ROIs, 1);
       for i = 1 : n_ROIs
          SC.BaseName = sprintf('%s_ROI%d', desc, i);
          % Compare the actual distribution of nearest neighbor distances to a
