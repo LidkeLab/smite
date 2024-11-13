@@ -27,6 +27,7 @@ This produces a cell array of dimension n_ROIs called RoI, defined as follows
                ROI          [xmin, xmax, ymin, ymax] of ROI
                X, Y         (x, y) coordinates of points inside
                X_SE, Y_SE   (x, y) localization errors for the above
+               SMD          SMD structure defining the ROI
 ```
 Note that X, Y, X_SE, Y_SE are actually cell arrays.  For example, RoI{1}
 will contain:
