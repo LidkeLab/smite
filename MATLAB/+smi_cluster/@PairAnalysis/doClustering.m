@@ -28,7 +28,10 @@ function results_c = doClustering(n_ROIs, RoI, desc, results_dir, plotting, ...
    %minPts = 3;  % minimum number of points in a cluster
 
    c = smi_cluster.Clustering();
-   c.PixelSize = PixelSize;
+   % PixelSize is only used for H-SET clustering, and has been set to nm units
+   % (Pixelsize = 1) earlier.
+%  c.PixelSize = PixelSize;
+   c.PixelSize = 1;
    c.Plotting = true;
    c.Alpha = 2;
    c.Valgorithm = 2;

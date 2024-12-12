@@ -18,12 +18,10 @@ function results_bi = ...
 % Created by
 %    Michael J. Wester (2022)
 
+   results_bi = [];
+
    SC = smi_cluster.StatisticsClustering();
    SC.ResultsDir = results_dir;
-
-   % Pearson Correlation Coefficient per ROI.
-   results = ...
-      smi.PairAnalyis.doPearsonCC(particles, n_ROIs, RoI, desc, results_dir);
 
    if ~combined
       %results_birip = cell(n_ROIs, 1);
