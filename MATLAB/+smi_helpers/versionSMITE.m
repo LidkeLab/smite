@@ -14,5 +14,6 @@ function version = versionSMITE()
    %version = '1.1.3';   % bugs in plotCombined fixed
    %version = '1.1.4';   % windowTR generalized
    %version = '1.1.5';   % windowStartTR added
-   version = '1.1.6';   % pearsonCorrCoef added to smi_stats
+   %version = '1.1.6';   % pearsonCorrCoef added to smi_stats
+   version = '1.2.0';   % cleanup of PairAnalysis class; added Manders' coeffs
 end
