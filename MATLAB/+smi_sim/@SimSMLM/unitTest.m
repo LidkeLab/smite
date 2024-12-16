@@ -5,10 +5,10 @@ function success = unitTest()
    SaveDir = smi_helpers.mkSMITETmpDir('unitTest', 'SimSMLM');
 
    obj = smi_sim.SimSMLM();
-   obj.SZ = 256;
-   obj.Rho = 30;
-   obj.NDatasets = 2;
-   obj.NFrames = 10;
+   obj.SZ = 128; %256
+   obj.Rho = 50; %30
+   obj.NDatasets = 10; %2
+   obj.NFrames = 1000; % 10
    obj.ZoomFactor = 2;
    obj.K_OnToOff = 1;
    obj.K_OffToOn = 0.005;
