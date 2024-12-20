@@ -37,14 +37,18 @@
 %    *_ROI*_L1/2_pairwiseCDF/PDF      NN distances compared to a random dist.
 %    *_ROI*_L1,L2_pairwisePDF2/CDF2   NN distances 2-label PDF/CDF
 %    *_ROI*_bivripley                 bivariate Ripley's
+%    *_bivripley_RC                   ROI combined bivariate Ripley's
 %    *_ROI*_crosscorr                 ROIwise pairwise cross-correlations
 %    *_RC_crosscorrR                  ROI combined pairwise cross-correlation
-%    *_cL1_lL2                        L1 clusters, L2 localizations overlap
-%    *_cL2_lL1                        L2 clusters, L1 localizations overlap
+%    *_ROI*_cL1_lL2                   L1 clusters, L2 localizations overlap
+%    *_ROI*_cL2_lL1                   L2 clusters, L1 localizations overlap
 %    *_ROI*_L1+L2                     2-label plots of localizations
+%    *_cs_ROI*                        histogram per ROI of cluster L1+L2 seps.
 %    *_cs_RC_PDF/CDF                  ROI combined 2-label cluster separations
 %    *_ls_ROI*                        histogram per ROI of loc. L1+L2 seps.
 %    *_ls_RC_PDF/CDF                  ROI combined localization L1+L2 seps.
+%    *_gmax_den1/2                    max(g(r)) vs L1/2 loc. density (#/nm^2)
+%    *_ROIs                           plot of the selected ROIs in each cell
 
 %% --- Set important parameters
 % Collect the set of files expressing each label together.

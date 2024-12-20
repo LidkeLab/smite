@@ -35,7 +35,11 @@ function [results_pcc, resultsRC_pcc] = ...
    pc = smi_cluster.PairCorrelation();
 
    pc.ResultsDir = results_dir;    % results directory
-   pc.Fig_ext = 'png';             % figure extension
+   if combined
+      pc.Fig_ext = '';             % figure extension
+   else
+      pc.Fig_ext = 'png';          % figure extension
+   end
    pc.Rmax_axis = RmaxAxisLimit;   % sets plotting limit if > 0
    % Histogram bin size for pairwise correlation---this is the number of pixels
    % per bin over which correlation statistics are collected.
@@ -67,6 +71,7 @@ function [results_pcc, resultsRC_pcc] = ...
       fprintf('ROI combined\n\n');
       txt = sprintf('%s_RC', desc);
       pc.BaseName = txt;
+      pc.Fig_ext = 'png';   % figure extension
       resultsRC_pcc = ...
          pc.pair_correlation_ROIcombined(2, n_ROIs, ROIs_combined, 1)
    end

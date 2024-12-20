@@ -202,9 +202,9 @@ function results = pair_correlation(obj, SMD1, SMD2)
    if ~isempty(obj.Fig_ext)
       print(['-d', obj.Fig_ext], name);
       saveas(gcf, name);
-   else
-      saveas(gcf, name);
-      delete(gcf);
+   %else
+   %   saveas(gcf, name);
+   %   delete(gcf);
    end
 
    Afound=estimates(1);
