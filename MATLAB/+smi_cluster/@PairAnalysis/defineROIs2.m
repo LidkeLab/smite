@@ -101,9 +101,12 @@ function n_ROIs_ALL = ...
       [n_ROIs, RoI, XYsize] = RT.getROI({SMD1, SMD2}, txt);
       n_ROIs_ALL = n_ROIs_ALL + n_ROIs;
 
-      % Redefine Pixel2nm for later use.
+      % Redefine Pixel2nm for later use.  This is done as original coordinates
+      % are in pixels, but are now converted into nm for use in the RoI
+      % structure, and uses such as clustering and related statistics.
+      % This is only really needed for H-SET clustering.  (2024/12/11)
       Pixel2nmSAVE = Pixel2nm;
-      Pixel2nm = 1;
+%     Pixel2nm = 1;
       saveas(gcf, fullfile(ResultsDir, sprintf('%s_ROIs.fig', desc)));
       print(fullfile(ResultsDir, sprintf('%s_ROIs.png', desc)), '-dpng');
       save(fullfile(ResultsDir, sprintf('%s_ROIs.mat', desc)), ...
@@ -111,6 +114,7 @@ function n_ROIs_ALL = ...
       close
       Pixel2nm = Pixel2nmSAVE;
       fid = fopen(fullfile(ResultsDir, sprintf('%s_ROIs.txt', desc)), 'w');
+      fprintf(fid, 'ROI #, [xmin, xmax, ymin, ymax]\n');
       for i = 1 : n_ROIs
          fprintf(fid, '%d %7.3f %7.3f %7.3f %7.3f\n', ...
                       i, RoI{i}.ROI ./ Pixel2nm);

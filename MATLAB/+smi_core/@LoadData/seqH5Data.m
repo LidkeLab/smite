@@ -29,7 +29,13 @@ function [Channel01, Version, NDatasets, TopList, InstrList] = ...
    elseif NumTopGroups == 1
       TopList = {h.Groups.Name};
       Channel01 = h.Groups(1);
-      if any(contains({ Channel01.Groups.Groups.Name }, 'Data0001'))
+      %if any(contains({ Channel01.Groups.Groups.Name }, 'Data0001'))
+      try
+         tf = any(contains({ Channel01.Groups.Groups.Name }, 'Data0001'));
+      catch ME
+         tf = false;
+      end
+      if tf
          Version = 'SEQv1';
          NDatasets = numel(Channel01.Groups.Groups);
          InstrList = { Channel01.Groups.Groups(1).Groups.Name };

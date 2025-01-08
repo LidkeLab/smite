@@ -30,6 +30,8 @@ methods:
   Pair cross-correlation for each ROI and combined ROI
 - **[doPlot2](doPlot2.m)**:
   Plot 2D ROIs
+- **[doSimpleStats](doSimpleStats.m)**:
+  Pearson's correlation and Manders' split coefficients for each ROI
 - **[overlayBaGoLROIs](overlayBaGoLROIs.m)**:
   overlay label 1 onto label 2 Gaussian images produced from the input ROI file
   names into appropriately named files

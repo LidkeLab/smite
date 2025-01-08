@@ -29,6 +29,7 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
 %                   ROI            [xmin, xmax, ymin, ymax] of ROI
 %                   X, Y           (x, y) coordinates of points inside
 %                   X_SE, Y_SE     (x, y) localization errors for the above
+%                   SMD            SMD structure defining the ROI
 %    XYsize      (x, y) image size (nm) [1 x 2]; needed for
 %                displaying coordinates where the origin in the UL corner
 %                (OriginLLvsUL)
@@ -52,15 +53,32 @@ function [n_ROIs, RoI, XYsize] = getROI(obj, src, txt)
    end
 
    if ~iscell(src)
-      [XY{1}, XY_SE{1}, XYsize, SMR] = obj.import_XY(src, obj.Pixel2nm, fmt);
+      n_labels = 1;
+      [XY{1}, XY_SE{1}, XYsize, SMD{1}] = ...
+         obj.import_XY(src, obj.Pixel2nm, fmt);
    else
       n_labels = numel(src);
       for i = 1 : n_labels
-         [XY{i}, XY_SE{i}, XYsize, SMR] = ...
+         [XY{i}, XY_SE{i}, XYsize, SMD{i}] = ...
             obj.import_XY(src{i}, obj.Pixel2nm, fmt);
       end
    end
    [n_ROIs, RoI] = ...
-      obj.getROI_XY(XY, XY_SE, x_size, y_size, txt, XYsize, SMR);
+      obj.getROI_XY(XY, XY_SE, x_size, y_size, txt, XYsize, SMD);
+
+   % Gather the appropriate SMD ROI to stash into RoI.
+   % NOTE:
+   %    RoI.ROI [xmin, xmax, ymin, ymax] of ROI in nm
+   %    isolateSubROI wants [YStart, XStart, YEnd, XEnd] in pixels
+   if ~isempty(SMD)
+      for i = 1 : n_labels
+         for j = 1 : n_ROIs
+            ROIpx = RoI{j}.ROI ./ obj.Pixel2nm;
+            ROIpx = ROIpx([3, 1, 4, 2]);
+            RoI{j}.SMD{i} = ...
+               smi_core.SingleMoleculeData.isolateSubROI(SMD{i}, ROIpx);
+         end
+      end
+   end
 
 end

@@ -1,18 +1,24 @@
-function [pearson, p_value] = pearsonCorrCoef(SMD1, SMD2)
+function [pearson, p_value] = pearsonCorrCoef(SMD1, SMD2, SRZoom, ROI)
 %pearsonCorrCoef finds the Pearson correlation coefficient between two SMDs.
 % pearsonCorrCoef finds the Pearson correlation coefficient between two sets of
-% localizations given in SMD1 and SMD2 when converted to histogram images.  Thw
+% localizations given in SMD1 and SMD2 when converted to Gaussian blob images.
 % p-value that tests the hypothesis of no correlation is also returned.
 %
 % INPUTS:
 %    SMD1, SMD2   single molecule data structures containing 2D localization
 %                 coordinates in fields X, Y as well as the image sizes in
 %                 XSize and YSize (the two datasets are assumed to have come
-%                 from teh same size images)
-%                 
+%                 from the same size images).  If XSize and YSize are not
+%                 provided, they will be estimated from the localizations
+%    SRZoom       magnification factor for the SMD coordinates in order to get
+%                 a better estimate of the Pearson Correlation Coefficient
+%                 (default: 20)
+%    ROI          for a ROI, corner coordinates [xmin, xmax, ymin, ymax] pixels
+%                 (default: [0, 0, 256, 256] pixels)
+%
 % OUTPUTS:
-%    pearson      correlation coefficent between the histogram images of the
-%                 two datasets
+%    pearson      correlation coefficent between the Gaussian blob images of
+%                 the two datasets
 %    p_value      p-value testing the hypothesis of no correlation.  The
 %                 p-value is the probability of getting a correlation as large
 %                 as the observed value by random chance, when the true
@@ -21,30 +27,44 @@ function [pearson, p_value] = pearsonCorrCoef(SMD1, SMD2)
 % Created by
 %    Michael Wester (2024)
 
-   % Make histogram images from the coordinates in SMD1 and SMD2.
-   nx = SMD1.XSize;   % assumed the same as SMD2.XSize
-   ny = SMD1.YSize;   % assumed the same as SMD2.YSize
-   H1 = zeros(nx, ny, 'single');
-   H2 = zeros(nx, ny, 'single');
-   n1 = numel(SMD1.X);   % number of localizations
-   n2 = numel(SMD2.X);   % number of localizations
-   for l = 1 : n1
-      ii = ceil(SMD1.X(l));
-      jj = ceil(SMD1.Y(l));
-      if ii >= 1 && ii <= nx && jj >= 1 && jj <= ny
-         H1(ii, jj) = H1(ii, jj) + 1;
-      end
+   if ~exist('SRZoom', 'var')
+      SRZoom = 20;
    end
-   for l = 1 : n2
-      ii = ceil(SMD2.X(l));
-      jj = ceil(SMD2.Y(l));
-      if ii >= 1 && ii <= nx && jj >= 1 && jj <= ny
-         H2(ii, jj) = H2(ii, jj) + 1;
-      end
+   if ~exist('ROI', 'var')
+      ROI = [0, 0, 256, 256];
    end
 
-   [r, p] = corrcoef(H1, H2);
+   SMD1a = SMD1;
+   SMD2a = SMD2;
+   if ROI ~= [0, 0, 256, 256]
+      SMD1a.X = SMD1a.X - ROI(1);
+      SMD2a.X = SMD2a.X - ROI(1);
+      SMD1a.Y = SMD1a.Y - ROI(3);
+      SMD2a.Y = SMD2a.Y - ROI(3);
+      delta_x = floor(ROI(2) - ROI(1));
+      delta_y = floor(ROI(4) - ROI(3));
+      SMD1a.XSize = delta_x;
+      SMD2a.XSize = delta_x;
+      SMD1a.YSize = delta_y;
+      SMD2a.YSize = delta_y;
+   end
+
+   % Make grayscale Gaussian blob images from the coordinates in SMD1 and SMD2.
+   % 0s below are to omit the scalebar in the generated images.
+   G1 = smi_vis.GenerateImages.grayscaleImage(SMD1a, SRZoom, 0);
+   G2 = smi_vis.GenerateImages.grayscaleImage(SMD2a, SRZoom, 0);
+
+   [r, p] = corrcoef(G1, G2);
    pearson = r(1, 2);
    p_value = p(1, 2);
+   %fprintf('pearson  = %f\n', pearson);
+
+   % Code to calculate pearson by hand.  The results should be the same as
+   % using the MATLAB function corrcoef.
+   %H1 = G1(:);
+   %H2 = G2(:);
+   %pearsonA = sum((H1 - mean(H1)) .* (H2 - mean(H2))) ...
+   %           ./ ((numel(H1) - 1) * std(H1) * std(H2));
+   %fprintf('pearsonA = %f\n', pearsonA);
 
 end

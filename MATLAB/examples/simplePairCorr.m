@@ -22,6 +22,7 @@
 % Avoid spaces in filenames and conditions!!!
 %
 % See doAnalysis    for analyses to perform:
+%     doSimpleStats for Pearson's correlation and Manders' split coefficients
 %     doBiStats     for mutual pairwise distance and bivariate Ripley's plots
 %     doClustering  for cluster parameters: E and minPts
 %     doClusterSep2 for cluster separation plots
@@ -36,14 +37,18 @@
 %    *_ROI*_L1/2_pairwiseCDF/PDF      NN distances compared to a random dist.
 %    *_ROI*_L1,L2_pairwisePDF2/CDF2   NN distances 2-label PDF/CDF
 %    *_ROI*_bivripley                 bivariate Ripley's
+%    *_bivripley_RC                   ROI combined bivariate Ripley's
 %    *_ROI*_crosscorr                 ROIwise pairwise cross-correlations
 %    *_RC_crosscorrR                  ROI combined pairwise cross-correlation
-%    *_cL1_lL2                        L1 clusters, L2 localizations overlap
-%    *_cL2_lL1                        L2 clusters, L1 localizations overlap
+%    *_ROI*_cL1_lL2                   L1 clusters, L2 localizations overlap
+%    *_ROI*_cL2_lL1                   L2 clusters, L1 localizations overlap
 %    *_ROI*_L1+L2                     2-label plots of localizations
+%    *_cs_ROI*                        histogram per ROI of cluster L1+L2 seps.
 %    *_cs_RC_PDF/CDF                  ROI combined 2-label cluster separations
 %    *_ls_ROI*                        histogram per ROI of loc. L1+L2 seps.
 %    *_ls_RC_PDF/CDF                  ROI combined localization L1+L2 seps.
+%    *_gmax_den1/2                    max(g(r)) vs L1/2 loc. density (#/nm^2)
+%    *_ROIs                           plot of the selected ROIs in each cell
 
 %% --- Set important parameters
 % Collect the set of files expressing each label together.
@@ -51,18 +56,19 @@
 PA = smi_cluster.PairAnalysis();
 
 %start_datadir = '/mnt/nas/cellpath/Genmab/Data/20221119_CHO_HAEGFR_antiHA_antiC1Q/PairwiseCorr';
+%start_datadir = '/mnt/nas/lidkelab/Projects/Mandall lab/10-17-24/Test 1/TGN46/Results/ResultsStructs';
 start_datadir = '.';
 Analysis = 'Analysis';
 
 particles = {'L1', 'L2'};     % label short descriptors
 Color = ['g', 'm'];           % label 1 and 2 colors on display
 %Pixel2nm = 108.018;           % pixels to nm [TIRF]
-Pixel2nm = 97.8;              % pixels to nm [sequential]
+Pixel2nm = 95.4;              % pixels to nm [sequential]
 HistBinSize = 5;              % # pixels per bin to collect correlation stats
 %RmaxAxisLimit = -1;           % sets r axis limit for pair correlation plots
 RmaxAxisLimit = 400;          % sets r axis limit for pair correlation plots
                               % if > 0 (nm)
-ROI_sizes = [7000, 7000];     % ROI sizes (nm)
+ROI_sizes = [3000, 3000];     % ROI sizes (nm)
 RegistrationNeeded = false;   % 2-color registration via fiducials needed?
 RegistrationViaDC = false;    % 2-color registration via drift correction?
 E = [20, 20];                 % epsilon: max distance between 2 adjacent points
@@ -103,6 +109,7 @@ PlotNonOverlap = false;
 % options:
 %    'combined'    only produce combined results over all ROIs
 %    'plotting'    produce most individual plots
+%    'SimpleStats' Pearson's correlation and Manders' split coefficients
 %    'BiStats'     pairwise mutual distances and bivariate Ripley's statistics
 %                  for each ROI
 %    'Clustering'  clusters for each label per ROI
@@ -113,10 +120,11 @@ PlotNonOverlap = false;
 %    'Overlap2'    overlaps between label 2 clusters and label 1 localizations
 %    'PairCorr'    pair correlation per ROI and combined over all ROIs
 %    'Plot2'       2D plot per ROI
-options = ["BiStats", "Clustering", "Clustering2", "LocSep2", ...
+options = ["SimpleStats", "BiStats", "Clustering", "Clustering2", "LocSep2",...
            "Overlap1", "Overlap2", "PairCorr", "Plot2"];
-%options = ["BiStats", "Clustering", "LocSep2", "Overlap2", "PairCorr"];
-%options = ["PairCorr"];
+%options = ["SimpleStats", "BiStats", "Clustering", "LocSep2", "Overlap2", ...
+%           "PairCorr"];
+%options = ["SimpleStats", "Clustering"];
 
 fprintf('Done set parameters.\n');
 
@@ -173,7 +181,7 @@ n_ROIs_ALL = PA.defineROIs2(Files1, Files2, Pixel2nm, Color, ROI_sizes, ...
 %    results_o1{1:n_files}{1:n_ROIs}       L1 clusters/L2 localizations overlap
 %    results_o2{1:n_files}{1:n_ROIs}       L2 clusters/L1 localizations overlap
 %    results_pcc{1:n_files}{1:n_ROIs}      pair cross-correlation results
-%    resultsRC_pcc{1:n_files}              as above for ROIs combined
+%    resultsRC_pcc{1:n_files}              as abmove for ROIs combined
 % The {1:n_files} is added at this level on the call to doAnalysis.
 
 % Analyze the ROIs in each file.
@@ -189,6 +197,7 @@ if n_files == 0
 end
 %[~, files] = ...
 %   smi_helpers.selectFiles(results_dir, '_ROIs.mat files', '*_ROIs.mat');
+results_ss    = cell(n_files, 1);
 results_c     = cell(n_files, 1);
 results_cs    = cell(n_files, 1);
 results_ls    = cell(n_files, 1);
@@ -206,15 +215,16 @@ for i = 1 : n_files
    desc = regexprep(filename, '_ROIs.mat', '');
    desc = regexprep(desc, '_ResultsStruct_BaGoL', '');
    desc = regexprep(desc, '_ResultsStruct', '');
-   [results_pcc{i}, resultsRC_pcc{i}, results_c{i}, results_cs{i}, ...
-    results_ls{i}, results_o1{i}, results_o2{i}] = ...
+   [results_pcc{i}, resultsRC_pcc{i}, results_ss{i}, results_c{i}, ...
+    results_cs{i}, results_ls{i}, results_o1{i}, results_o2{i}] = ...
       PA.doAnalysis(n_ROIs, RoI, ROI_sizes, desc, particles, results_dir,  ...
                     opts, Pixel2nm, HistBinSize, RmaxAxisLimit, E, minPts, ...
                     PlotNonOverlap, Color);
 end
 analysis = 'analysis';
-save(fullfile(results_dir, analysis), 'results_pcc', 'resultsRC_pcc', ...
-     'results_c', 'results_cs', 'results_ls', 'results_o1', 'results_o2');
+save(fullfile(results_dir, analysis), 'results_pcc', 'resultsRC_pcc',   ...
+    'results_ss', 'results_c', 'results_cs', 'results_ls', 'results_o1', ...
+    'results_o2');
 % Save analysis.mat
 fprintf('Done one-by-one.\n');
 

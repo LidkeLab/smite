@@ -1,5 +1,5 @@
-function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
-          results_o1, results_o2] =                                      ...
+function [results_pcc, resultsRC_pcc, results_ss, results_c, results_cs, ...
+          results_ls, results_o1, results_o2] =                          ...
    doAnalysis(n_ROIs, RoI, ROI_sizes, desc, particles, results_dir,      ...
               options, PixelSize, HistBinSize, RmaxAxisLimit, E, minPts, ...
               PlotNonOverlap, Color)
@@ -15,6 +15,8 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
 %    options       string array of strings specifying analyses to be performed:
 %                      'combined'    the analysis is combined over all ROIs
 %                      'plotting'    plots are to be produced.
+%                      'SimpleStats' Pearson's correlation and Manders' split
+%                                    coefficients per ROI
 %                      'BiStats'     pairwise mutual distances and bivariate
 %                                    Ripley's statistics for each ROI
 %                      'Clustering'  clusters for each label per ROI
@@ -41,7 +43,7 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
 %    desc_results.mat containing the various results_ cell arrays for one cell
 %    Various results containers from the called helper functions in case the
 %    user wants to have more details:
-%                       bivariate statistics
+%       results_bi      bivariate statistics
 %          Also, figures *_ROI*_L1/2_pairwiseCDF/PDF compared to a random dist.
 %                *_ROI*_L1,L2_pairwisePDF2/CDF2      2-label PDF/CDF
 %                *_ROI*_bivripley                    bivariate Ripley
@@ -108,6 +110,8 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
       plotting = true;
    end
 
+   results_ss = [];
+   results_bi = [];
    results_pcc = [];
    resultsRC_pcc = [];
    results_c = [];
@@ -116,16 +120,26 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
    results_o1 = [];
    results_o2 = [];
 
+   % Pearson's correlation and Manders' split coefficients per ROI.
+   if any(contains(options, "SimpleStats"))
+      results_ss = PA.doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles, ...
+                                    results_dir);
+      fprintf("Done SimpleStats\n");
+   end
+
    % Pairwise mutual distances and bivariate Ripley's per ROI and the latter
    % also combined over all ROIs.
    if any(contains(options, "BiStats"))
-      PA.doBiStats(n_ROIs, RoI, desc, particles, results_dir, combined);
+      results_bi = PA.doBiStats(n_ROIs, RoI, desc, particles, results_dir, ...
+                                combined);
+      fprintf("Done BiStats\n");
    end
 
    % Clusters for each label per ROI.
    if any(contains(options, "Clustering"))
-      results_c  = PA.doClustering(n_ROIs, RoI, desc, results_dir, plotting,...
-                                PixelSize, E, minPts);
+      results_c = PA.doClustering(n_ROIs, RoI, desc, results_dir, plotting,...
+                                  PixelSize, E, minPts);
+      fprintf("Done Clustering\n");
    end
 
    % C2C nearest neighbor distances between label 1/label 2 clusters per ROI
@@ -133,6 +147,7 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
    if any(contains(options, "Clustering2"))
       results_cs = PA.doClusterSep2(n_ROIs, results_c, desc, particles, ...
                                     results_dir, plotting);
+      fprintf("Done Clustering2\n");
    end
 
    % Nearest neighbor distances between label 1/label 2 localizations per ROI
@@ -140,6 +155,7 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
    if any(contains(options, "LocSep2"))
       results_ls = PA.doLocSep2(n_ROIs, RoI, desc, particles, results_dir, ...
                                 plotting);
+      fprintf("Done LocSep2\n");
    end
 
    % Overlaps between label 1 clusters and label 2 localizations.
@@ -148,6 +164,7 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
       results_o1 = PA.doOverlap(n_ROIs, RoI, results_c, l12, desc,      ...
                                 particles, results_dir, PlotNonOverlap, ...
                                 Color, plotting);
+      fprintf("Done Overlap1\n");
    end
 
    % Overlaps between label 2 clusters and label 1 localizations.
@@ -156,6 +173,7 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
       results_o2 = PA.doOverlap(n_ROIs, RoI, results_c, l12, desc,      ...
                                 particles, results_dir, PlotNonOverlap, ...
                                 Color, plotting);
+      fprintf("Done Overlap2\n");
    end
 
    % Pair correlation per ROI and combined over all ROIs.
@@ -163,16 +181,19 @@ function [results_pcc, resultsRC_pcc, results_c, results_cs, results_ls, ...
       [results_pcc, resultsRC_pcc] =                                        ...
          PA.doPairCorr(n_ROIs, RoI, ROI_sizes, desc, results_dir, combined, ...
                        plotting, HistBinSize, RmaxAxisLimit);
+      fprintf("Done PairCorr\n");
    end
 
    % 2D plot per ROI.
    if any(contains(options, "Plot2"))
       PA.doPlot2(n_ROIs, RoI, desc, particles, results_dir, Color, plotting);
+      fprintf("Done Plot2\n");
    end
 
    % Save results.
    save(fullfile(results_dir, sprintf('%s_results.mat', desc)), 'n_ROIs', ...
-        'RoI', 'results_pcc', 'resultsRC_pcc', 'results_c', 'results_cs', ...
-        'results_o1', 'results_o2');
+        'RoI', 'results_ss', 'results_c', 'results_cs',  'results_ls',    ...
+        'results_o1', 'results_o2', 'results_pcc', 'resultsRC_pcc');
+   fprintf("Done saving results\n");
 
 end
