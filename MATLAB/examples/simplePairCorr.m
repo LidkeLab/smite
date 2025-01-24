@@ -133,6 +133,7 @@ fprintf('Done set parameters.\n');
 % ROIS in a cell are defined by n_ROIs (number of ROIs) and
 %    RoI{1:n_ROIs}.ROI             ROI coordinates (xmin, xmax, ymin, ymax)
 %    RoI{1:n_ROIs}.X/Y/X_SE/Y_SE   [L1 values, L2 values]
+%    RoI{1:n_ROIs}.SMD             {L1 values, L2 values}
 
 % Collect the Label 1 files.
 Files1 = {};

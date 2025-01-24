@@ -23,6 +23,7 @@ function n_ROIs_ALL = ...
 %    Note: data file defines n_ROIs (number of ROIs) and
 %       RoI{1:n_ROIs}.ROI             ROI coordinates (xmin, xmax, ymin, ymax)
 %       RoI{1:n_ROIs}.X/Y/X_SE/Y_SE   [L1 values, L2 values]
+%       RoI{1:n_ROIs}.SMD             {L1 values, L2 values}
 
 % Created by
 %    Michael J. Wester (2022)
