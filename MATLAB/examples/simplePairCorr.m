@@ -124,7 +124,7 @@ options = ["SimpleStats", "BiStats", "Clustering", "Clustering2", "LocSep2",...
            "Overlap1", "Overlap2", "PairCorr", "Plot2"];
 %options = ["SimpleStats", "BiStats", "Clustering", "LocSep2", "Overlap2", ...
 %           "PairCorr"];
-%options = ["SimpleStats", "Clustering"];
+%options = ["SimpleStats"];
 
 fprintf('Done set parameters.\n');
 
