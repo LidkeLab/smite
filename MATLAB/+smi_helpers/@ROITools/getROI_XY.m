@@ -1,5 +1,5 @@
 function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
-                                   txt, XYsize, SMR)
+                                   txt, XYsize, SMD)
 % Let the user select ROIs from (x, y)-coordinates.
 %
 % INPUTS:
@@ -13,8 +13,8 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
 %    XYsize           [OPTIONAL] (x, y) image size (nm) [1 x 2]; needed for
 %                     displaying coordinates where the origin in the UL corner
 %                     (OriginLLvsUL)
-%    SMR              [OPTIONAL] SMR structure from an SMA_SR data structure
-%                     needed for gaussianImage in get_ROI (GaussIm)
+%    SMD              [OPTIONAL] cell array of ROI SMD data structures needed
+%                     for gaussianImage in get_ROI (GaussIm)
 %
 % OUTPUTS:
 %    n_ROIs           number of ROIs created
@@ -28,8 +28,8 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
 % Created by
 %    Michael J. Wester (2021)
 
-   if ~exist('SMR', 'var')
-      SMR = [];
+   if ~exist('SMD', 'var')
+      SMD = {};
    end
 
    if obj.XYvsYX
@@ -68,9 +68,9 @@ function [n_ROIs, RoI] = getROI_XY(obj, XY, XY_SE, x_size, y_size, ...
       end
    end
 
-   if obj.GaussIm && exist('SMR', 'var') && ~isempty(SMR)
+   if obj.GaussIm && exist('SMD', 'var') && ~isempty(SMD)
       [n_ROIs, ROI, index_ROI] = ...
-         obj.get_ROI_GaussIm(X, Y, x_size, y_size, txt, SMR);
+         obj.get_ROI_GaussIm(X, Y, x_size, y_size, txt, SMD);
    else
       [n_ROIs, ROI, index_ROI] = obj.get_ROI(X, Y, x_size, y_size, txt);
    end

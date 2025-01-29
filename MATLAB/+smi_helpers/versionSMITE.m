@@ -15,5 +15,6 @@ function version = versionSMITE()
    %version = '1.1.4';   % windowTR generalized
    %version = '1.1.5';   % windowStartTR added
    %version = '1.1.6';   % pearsonCorrCoef added to smi_stats
-   version = '1.2.0';   % cleanup of PairAnalysis class; added Manders' coeffs
+   %version = '1.2.0';   % cleanup of PairAnalysis class; added Manders' coeffs
+   version = '1.2.1';   % For 2-color, select ROIs from a Gaussian image
 end

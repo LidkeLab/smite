@@ -18,7 +18,8 @@ function [n_ROIs, ROI, index_ROI] = ...
 %                     y-coordinates
 %    x_size, y_size   box diameters used when clicking the left mouse button
 %    txt              text to label the ROI figure
-%    SMD              SMD structure needed for gaussianImage (GaussIm)
+%    SMD              cell array of SMD structures needed for gaussianImage
+%                     (GaussIm)
 %
 % OUTPUTS:
 %    n_ROIs           number of ROIs created
@@ -38,7 +39,7 @@ function [n_ROIs, ROI, index_ROI] = ...
 
    BS = char(8);   DEL = char(127);
 
-%figure(2); plot(SMD.X * pixel2nm, SMD.Y * pixel2nm, 'k.');
+%figure(2); plot(SMD{2}.X * pixel2nm, SMD{2}.Y * pixel2nm, 'k.');
 %figure(3); plot(X{1}, Y{1}, 'k.');
 
    % selected = 0   terminate selection
@@ -46,9 +47,20 @@ function [n_ROIs, ROI, index_ROI] = ...
    %            2   ignored or region delete
    cm = hot(256);
    cm(1, :) = [0, 0, 0];
-   GaussIm = smi_vis.GenerateImages.gaussianImage(SMD, SRzoom);
-   P = prctile(GaussIm(GaussIm > 0), 99.9);
-   GaussIm(GaussIm > P) = P;
+   if n_labels == 1
+      GaussIm = smi_vis.GenerateImages.gaussianImage(SMD{1}, SRzoom);
+      P = prctile(GaussIm(GaussIm > 0), 99.9);
+      GaussIm(GaussIm > P) = P;
+   else
+      GaussIm1 = smi_vis.GenerateImages.gaussianImage(SMD{1}, SRzoom);
+      GaussIm2 = smi_vis.GenerateImages.gaussianImage(SMD{2}, SRzoom);
+      P = prctile([GaussIm1(GaussIm1 > 0); GaussIm2(GaussIm2 > 0)], 99.9);
+      GaussIm1(GaussIm1 > P) = P;
+      GaussIm2(GaussIm2 > P) = P;
+      colorvec = smi_helpers.colorVector(obj.Color);
+      GaussIm = imfuse(GaussIm1, GaussIm2, 'falsecolor', ...
+                       'Scaling', 'joint', 'ColorChannels', colorvec);
+   end
    h = imshow(GaussIm, cm);
 
    %for i = 2 : n_labels
@@ -126,8 +138,8 @@ function [n_ROIs, ROI, index_ROI] = ...
          tmp  = ymin;
          ymin = ymax;
          ymax = tmp;
-         ymin = SMD.YSize * pixel2nm - ymin;
-         ymax = SMD.YSize * pixel2nm - ymax;
+         ymin = SMD{1}.YSize * pixel2nm - ymin;
+         ymax = SMD{1}.YSize * pixel2nm - ymax;
 
          ROI{n_ROIs} = [xmin, xmax, ymin, ymax];
          for i = 1 : n_labels

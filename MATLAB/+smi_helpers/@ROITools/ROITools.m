@@ -87,7 +87,7 @@ properties
    % works for single labeled molecules.
    GaussIm = false;       % Use gaussianImage for ROI selection display.
    OriginLLvsUL = true;   % Use LL origin coordinates rather than UL.
-   SRzoom = 1;            % Zoom factor for gaussianImage.
+   SRzoom = 20;           % Zoom factor for gaussianImage.
    EM = false;            % EM data format for import_XY.
    Transform = {};        % Coordinate transform from label i -> 1.
    Mask = {};             % Boolean image mask to be used with an SMD source

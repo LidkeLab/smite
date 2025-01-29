@@ -62,6 +62,7 @@ Analysis = 'Analysis';
 
 particles = {'L1', 'L2'};     % label short descriptors
 Color = ['g', 'm'];           % label 1 and 2 colors on display
+GaussIm = true;               % select ROIs from a Gaussian image if true
 %Pixel2nm = 108.018;           % pixels to nm [TIRF]
 Pixel2nm = 95.4;              % pixels to nm [sequential]
 HistBinSize = 5;              % # pixels per bin to collect correlation stats
@@ -169,8 +170,8 @@ if numel(Files2) ~= n_files
 end
 
 % Select the ROIs over all images.
-n_ROIs_ALL = PA.defineROIs2(Files1, Files2, Pixel2nm, Color, ROI_sizes, ...
-                            results_dir,                                ...
+n_ROIs_ALL = PA.defineROIs2(Files1, Files2, Pixel2nm, Color, GaussIm, ...
+                            ROI_sizes, results_dir,                   ...
                             RegistrationNeeded, RegistrationViaDC);
 
 %% ---------- Analyze the ROIS one-by-one

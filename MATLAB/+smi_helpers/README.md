@@ -13,6 +13,8 @@ functions:
   adds simple GUI controls based on the fields in 'ParamStruct'
 - **[arrayMUX](arrayMUX.m)**:
   a multiplexer intended to generalize for most arrays
+- **[colorVector](colorVector.m)**:
+  converts a string of one character color names into an ordered RGB vector
 - **[compressToRange](compressToRange.m)**:
   compresses the 'IntegerArray' to a range of integers with no missing values
 - **[convertTimeStringToNum](convertTimeStringToNum.m)**:

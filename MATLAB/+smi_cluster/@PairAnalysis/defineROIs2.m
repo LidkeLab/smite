@@ -1,6 +1,6 @@
 function n_ROIs_ALL = ...
-   defineROIs2(Files1, Files2, Pixel2nm, Color, ROI_sizes, ResultsDir, ...
-               RegistrationNeeded, RegistrationViaDC)
+   defineROIs2(Files1, Files2, Pixel2nm, Color, GaussIm, ROI_sizes, ...
+               ResultsDir, RegistrationNeeded, RegistrationViaDC)
 % Select ROIs simultaneously for label 1 and label 2 over all images.
 %
 % INPUTS:
@@ -10,6 +10,7 @@ function n_ROIs_ALL = ...
 %                 same as the ROIs will be specified for both simultaneously
 %    Pixel2nm     conversion factor from pixels to nm
 %    Color        label 1 and 2 colors on display
+%    GaussIm      true if selecting ROIs off a Gaussian image, otherwise dot im
 %    ROI_sizes    ROI length and width, e.g., [2000, 2000] (nm)
 %    ResultsDir   directory in which to place the files generated
 %    RegistrationNeeded   2-color registration via fiducials needed?
@@ -33,6 +34,17 @@ function n_ROIs_ALL = ...
    RT.Color = Color;   % label 1 and 2 colors on display
    RT.ROI_sizes = ROI_sizes;
    RT.Pixel2nm = Pixel2nm;
+   % GaussIm = true indicates that gaussianImage will be used for the ROI
+   %    selection display.
+   % OriginLLvsUL = true says to use lower left origin coordinates rather than
+   %    upper left origin coordinates in the ROI selection display.
+   % If GaussIm is true, make OriginLLvsUL false for consistency.  The default
+   % is: GaussIm = false and OriginLLvsUL = true.
+   if GaussIm
+      RT.GaussIm = true;    RT.OriginLLvsUL = false;
+   else
+      RT.GaussIm = false;   RT.OriginLLvsUL = true;
+   end
 
    n_ROIs_ALL = 0;
    n_files = numel(Files1);
