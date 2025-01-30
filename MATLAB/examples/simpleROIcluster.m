@@ -72,8 +72,7 @@ RT = smi_helpers.ROITools();
 % OriginLLvsUL = true says to use lower left origin coordinates rather than
 %    upper left origin coordinates in the ROI selection display.
 % If GaussIm is true, make OriginLLvsUL false for consistency.  The default is:
-% GaussIm = false and OriginLLvsUL = true.  Currently, GaussIm only works for
-% single labeled molecules.
+% GaussIm = false and OriginLLvsUL = true.
 %RT.GaussIm = true;    RT.OriginLLvsUL = false;
 RT.GaussIm = false;   RT.OriginLLvsUL = true;
 RT.SRzoom = 4;              % zoom factor for gaussianImage

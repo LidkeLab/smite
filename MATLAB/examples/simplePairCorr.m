@@ -49,6 +49,11 @@
 %    *_ls_RC_PDF/CDF                  ROI combined localization L1+L2 seps.
 %    *_gmax_den1/2                    max(g(r)) vs L1/2 loc. density (#/nm^2)
 %    *_ROIs                           plot of the selected ROIs in each cell
+%
+% Output file naming conventions:
+%    analysis.mat                     analysis results by file # and ROI
+%    *_ROIs.txt                       [xmin, xmax, ymin, ymax] by ROI number
+%    *_stats.txt                      Pearson's and Manders' coefficients
 
 %% --- Set important parameters
 % Collect the set of files expressing each label together.
