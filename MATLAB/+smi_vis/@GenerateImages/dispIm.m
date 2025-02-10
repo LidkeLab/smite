@@ -29,7 +29,7 @@ fileButton1 = uicontrol('Style', 'pushbutton','String','Choose Image',...
     'Unit','normalize','Enable','on','Position', [0.75 0.92 0.15 0.06],'Callback',@backward);
 
 function getFileList1(~,~) % Choose data file(s) and list them in the File List box
-[filename, pathname]=uigetfile('Y:\*.png;*.tif','MultiSelect','on');
+[filename, pathname]=uigetfile('*.png;*.tif','MultiSelect','on');
 Im = cell(1,length(filename));
 map = Im;
 for ii = 1:length(filename)

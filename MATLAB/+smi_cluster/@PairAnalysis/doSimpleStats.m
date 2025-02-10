@@ -1,5 +1,5 @@
 function results_ss = doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles,...
-                                   results_dir)
+                                   results_dir, combined)
 %doSimpleStats finds the Pearson and Manders' coefficients between two colors.
 % pearsonCorrCoef finds the Pearson correlation coefficient between two sets of
 % localizations given in a list of coincident ROIs when converted to histogram
@@ -16,6 +16,7 @@ function results_ss = doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles,...
 %    desc          string identifying the analysis
 %    particles     string array describing the two particles
 %    results_dir   output directory
+%    combined      produce combined results over all ROIs
 %                 
 % OUTPUTS:
 %    results_ss    results structure imdexed by ROI with the following fields:
@@ -44,7 +45,7 @@ function results_ss = doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles,...
    for i = 1 : n_ROIs
       SMD1 = RoI{i}.SMD{1};
       SMD2 = RoI{i}.SMD{2};
-      ROI  = RoI{i}.ROI / PixelSize;
+      ROI  = RoI{i}.ROI / PixelSize;   % [xmin, xmax, ymin, ymax] (pixel)
 
       % Pearson correlation coefficient.
       [pearson, p_value] = smi_stat.pearsonCorrCoef(SMD1, SMD2, SRZoom, ROI);
@@ -58,6 +59,18 @@ function results_ss = doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles,...
 
       fprintf(out, '%2d  %7.4f %7.2g %7.4f %7.4f\n', ...
                    i, pearson, p_value, M1, M2);
+   end
+   if combined   % mean results
+      mean_pearson = mean(arrayfun(@(i) results_ss{i}.pearson, 1 : n_ROIs));
+      mean_M1      = mean(arrayfun(@(i) results_ss{i}.M1, 1 : n_ROIs));
+      mean_M2      = mean(arrayfun(@(i) results_ss{i}.M2, 1 : n_ROIs));
+      SE_pearson = std(arrayfun(@(i) results_ss{i}.pearson, 1 : n_ROIs));
+      SE_M1      = std(arrayfun(@(i) results_ss{i}.M1, 1 : n_ROIs));
+      SE_M2      = std(arrayfun(@(i) results_ss{i}.M2, 1 : n_ROIs));
+      fprintf(out, 'avg %7.4f         %7.4f %7.4f\n', ...
+                   mean_pearson, mean_M1, mean_M2);
+      fprintf(out, 'SE  %7.4f         %7.4f %7.4f\n', ...
+                   SE_pearson, SE_M1, SE_M2);
    end
    fclose(out);
 

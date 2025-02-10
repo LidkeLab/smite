@@ -49,7 +49,7 @@ methods(Static)
    results_o = doOverlap(n_ROIs, RoI, results_c, l12, desc, particles, ...
                          results_dir, PlotNonOverlap, Color, plotting)
    results_ss = doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles, ...
-                              results_dir)
+                              results_dir, combined)
    overlayBaGoLROIs(pathnameB, filesB, MAPNfile, ROI_sizes, SRImageZoom)
    doPlot2(n_ROIs, RoI, desc, particles, results_dir, Color, plotting)
 

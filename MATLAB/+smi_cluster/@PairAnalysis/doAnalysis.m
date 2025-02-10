@@ -123,7 +123,7 @@ function [results_pcc, resultsRC_pcc, results_ss, results_c, results_cs, ...
    % Pearson's correlation and Manders' split coefficients per ROI.
    if any(contains(options, "SimpleStats"))
       results_ss = PA.doSimpleStats(n_ROIs, RoI, PixelSize, desc, particles, ...
-                                    results_dir);
+                                    results_dir, combined);
       fprintf("Done SimpleStats\n");
    end
 

@@ -112,12 +112,12 @@ end
 
 % Hopkins' statistic per ROI.
 if doHopkins
-   %SC.CSV = true;
+   SC.CSV = true;
    P_hopkins_ROI = ...
    SC.plotCombined(arrayfun(@(i) rdata{i}.collected.H_ROI, 1 : n_files, ...
                             'UniformOutput', false),                    ...
                    0.01, 'Hopkins per ROI', econd, 'hopkins_ROI');
-   %SC.CSV = false;
+   SC.CSV = false;
    fprintf(out, 'P_Hopkins per ROI =\n');
    fprintf(out, fmt, P_hopkins_ROI);
    fprintf(out, '\n');
