@@ -37,6 +37,7 @@ G indicates a GPU is used.
 [simplePairCorr](simplePairCorr.m)                                              | step-by-step script to choose 2-label ROIs & do various analyses for ROIs separate or combined
 [Example_Publish](Example_Publish.m)                                            | generate results for a microscope experiment
 [Example_Publish_generic](Example_Publish_generic.m)                            | as above for multiple directories of data
+[Example_Publish_SMF](Example_Publish_SMF.m)                                    | as Example_Publish but using a pre-existing SMF
 [Example_SMLM_Basic](Example_SMLM_Basic.m)                                      | demonstrate basic SMLM functionality
 [Example_SMLM_script](Example_SMLM_script.m)                                    | example of SMLM analysis
 [hierBaGoL_wrapper](hierBaGoL_wrapper.m)                                        | wrapper used to call BaGoL routines

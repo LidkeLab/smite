@@ -21,6 +21,7 @@ SMITE code templates requiring user-supplied data:
    Example_plotROIDriver        plot dot, Gaussian or circle images of ROIs
    Example_Publish		generate results for a microscope experiment
    Example_Publish_generic	as above for multiple directories of data
+   Example_Publish_SMF          as Example_Publish but using a pre-existing SMF
    Example_SMLM_Basic		demonstrate basic SMLM functionality
    Example_SMLM_script		example of SMLM analysis
    hierBaGoL_wrapper		wrapper used to call BaGoL routines
