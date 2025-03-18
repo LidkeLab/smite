@@ -34,5 +34,7 @@ IncludeCell = [];
 %IncludeCell = [1, 7]; % DNP-BSA_2150pM
 %IncludeCell = [2]; % Resting
 
+PixelSize = 97.8;   % nm/pixel
+
 CI = smi_cluster.ClusterInterface;
-CI.plotROIDriver(97.8, options, start_DataDir, SaveDir, IncludeCell);
+CI.plotROIDriver(PixelSize, options, start_DataDir, SaveDir, IncludeCell);
