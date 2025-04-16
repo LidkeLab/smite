@@ -57,6 +57,8 @@ properties
    CSV = false;           % If true, produce a CSV file of the data
 
    % Properties below are used by various routines.
+   HopTestPts    =  10;   % Number of test points to compute Hopkins' statistic
+   HopTests      =1000;   % Number of tests to run to produce a Hopkins' stat.
    Rate          =  20;   % Sampling rate for statistical functions
    Dendro_cutoff =  50;   % Cluster cutoff for Dendrogram analysis (nm)
    Ripley_cutoff = 200;   % Ripley distance cutoff (nm)

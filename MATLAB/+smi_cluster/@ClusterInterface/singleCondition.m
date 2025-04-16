@@ -1,6 +1,6 @@
 function singleCondition(pathname, files, algorithm_range, E_range, ...
                          minPts_range, Pixel2nm, base_name, A_ROI,  ...
-                         doHopkins, doSigmaActual, Alpha)
+                         doHopkins, doSigmaActual, Alpha, SC)
 % ---------- Statistics for a single condition
 % Perform cluster analysis for comparison of experimental conditions.  This is
 % useful for performing parameter studies, especially over a range of E's
@@ -23,7 +23,8 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
 %                      avoid crashes due to lack of memory
 %    Alpha             [DEFAULT = 2] ratio of local density / overall density
 %                      for Voronoi clustering
-%                     
+%    SC                StatisticsClustering object containing certain
+%                      parameters such as HopTestPts and HopTests
 %
 % OUTPUTS:
 %    A variety of plots are produced and are placed in a subdirectory of
@@ -52,8 +53,10 @@ function singleCondition(pathname, files, algorithm_range, E_range, ...
    end
 
    c  = smi_cluster.Clustering();
-   SC = smi_cluster.StatisticsClustering();
    PC = smi_cluster.PairCorrelation();
+   if ~exist('SC', 'var')
+      SC = smi_cluster.StatisticsClustering();
+   end
 
    base_name_save = base_name;
    if ~startsWith(base_name, 'ALL')

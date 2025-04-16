@@ -10,6 +10,8 @@ function H = hopkins_ROIcombined(obj, n_ROIs, RoI)
 %                       descriptive suffixes attached
 %       Xlim            []       x-axis limits if defined
 %       Ylim            []       y-axis limits if defined
+%       HopTestPts      number of Hopkins' statistic test points
+%       HopTests        number of tests to run to produce a Hopkins' statistic
 %    n_ROIs      number of ROIs to combine
 %    ROIs        n_ROIs cell array containing the following fields (nm):
 %       ROI      ROI limits in the form
@@ -24,8 +26,10 @@ function H = hopkins_ROIcombined(obj, n_ROIs, RoI)
 
 base_name = obj.BaseName;
 
-test = 5;        % The number of test points.
-ntests = 1000;   % The number of Hopkins statistics to use.
+%test = 5;        % The number of test points.
+%ntests = 1000;   % The number of Hopkins statistics to use.
+test = obj.HopTestPts;   % The number of test points.
+ntests = obj.HopTests;   % The number of Hopkins statistics to use.
 
 % Dimension (2D or 3D)
 dim = 2;

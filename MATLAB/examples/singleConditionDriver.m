@@ -132,9 +132,14 @@ algorithm_range = {'DBSCAN'};
 Alpha = 2;
 
 CI = smi_cluster.ClusterInterface();
-%Alpha = 3;
+SC = smi_cluster.StatisticsClustering();
+C.HopTestPts = 10;
+C.HopTests = 1000;
+
+%Alpha = 2;
 CI.singleCondition(pathname, files, algorithm_range, E_range, minPts_range,...
-                   Pixel2nm, base_name, A_ROI, doHopkins, doSigmaActual, Alpha);
+                   Pixel2nm, base_name, A_ROI, doHopkins, doSigmaActual,   ...
+                   Alpha, SC);
 
 %Alpha = 3;
 %CI.singleCondition(pathname, files, algorithm_range, E_range, minPts_range,...

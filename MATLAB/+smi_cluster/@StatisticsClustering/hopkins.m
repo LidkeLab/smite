@@ -10,6 +10,8 @@ function results = hopkins(obj, particle_types, SMD)
 %       BaseName        name to identify saved plots, which will have various
 %                       descriptive suffixes attached
 %       Rate            [ 20]    sampling rate for statistical functions
+%       HopTestPts      number of Hopkins' statistic test points
+%       HopTests        number of tests to run to produce a Hopkins' statistic
 %    particle_types   cell array of particle types (names)
 %                     e.g., particle_types = {'5', '10'};
 %                         are of the form {[n1 x 1], [n2 x 1]}
@@ -76,8 +78,10 @@ else
    D_nm = -1;
 end
 
-test = 5;        % The number of test points.
-ntests = 1000;   % The number of Hopkins statistics to use.
+%test = 5;        % The number of test points.
+%ntests = 1000;   % The number of Hopkins statistics to use.
+test = obj.HopTestPts;   % The number of test points.
+ntests = obj.HopTests;   % The number of Hopkins statistics to use.
 bins = 100;      % The number of bins for the probability graphs.
 fitting = false; % Gaussian fitting of the data.
 
