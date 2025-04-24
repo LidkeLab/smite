@@ -1,4 +1,4 @@
-function defineROIs(pathname, files, Pixel2nm, RT, oneROI)
+function defineROIs(pathname, files, Pixel2nm, RT, oneROI, ROI_sizes)
 % ----------- Define the ROIs
 % Choose ROIs of a fixed size over a series of images.  These are typically
 % used for cluster analysis.
@@ -10,6 +10,7 @@ function defineROIs(pathname, files, Pixel2nm, RT, oneROI)
 %    Pixel2nm          conversion factor from pixels to nm
 %    RT                class reference to smi_helpers.ROITools()
 %    oneROI            treat the whole image as a single ROI (logical)
+%    ROI_sizes         ROI x, y sizes (in nm) used if oneROI is true
 %
 % OUTPUTS:
 %    pathname/Analysis/*_ROIs.mat is saved containing the coordinates of the

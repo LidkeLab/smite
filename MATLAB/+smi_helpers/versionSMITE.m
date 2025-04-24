@@ -16,5 +16,6 @@ function version = versionSMITE()
    %version = '1.1.5';   % windowStartTR added
    %version = '1.1.6';   % pearsonCorrCoef added to smi_stats
    %version = '1.2.0';   % cleanup of PairAnalysis class; added Manders' coeffs
-   version = '1.2.1';   % For 2-color, select ROIs from a Gaussian image
+   %version = '1.2.1';   % For 2-color, select ROIs from a Gaussian image
+   version = '1.2.2';   % made HopTestPts and HopTests user adjustable
 end

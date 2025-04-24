@@ -85,6 +85,7 @@ CI = smi_cluster.ClusterInterface();
 % ROI rather than a series of small ROIs.
 oneROI = false;
 if oneROI
+   % Here, we assume the images are 256x256 pixels.
    ROI_sizes = [256, 256] * Pixel2nm;   % (nm)
    A_ROI = prod(ROI_sizes);
 end
@@ -117,7 +118,7 @@ else
                             '*_Results*.mat files', '*_Results*.mat');
 end
 
-CI.defineROIs(pathname, files, Pixel2nmGlobal, RT, oneROI);
+CI.defineROIs(pathname, files, Pixel2nmGlobal, RT, oneROI, ROI_sizes);
 
 %% ---------- Possibly, define BaGoL ROIs from previous ROIs and BaGoL results
 %%            (MF BaGoL Results or BaGoL MAPN files)

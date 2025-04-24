@@ -38,8 +38,9 @@ methods(Static)
                     keep_numbering)
    defineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
                    OriginLLvsUL)
-   defineROIs(pathname, files, Pixel2nm, RT, oneROI)
+   defineROIs(pathname, files, Pixel2nm, RT, oneROI, ROI_sizes)
    [n_ROIs, RoI] = filterROIs(pathname, files, filter)
+
    % Called by singleConditionDriver.
    singleCondition(pathname, files, algorithm_range, E_range, ...
                    minPts_range, Pixel2nm, base_name, A_ROI,  ...
