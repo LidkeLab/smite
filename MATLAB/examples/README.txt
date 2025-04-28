@@ -24,6 +24,7 @@ SMITE code templates requiring user-supplied data:
    Example_Publish_SMF          as Example_Publish but using a pre-existing SMF
    Example_SMLM_Basic		demonstrate basic SMLM functionality
    Example_SMLM_script		example of SMLM analysis
+   Example_SPT_movie            produce a movie from SPT results
    hierBaGoL_wrapper		wrapper used to call BaGoL routines
    generateBaGoLScripts		generate a series of self-contained scripts to
 				run BaGoL over a number of cells, one script

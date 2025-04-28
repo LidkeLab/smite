@@ -40,6 +40,7 @@ G indicates a GPU is used.
 [Example_Publish_SMF](Example_Publish_SMF.m)                                    | as Example_Publish but using a pre-existing SMF
 [Example_SMLM_Basic](Example_SMLM_Basic.m)                                      | demonstrate basic SMLM functionality
 [Example_SMLM_script](Example_SMLM_script.m)                                    | example of SMLM analysis
+[Example_SPT_movie](Example_SPT_movie.m)                                        | produce a movie from SPT results
 [hierBaGoL_wrapper](hierBaGoL_wrapper.m)                                        | wrapper used to call BaGoL routines
 [generateBaGoLScripts](generateBaGoLScripts.m)                                  | generate a series of self-contained scripts to run BaGoL over a number of cells, one script per cell
 [BaGoL_TEMPLATE](BaGoL_TEMPLATE.m)                                              | BaGoL script template for generateBaGoLScripts
