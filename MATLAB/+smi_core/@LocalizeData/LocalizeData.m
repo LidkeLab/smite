@@ -99,6 +99,7 @@ classdef LocalizeData < handle
                         'localizations were not generated.'])
                 end
                 SMD = [];
+                SMDPreThresh = [];
             end
         end
         
