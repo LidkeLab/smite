@@ -297,6 +297,9 @@ methods
         end
         [SMD] = LD.genLocalizations();
 
+        % Filter out any localizations with nonzero imaginary standard errors.
+        SMD = smi_helpers.Filters.filterImag(SMD, obj.Verbose);
+
         % Keep track of why localizations were filtered out.
         obj.SMDPreThresh = smi_core.SingleMoleculeData.catSMD( ...
                               obj.SMDPreThresh, LD.SMDPreThresh, false);

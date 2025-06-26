@@ -18,6 +18,8 @@ methods(Static)
    SMD = filterFC(SMD, Verbose, nFC)
    SMD = filterNN(SMD, Verbose, n_NN, MedianMultiplier)
 
+   SMD = filterImag(SMD, Verbose)
+
 end % methods(Static)
 
 end % classdef Filters

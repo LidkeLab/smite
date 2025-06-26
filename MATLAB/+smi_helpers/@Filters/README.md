@@ -25,3 +25,5 @@ static methods:
   filter out localizations representing fewer than nFC frame connections
 - **[filterNN](filterNN.m)**:
   localizations are filtered based on the nearest neighbor distance
+- **[filterImag](filterImag.m)**:
+  filter out _SE SMD fields with non-zero imaginary components
