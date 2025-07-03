@@ -123,10 +123,17 @@ BaGoLParams.Xi = [20, 1];           % [k, theta] parameters for gamma prior
 BaGoLParams.DataROI = [];           % [Xmin, Xmax, Ymin, Ymax] (pixel)
 DataROI = [];
 
+% ---------- ROIs ----------
+
 % If ROIs is true, the input file has ROIs already defined (*_ROIs.mat), so use
 % them below if only one filename is provided.
 %ROIs = true;
 ROIs = false;
+
+% If GaussIm is true, ROIs were selected from Guassian images, so need to
+% replace y by 256 - y, that is, the origin of the xy-coordinates is the upper
+% left rather than the lower left corner of the image.
+GaussIm = true;
 
 % If includeROIs is set to a list of integers, then only those ROIs will be
 % processed when ROIs is set to true.
@@ -178,12 +185,22 @@ if numel(Files) == 1 && ROIs
    % Do all the ROIs when includeROIs is empty (the default),
    if isempty(includeROIs)
       for i = 1 : n_ROIs
-         DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+         %DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+         DataROI_SR = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+         if GaussIm
+            DataROI_SR([3, 4]) = 256 - DataROI_SR([4, 3]);
+         end
+         DataROI(i, :) = DataROI_SR;
       end
    else
       for i = 1 : n_ROIs
          if ismember(i, includeROIs)
-            DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+            %DataROI(i, :) = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+            DataROI_SR = ROIsFile.RoI{i}.ROI ./ BaGoLParams.PixelSize;
+            if GaussIm
+               DataROI_SR([3, 4]) = 256 - DataROI_SR([4, 3]);
+            end
+            DataROI(i, :) = DataROI_SR;
          end
       end
    end
