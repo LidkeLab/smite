@@ -18,5 +18,6 @@ function version = versionSMITE()
    %version = '1.2.0';   % cleanup of PairAnalysis class; added Manders' coeffs
    %version = '1.2.1';   % For 2-color, select ROIs from a Gaussian image
    %version = '1.2.2';   % made HopTestPts and HopTests user adjustable
-   version = '1.2.3';   % add example script Example_SPT_movie
+   %version = '1.2.3';   % add example script Example_SPT_movie
+   version = '1.2.4';   % add GaussIm option for hierBaGoLwrapper ROI mode
 end
