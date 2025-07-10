@@ -223,6 +223,8 @@ function [SMD, Statistics] = driftCorrectKNNIntra(obj, SMD, cDataset, iDataset)
       range = double(1:SMD.NFrames);
       SMD.DriftX(:, i) = polyval([PX', 0], range);
       SMD.DriftY(:, i) = polyval([PY', 0], range);
+      SMD.X = XYC(:,1);
+      SMD.Y = XYC(:,2);
 
       if Ndims == 3
          PZ = P(2*PDegree + 1 : end);
