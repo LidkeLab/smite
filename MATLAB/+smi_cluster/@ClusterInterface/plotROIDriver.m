@@ -17,6 +17,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
 %       MAPN            BaGoL MAPN file
 %       Dot             Dot plot
 %       Gaussian        Gaussian plot
+%       GaussSEConst    Gaussian plot with constant X/Y_SE
 %       Circle          Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
 %       Boundary        Include ROI boundaries
 %       Cluster         Include ROI clusters
@@ -40,6 +41,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    opt.MAPN = false;
    opt.Dot = false;
    opt.Gaussian = false;
+   opt.GaussSEConst = false;
    opt.Circle = false;
    opt.Boundary = false;
    opt.Cluster = false;
@@ -60,6 +62,10 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
       opt.Dot = true;
    end
    if contains('Gaussian', options)
+      opt.Gaussian = true;
+   end
+   if contains('GaussSEConst', options)
+      opt.GaussSEConst = true;
       opt.Gaussian = true;
    end
    if contains('Circle', options)
@@ -96,6 +102,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    % Clusters collected together in a single *_results.mat file.
    [pathnameC, filesC] = smi_helpers.selectFiles(start_datadir, ...
       '*_results.mat single file', '*_results.mat');
+   fprintf('C: %s\n', fullfile(pathnameC, filesC{1}));
    if opt.SR
       [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
          'SR _Results.mat files', '*_Results.mat');
@@ -108,6 +115,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
       [pathnameB, filesB] = smi_helpers.selectFiles(start_datadir, ...
          'MAPN*.mat files', 'MAPN_*.mat');
    end
+   fprintf('B: %s\n', pathnameB);
 
    % Include all the ROIs in only some cells.
    if exist('IncludeCell', 'var') && ~isempty(IncludeCell)

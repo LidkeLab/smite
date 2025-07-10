@@ -3,18 +3,19 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 %
 % INPUTS:
 %    opt         data characteristics and types of plots to produce if true
-%       SR          SR Results file
-%       BaGoL       BaGoL Results file (BGL.SMD)
-%       MAPN        BaGoL MAPN file
-%       Dot         Dot plot
-%       Gaussian    Gaussian plot
-%       Circle      Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
-%       Boundary    Include ROI boundaries
-%       Cluster     Include ROI clusters
-%       NoSave      Do not save outputs
+%       SR             SR Results file
+%       BaGoL          BaGoL Results file (BGL.SMD)
+%       MAPN           BaGoL MAPN file
+%       Dot            Dot plot
+%       Gaussian       Gaussian plot
+%       GaussSEConst   Gaussian plot with constant X/Y_SE
+%       Circle         Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
+%       Boundary       Include ROI boundaries
+%       Cluster        Include ROI clusters
+%       NoSave         Do not save outputs
 %
-%       IncludeCell Cells to produce plots for [DEFAULT: 1 : numel(filesB)]
-%                   using the numbering in the list filesB
+%       IncludeCell    Cells to produce plots for [DEFAULT: 1 : numel(filesB)]
+%                      using the numbering in the list filesB
 %    pathnameC   path to filesC
 %    filesC      cluster data per ROI per cell for a single condition; this
 %                will be a single *_results.mat file
@@ -46,6 +47,8 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    Zoom = 20;
    ScaleBarLength = 500; % nm
    ScaleBarWidth  = 100; % nm
+   % Special BaGoL plots for Diane: X/Y_SE are constant and uniform.
+   SEConstant = 5; % nm
 
    CI = smi_cluster.ClusterInterface();
 
@@ -76,7 +79,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       % Display a quick summary of the upcoming analysis.
       if opt.SR
          fprintf('%s: SMD = %d\n', short, numel(SMD.X));
-      elseif opt.BaGoL || opt.Circle
+      elseif opt.BaGoL
          BGL = dataB.BGL;
          fprintf('%s: SMD = %d, MAPN = %d\n', ...
                  short, numel(BGL.SMD.X), numel(BGL.MAPN.X));
@@ -99,11 +102,17 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
          SMDsave = BGL.SMD;
       elseif opt.MAPN
          %SMDsave = BGL.MAPN;
-         SMDsave = MAPN;
+         MAPNsave = MAPN;
+         SMDsave  = MAPN;
       elseif opt.Circle
          SMDsave  = BGL.SMD;
          MAPNsave = BGL.MAPN;
       end
+      if opt.GaussSEConst
+         SMDsave.X_SE = single(SEConstant) .* ones(size(SMDsave.X));
+         SMDsave.Y_SE = SMDsave.X_SE;
+      end
+
       j_ROI = sum(dataC.n_ROIs(1 : i - 1));
       for j = 1 : dataC.n_ROIs(i)
          j_ROI = j_ROI + 1;
@@ -328,6 +337,9 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             out_type = 'dot';
          elseif opt.Gaussian
             out_type = 'Gaussian';
+            if opt.GaussSEConst
+               out_type = 'GaussSEConst';
+            end
          elseif opt.Circle
             out_type = 'circle';
          end
