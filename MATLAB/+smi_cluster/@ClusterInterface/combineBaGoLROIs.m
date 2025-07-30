@@ -1,5 +1,5 @@
 function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
-                          keep_numbering)
+                          keep_numbering, GaussIm)
 % ---------- Possibly, combine individually processed BaGoL ROIs into a single
 %            _ROIs.mat file using the _ROIs.mat file that was used to define
 %            the ROIs originally from the SR data
@@ -34,6 +34,8 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 %                otherwise if true, assume MAPN_*.mat files
 %    keep_numbering retain the ROI numbering even if there are missing ROIs
 %                (which will be treated as empty) [default: false]
+%    GaussIm     true if the original SR ROIs were chosen from a Gaussian image
+%                [default: false]
 %
 % OUTPUTS:
 %    Saves pathnameB/Analysis/*_BaGoL_ROIs.mat
@@ -43,6 +45,9 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 
    if ~exist('keep_numbering', 'var')
       keep_numbering = false;
+   end
+   if ~exist('GaussIm', 'var')
+      GaussIm = false;
    end
 
    results_dir = pathnameB;
@@ -149,10 +154,19 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
          for j = 1 : n_labels
             Xnm = RoI{i}.X{j};
 %           if RT.GaussIm    % if GaussIm, have DIPimage style coordinates
-%              Ynm = XYsize(2) - RoI{i}.Y;
+%              Ynm = XYsize(2) - RoI{i}.Y{j};
 %           else
                Ynm = RoI{i}.Y{j};
 %           end
+            % If the original SR ROIs were chosen via GaussIm and then run
+            % individually through BaGoL, ymin and ymax are flipped about the
+            % center of the image, so need to be corrected.  This problem
+            % really should be fixed when the BaGoL ROI is defined, but for now
+            % ...
+            if GaussIm && (ymin > min(Ynm) || ymax < max(Ynm))
+               ymin = XYsize(2) - ymax;
+               ymax = XYsize(2) - ymin;
+            end
             l = xmin <= Xnm & Xnm <= xmax & ymin <= Ynm & Ynm <= ymax;
             fprintf('Cell %d ROI %d Label %d: %d points\n', c, i, j, sum(l));
             % Check that l includes some points!

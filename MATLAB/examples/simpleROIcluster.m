@@ -156,7 +156,7 @@ else
 end
 
 CI.combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
-                    keep_numbering);
+                    keep_numbering, RT.GaussIm);
 
 %% ---------- Possibly, filter out some ROIs
 
