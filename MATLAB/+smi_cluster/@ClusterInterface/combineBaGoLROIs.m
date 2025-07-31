@@ -160,12 +160,14 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 %           end
             % If the original SR ROIs were chosen via GaussIm and then run
             % individually through BaGoL, ymin and ymax are flipped about the
-            % center of the image, so need to be corrected.  This problem
-            % really should be fixed when the BaGoL ROI is defined, but for now
-            % ...
-            if GaussIm && (ymin > min(Ynm) || ymax < max(Ynm))
-               ymin = XYsize(2) - ymax;
-               ymax = XYsize(2) - ymin;
+            % center of the image, so need to be corrected.
+            if GaussIm %&& (ymin > min(Ynm) || ymax < max(Ynm))
+               ymin_old = ymin;
+               ymax_old = ymax;
+               ymin = XYsize(2) - ymax_old;
+               ymax = XYsize(2) - ymin_old;
+               ROI(3:4) = [ymin, ymax];
+               RoI{i}.ROI(3:4) = ROI(3:4);
             end
             l = xmin <= Xnm & Xnm <= xmax & ymin <= Ynm & Ynm <= ymax;
             fprintf('Cell %d ROI %d Label %d: %d points\n', c, i, j, sum(l));
