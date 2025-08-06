@@ -68,6 +68,10 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
          ResultsFile = regexprep(ResultsFile, '_Label_[0-9][0-9]', '');
          ResultsFile = regexprep(ResultsFile, '_L[0-9][0-9]', '');
       end
+      % Extract the filename (see short below) for Windows and MacOS/Linux
+      % conventions.
+      ResultsFile = regexprep(ResultsFile, '^.*/',  '');
+      ResultsFile = regexprep(ResultsFile, '^.*\\', '');
       if isfield(dataR, 'Label1');
          Label1 = dataR.Label1;
       end
