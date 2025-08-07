@@ -25,6 +25,19 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 %    Cell_02_Results_BaGoL_ROIs.mat
 %    ...
 %
+% You can select _ROIs.mat files for multiple cells and then choose the
+% correspnding MAPN ROI files.  If all the MAPN ROI files are present, this
+% works smoothly.  However, if some MAPN ROI files for a particular cell are
+% missing, this may result in an error (Inconsistency in Cell #).  In this
+% situation, run just the single cell with missing MAPN ROIs by itself and all
+% will work fine.  You can then continue to run multiple cells after this
+% cell.  For example, suppose there are 7 cells with cell 4 missing some MAPN
+% ROIs.  Selecting all 7 cells and all MAPN ROIs initially will prodduce the
+% error after cell 3 _BaGoL_ROIs.mat is written out.  So, run cell 4 again,
+% this time by itself, and this time cell 4 _BaGoL_ROIs.mat will be saved.
+% Now, select cells 5-7 (and corresponding BaGoL ROIs) and continue processing.
+% See also the parameter Keep_numbering below.
+%
 % INPUTS:
 %    pathnameR   path to where the ROIs file below are located
 %    filesR      _Results_ROIs.mat files to collect ROI info from
@@ -99,7 +112,7 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
             if k <= n_files
                fileB = filesB{k};
                dataB = load(fullfile(pathnameB, fileB));
-               % Extract the ROI number and label number from the file name. 
+               % Extract the ROI, label and cell number from the file name. 
                i = str2num(regexprep(fileB, '^.*ROI_([0-9][0-9]).*$',   '$1'));
                j = str2num(regexprep(fileB, '^.*Label_([0-9][0-9]).*$', '$1'));
                d = str2num(regexprep(fileB, '^.*Cell_([0-9][0-9]).*$',  '$1'));
@@ -134,9 +147,17 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
          end
       end
 
-      % Eliminate empty ROIs.
+      % Print out missing ROIs.
       missing = setdiff(1 : n_ROIs, found);
-      if ~keep_numbering && isempty(missing)
+      if ~isempty(missing)
+         fprintf('Cell %d MISSING ROIs:', c);
+         for ii = 1 : numel(missing)
+            fprintf(' %d', missing(ii));
+         end
+         fprintf('\n');
+      end
+      % Eliminate empty ROIs.
+      if ~keep_numbering && ~isempty(missing)
          RoI_new = cell(n_ROIs - numel(missing), 1);
          k = 1;
          for ii = 1 : n_ROIs
@@ -145,6 +166,7 @@ function combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
                k = k + 1;
             end
          end
+         k = k - 1;
          n_ROIs = n_ROIs - numel(missing); 
          RoI = RoI_new;
       end
