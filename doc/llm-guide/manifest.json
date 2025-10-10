@@ -1,0 +1,220 @@
+{
+  "name": "smite LLM Interactive Guide",
+  "version": "1.0.0",
+  "base_path": "doc/llm-guide/",
+  "generated": "2025-01-10T14:45:00Z",
+  "index": "index.md",
+  "total_documents": 12,
+  "total_words": 18880,
+  "categories": [
+    {
+      "id": "getting-started",
+      "title": "Getting Started",
+      "description": "Beginner introduction to smite - installation, setup, and first steps",
+      "document_count": 3,
+      "documents": ["quickstart", "installation", "first-analysis"]
+    },
+    {
+      "id": "core-concepts",
+      "title": "Core Concepts",
+      "description": "Foundational knowledge about smite architecture and data structures",
+      "document_count": 3,
+      "documents": ["architecture", "smf-structure", "smd-structure"]
+    },
+    {
+      "id": "workflows",
+      "title": "Workflows",
+      "description": "Complete analysis pipelines for SMLM and SPT",
+      "document_count": 2,
+      "documents": ["smlm-analysis", "spt-tracking"]
+    },
+    {
+      "id": "how-to",
+      "title": "How-To Guides",
+      "description": "Task-based guides for specific operations",
+      "document_count": 2,
+      "documents": ["load-data", "localize-molecules"]
+    },
+    {
+      "id": "examples",
+      "title": "Examples",
+      "description": "Practical, runnable examples",
+      "document_count": 1,
+      "documents": ["basic-localization"]
+    }
+  ],
+  "documents": [
+    {
+      "id": "quickstart",
+      "title": "Quick Start Guide",
+      "path": "getting-started/quickstart.md",
+      "category": "getting-started",
+      "level": "beginner",
+      "tags": ["quickstart", "setup", "first-steps", "getting-started"],
+      "summary": "Get started with smite in 5 minutes - install, verify, and run your first analysis",
+      "estimated_time": "5-10 minutes",
+      "word_count": 750,
+      "prerequisites": [],
+      "related": ["installation", "first-analysis"]
+    },
+    {
+      "id": "installation",
+      "title": "Installation Guide",
+      "path": "getting-started/installation.md",
+      "category": "getting-started",
+      "level": "beginner",
+      "tags": ["installation", "setup", "dependencies", "gpu", "cuda"],
+      "summary": "Complete installation guide for smite including dependencies, GPU setup, and compilation",
+      "estimated_time": "10-15 minutes",
+      "word_count": 1380,
+      "prerequisites": [],
+      "related": ["quickstart", "first-analysis"]
+    },
+    {
+      "id": "first-analysis",
+      "title": "Your First Analysis",
+      "path": "getting-started/first-analysis.md",
+      "category": "getting-started",
+      "level": "beginner",
+      "tags": ["tutorial", "smlm", "gui", "analysis", "workflow"],
+      "summary": "Complete walkthrough of analyzing SMLM data using the GUI",
+      "estimated_time": "15-20 minutes",
+      "word_count": 1234,
+      "prerequisites": ["quickstart", "installation"],
+      "related": ["smlm-analysis", "architecture"]
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture and Design",
+      "path": "core-concepts/architecture.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["architecture", "design", "smf", "smd", "namespaces"],
+      "summary": "Understanding smite's architecture: SMF/SMD paradigm, namespaces, and design philosophy",
+      "estimated_time": "10-15 minutes",
+      "word_count": 1417,
+      "prerequisites": ["quickstart"],
+      "related": ["smf-structure", "smd-structure"]
+    },
+    {
+      "id": "smf-structure",
+      "title": "SMF Structure Reference",
+      "path": "core-concepts/smf-structure.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["smf", "parameters", "configuration", "reference"],
+      "summary": "Complete reference to the Single Molecule Fitting (SMF) parameter structure",
+      "estimated_time": "20-30 minutes",
+      "word_count": 2261,
+      "prerequisites": ["architecture"],
+      "related": ["smd-structure", "smlm-analysis"]
+    },
+    {
+      "id": "smd-structure",
+      "title": "SMD Structure Reference",
+      "path": "core-concepts/smd-structure.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["smd", "results", "data", "reference"],
+      "summary": "Complete reference to the Single Molecule Data (SMD) results structure",
+      "estimated_time": "20-30 minutes",
+      "word_count": 2232,
+      "prerequisites": ["architecture"],
+      "related": ["smf-structure", "smlm-analysis"]
+    },
+    {
+      "id": "smlm-analysis",
+      "title": "SMLM Analysis Workflow",
+      "path": "workflows/smlm-analysis.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["smlm", "super-resolution", "workflow", "localization"],
+      "summary": "Complete workflow for Single Molecule Localization Microscopy analysis",
+      "estimated_time": "20-30 minutes",
+      "word_count": 2258,
+      "prerequisites": ["architecture", "smf-structure", "smd-structure"],
+      "related": ["first-analysis", "localize-molecules", "load-data"]
+    },
+    {
+      "id": "spt-tracking",
+      "title": "SPT Tracking Workflow",
+      "path": "workflows/spt-tracking.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["spt", "tracking", "trajectories", "diffusion"],
+      "summary": "Complete workflow for Single Particle Tracking analysis",
+      "estimated_time": "20-30 minutes",
+      "word_count": 2063,
+      "prerequisites": ["architecture", "smf-structure"],
+      "related": ["smlm-analysis", "localize-molecules"]
+    },
+    {
+      "id": "load-data",
+      "title": "Loading Data",
+      "path": "how-to/load-data.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["data", "loading", "h5", "mat", "files"],
+      "summary": "How to load microscopy data from .h5 and .mat files",
+      "estimated_time": "10-15 minutes",
+      "word_count": 1662,
+      "prerequisites": ["quickstart"],
+      "related": ["smf-structure", "smlm-analysis"]
+    },
+    {
+      "id": "localize-molecules",
+      "title": "Localizing Molecules",
+      "path": "how-to/localize-molecules.md",
+      "category": "how-to",
+      "level": "intermediate",
+      "tags": ["localization", "fitting", "psf", "thresholding"],
+      "summary": "How to find and fit molecular localizations in image data",
+      "estimated_time": "15-20 minutes",
+      "word_count": 1969,
+      "prerequisites": ["architecture", "smf-structure"],
+      "related": ["smlm-analysis", "basic-localization"]
+    },
+    {
+      "id": "basic-localization",
+      "title": "Basic Localization Example",
+      "path": "examples/basic-localization.md",
+      "category": "examples",
+      "level": "beginner",
+      "tags": ["example", "localization", "tutorial", "hands-on"],
+      "summary": "Complete, runnable example of molecule localization from start to finish",
+      "estimated_time": "10-15 minutes",
+      "word_count": 1619,
+      "prerequisites": ["quickstart"],
+      "related": ["localize-molecules", "smlm-analysis"]
+    },
+    {
+      "id": "index",
+      "title": "smite Interactive User Guide",
+      "path": "index.md",
+      "category": "navigation",
+      "level": "beginner",
+      "tags": ["index", "navigation", "guide"],
+      "summary": "Master navigation hub for the smite LLM interactive documentation",
+      "estimated_time": "5 minutes",
+      "word_count": 1415,
+      "prerequisites": [],
+      "related": []
+    }
+  ],
+  "access_methods": {
+    "github_raw": "https://raw.githubusercontent.com/LidkeLab/smite/main/doc/llm-guide/",
+    "local_windows": "file:///C:/Users/klidke/Documents/MATLAB/smite/doc/llm-guide/",
+    "local_unix": "file:///~/Documents/MATLAB/smite/doc/llm-guide/"
+  },
+  "usage": {
+    "for_llms": "Load index.md first for navigation. Use manifest to find relevant documents by category, tags, or prerequisites. Load specific documents as needed based on user questions.",
+    "for_humans": "Start with index.md for an overview. Follow learning paths or search by category/tags to find relevant guides."
+  },
+  "phase": "phase1_essential",
+  "coverage": {
+    "phase1_complete": true,
+    "phase1_documents": 12,
+    "total_planned": 52,
+    "percentage": 23.1
+  }
+}

@@ -1,0 +1,351 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "smite LLM Documentation Status",
+  "description": "Schema for tracking the state of LLM documentation build and maintenance",
+  "type": "object",
+  "required": ["version", "base_path", "phases", "documents", "coverage"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "base_path": {
+      "type": "string",
+      "description": "Base directory for documentation",
+      "default": "doc/llm-guide/"
+    },
+    "last_build": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last build operation (ISO 8601)"
+    },
+    "last_update": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last update operation (ISO 8601)"
+    },
+    "last_validation": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last validation (ISO 8601)"
+    },
+    "phases": {
+      "type": "object",
+      "description": "Build phase status tracking",
+      "properties": {
+        "phase1_essential": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["not_started", "in_progress", "complete"]
+            },
+            "completed": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "started": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "target_docs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "completed_docs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        },
+        "phase2_comprehensive": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["not_started", "in_progress", "complete"]
+            },
+            "completed": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "started": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "target_docs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "completed_docs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        },
+        "phase3_maintenance": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["not_started", "in_progress", "complete"]
+            },
+            "started": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "documents": {
+      "type": "object",
+      "description": "Per-document tracking information",
+      "patternProperties": {
+        "^[a-z-]+/[a-z-]+\\.md$": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["complete", "in_progress", "needs_update", "needs_review", "failed"]
+            },
+            "created": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "word_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "validation": {
+              "type": "string",
+              "enum": ["passed", "failed", "needs_review", "not_tested"]
+            },
+            "source_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Source files this document was derived from"
+            },
+            "derived_from_commits": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{7,40}$"
+              },
+              "description": "Git commit hashes used when generating/updating"
+            },
+            "update_reason": {
+              "type": "string",
+              "description": "Why document needs updating"
+            }
+          }
+        }
+      }
+    },
+    "pending_updates": {
+      "type": "array",
+      "description": "Documents that need updating",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "string",
+            "description": "Document path relative to base_path"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why update is needed"
+          },
+          "detected": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When need was detected"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "major", "minor"],
+            "description": "Update urgency"
+          },
+          "changed_commits": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{7,40}$"
+            },
+            "description": "Commits that triggered this update need"
+          },
+          "changed_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Source files that changed"
+          }
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "description": "Manifest.json status",
+      "properties": {
+        "exists": {
+          "type": "boolean"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "needs_update": {
+          "type": "boolean"
+        }
+      }
+    },
+    "index": {
+      "type": "object",
+      "description": "Index.md status",
+      "properties": {
+        "exists": {
+          "type": "boolean"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "needs_update": {
+          "type": "boolean"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Documentation coverage metrics",
+      "properties": {
+        "total_planned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of planned documents"
+        },
+        "total_complete": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of completed documents"
+        },
+        "percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Coverage percentage"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "description": "Latest validation results",
+      "properties": {
+        "last_run": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "overall_status": {
+          "type": "string",
+          "enum": ["passed", "passed_with_warnings", "failed", "error", "not_run"]
+        },
+        "health_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "files_checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "all_files_exist": {
+          "type": "boolean"
+        },
+        "cross_references_valid": {
+          "type": "boolean"
+        },
+        "frontmatter_consistent": {
+          "type": "boolean"
+        },
+        "code_examples_tested": {
+          "type": "boolean"
+        },
+        "tests": {
+          "type": "object",
+          "properties": {
+            "file_existence": {
+              "type": "string",
+              "enum": ["passed", "failed", "skipped"]
+            },
+            "cross_references": {
+              "type": "string",
+              "enum": ["passed", "failed", "skipped"]
+            },
+            "frontmatter": {
+              "type": "string",
+              "enum": ["passed", "failed", "skipped"]
+            },
+            "manifest": {
+              "type": "string",
+              "enum": ["passed", "failed", "skipped"]
+            },
+            "external_links": {
+              "type": "string",
+              "enum": ["passed", "warning", "failed", "skipped"]
+            },
+            "code_syntax": {
+              "type": "string",
+              "enum": ["passed", "warning", "failed", "skipped"]
+            },
+            "code_execution": {
+              "type": "string",
+              "enum": ["passed", "warning", "failed", "skipped"]
+            },
+            "document_structure": {
+              "type": "string",
+              "enum": ["passed", "failed", "skipped"]
+            }
+          }
+        },
+        "issues": {
+          "type": "object",
+          "properties": {
+            "critical": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "major": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minor": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "warnings": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

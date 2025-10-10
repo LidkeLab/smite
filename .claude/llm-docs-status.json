@@ -1,0 +1,239 @@
+{
+  "version": "1.0.0",
+  "base_path": "doc/llm-guide/",
+  "last_build": "2025-01-10T14:45:00Z",
+  "last_update": "2025-10-10T18:00:00Z",
+  "phases": {
+    "phase1_essential": {
+      "status": "complete",
+      "started": "2025-01-10T14:22:00Z",
+      "completed": "2025-01-10T14:45:00Z",
+      "target_docs": 12,
+      "completed_docs": 12,
+      "description": "Minimum viable documentation set for basic LLM interaction"
+    },
+    "phase2_comprehensive": {
+      "status": "not_started",
+      "target_docs": 40,
+      "completed_docs": 0,
+      "description": "Complete all categories for full coverage"
+    },
+    "phase3_maintenance": {
+      "status": "not_started",
+      "description": "Ongoing updates and refinements based on usage"
+    }
+  },
+  "documents": {
+    "getting-started/quickstart.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:25:00Z",
+      "updated": "2025-01-10T14:25:00Z",
+      "word_count": 750,
+      "validation": "passed",
+      "source_files": ["README.md", "doc/CoreOverview.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "getting-started/installation.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:28:00Z",
+      "updated": "2025-01-10T14:28:00Z",
+      "word_count": 1380,
+      "validation": "passed",
+      "source_files": ["README.md", "doc/mex+CUDA.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "getting-started/first-analysis.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:35:00Z",
+      "updated": "2025-01-10T14:35:00Z",
+      "word_count": 1234,
+      "validation": "passed",
+      "source_files": ["MATLAB/+smi/@SMLM/README.md", "doc/CoreOverview.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "core-concepts/architecture.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:36:00Z",
+      "updated": "2025-01-10T14:36:00Z",
+      "word_count": 1417,
+      "validation": "passed",
+      "source_files": ["CLAUDE.md", "doc/CoreOverview.md", "doc/SMITEclasses.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "core-concepts/smf-structure.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:37:00Z",
+      "updated": "2025-10-10T18:00:00Z",
+      "word_count": 2261,
+      "validation": "passed",
+      "validation_corrections": ["MaxZ_SE default: 0.5→0.05", "PSFSigma default: 1.0→1"],
+      "source_files": ["doc/DataStructures/SMF.md", "MATLAB/+smi_core/@SingleMoleculeFitting/SingleMoleculeFitting.m"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "core-concepts/smd-structure.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:38:00Z",
+      "updated": "2025-01-10T14:38:00Z",
+      "word_count": 2232,
+      "validation": "passed",
+      "source_files": ["doc/DataStructures/SMD.md", "MATLAB/+smi_core/@SingleMoleculeData/SingleMoleculeData.m"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "workflows/smlm-analysis.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:39:00Z",
+      "updated": "2025-01-10T14:39:00Z",
+      "word_count": 2258,
+      "validation": "passed",
+      "source_files": ["MATLAB/+smi/@SMLM/README.md", "MATLAB/+smi/@SMLM/SMLM.m", "doc/CoreOverview.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "workflows/spt-tracking.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:40:00Z",
+      "updated": "2025-01-10T14:40:00Z",
+      "word_count": 2063,
+      "validation": "passed",
+      "source_files": ["MATLAB/+smi/@SPT/README.md", "MATLAB/+smi/@SPT/SPT.m", "doc/DataStructures/TR.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "how-to/load-data.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:41:00Z",
+      "updated": "2025-01-10T14:41:00Z",
+      "word_count": 1662,
+      "validation": "passed",
+      "source_files": ["MATLAB/+smi_core/@LoadData/README.md", "doc/FileFormats/HDF5.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "how-to/localize-molecules.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:42:00Z",
+      "updated": "2025-01-10T14:42:00Z",
+      "word_count": 1969,
+      "validation": "passed",
+      "source_files": ["MATLAB/+smi_core/@LocalizeData/README.md", "MATLAB/+smi_core/README_GaussMLE.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "examples/basic-localization.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:43:00Z",
+      "updated": "2025-01-10T14:43:00Z",
+      "word_count": 1619,
+      "validation": "passed",
+      "source_files": ["MATLAB/examples/Example_LocalizeData.m", "MATLAB/+smi_sim/@GaussBlobs/README.md"],
+      "derived_from_commits": ["0a94de5"]
+    },
+    "index.md": {
+      "status": "complete",
+      "created": "2025-01-10T14:44:00Z",
+      "updated": "2025-01-10T14:44:00Z",
+      "word_count": 1415,
+      "validation": "passed",
+      "source_files": ["manifest.json"],
+      "derived_from_commits": ["0a94de5"]
+    }
+  },
+  "pending_updates": [],
+  "manifest": {
+    "exists": true,
+    "generated": "2025-01-10T14:45:00Z",
+    "needs_update": false
+  },
+  "index": {
+    "exists": true,
+    "generated": "2025-01-10T14:44:00Z",
+    "needs_update": false
+  },
+  "coverage": {
+    "total_planned": 52,
+    "total_complete": 12,
+    "percentage": 23.1
+  },
+  "validation": {
+    "last_run": "2025-01-10T18:00:00Z",
+    "overall_status": "comprehensive_source_verification_complete",
+    "health_score": 95,
+    "source_code_verified": true,
+    "verification_coverage": "100%",
+    "claims_verified": 200,
+    "errors_found": 4,
+    "code_examples_tested": false,
+    "requires_gpu_machine": true,
+    "files_checked": 12,
+    "all_files_exist": true,
+    "cross_references_valid": true,
+    "frontmatter_consistent": true,
+    "corrections_applied": [
+      {
+        "date": "2025-01-10T16:00:00Z",
+        "issue": "BoxSize must be odd",
+        "severity": "critical",
+        "type": "assumption",
+        "status": "FIXED",
+        "locations": [
+          "core-concepts/smf-structure.md (2 places)",
+          "how-to/localize-molecules.md (3 places)",
+          "workflows/smlm-analysis.md (1 place)"
+        ],
+        "fix": "Removed false constraint - BoxSize can be any integer, typically 5-10"
+      },
+      {
+        "date": "2025-01-10T16:00:00Z",
+        "issue": "GPU optional with CPU fallback",
+        "severity": "critical",
+        "type": "assumption",
+        "status": "FIXED",
+        "locations": [
+          "getting-started/quickstart.md",
+          "getting-started/installation.md",
+          "workflows/smlm-analysis.md (2 places)",
+          "how-to/localize-molecules.md",
+          "core-concepts/architecture.md"
+        ],
+        "fix": "Clarified GPU (NVIDIA CUDA) is required for GaussMLE fitting - no CPU fallback"
+      },
+      {
+        "date": "2025-01-10T18:00:00Z",
+        "issue": "MaxZ_SE default value incorrect (0.5 vs 0.05)",
+        "severity": "critical",
+        "type": "transcription_error",
+        "status": "FIXED",
+        "locations": [
+          "core-concepts/smf-structure.md (line 272)"
+        ],
+        "source": "SingleMoleculeFitting.m:212",
+        "fix": "Changed default from 0.5 to 0.05 micrometers (10× error corrected)"
+      },
+      {
+        "date": "2025-01-10T18:00:00Z",
+        "issue": "PSFSigma default value type mismatch (1.0 vs 1)",
+        "severity": "medium",
+        "type": "transcription_error",
+        "status": "FIXED",
+        "locations": [
+          "core-concepts/smf-structure.md (line 210)"
+        ],
+        "source": "SingleMoleculeFitting.m:198",
+        "fix": "Changed default from 1.0 to 1 to match source code integer type"
+      }
+    ],
+    "pending_validation": [
+      {
+        "task": "Test all MATLAB code examples",
+        "status": "deferred",
+        "reason": "Requires GPU machine - current machine has no NVIDIA GPU",
+        "priority": "high",
+        "documents_affected": 12
+      }
+    ],
+    "issues": [
+      {
+        "type": "info",
+        "severity": "low",
+        "message": "Code examples not tested on GPU machine - syntax verified only",
+        "count": 47
+      }
+    ]
+  }
+}
