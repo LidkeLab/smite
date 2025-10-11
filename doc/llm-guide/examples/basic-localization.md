@@ -45,26 +45,32 @@ Copy and run this complete example:
 %% Step 1: Generate Simulated Data
 fprintf('=== Generating Simulated Data ===\n');
 
-% Create simulation object
-Sim = smi_sim.GaussBlobs();
+% Simulation parameters
+SZ = 128;                     % Image size (pixels, square)
+NFrames = 50;                 % Number of frames
+Rho = 0.01;                   % Density (emitters/pixel) - ~200 emitters per frame
+Photons = 1000;               % Photons per emitter
+PSFSigma = 1.3;               % PSF sigma (pixels)
+Bg = 5;                       % Background (photons/pixel)
 
-% Configure simulation parameters
-Sim.Sigma = 1.3;              % PSF sigma (pixels)
-Sim.FrameSize = [128, 128];   % Image size (pixels)
-Sim.NFrames = 50;             % Number of frames
-Sim.NEmitters = 200;          % Number of emitters
-Sim.Photons = 1000;           % Photons per emitter
-Sim.Bg = 5;                   % Background (photons/pixel)
+% Generate image stack using GaussBlobs static method
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 
-% Generate clean data (ground truth)
-[imageStack_clean, SMD_true] = Sim.genRandomBlobImage();
+% For ground truth, generate SMD
+SMD_true = smi_core.SingleMoleculeData.createSMD();
+SMD_true.NFrames = NFrames;
+SMD_true.NDatasets = 1;
+for nn = 1:NFrames
+    N = poissrnd(Rho * SZ * SZ);
+    SMD_true.FrameNum = cat(1, SMD_true.FrameNum, nn*ones(N,1));
+    SMD_true.X = cat(1, SMD_true.X, SZ*rand(N,1));
+    SMD_true.Y = cat(1, SMD_true.Y, SZ*rand(N,1));
+end
 
-% Add Poisson noise (realistic camera data)
-imageStack_noisy = poissrnd(imageStack_clean);
-
-fprintf('Generated %d frames with %d emitters\n', Sim.NFrames, Sim.NEmitters);
-fprintf('Image size: %d × %d pixels\n', Sim.FrameSize);
-fprintf('Photons per emitter: %d\n', Sim.Photons);
+fprintf('Generated %d frames with ~%d emitters per frame\n', NFrames, round(Rho*SZ*SZ));
+fprintf('Image size: %d × %d pixels\n', SZ, SZ);
+fprintf('Photons per emitter: %d\n', Photons);
 
 %% Step 2: Configure SMF for Localization
 fprintf('\n=== Configuring Parameters ===\n');
@@ -197,7 +203,7 @@ subplot(2,3,2);
 plot(SMD_true.X, SMD_true.Y, 'go', 'MarkerSize', 8, 'DisplayName', 'True positions');
 hold on;
 plot(SMD.X, SMD.Y, 'r.', 'MarkerSize', 4, 'DisplayName', 'Localizations');
-axis equal; axis([0 Sim.FrameSize(2) 0 Sim.FrameSize(1)]);
+axis equal; axis([0 SZ 0 SZ]);
 legend('Location', 'best');
 title(sprintf('Localizations (%.0f%% detected)', detection_rate));
 xlabel('X (pixels)'); ylabel('Y (pixels)');
@@ -225,7 +231,7 @@ histogram(SMD.Bg, 30);
 xlabel('Background (photons/pixel)');
 ylabel('Count');
 title(sprintf('Background (mean: %.1f)', mean(SMD.Bg)));
-xline(Sim.Bg, 'g--', 'LineWidth', 2, 'Label', 'True');
+xline(Bg, 'g--', 'LineWidth', 2, 'Label', 'True');
 grid on;
 
 % Panel 6: Localization error distribution
@@ -247,8 +253,12 @@ fprintf('\n=== Generating Super-Resolution Image ===\n');
 
 % Use Gaussian rendering
 SR_zoom = 20;  % 20× zoom (effective pixel size = 5 nm)
-SR_image = smi_vis.GenerateImages.gaussImage([SMD.X, SMD.Y], ...
-    SMF.Data.PixelSize, SR_zoom, [Sim.FrameSize(1), Sim.FrameSize(2)]);
+
+% Prepare SMD for gaussianImage (needs XSize, YSize)
+SMD.XSize = SZ;
+SMD.YSize = SZ;
+
+SR_image = smi_vis.GenerateImages.gaussianImage(SMD, SR_zoom, 0);
 
 % Display
 figure('Name', 'Super-Resolution Image');
@@ -265,7 +275,7 @@ fprintf('Effective SR pixel size: %.1f nm\n', ...
 fprintf('\n=== Summary Statistics ===\n');
 fprintf('----------------------------------------\n');
 fprintf('Data:\n');
-fprintf('  Frames: %d\n', Sim.NFrames);
+fprintf('  Frames: %d\n', NFrames);
 fprintf('  True emitters: %d\n', length(SMD_true.X));
 fprintf('  Localizations found: %d\n', length(SMD.X));
 fprintf('  Detection rate: %.1f%%\n', detection_rate);
@@ -326,20 +336,28 @@ When you run this example, you should see:
 
 ```matlab
 % Brighter emitters (better precision)
-Sim.Photons = 2000;
+Photons = 2000;
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 
 % Dimmer emitters (worse precision)
-Sim.Photons = 500;
+Photons = 500;
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 ```
 
 ### 2. Change Background Level
 
 ```matlab
 % Higher background (worse SNR)
-Sim.Bg = 20;
+Bg = 20;
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 
 % Lower background (better SNR)
-Sim.Bg = 1;
+Bg = 1;
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 ```
 
 ### 3. Adjust Detection Threshold
@@ -368,15 +386,19 @@ xlabel('Fitted PSF Sigma (pixels)');
 
 ```matlab
 % More frames = more localizations
-Sim.NFrames = 200;
+NFrames = 200;
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 ```
 
 ### 6. Change Image Size
 
 ```matlab
 % Larger field of view
-Sim.FrameSize = [256, 256];
-Sim.NEmitters = 800;  % Scale emitter count
+SZ = 256;
+Rho = 0.01;  % Same density = more total emitters
+imageStack_noisy = smi_sim.GaussBlobs.genRandomBlobImage(SZ, NFrames, Rho, ...
+    Photons, PSFSigma, Bg);
 ```
 
 ## Understanding the Output
@@ -423,20 +445,20 @@ After running this example:
 
 Solutions:
 - Lower `BoxFinding.MinPhotons`
-- Increase `Sim.Photons` (make emitters brighter)
+- Increase `Photons` parameter (make emitters brighter)
 - Check thresholding isn't too aggressive
 
 **Issue: Poor precision (>50 nm)**
 
 Solutions:
-- Increase `Sim.Photons`
-- Decrease `Sim.Bg`
+- Increase `Photons` parameter
+- Decrease `Bg` parameter
 - Check camera parameters are correct
 
 **Issue: High localization error**
 
 Solutions:
-- Verify `SMF.Fitting.PSFSigma` matches simulation
+- Verify `SMF.Fitting.PSFSigma` matches `PSFSigma` simulation parameter
 - Check for fitting convergence (increase iterations)
 - Ensure thresholding filters poor fits
 
@@ -444,8 +466,8 @@ Solutions:
 
 Solutions:
 - Check GPU is working: `gpuDevice`
-- Reduce `Sim.NFrames` for testing
-- Reduce `Sim.NEmitters`
+- Reduce `NFrames` parameter for testing
+- Reduce `Rho` parameter (density)
 
 ## See Also
 
