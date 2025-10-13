@@ -2,45 +2,58 @@
   "name": "smite LLM Interactive Guide",
   "version": "1.0.0",
   "base_path": "doc/llm-guide/",
-  "generated": "2025-01-10T14:45:00Z",
+  "generated": "2025-10-11T01:00:00Z",
+  "total_documents": 57,
   "index": "index.md",
-  "total_documents": 12,
-  "total_words": 18880,
+  "description": "Comprehensive LLM-optimized documentation for the smite (Single Molecule Imaging Toolbox Extraordinaire) - a MATLAB-based toolbox for fluorescence single molecule imaging analysis with emphasis on SMLM and SPT",
   "categories": [
     {
       "id": "getting-started",
       "title": "Getting Started",
-      "description": "Beginner introduction to smite - installation, setup, and first steps",
-      "document_count": 3,
-      "documents": ["quickstart", "installation", "first-analysis"]
+      "description": "Essential guides for new users to quickly start using smite for single molecule analysis",
+      "document_count": 4
     },
     {
       "id": "core-concepts",
       "title": "Core Concepts",
-      "description": "Foundational knowledge about smite architecture and data structures",
-      "document_count": 3,
-      "documents": ["architecture", "smf-structure", "smd-structure"]
+      "description": "Fundamental architecture, data structures, and design patterns that define smite",
+      "document_count": 6
     },
     {
       "id": "workflows",
       "title": "Workflows",
-      "description": "Complete analysis pipelines for SMLM and SPT",
-      "document_count": 2,
-      "documents": ["smlm-analysis", "spt-tracking"]
+      "description": "Complete step-by-step workflows for major analysis pipelines including SMLM, SPT, and batch processing",
+      "document_count": 8
     },
     {
       "id": "how-to",
       "title": "How-To Guides",
-      "description": "Task-based guides for specific operations",
-      "document_count": 2,
-      "documents": ["load-data", "localize-molecules"]
+      "description": "Practical, task-focused guides for specific operations and configurations",
+      "document_count": 13
     },
     {
       "id": "examples",
       "title": "Examples",
-      "description": "Practical, runnable examples",
-      "document_count": 1,
-      "documents": ["basic-localization"]
+      "description": "Working code examples demonstrating common and advanced analysis scenarios",
+      "document_count": 5
+    },
+    {
+      "id": "api-reference",
+      "title": "API Reference",
+      "description": "Detailed namespace and class documentation for programmatic access",
+      "document_count": 9
+    },
+    {
+      "id": "reference",
+      "title": "Reference",
+      "description": "Technical reference materials including data structures, file formats, and dependencies",
+      "document_count": 5
+    },
+    {
+      "id": "troubleshooting",
+      "title": "Troubleshooting",
+      "description": "Solutions to common problems, errors, and optimization issues",
+      "document_count": 6
     }
   ],
   "documents": [
@@ -50,25 +63,23 @@
       "path": "getting-started/quickstart.md",
       "category": "getting-started",
       "level": "beginner",
-      "tags": ["quickstart", "setup", "first-steps", "getting-started"],
-      "summary": "Get started with smite in 5 minutes - install, verify, and run your first analysis",
-      "estimated_time": "5-10 minutes",
-      "word_count": 750,
+      "tags": ["quickstart", "tutorial", "smlm", "basics"],
+      "summary": "Fast-track introduction to running your first SMLM analysis in under 10 minutes",
       "prerequisites": [],
-      "related": ["installation", "first-analysis"]
+      "related": ["installation", "first-analysis"],
+      "estimated_time": "10 minutes"
     },
     {
       "id": "installation",
-      "title": "Installation Guide",
+      "title": "Installation and Setup",
       "path": "getting-started/installation.md",
       "category": "getting-started",
       "level": "beginner",
-      "tags": ["installation", "setup", "dependencies", "gpu", "cuda"],
-      "summary": "Complete installation guide for smite including dependencies, GPU setup, and compilation",
-      "estimated_time": "10-15 minutes",
-      "word_count": 1380,
+      "tags": ["installation", "setup", "dependencies", "gpu"],
+      "summary": "Complete installation instructions including MATLAB setup, GPU configuration, and dependency verification",
       "prerequisites": [],
-      "related": ["quickstart", "first-analysis"]
+      "related": ["quickstart", "dependencies"],
+      "estimated_time": "15 minutes"
     },
     {
       "id": "first-analysis",
@@ -76,38 +87,47 @@
       "path": "getting-started/first-analysis.md",
       "category": "getting-started",
       "level": "beginner",
-      "tags": ["tutorial", "smlm", "gui", "analysis", "workflow"],
-      "summary": "Complete walkthrough of analyzing SMLM data using the GUI",
-      "estimated_time": "15-20 minutes",
-      "word_count": 1234,
-      "prerequisites": ["quickstart", "installation"],
-      "related": ["smlm-analysis", "architecture"]
+      "tags": ["tutorial", "smlm", "workflow", "beginner"],
+      "summary": "Step-by-step tutorial for performing your first complete SMLM analysis from raw data to super-resolution image",
+      "prerequisites": ["installation"],
+      "related": ["quickstart", "smlm-analysis"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "understanding-results",
+      "title": "Understanding Your Results",
+      "path": "getting-started/understanding-results.md",
+      "category": "getting-started",
+      "level": "beginner",
+      "tags": ["results", "smd", "interpretation", "visualization"],
+      "summary": "Guide to interpreting SMLM results including SMD structure, precision metrics, and output files",
+      "prerequisites": ["first-analysis"],
+      "related": ["smd-structure", "visualize-results"],
+      "estimated_time": "15 minutes"
     },
     {
       "id": "architecture",
-      "title": "Architecture and Design",
+      "title": "Architecture Overview",
       "path": "core-concepts/architecture.md",
       "category": "core-concepts",
       "level": "intermediate",
-      "tags": ["architecture", "design", "smf", "smd", "namespaces"],
-      "summary": "Understanding smite's architecture: SMF/SMD paradigm, namespaces, and design philosophy",
-      "estimated_time": "10-15 minutes",
-      "word_count": 1417,
-      "prerequisites": ["quickstart"],
-      "related": ["smf-structure", "smd-structure"]
+      "tags": ["architecture", "design", "namespaces", "structure"],
+      "summary": "Complete overview of smite's architecture including namespace organization, design philosophy, and component relationships",
+      "prerequisites": [],
+      "related": ["data-flow", "smf-structure"],
+      "estimated_time": "20 minutes"
     },
     {
       "id": "smf-structure",
-      "title": "SMF Structure Reference",
+      "title": "SMF Structure Deep Dive",
       "path": "core-concepts/smf-structure.md",
       "category": "core-concepts",
       "level": "intermediate",
-      "tags": ["smf", "parameters", "configuration", "reference"],
-      "summary": "Complete reference to the Single Molecule Fitting (SMF) parameter structure",
-      "estimated_time": "20-30 minutes",
-      "word_count": 2261,
-      "prerequisites": ["architecture"],
-      "related": ["smd-structure", "smlm-analysis"]
+      "tags": ["smf", "parameters", "configuration", "data-structure"],
+      "summary": "Comprehensive guide to the SingleMoleculeFitting structure that controls all analysis parameters",
+      "prerequisites": [],
+      "related": ["smd-structure", "data-flow"],
+      "estimated_time": "25 minutes"
     },
     {
       "id": "smd-structure",
@@ -115,64 +135,299 @@
       "path": "core-concepts/smd-structure.md",
       "category": "core-concepts",
       "level": "intermediate",
-      "tags": ["smd", "results", "data", "reference"],
-      "summary": "Complete reference to the Single Molecule Data (SMD) results structure",
-      "estimated_time": "20-30 minutes",
-      "word_count": 2232,
-      "prerequisites": ["architecture"],
-      "related": ["smf-structure", "smlm-analysis"]
+      "tags": ["smd", "results", "data-structure", "localizations"],
+      "summary": "Complete reference for the SingleMoleculeData structure containing localization results",
+      "prerequisites": [],
+      "related": ["smf-structure", "tr-structure"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "tr-structure",
+      "title": "TR Structure for Tracking",
+      "path": "core-concepts/tr-structure.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["tracking", "spt", "trajectories", "data-structure"],
+      "summary": "Guide to the Tracking Results structure used for single particle tracking analysis",
+      "prerequisites": ["smd-structure"],
+      "related": ["spt-tracking"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "coordinate-system",
+      "title": "Coordinate System and Conventions",
+      "path": "core-concepts/coordinate-system.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["coordinates", "conventions", "indexing"],
+      "summary": "Explanation of smite's coordinate system, indexing conventions, and spatial reference frames",
+      "prerequisites": [],
+      "related": ["smd-structure", "architecture"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "data-flow",
+      "title": "Data Flow Through Pipelines",
+      "path": "core-concepts/data-flow.md",
+      "category": "core-concepts",
+      "level": "intermediate",
+      "tags": ["pipeline", "workflow", "architecture", "data-flow"],
+      "summary": "Visual and textual explanation of how data flows through SMLM and SPT pipelines",
+      "prerequisites": ["architecture", "smf-structure"],
+      "related": ["smlm-analysis", "spt-tracking"],
+      "estimated_time": "15 minutes"
     },
     {
       "id": "smlm-analysis",
-      "title": "SMLM Analysis Workflow",
+      "title": "Complete SMLM Analysis Workflow",
       "path": "workflows/smlm-analysis.md",
       "category": "workflows",
       "level": "intermediate",
-      "tags": ["smlm", "super-resolution", "workflow", "localization"],
-      "summary": "Complete workflow for Single Molecule Localization Microscopy analysis",
-      "estimated_time": "20-30 minutes",
-      "word_count": 2258,
-      "prerequisites": ["architecture", "smf-structure", "smd-structure"],
-      "related": ["first-analysis", "localize-molecules", "load-data"]
+      "tags": ["smlm", "workflow", "pipeline", "super-resolution"],
+      "summary": "Comprehensive guide to the complete SMLM analysis pipeline from raw data to super-resolution images",
+      "prerequisites": ["smf-structure", "smd-structure"],
+      "related": ["first-analysis", "localize-molecules"],
+      "estimated_time": "25 minutes"
     },
     {
       "id": "spt-tracking",
-      "title": "SPT Tracking Workflow",
+      "title": "Single Particle Tracking Workflow",
       "path": "workflows/spt-tracking.md",
       "category": "workflows",
       "level": "intermediate",
       "tags": ["spt", "tracking", "trajectories", "diffusion"],
-      "summary": "Complete workflow for Single Particle Tracking analysis",
-      "estimated_time": "20-30 minutes",
-      "word_count": 2063,
-      "prerequisites": ["architecture", "smf-structure"],
-      "related": ["smlm-analysis", "localize-molecules"]
+      "summary": "Complete workflow for tracking single particles through time and analyzing their motion",
+      "prerequisites": ["smf-structure", "smd-structure"],
+      "related": ["smlm-analysis", "localize-molecules"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "batch-processing",
+      "title": "Batch Processing with smi.Publish",
+      "path": "workflows/batch-processing.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["batch", "publish", "workflow", "multi-cell", "automation"],
+      "summary": "Comprehensive guide to batch processing multiple datasets using the smi.Publish class with standard directory structures",
+      "prerequisites": ["smf-structure", "smd-structure", "smlm-analysis"],
+      "related": ["first-analysis", "spt-tracking"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "drift-correction",
+      "title": "Drift Correction in SMLM",
+      "path": "workflows/drift-correction.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["drift-correction", "knn", "brightfield", "registration", "alignment"],
+      "summary": "Comprehensive guide to correcting stage drift during long SMLM acquisitions using fiducial-free and brightfield-based methods",
+      "prerequisites": ["smf-structure", "smd-structure", "smlm-analysis"],
+      "related": ["localize-molecules"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "frame-connection",
+      "title": "Frame Connection for SMLM Blinking Analysis",
+      "path": "workflows/frame-connection.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["frame-connection", "smlm", "blinking", "precision", "lap-fc"],
+      "summary": "Comprehensive guide to frame connection, which links localizations across frames from the same blinking emitter to improve precision and reduce data size",
+      "prerequisites": ["smf-structure", "smd-structure", "smlm-analysis"],
+      "related": ["smlm-analysis", "spt-tracking", "localize-molecules"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "bagol-clustering",
+      "title": "BaGoL Clustering Workflow",
+      "path": "workflows/bagol-clustering.md",
+      "category": "workflows",
+      "level": "advanced",
+      "tags": ["bagol", "clustering", "bayesian", "super-resolution"],
+      "summary": "Bayesian Grouping of Localizations workflow for determining true emitter positions",
+      "prerequisites": ["smlm-analysis", "smd-structure"],
+      "related": ["smi-cluster"],
+      "estimated_time": "25 minutes"
+    },
+    {
+      "id": "channel-registration",
+      "title": "Multi-Channel Registration",
+      "path": "workflows/channel-registration.md",
+      "category": "workflows",
+      "level": "advanced",
+      "tags": ["multi-channel", "registration", "alignment", "two-color"],
+      "summary": "Guide to registering and aligning multi-channel SMLM data",
+      "prerequisites": ["smlm-analysis", "batch-processing"],
+      "related": ["multi-channel"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "roi-analysis",
+      "title": "ROI-Based Analysis",
+      "path": "workflows/roi-analysis.md",
+      "category": "workflows",
+      "level": "intermediate",
+      "tags": ["roi", "regions", "analysis", "segmentation"],
+      "summary": "Workflow for analyzing specific regions of interest within SMLM data",
+      "prerequisites": ["smlm-analysis"],
+      "related": ["work-with-rois"],
+      "estimated_time": "15 minutes"
     },
     {
       "id": "load-data",
-      "title": "Loading Data",
+      "title": "How to Load Data",
       "path": "how-to/load-data.md",
       "category": "how-to",
       "level": "beginner",
-      "tags": ["data", "loading", "h5", "mat", "files"],
-      "summary": "How to load microscopy data from .h5 and .mat files",
-      "estimated_time": "10-15 minutes",
-      "word_count": 1662,
-      "prerequisites": ["quickstart"],
-      "related": ["smf-structure", "smlm-analysis"]
+      "tags": ["data-loading", "files", "h5", "mat", "roi"],
+      "summary": "Practical guide to loading raw camera data from .h5 and .mat files into smite",
+      "prerequisites": ["smf-structure"],
+      "related": ["localize-molecules", "smlm-analysis"],
+      "estimated_time": "10 minutes"
     },
     {
       "id": "localize-molecules",
-      "title": "Localizing Molecules",
+      "title": "How to Localize Molecules",
       "path": "how-to/localize-molecules.md",
       "category": "how-to",
       "level": "intermediate",
-      "tags": ["localization", "fitting", "psf", "thresholding"],
-      "summary": "How to find and fit molecular localizations in image data",
-      "estimated_time": "15-20 minutes",
-      "word_count": 1969,
-      "prerequisites": ["architecture", "smf-structure"],
-      "related": ["smlm-analysis", "basic-localization"]
+      "tags": ["localization", "fitting", "psf", "precision"],
+      "summary": "Detailed guide to finding and fitting molecules to obtain precise localizations",
+      "prerequisites": ["load-data", "smf-structure"],
+      "related": ["smlm-analysis", "basic-localization"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "create-smf",
+      "title": "Creating and Configuring SMF",
+      "path": "how-to/create-smf.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["smf", "configuration", "parameters"],
+      "summary": "Step-by-step guide to creating and configuring SingleMoleculeFitting structures",
+      "prerequisites": ["smf-structure"],
+      "related": ["tune-parameters", "first-analysis"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "calibrate-camera",
+      "title": "Camera Calibration",
+      "path": "how-to/calibrate-camera.md",
+      "category": "how-to",
+      "level": "intermediate",
+      "tags": ["camera", "calibration", "scmos", "emccd"],
+      "summary": "Guide to camera calibration including gain, offset, and noise characterization",
+      "prerequisites": [],
+      "related": ["load-data", "file-formats"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "threshold-results",
+      "title": "Thresholding Localizations",
+      "path": "how-to/threshold-results.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["thresholding", "filtering", "quality-control"],
+      "summary": "How to filter localizations based on quality metrics and custom criteria",
+      "prerequisites": ["localize-molecules"],
+      "related": ["tune-parameters", "smlm-analysis"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "visualize-results",
+      "title": "Visualizing Results",
+      "path": "how-to/visualize-results.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["visualization", "images", "plots", "super-resolution"],
+      "summary": "Guide to creating super-resolution images and diagnostic plots",
+      "prerequisites": ["understanding-results"],
+      "related": ["export-results", "smi-vis"],
+      "estimated_time": "12 minutes"
+    },
+    {
+      "id": "save-and-load-smd",
+      "title": "Saving and Loading Results",
+      "path": "how-to/save-and-load-smd.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["saving", "loading", "persistence", "smd"],
+      "summary": "How to save and load SMD structures and analysis results",
+      "prerequisites": ["smd-structure"],
+      "related": ["export-results"],
+      "estimated_time": "8 minutes"
+    },
+    {
+      "id": "export-results",
+      "title": "Exporting Results",
+      "path": "how-to/export-results.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["export", "csv", "excel", "formats"],
+      "summary": "How to export results to various formats for external analysis",
+      "prerequisites": ["smd-structure"],
+      "related": ["save-and-load-smd", "visualize-results"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "tune-parameters",
+      "title": "Tuning Analysis Parameters",
+      "path": "how-to/tune-parameters.md",
+      "category": "how-to",
+      "level": "intermediate",
+      "tags": ["optimization", "parameters", "tuning"],
+      "summary": "Systematic approach to optimizing analysis parameters for your data",
+      "prerequisites": ["smlm-analysis"],
+      "related": ["threshold-results", "localization-quality"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "simulate-data",
+      "title": "Simulating SMLM Data",
+      "path": "how-to/simulate-data.md",
+      "category": "how-to",
+      "level": "intermediate",
+      "tags": ["simulation", "synthetic-data", "testing"],
+      "summary": "How to generate synthetic SMLM and SPT data for testing and validation",
+      "prerequisites": ["smf-structure"],
+      "related": ["smi-sim", "testing"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "use-gpu",
+      "title": "Using GPU Acceleration",
+      "path": "how-to/use-gpu.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["gpu", "cuda", "performance"],
+      "summary": "Guide to configuring and using GPU acceleration for localization",
+      "prerequisites": [],
+      "related": ["installation", "gpu-problems"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "work-with-rois",
+      "title": "Working with ROIs",
+      "path": "how-to/work-with-rois.md",
+      "category": "how-to",
+      "level": "beginner",
+      "tags": ["roi", "regions", "cropping"],
+      "summary": "How to define, apply, and analyze regions of interest",
+      "prerequisites": ["load-data"],
+      "related": ["roi-analysis"],
+      "estimated_time": "12 minutes"
+    },
+    {
+      "id": "combine-datasets",
+      "title": "Combining Multiple Datasets",
+      "path": "how-to/combine-datasets.md",
+      "category": "how-to",
+      "level": "intermediate",
+      "tags": ["datasets", "combining", "concatenation"],
+      "summary": "How to combine localizations from multiple datasets",
+      "prerequisites": ["smd-structure"],
+      "related": ["batch-processing"],
+      "estimated_time": "10 minutes"
     },
     {
       "id": "basic-localization",
@@ -180,41 +435,347 @@
       "path": "examples/basic-localization.md",
       "category": "examples",
       "level": "beginner",
-      "tags": ["example", "localization", "tutorial", "hands-on"],
-      "summary": "Complete, runnable example of molecule localization from start to finish",
-      "estimated_time": "10-15 minutes",
-      "word_count": 1619,
-      "prerequisites": ["quickstart"],
-      "related": ["localize-molecules", "smlm-analysis"]
+      "tags": ["example", "localization", "tutorial"],
+      "summary": "Simple complete example of loading data and localizing molecules",
+      "prerequisites": ["first-analysis"],
+      "related": ["localize-molecules"],
+      "estimated_time": "10 minutes"
     },
     {
-      "id": "index",
-      "title": "smite Interactive User Guide",
-      "path": "index.md",
-      "category": "navigation",
-      "level": "beginner",
-      "tags": ["index", "navigation", "guide"],
-      "summary": "Master navigation hub for the smite LLM interactive documentation",
-      "estimated_time": "5 minutes",
-      "word_count": 1415,
+      "id": "multi-channel",
+      "title": "Multi-Channel SMLM Example",
+      "path": "examples/multi-channel.md",
+      "category": "examples",
+      "level": "intermediate",
+      "tags": ["example", "multi-channel", "two-color"],
+      "summary": "Example of analyzing and overlaying multi-channel SMLM data",
+      "prerequisites": ["smlm-analysis"],
+      "related": ["channel-registration"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "tracking-diffusion",
+      "title": "Tracking and Diffusion Analysis Example",
+      "path": "examples/tracking-diffusion.md",
+      "category": "examples",
+      "level": "intermediate",
+      "tags": ["example", "spt", "tracking", "diffusion"],
+      "summary": "Complete example of single particle tracking and diffusion coefficient estimation",
+      "prerequisites": ["spt-tracking"],
+      "related": ["smi-stat"],
+      "estimated_time": "18 minutes"
+    },
+    {
+      "id": "3d-localization",
+      "title": "3D Localization with Astigmatism",
+      "path": "examples/3d-localization.md",
+      "category": "examples",
+      "level": "advanced",
+      "tags": ["example", "3d", "astigmatism", "z-position"],
+      "summary": "Example of 3D localization using astigmatic PSF",
+      "prerequisites": ["localize-molecules"],
+      "related": ["smi-psf"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "clustering-analysis",
+      "title": "Clustering Analysis Example",
+      "path": "examples/clustering-analysis.md",
+      "category": "examples",
+      "level": "advanced",
+      "tags": ["example", "clustering", "dbscan", "analysis"],
+      "summary": "Example of performing clustering analysis on SMLM results",
+      "prerequisites": ["smlm-analysis"],
+      "related": ["bagol-clustering", "smi-cluster"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-namespace",
+      "title": "smi Namespace Overview",
+      "path": "api-reference/smi-namespace.md",
+      "category": "api-reference",
+      "level": "intermediate",
+      "tags": ["api", "namespace", "reference"],
+      "summary": "Overview of the main smi namespace and its entry-point classes",
+      "prerequisites": ["architecture"],
+      "related": ["smi-core", "api-navigation"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-core",
+      "title": "smi_core Namespace Reference",
+      "path": "api-reference/smi-core.md",
+      "category": "api-reference",
+      "level": "intermediate",
+      "tags": ["api", "core", "reference", "classes"],
+      "summary": "Complete reference for core functionality classes in smi_core namespace",
+      "prerequisites": ["architecture"],
+      "related": ["smi-namespace"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "smi-vis",
+      "title": "smi_vis Visualization Reference",
+      "path": "api-reference/smi-vis.md",
+      "category": "api-reference",
+      "level": "intermediate",
+      "tags": ["api", "visualization", "images", "plots"],
+      "summary": "Reference for visualization and image generation tools",
       "prerequisites": [],
-      "related": []
+      "related": ["visualize-results"],
+      "estimated_time": "12 minutes"
+    },
+    {
+      "id": "smi-sim",
+      "title": "smi_sim Simulation Reference",
+      "path": "api-reference/smi-sim.md",
+      "category": "api-reference",
+      "level": "intermediate",
+      "tags": ["api", "simulation", "synthetic-data"],
+      "summary": "Reference for data simulation tools and classes",
+      "prerequisites": [],
+      "related": ["simulate-data"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-cluster",
+      "title": "smi_cluster Analysis Reference",
+      "path": "api-reference/smi-cluster.md",
+      "category": "api-reference",
+      "level": "advanced",
+      "tags": ["api", "clustering", "analysis"],
+      "summary": "Reference for clustering and spatial analysis tools",
+      "prerequisites": [],
+      "related": ["bagol-clustering", "clustering-analysis"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-stat",
+      "title": "smi_stat Statistics Reference",
+      "path": "api-reference/smi-stat.md",
+      "category": "api-reference",
+      "level": "advanced",
+      "tags": ["api", "statistics", "hmm", "diffusion"],
+      "summary": "Reference for statistical analysis methods including HMM and diffusion estimation",
+      "prerequisites": [],
+      "related": ["spt-tracking", "tracking-diffusion"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-psf",
+      "title": "smi_psf PSF Tools Reference",
+      "path": "api-reference/smi-psf.md",
+      "category": "api-reference",
+      "level": "advanced",
+      "tags": ["api", "psf", "3d", "fitting"],
+      "summary": "Reference for PSF modeling and 3D localization tools",
+      "prerequisites": [],
+      "related": ["3d-localization"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "smi-helpers",
+      "title": "smi_helpers Utilities Reference",
+      "path": "api-reference/smi-helpers.md",
+      "category": "api-reference",
+      "level": "intermediate",
+      "tags": ["api", "utilities", "helpers"],
+      "summary": "Reference for helper utilities and convenience functions",
+      "prerequisites": [],
+      "related": [],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "api-navigation",
+      "title": "API Navigation Guide",
+      "path": "api-reference/navigation.md",
+      "category": "api-reference",
+      "level": "beginner",
+      "tags": ["api", "navigation", "guide"],
+      "summary": "Guide to navigating the smite API and finding the right tools",
+      "prerequisites": [],
+      "related": ["smi-namespace", "smi-core"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "data-structures",
+      "title": "Data Structures Reference",
+      "path": "reference/data-structures.md",
+      "category": "reference",
+      "level": "intermediate",
+      "tags": ["reference", "data-structures", "smf", "smd", "tr"],
+      "summary": "Complete reference for all major data structures in smite",
+      "prerequisites": [],
+      "related": ["smf-structure", "smd-structure"],
+      "estimated_time": "20 minutes"
+    },
+    {
+      "id": "file-formats",
+      "title": "File Formats Reference",
+      "path": "reference/file-formats.md",
+      "category": "reference",
+      "level": "intermediate",
+      "tags": ["reference", "files", "formats", "h5", "mat"],
+      "summary": "Documentation of all file formats used by smite",
+      "prerequisites": [],
+      "related": ["load-data"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "dependencies",
+      "title": "Dependencies and Requirements",
+      "path": "reference/dependencies.md",
+      "category": "reference",
+      "level": "beginner",
+      "tags": ["reference", "dependencies", "requirements"],
+      "summary": "Complete list of dependencies, toolboxes, and system requirements",
+      "prerequisites": [],
+      "related": ["installation"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "compilation",
+      "title": "Compilation Guide",
+      "path": "reference/compilation.md",
+      "category": "reference",
+      "level": "advanced",
+      "tags": ["reference", "compilation", "mex", "cuda"],
+      "summary": "Guide to compiling mex and CUDA files from source",
+      "prerequisites": ["installation"],
+      "related": ["compilation-errors"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "testing",
+      "title": "Testing Framework",
+      "path": "reference/testing.md",
+      "category": "reference",
+      "level": "advanced",
+      "tags": ["reference", "testing", "unit-tests", "validation"],
+      "summary": "Guide to the testing framework and running unit tests",
+      "prerequisites": [],
+      "related": ["simulate-data"],
+      "estimated_time": "12 minutes"
+    },
+    {
+      "id": "installation-issues",
+      "title": "Installation Problems",
+      "path": "troubleshooting/installation-issues.md",
+      "category": "troubleshooting",
+      "level": "beginner",
+      "tags": ["troubleshooting", "installation", "setup"],
+      "summary": "Solutions to common installation and setup problems",
+      "prerequisites": [],
+      "related": ["installation"],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "gpu-problems",
+      "title": "GPU Issues",
+      "path": "troubleshooting/gpu-problems.md",
+      "category": "troubleshooting",
+      "level": "beginner",
+      "tags": ["troubleshooting", "gpu", "cuda"],
+      "summary": "Diagnosing and fixing GPU-related problems",
+      "prerequisites": [],
+      "related": ["use-gpu", "installation"],
+      "estimated_time": "12 minutes"
+    },
+    {
+      "id": "localization-quality",
+      "title": "Localization Quality Issues",
+      "path": "troubleshooting/localization-quality.md",
+      "category": "troubleshooting",
+      "level": "intermediate",
+      "tags": ["troubleshooting", "localization", "quality", "precision"],
+      "summary": "Diagnosing and improving poor localization quality",
+      "prerequisites": ["localize-molecules"],
+      "related": ["tune-parameters"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "memory-issues",
+      "title": "Memory Problems",
+      "path": "troubleshooting/memory-issues.md",
+      "category": "troubleshooting",
+      "level": "intermediate",
+      "tags": ["troubleshooting", "memory", "performance"],
+      "summary": "Solutions for out-of-memory errors and memory optimization",
+      "prerequisites": [],
+      "related": [],
+      "estimated_time": "10 minutes"
+    },
+    {
+      "id": "compilation-errors",
+      "title": "Compilation Errors",
+      "path": "troubleshooting/compilation-errors.md",
+      "category": "troubleshooting",
+      "level": "advanced",
+      "tags": ["troubleshooting", "compilation", "mex", "cuda"],
+      "summary": "Solutions to mex and CUDA compilation errors",
+      "prerequisites": ["compilation"],
+      "related": ["gpu-problems"],
+      "estimated_time": "15 minutes"
+    },
+    {
+      "id": "common-mistakes",
+      "title": "Common Mistakes",
+      "path": "troubleshooting/common-mistakes.md",
+      "category": "troubleshooting",
+      "level": "beginner",
+      "tags": ["troubleshooting", "mistakes", "pitfalls"],
+      "summary": "Common mistakes users make and how to avoid them",
+      "prerequisites": [],
+      "related": [],
+      "estimated_time": "12 minutes"
     }
   ],
   "access_methods": {
     "github_raw": "https://raw.githubusercontent.com/LidkeLab/smite/main/doc/llm-guide/",
-    "local_windows": "file:///C:/Users/klidke/Documents/MATLAB/smite/doc/llm-guide/",
-    "local_unix": "file:///~/Documents/MATLAB/smite/doc/llm-guide/"
+    "local": "file:///C:/Users/klidke/Documents/MATLAB/smite/doc/llm-guide/",
+    "repository": "https://github.com/LidkeLab/smite"
   },
-  "usage": {
-    "for_llms": "Load index.md first for navigation. Use manifest to find relevant documents by category, tags, or prerequisites. Load specific documents as needed based on user questions.",
-    "for_humans": "Start with index.md for an overview. Follow learning paths or search by category/tags to find relevant guides."
+  "usage_instructions": {
+    "for_llms": "This manifest provides a structured index of all smite documentation. When helping users, reference specific documents by their 'path' field. Use 'prerequisites' to guide learning paths and 'related' for cross-references. The 'summary' field provides quick context for each document.",
+    "for_humans": "Browse documents by category. Start with 'getting-started' for basics, then explore 'workflows' for complete pipelines. Use 'how-to' guides for specific tasks and 'troubleshooting' when you encounter problems. The 'api-reference' section provides detailed technical documentation.",
+    "learning_paths": {
+      "complete_beginner": [
+        "getting-started/installation.md",
+        "getting-started/quickstart.md",
+        "getting-started/first-analysis.md",
+        "getting-started/understanding-results.md"
+      ],
+      "smlm_user": [
+        "workflows/smlm-analysis.md",
+        "how-to/localize-molecules.md",
+        "workflows/frame-connection.md",
+        "workflows/drift-correction.md"
+      ],
+      "spt_user": [
+        "workflows/spt-tracking.md",
+        "examples/tracking-diffusion.md",
+        "core-concepts/tr-structure.md"
+      ],
+      "batch_processing": [
+        "workflows/batch-processing.md",
+        "how-to/combine-datasets.md",
+        "workflows/roi-analysis.md"
+      ],
+      "advanced_analysis": [
+        "workflows/bagol-clustering.md",
+        "examples/3d-localization.md",
+        "workflows/channel-registration.md"
+      ]
+    }
   },
-  "phase": "phase1_essential",
-  "coverage": {
-    "phase1_complete": true,
-    "phase1_documents": 12,
-    "total_planned": 52,
-    "percentage": 23.1
+  "metadata": {
+    "toolbox_name": "smite",
+    "full_name": "Single Molecule Imaging Toolbox Extraordinaire",
+    "primary_language": "MATLAB",
+    "license": "GPL-3.0",
+    "min_matlab_version": "R2021a",
+    "gpu_required": true,
+    "gpu_compute_capability": "5.0",
+    "main_branch": "main"
   }
 }
