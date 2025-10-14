@@ -53,19 +53,11 @@ This repository includes **comprehensive LLM-friendly documentation** designed f
    Requires Claude Desktop with Filesystem extension (2-minute setup: File → Settings → Extensions).
    Allows Claude to read AND write your files.
 
-2. **Remote (zero setup):**
-
-   Tell Claude to:
-   ```
-   Read this URL: https://raw.githubusercontent.com/LidkeLab/smite/main/LLM_DOCS.md
-   ```
-   Works immediately with any LLM. Read-only.
-
-3. **Then discuss smite naturally:**
+2. **Then discuss smite naturally:**
    - Ask installation questions
    - Get code examples
    - Troubleshoot issues
-   - Create analysis scripts (local only)
+   - Create analysis scripts
 
 See **[LLM_DOCS.md](LLM_DOCS.md)** for complete setup instructions and capabilities.
 
