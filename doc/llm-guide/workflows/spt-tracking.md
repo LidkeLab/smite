@@ -113,6 +113,7 @@ SPTSim.createSimulation();
 
 % Convert to image stack
 SMF = smi_core.SingleMoleculeFitting();
+SMF.Data.DataROI = [1, 1, 128, 128];  % Required for gaussBlobImage
 SMF.Fitting.PSFSigma = 1.3;
 [~, sequence] = smi_sim.GaussBlobs.gaussBlobImage(SPTSim.SMD, SMF);
 
