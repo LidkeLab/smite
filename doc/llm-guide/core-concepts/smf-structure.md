@@ -49,6 +49,20 @@ SMF = smi_core.SingleMoleculeFitting();
 % SMF.Data, SMF.BoxFinding, SMF.Fitting, etc.
 ```
 
+**⚠️ Case-Sensitivity Note:**
+
+MATLAB variable names are case-sensitive. The variable `SMF` (uppercase) can conflict with MATLAB's Fuzzy Logic Toolbox function `smf` (lowercase). If you encounter errors like:
+
+```
+Cannot find an exact (case-sensitive) match for 'SMF'
+The closest match is: smf in .../toolbox/fuzzy/fuzzy/smf.m
+```
+
+**Solutions:**
+1. Use a different variable name: `SMF_obj` or `my_SMF`
+2. Clear the conflict: `clear SMF; SMF = smi_core.SingleMoleculeFitting();`
+3. Use the full class path in examples: `smi_core.SingleMoleculeFitting()`
+
 ### Accessing Fields
 
 ```matlab

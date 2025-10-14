@@ -106,6 +106,8 @@ SMD.PSFSigma = [1.3; 1.3];
 
 Generate full-frame images with multiple blobs per frame.
 
+**⚠️ Important:** `SMF.Data.DataROI` must be set before calling this function, even though this field is optional for analysis workflows. DataROI defines the output image dimensions.
+
 **Signature:**
 ```matlab
 [Model, Data] = smi_sim.GaussBlobs.gaussBlobImage(SMD, SMF, Bg, Density)
@@ -113,7 +115,7 @@ Generate full-frame images with multiple blobs per frame.
 
 **Inputs:**
 - `SMD`: SingleMoleculeData with blob positions and parameters
-- `SMF`: SingleMoleculeFitting structure (for image size, ROI)
+- `SMF`: SingleMoleculeFitting structure (**requires SMF.Data.DataROI**)
 - `Bg`: Background level override (optional)
 - `Density`: Density flag (optional)
 
