@@ -36,5 +36,36 @@ IncludeCell = [];
 
 PixelSize = 97.8;   % nm/pixel
 
+% Plot dot, Gaussian or circle images of SMD/MAPN coordinates per ROI per Cell.
+% In other words, this function can plot cluster boundaries overlaid on dot,
+% Gaussian or circle plots of SR or BaGoL results.  The driver collects the
+% paths and files needed, while plotROI produces the specified plots from these
+% and a few other pieces of information for each ROI in each Cell, putting the
+% results in SaveDir.  WARNING: Not ALL combinations of options work together!
+%
+% INPUTS:
+%    PixelSize       plxel length (nm)
+%    options         cell array of strings that are selected from the following
+%                    options [DEFAULT = {'BaGoL', 'Gaussian', 'Cluster'}]:
+%       SR              SR Results file
+%       BaGoL           BaGoL Results file (BGL.SMD)
+%       MAPN            BaGoL MAPN file
+%       Dot             Dot plot
+%       Gaussian        Gaussian plot
+%       GaussSEConst    Gaussian plot with constant X/Y_SE
+%       Circle          Circle plot (BaGoL Results file: BGL.SMD + BGL.MAPN)
+%       Boundary        Include ROI boundaries
+%       Cluster         Include ROI clusters
+%       ROIImages       produce one image per ROI
+%       OneImage        produce one image displaying all ROIs
+%       NoSave          do not save outputs
+%    start_datadir   starting data directory from which SaveDir will be made a
+%                    subdirectory of by default if SaveDir not provided
+%                    [DEFAULT = '.']
+%    SaveDir         directory in which to save images
+%                    [DEFAULT = fullfile(start_datadir, 'ROIClusterAnalysis')]
+%    IncludeCell     Cells to produce plots for [DEFAULT: 1 : numel(filesB)]
+%                    using the numbering in the list filesB
+
 CI = smi_cluster.ClusterInterface;
 CI.plotROIDriver(PixelSize, options, start_DataDir, SaveDir, IncludeCell);
