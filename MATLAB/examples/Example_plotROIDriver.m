@@ -12,6 +12,10 @@ options = {'MAPN', 'Gaussian', 'Boundary', 'Cluster', 'OneImage', 'NoSave'};
 %options = {'MAPN', 'Gaussian', 'Boundary', 'Cluster', 'ROIImages', 'NoSave'};
 %options = {'MAPN', 'Gaussian', 'Cluster', 'ROIImages'};
 
+% One BaGoL MAPN ROI per MAPN Results file.
+%options = {'MAPN', 'MAPNResultsROI', 'Gaussian', 'Cluster'};
+%options = {'MAPN', 'MAPNResultsROI', 'GaussSEConst', 'Cluster'};
+
 % One SMITE SR image exhibiting multiple ROIs.
 %options = {'SR', 'Gaussian', 'Boundary', 'Cluster', 'OneImage', 'NoSave'};
 %options = {'SR', 'Dot', 'Boundary', 'Cluster', 'OneImage', 'NoSave'};
@@ -50,6 +54,7 @@ PixelSize = 97.8;   % nm/pixel
 %       SR              SR Results file
 %       BaGoL           BaGoL Results file (BGL.SMD)
 %       MAPN            BaGoL MAPN file
+%       MAPNResultsROI  Individual BaGoL MAPN Results_ROI files
 %       Dot             Dot plot
 %       Gaussian        Gaussian plot
 %       GaussSEConst    Gaussian plot with constant X/Y_SE

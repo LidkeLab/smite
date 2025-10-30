@@ -15,6 +15,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
 %       SR              SR Results file
 %       BaGoL           BaGoL Results file (BGL.SMD)
 %       MAPN            BaGoL MAPN file
+%       MAPNResultsROI  Individual BaGoL MAPN Results_ROI files
 %       Dot             Dot plot
 %       Gaussian        Gaussian plot
 %       GaussSEConst    Gaussian plot with constant X/Y_SE
@@ -39,6 +40,7 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    opt.SR = false;
    opt.BaGoL = false;
    opt.MAPN = false;
+   opt.MAPNResultsROI = false;
    opt.Dot = false;
    opt.Gaussian = false;
    opt.GaussSEConst = false;
@@ -57,6 +59,9 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    end
    if contains('MAPN', options)
       opt.MAPN = true;
+   end
+   if contains('MAPNResultsROI', options)
+      opt.MAPNResultsROI = true;
    end
    if contains('Dot', options)
       opt.Dot = true;
@@ -131,6 +136,10 @@ function plotROIDriver(PixelSize, options, start_datadir, SaveDir, IncludeCell)
    if opt.ROIImages
       CI.plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
                  SaveDir);
+   end
+   if opt.MAPNResultsROI
+      CI.plotROIn(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, ...
+                  SaveDir);
    end
 
    fprintf('Done.\n');
