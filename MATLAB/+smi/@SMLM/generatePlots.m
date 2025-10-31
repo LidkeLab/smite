@@ -137,7 +137,7 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
       DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
       figDC = DC.plotDriftCorrection(SMD, 'R');
       if ~isempty(PlotSaveDir2)
-         FileName = [BaseName '_CumDriftCorrection'];
+         FileName = [BaseName '_CumDriftCorrection.png'];
          saveas(gcf, fullfile(PlotSaveDir2, FileName), 'png');
       end
       if ~ShowPlots; close(gcf); end
@@ -149,7 +149,7 @@ if isfield(SMD,'DriftX') && ~isempty(SMD.DriftX) && ...
       DC.PixelSizeZUnit = obj.SMF.DriftCorrection.PixelSizeZUnit;
       figDC = DC.plotDriftCorrection(SMD, 'A');
       if ~isempty(PlotSaveDir2)
-         FileName = [BaseName '_DriftCorrection'];
+         FileName = [BaseName '_DriftCorrection.png'];
          saveas(gcf, fullfile(PlotSaveDir2, FileName), 'png');
       end
       if ~ShowPlots; close(gcf); end
