@@ -17,6 +17,8 @@ function [Success] = unitTest()
 %                        units of photons^2 for non-scalar gain and offset.
 %            Success(4): Same as Success(1) for scalar gain.
 %            Success(5): Same as Success(2) for scalar offset.
+%            Success(6): Test sCMOS camera with scalar calibration (Orca
+%                        Fusion scenario) - scalars auto-expand to 2D arrays.
 
 % Created by:
 %   David J. Schodt (Lidke Lab, 2020)
@@ -89,7 +91,7 @@ SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraGain = CameraGain;
 SMF.Data.CameraOffset = CameraOffset;
 SMF.Data.CameraReadNoise = CameraReadNoise;
-Success = zeros(1, 5, 'logical');
+Success = zeros(1, 6, 'logical');
 try
     DTP = smi_core.DataToPhotons(SMF, RawDataBottomRight, ...
         ROIBottomRight, CalibrationROI, true);
@@ -161,7 +163,37 @@ DTP.CameraOffset = CameraOffset;
 DTP.CameraReadNoise = CameraReadNoise;
 [CorrectedData, CorrectedNoise] = DTP.convertData();
 Success(4) = all(abs(CorrectedData(:)-DataWithScalarReadNoise(:)) < 0.1);
-Success(5) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
+% CorrectedNoise may be expanded to 2D array by scalar expansion logic
+if isscalar(CorrectedNoise)
+    Success(5) = (abs(CorrectedNoise-ScalarReadNoisePhotons) < 0.1);
+else
+    % All elements should equal the scalar value
+    Success(5) = all(abs(CorrectedNoise(:)-ScalarReadNoisePhotons) < 0.1);
+end
+
+% Test sCMOS camera with scalar calibration (modern uniform sensors like
+% Orca Fusion). This tests the auto-expansion of scalar values to 2D arrays.
+SMF_sCMOS = smi_core.SingleMoleculeFitting;
+SMF_sCMOS.Data.CameraType = 'SCMOS';
+SMF_sCMOS.Data.CameraGain = CameraGain;  % Use the scalar value already defined
+SMF_sCMOS.Data.CameraOffset = CameraOffset;
+SMF_sCMOS.Data.CameraReadNoise = CameraReadNoise;
+SMF_sCMOS.Data.CalibrationFilePath = '';  % Empty to trigger scalar path
+try
+    DTP_sCMOS = smi_core.DataToPhotons(SMF_sCMOS, RawData, [], [], 0, false);
+    [CorrectedData_sCMOS, CorrectedNoise_sCMOS] = DTP_sCMOS.convertData();
+    % Verify the conversion worked correctly
+    % Note: The scalar expansion happens internally in convertToPhotons,
+    % so DTP_sCMOS.CameraGain remains scalar, but the output arrays are
+    % properly sized and the conversion is correct.
+    Success(6) = all(abs(CorrectedData_sCMOS(:)-DataWithScalarReadNoise(:)) < 0.1) ...
+        && (size(CorrectedNoise_sCMOS, 1) == FrameSizeFull) ...
+        && (size(CorrectedNoise_sCMOS, 2) == FrameSizeFull);
+catch MException
+    warning('sCMOS scalar test failed: %s - %s', ...
+        MException.identifier, MException.message)
+    Success(6) = false;
+end
 
 
 end
