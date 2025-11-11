@@ -83,11 +83,29 @@ classdef FindROI < handle
                 switch SMF.Data.CameraType
                     case 'SCMOS'
                         obj.IsSCMOS = 1;
-                        obj.Varim = gpuArray(single(SMF.Data.CameraReadNoise./SMF.Data.CameraGain.^2)); 
+                        % For sCMOS with scalar calibration (modern uniform
+                        % sensors like Orca Fusion), expand to 2D variance image
+                        % matching data dimensions. This supports Issue #37 fix.
+                        CameraReadNoise = SMF.Data.CameraReadNoise;
+                        CameraGain = SMF.Data.CameraGain;
+                        if isscalar(CameraReadNoise) && isscalar(CameraGain)
+                            % Need 2D variance image for sCMOS CUDA kernels
+                            % Expand based on Data dimensions if available
+                            if nargin > 1 && ~isempty(Data)
+                                [NRows, NCols, ~] = size(Data);
+                                CameraReadNoise = CameraReadNoise * ones(NRows, NCols, 'single');
+                                CameraGain = CameraGain * ones(NRows, NCols, 'single');
+                            else
+                                % Data not yet available - will fail if used
+                                % This case shouldn't happen in normal workflow
+                                warning('FindROI: sCMOS with scalar calibration but no Data provided');
+                            end
+                        end
+                        obj.Varim = gpuArray(single(CameraReadNoise./CameraGain.^2));
                     otherwise
                         obj.IsSCMOS = 0;
                 end
-                
+
             end
             
             if nargin > 1
@@ -306,24 +324,24 @@ classdef FindROI < handle
         end
         
         function [Out] = gauss_sCMOS(Stack, Varim, Sigma)
-        %gauss_sCMOS() Out of place, weighted Gaussian filter
-        % [SubStack] = gauss_sCMOS(SubStack, Varim, Sigma)
+        %gauss_sCMOS() Variance-weighted Gaussian filter for sCMOS
+        % [Out] = gauss_sCMOS(Stack, Varim, Sigma)
         %
-        % Filtering is applied using direct, weighted calcualtion, but done
-        % separably along x and y. 
+        % Filtering is applied using variance-weighted convolution, done
+        % separably along x and y. This implements the optimal filtering
+        % for sCMOS cameras with pixel-dependent noise (Huang et al. 2013).
         %
-        % This is an out of place filter, meaning that inputs are not
-        % modified. 
+        % This is an out-of-place filter (input Stack is not modified).
         %
         % If the input is not gpuArray, it is copied to the GPU
-        % 
+        %
         % INPUTS:
         %   Stack:      Stack of 2D images to be filtered
-        %   Varim:      A gain-corrected variance image 
+        %   Varim:      A gain-corrected variance image (2D array)
         %   Sigma:      Gaussian Kernel (Pixels)
         %
         % OUTPUTS:
-        %   Out:        2D stack of images (gpuArray) 
+        %   Out:        Filtered 2D stack of images (gpuArray)
         %
         % REQUIRES:
         %   MATLAB 2014a or later versions
@@ -332,21 +350,27 @@ classdef FindROI < handle
         %   smi_cuda_FindROI.ptx
         %   smi_cuda_FindROI.cu
         %
-        
-        Out1=gpuArray(zeros(size(Stack),'single'));
-        
+
+        % Create working copy (matches gaussInPlace pattern)
+        Out = gpuArray(zeros(size(Stack),'single'));
+
         %Creating GPU CUDA kernel objects from PTX and CU code
         K_Gauss = parallel.gpu.CUDAKernel('smi_cuda_FindROI.ptx','smi_cuda_FindROI.cu','kernel_gaussMajor_sCMOS');
         K_Gauss.GridSize(1) = size(Stack,3);
         K_Gauss.ThreadBlockSize(1) = size(Stack,2);
-        
-        %Calling the gpu code to apply Gaussian filter along major
-        Out1 = feval(K_Gauss,gpuArray(Stack),Varim,Out1,size(Stack,1),Sigma);
-        
-        %Permuting and doing the other dimension
-        Out = gpuArray(zeros(size(Stack),'single'));
-        Out = feval(K_Gauss,permute(Out1,[2 1 3]),permute(Varim,[2 1]),Out,size(Stack,1),Sigma);
-        
+
+        %Calling the gpu code to apply Gaussian filter along major dimension
+        Out = feval(K_Gauss,gpuArray(Stack),Varim,Out,size(Stack,1),Sigma);
+
+        %Permute for second pass (matches gaussInPlace pattern)
+        Out = permute(Out,[2 1 3]);
+        Varim = permute(Varim,[2 1]);
+
+        %Second pass along other dimension - use current Out dimensions
+        K_Gauss.GridSize(1) = size(Out,3);
+        K_Gauss.ThreadBlockSize(1) = size(Out,2);
+        Out = feval(K_Gauss,Out,Varim,Out,size(Out,1),Sigma);
+
         %Permute back
         Out = permute(Out,[2 1 3]);
 
