@@ -23,5 +23,6 @@ function version = versionSMITE()
    %version = '1.2.5';   % Added a new output style (GaussSEConst) to plotROI
    %version = '1.2.6';   % Fixed combineBaGoLROIs to handle GaussIm defined ROIs
    %version = '1.3.0';   % Added comprehensive LLM documentation system
-   version = '1.3.1';   % Generalize plotROI to handle MAPN Results_ROI files
+   %version = '1.3.1';   % Generalize plotROI to handle MAPN Results_ROI files
+   version = '1.3.2';   % Generalize plotROIn to handle missing Cells.
 end

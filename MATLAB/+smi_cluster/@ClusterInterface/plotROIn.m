@@ -11,6 +11,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
 % overlayed by cluster boundaries.  Images are saved unless NoSave is
 % specified.
 %
+% filesB and filesC.files are assumed to have the string 'Cell_nn' embedded in
+% their names, where nn is a 2-digit cell number like 01, 12, etc.  filesB is
+% also assumed to have a 2-digit ROI number: 'ROI_nn' embedded in their names.
+%
 % INPUTS:
 %    opt         data characteristics and types of plots to produce if true
 % x     SR             SR Results file
@@ -64,6 +68,18 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    dataC = load(fullfile(pathnameC, filesC{1}));
 
    ScaleBarMsg = true;
+
+   % Extract the Cell numbers from the dataC filenames for matching purposes
+   % with dataB Cell numbers (comes in when there are missing Cells.
+   n_dataC = numel(dataC.files);
+   c_CellNum = zeros(1, n_dataC);
+   c_CellNum2Index = zeros(1, n_dataC);
+   for i = 1 : n_dataC
+      c_CellNum(i) = ...
+         str2num(regexprep(dataC.files{i}, '^.*Cell_([0-9]+).*$', '$1'));
+      c_CellNum2Index(c_CellNum(i)) = i;
+   end
+
    for i = 1 : numel(filesB)
       if ~ismember(i, opt.IncludeCell)
          % Remember: j = sum(dataC.n_ROIs(1 : i_cell - 1)) + i_ROI;
@@ -104,8 +120,17 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
          SMDsave.Y_SE = SMDsave.X_SE;
       end
 
-      j = sum(dataC.n_ROIs(1 : i_cell - 1)) + i_ROI;
-      ROI = dataC.RoI{i_cell}{i_ROI}.ROI;
+      % Added indexing arrays to deal wih missing Cells.
+      %j = sum(dataC.n_ROIs(1 : i_cell - 1)) + i_ROI;
+      %ROI = dataC.RoI{i_cell}{i_ROI}.ROI;
+      j = 0;
+      for k = 1 : i_cell - 1
+         if 0 < c_CellNum(k) & c_CellNum(k) < i_cell
+            j = j + dataC.n_ROIs(k);
+         end
+      end
+      j = j + i_ROI;
+      ROI = dataC.RoI{c_CellNum2Index(i_cell)}{i_ROI}.ROI;
       SMD = SMDsave;
 
       if opt.Gaussian
@@ -225,6 +250,7 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
             saveas(gcf, SaveFile, 'fig');
          end
       else
+         fprintf('\n');
          pause(3)
       end
       close
