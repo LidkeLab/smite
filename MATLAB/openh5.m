@@ -19,6 +19,21 @@ function [H5Structure] = openh5(FilePath)
 % REQUIRES:
 %   MATLAB 2016b or later
 
-[H5Structure] = smi_core.LoadData.readH5File(FilePath);
+fprintf('Opening h5 with custom loader: %s\n', FilePath);
+%  GroupName: (optional) Name of a specific group in the .h5 file to be
+%             extracted.
+GroupName = inputdlg('Specific group in the .h5 file to be extracted.');
+if isempty(GroupName)
+   disp('Canceled!');
+   return
+end
+GroupName = GroupName{1};
+if ~isempty(GroupName)
+   [H5Structure] = smi_core.LoadData.readH5File(FilePath, GroupName);
+else
+   [H5Structure] = smi_core.LoadData.readH5File(FilePath);
+end
+assignin('base', 'h5Struct', H5Structure);
+disp('Loaded to variable: h5Struct');
 
 end
