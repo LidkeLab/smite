@@ -22,7 +22,7 @@ function SMD_True = kDisc(k, center, radius)
    y = zeros(k, 1);
 
    for i = 1 : k
-      r = radius * radius;
+      r = radius * rand;
       theta = 2 * pi * rand;
       x(i) = center(1) + r * cos(theta);
       y(i) = center(2) + r * sin(theta);
