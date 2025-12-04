@@ -118,8 +118,12 @@ methods:
 - **[genNoisySMD](genNoisySMD.m)**:
   takes the SMD_Model struct as an input, generates the noisy SMD struct and
   return SMD_Data
+- **[kDisc](kDisc.m)**:
+  produces a disc of k points
 - **[kTet](kTet.m)**:
   produces a circle of k equally spaced points starting at a random place
+- **[simkDiscs](simkDiscs.m)**:
+  generates 2D k-discs in the simulation region
 - **[simStar](simStar.m)**:
   simulates the Siemen star
 - **[simkTets](simkTets.m)**:

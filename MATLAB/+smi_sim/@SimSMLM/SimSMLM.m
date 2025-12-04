@@ -88,7 +88,9 @@ classdef SimSMLM < handle
 
     methods(Static)
 
+        SMD_True = kDisc(k, center, radius)
         SMD_True = kTet(k, center, radius, startAngle)
+
         success = unitTest()
 
     end
