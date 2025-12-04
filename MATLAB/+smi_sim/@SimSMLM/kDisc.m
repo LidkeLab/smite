@@ -21,11 +21,17 @@ function SMD_True = kDisc(k, center, radius)
    x = zeros(k, 1);
    y = zeros(k, 1);
 
-   for i = 1 : k
-      r = radius * rand;
-      theta = 2 * pi * rand;
-      x(i) = center(1) + r * cos(theta);
-      y(i) = center(2) + r * sin(theta);
+   % Randomly cover the disc with k points.
+   radius2 = radius^2;
+   i = 0;
+   while i < k
+      xx = radius * (2 * rand - 1);
+      yy = radius * (2 * rand - 1);
+      if xx^2 + yy^2 <= radius2
+         i = i + 1;
+         x(i) = center(1) + xx;
+         y(i) = center(2) + yy;
+      end
    end
 
    SMD_True = smi_core.SingleMoleculeData.createSMD();
