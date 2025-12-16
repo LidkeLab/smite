@@ -59,7 +59,7 @@ doHopkins = true;   % Hopkins' test can be time consuming for dense ROIs
 % Set to false for very dense ROIs to avoid crashes due to lack of memory.
 doSigmaActual = false;
 
-ROI_sizes = [3000, 3000];   % [delta_x, delta_y] (nm)
+ROI_sizes = [2000, 2000];   % [delta_x, delta_y] (nm)
 A_ROI = prod(ROI_sizes);    % ROI area (nm^2)
 %Pixel2nm = 16000/150;       % conversion factor from pixels to nm
 %Pixel2nm = 108.018;         % pixels to nm [TIRF]
@@ -73,8 +73,8 @@ RT = smi_helpers.ROITools();
 %    upper left origin coordinates in the ROI selection display.
 % If GaussIm is true, make OriginLLvsUL false for consistency.  The default is:
 % GaussIm = false and OriginLLvsUL = true.
-%RT.GaussIm = true;    RT.OriginLLvsUL = false;
-RT.GaussIm = false;   RT.OriginLLvsUL = true;
+RT.GaussIm = true;    RT.OriginLLvsUL = false;
+%RT.GaussIm = false;   RT.OriginLLvsUL = true;
 RT.SRzoom = 4;              % zoom factor for gaussianImage
 RT.ROI_sizes = ROI_sizes;   
 RT.Pixel2nm = Pixel2nm;
@@ -95,8 +95,8 @@ end
 start_datadir = '.';
 
 % If true, look for MAPN_*.mat, otherwise *_Results*.mat for BaGoL coordinates.
-%MAPNfile = false;
 MAPNfile = true;
+MAPNfile_defROIs = false; % used only in the "Define the ROIs" section below!!!
 
 % Filtering parameters:
 %filter.maxLocROI = 0;     % minimum number of localizations allowed in a ROI
@@ -110,7 +110,7 @@ fprintf('Done set parameters.\n');
 
 %% ----------- Define the ROIs
 
-if MAPNfile
+if MAPNfile_defROIs
    [pathname, files] = smi_helpers.selectFiles(start_datadir, ...
                             'MAPN*.mat files', 'MAPN_*.mat');
 else
@@ -156,7 +156,8 @@ else
 end
 
 CI.combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
-                    keep_numbering, RT.GaussIm);
+                    keep_numbering, RT.OriginLLvsUL);
+%                   keep_numbering, RT.GaussIm); % be consistent!; see above
 
 %% ---------- Possibly, filter out some ROIs
 
@@ -166,6 +167,10 @@ CI.combineBaGoLROIs(pathnameR, filesR, pathnameB, filesB, MAPNfile, ...
 [n_ROIs, RoI] = CI.filterROIs(pathname, files, filter);
 
 %% ---------- Statistics for a single condition
+
+% NOTE: a pure batch version of this section, which runs much more quickly,
+% can be found in
+%    examples/singleConditionDriver.m
 
 % Main parameters to change: algorithm_range, E_range, minPts_range
 

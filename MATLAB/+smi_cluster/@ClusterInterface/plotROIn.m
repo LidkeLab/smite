@@ -58,8 +58,10 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    % Boundary shrink factor (0 = convex hull, 1 = as concave as possible,
    % 0.5 = MATLAB default)
    ShrinkFactor = 0.5;
-   ScaleBarLength = 500; % nm
-   ScaleBarWidth  = 100; % nm
+   %ScaleBarLength = 500; % nm
+   %ScaleBarWidth  = 100; % nm
+   ScaleBarLength = 100;  % nm
+   ScaleBarWidth  = 25;   % nm
    % Special BaGoL plots for Diane: X/Y_SE are constant and uniform.
    SEConstant = 5; % nm
 
@@ -70,7 +72,17 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
    ScaleBarMsg = true;
 
    % Extract the Cell numbers from the dataC filenames for matching purposes
-   % with dataB Cell numbers (comes in when there are missing Cells.
+   % with dataB Cell numbers (comes in when there are missing Cells).
+   % c_CellNum       is the array of Cell numbers encountered in dataCi
+   %                 filenames
+   % c_CellNum2Index is the inverse of CellNum, the indices in CellNum
+   %                 corresponding to particular cell numbers or zero if there
+   %                 is no correspondence,
+   % For example. suppose 11 cells are encountered (1-11) with cell #7 missing,
+   % then index           = 1 2 3 4 5 6 7 8  9 10 11
+   %                        ------------------------
+   %      c_CellNum       = 1 2 3 4 5 6 8 9 10 11
+   %      c_CellNum2Index = 1 2 3 4 5 6 0 7  8  9 10
    n_dataC = numel(dataC.files);
    c_CellNum = zeros(1, n_dataC);
    c_CellNum2Index = zeros(1, n_dataC);
@@ -125,8 +137,11 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       %ROI = dataC.RoI{i_cell}{i_ROI}.ROI;
       j = 0;
       for k = 1 : i_cell - 1
-         if 0 < c_CellNum(k) & c_CellNum(k) < i_cell
-            j = j + dataC.n_ROIs(k);
+         if k <= n_dataC
+            % OK if i_cell - 1 >= n_dataC
+            if 0 < c_CellNum(k) & c_CellNum(k) < i_cell
+               j = j + dataC.n_ROIs(k);
+            end
          end
       end
       j = j + i_ROI;
@@ -152,8 +167,6 @@ function plotROI(opt, pathnameC, filesC, pathnameB, filesB, PixelSize, SaveDir)
       fprintf(' (abs ROI %d)', j);
 
       % Gaussian image plot of SR localizations.
-      ScaleBarLength = 100;  % nm
-      ScaleBarWidth  = 25;   % nm
       if opt.Gaussian
          if ScaleBarMsg
             fprintf('\nScaleBar = %d nm', ScaleBarLength);

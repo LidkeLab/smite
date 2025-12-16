@@ -269,6 +269,9 @@ Additional details on the core functionality of ***smite*** can be
 found [here](doc/CoreOverview.md), including both simple and
 extended examples of usage.
 
+### [UNM workflows](doc/UNMworkflows.md)
+Typical Univerisity of New Mexico workflows for ***smite*** software.
+
 ---
 
 ## Contributions/Support

@@ -44,6 +44,7 @@ G indicates a GPU is used.
 [hierBaGoL_wrapper](hierBaGoL_wrapper.m)                                        | wrapper used to call BaGoL routines
 [generateBaGoLScripts](generateBaGoLScripts.m)                                  | generate a series of self-contained scripts to run BaGoL over a number of cells, one script per cell
 [BaGoL_TEMPLATE](BaGoL_TEMPLATE.m)                                              | BaGoL script template for generateBaGoLScripts
+[hierBaGoLwrapper](hierBaGoLwrapper.m)                                          | typical hierarchal BaGoL wrapper script
 [simpleROIcluster](simpleROIcluster.m)                                          | step-by-step script to choose ROIs, cluster and analyze/compare conditions for 1-label data
 [singleConditionDriver](singleConditionDriver.m)                                | batch cluster analysis for comparison of experimental conditions for 1-label data
 [combinedStats1](combinedStats1.m)                                              | batch cluster analysis for combining statistics
