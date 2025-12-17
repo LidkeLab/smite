@@ -97,18 +97,31 @@
     Guassian-like (constant localization standard error) [option
     'GaussSEConst'] images with ROI and cluster boundaries.  Inputs can be
     single condition results, plus one of:
+
     (1) a SR Results file [option 'SR']; (2) a single BaGoL MAPN file
-    containing multiple ROIs [option 'MAPN']; a series of individual BaGoL MAPN
-    Results_ROI files containing one ROI per file [option 'MAPNResultsROI'].
-    This last can handle missing ROIs as long as the naming convention is
-    observed:
+    containing multiple ROIs [option 'MAPN']; (3) a series of individual BaGoL
+    MAPN Results_ROI files containing one ROI per file [option
+    'MAPNResultsROI'].  This last can handle missing ROIs as long as the naming
+    convention is observed:
 
     filesB and filesC.files are assumed to have the string 'Cell_nn' embedded
     in their names, where nn is a 2-digit cell number like 01, 12, etc.  filesB
     is also assumed to have a 2-digit ROI number: 'ROI_nn' embedded in their
     names.
 
-## 2-color: Publish -> BaGoL -> cluster -> compare conditions OR overlay images
+## 2-color: Publish -> BaGoL -> cluster -> statistics
 
 - The analyses for 2 colors has much in common with 1-color analysis, except
-  Label_01 and Label_02 files are treated separately once ROIs are chosen.
+  Label_01 and Label_02 files are treated together once ROIs are chosen.
+
+- Initially, the 2 labels are analyzed separately: SMLM, Publish, BaGoL.
+
+- use **simplePairCorr**: *Define the ROIs* to select ROIs simultaneously for
+  the 2 labels.  As above, the _ROIs.mat files are defined (transformed) or
+  combined into single _BaGoL_ROIs.mat files.
+
+- Once BaGolized, use *Analyze the ROIS one-by-one* (statistics are collected
+  for each ROI) or *Analyze a group of files of ROIs all together* (some
+  statistics are combined like pair correlation) to detect clusters and produce
+  clustering and other 2-color statistics.  The analysis results are saved for
+  possible further processing.

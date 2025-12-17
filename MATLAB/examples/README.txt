@@ -30,7 +30,6 @@ SMITE code templates requiring user-supplied data:
 				run BaGoL over a number of cells, one script
 				per cell
    BaGoL_TEMPLATE		BaGoL script template for generateBaGoLScripts
-   hierBaGoLwrapper		typical hierarchal BaGoL wrapper script
    simplePairCorr               step-by-step script to choose 2-label ROIs & do
                                 various analyses for ROIs separate or combined
    simpleROIcluster             step-by-step script to choose ROIs, cluster and
