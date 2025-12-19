@@ -42,7 +42,7 @@
 
   - If the variable *ROIs* is true and only one filename is provided (see
     below), and assuming SMD files are of the form Cell_nn_Label_0n_Results.mat
-    and ROI files are of the form Cell_nn_Label_01_Results_ROIs.mat (and are
+    and ROI files are of the form Cell_nn_Label_0n_Results_ROIs.mat (and are
     located in the subdirectory 'Analysis' of DataDir) as done when choosing
     ROIs using the scripts simpleROIcluster or simplePairCorr, this current
     script will automatically use the ROI information in the _ROIs.mat file to
@@ -83,13 +83,15 @@
   *Statistics for a single condition*.  pathname designates the path where the
   ROIs or BaGoL_ROIs are stashed for a single condition, while files reference
   the *_ROIs.mat or *_BaGoL_ROIs.mat files containing ROI definitions.
-  *_BaGol_ROIs.mat files are converted from from *_ROIs.mat and MAPN files by
-  the section (*Define the BaGoL ROIs from the previous ROIs and BaGoL
-  results*) in **simpleROIcluster**.
+  *_BaGol_ROIs.mat files are converted from *_ROIs.mat and MAPN files by the
+  section (*Define the BaGoL ROIs from the previous ROIs and BaGoL results* or
+  *Possibly, combine individually processed BaGoL ROIs into a single _ROIs.mat
+  file using the _ROIs.mat file that was used to define the ROIs originally
+  from the SR data*) in **simpleROIcluster**.
 
 - use
-  - **simROIcluster**: *Combined statistics for one or more conditions* (simple
-    combined plots) or *Combined statistics for multiple conditions and
+  - **simpleROIcluster**: *Combined statistics for one or more conditions*
+    (simple combined plots) or *Combined statistics for multiple conditions and
     experiments* (more complex combined plots) to compare multiple single
     conditions whose results (.mat files) are collected together into a single
     directory.
@@ -121,7 +123,7 @@
   combined into single _BaGoL_ROIs.mat files.
 
 - Once BaGolized, use *Analyze the ROIS one-by-one* (statistics are collected
-  for each ROI) or *Analyze a group of files of ROIs all together* (some
-  statistics are combined like pair correlation) to detect clusters and produce
+  for each ROI) or *Analyze a group of files of ROIs all together* (some ROI
+  statistics are combined, like pair correlation) to detect and produce
   clustering and other 2-color statistics.  The analysis results are saved for
   possible further processing.
