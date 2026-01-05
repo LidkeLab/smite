@@ -67,6 +67,28 @@ CameraGain = single(CameraGain);
 CameraOffset = single(CameraOffset);
 CameraReadNoise = single(CameraReadNoise);
 
+% For sCMOS cameras with scalar calibration values (modern low-variation
+% sensors like Orca Fusion), expand scalars to 2D arrays matching image
+% dimensions. This ensures consistent behavior throughout the pipeline while
+% supporting simplified calibration for uniform sensors.
+if isscalar(CameraGain) && isscalar(CameraOffset) && ...
+        (isempty(CameraReadNoise) || isscalar(CameraReadNoise))
+    % Get image dimensions from RawData
+    [NRows, NCols, ~] = size(RawData);
+
+    % Expand scalars to 2D arrays
+    CameraGain = CameraGain * ones(NRows, NCols, 'single');
+    CameraOffset = CameraOffset * ones(NRows, NCols, 'single');
+    if ~isempty(CameraReadNoise)
+        CameraReadNoise = CameraReadNoise * ones(NRows, NCols, 'single');
+    end
+
+    % Update CalibrationROI to match full image size if not properly defined
+    if isempty(CalibrationROI) || isequal(CalibrationROI, [1, 1, 1, 1])
+        CalibrationROI = [1, 1, NRows, NCols];
+    end
+end
+
 % Compare array sizes and ROI definitions to ensure consistency.
 SizeRawData = size(RawData);
 SizeCameraGain = size(CameraGain);

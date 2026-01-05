@@ -46,6 +46,11 @@ GaussMLE = smi_core.GaussMLE(obj.SMF, ROIStack);
 SMDCandidates.X = SMDCandidates.X + SMDCandidates.XBoxCorner;
 SMDCandidates.Y = SMDCandidates.Y + SMDCandidates.YBoxCorner;
 
+% Merge duplicate localizations that may have been generated when
+% FindROI detects multiple identical pixel maxima (Issue #21).
+% This is rare but can occur in noise-free simulation data.
+SMDCandidates = obj.mergeDuplicateLocalizations(SMDCandidates);
+
 % Threshold localizations.
 MinMax = smi_core.Threshold.setMinMax(obj.SMF);
 if obj.SMF.Thresholding.AutoThreshLogL
