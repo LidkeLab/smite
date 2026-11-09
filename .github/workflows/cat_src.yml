@@ -1,42 +1,65 @@
 name: Concatenate Source and Readme
 
-on: 
+# On each push to main, rebuild all_source.txt (every tracked .m and .md
+# file, joined into one) and publish it with README.md on the gh-pages
+# branch, which GitHub Pages serves. The job adds one commit to gh-pages
+# when the content changed and pushes it normally: it never rebuilds the
+# branch or force-pushes.
+
+on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Runs publish one at a time, in order, so two quick pushes to main
+# cannot race on gh-pages.
+concurrency:
+  group: publish-gh-pages
+  cancel-in-progress: false
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Concatenate Files
-      run: |
-        cd ${{ github.workspace }}
-        find . -name '*.m' -o -name '*.md' | while read -r file; do
-          echo "$file" >> all_source.txt
-          cat "$file" >> all_source.txt
-          echo >> all_source.txt
-        done
-
-    - name: Setup Git  
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-      
-    - name: Commit Files
-      run: |
-        git checkout -B gh-pages main
-        git reset --hard origin/main
-        git rm -rf .
-        git checkout main -- README.md  # Explicitly checkout the latest README.md from main
-        git add README.md all_source.txt
-        git commit -m "Updating all source and README"
-
-    - name: Push Changes
-      uses: ad-m/github-push-action@master
+    - name: Check out main
+      uses: actions/checkout@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
+        path: src
+
+    - name: Check out gh-pages
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: site
+
+    - name: Concatenate Files
+      working-directory: src
+      run: |
+        # Tracked files only, in a fixed order, so an unchanged source
+        # gives an identical file and no commit.
+        git ls-files -z -- '*.m' '*.md' | LC_ALL=C sort -z |
+        while IFS= read -r -d '' file; do
+          printf './%s\n' "$file"
+          cat "$file"
+          echo
+        done > ../site/all_source.txt
+        cp README.md ../site/README.md
+
+    - name: Commit and Push
+      working-directory: site
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add all_source.txt README.md
+        if git diff --cached --quiet; then
+          echo "gh-pages already matches main ${GITHUB_SHA}; nothing to publish."
+          exit 0
+        fi
+        git commit -m "Rebuild all_source.txt and README.md from main ${GITHUB_SHA::7}"
+        git push origin HEAD:gh-pages
