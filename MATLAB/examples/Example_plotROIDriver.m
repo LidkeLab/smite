@@ -24,7 +24,7 @@ options = {'MAPN', 'Gaussian', 'Boundary', 'Cluster', 'OneImage', 'NoSave'};
 %options = {'SR', 'Gaussian', 'Boundary', 'Cluster', 'ROIImages', 'NoSave'};
 %options = {'SR', 'Gaussian', 'Cluster', 'ROIImages'};
 
-start_DataDir = '/mnt/nas/cellpath/Genmab/Data/';
+start_DataDir = '.';
 
 SaveDir = '/mnt/nas/lidkelab/Personal Folders/MJW/ROI/NEW/OUT';
 

@@ -8,7 +8,7 @@
 %    ResultsStructs containing individual "Cell_*_Results.mat" files.  The cell
 %    number is embedded in the name of the _Results.mat files,
 % -  a short name for the BaGoL output directory (Results_BaGoL) to which the
-%    cell number will be appended, e,g., B12_20240816_02,
+%    cell number will be appended, e,g., Sample_02,
 % -  the fullpath of the BaGoL directory that will contain the scripts
 %    produced.
 clear all
@@ -16,10 +16,12 @@ clear all
 % BaGoL template script location.  Note that 3 lines in this file start with a
 % +.  These lines will be replaced by the appropriate information
 % (BaGoL_Results directory, D1 data directory, and cell data filename) when
-% this script is run.
-Template = '/mnt/nas/cellpath/Genmab/Data/Analyses/BaGoL_TEMPLATE.m';
-ResultsDir = '/mnt/nas/cellpath/Genmab/Data/2024-05-17_HeLa_SaturatingIgG10min/HeLa_IgG1-B12-AF647_5ugml_10min/Results';
-Results_BaGoL = 'B12_20240816';
+% this script is run.  BaGoL_TEMPLATE.m in the smite examples directory is
+% such a template; copy and edit it as needed.
+Template = fullfile(fileparts(mfilename('fullpath')), 'BaGoL_TEMPLATE.m');
+% Directory of SMITE results (containing the subdirectory ResultsStructs).
+ResultsDir = '.';
+Results_BaGoL = 'Sample';
 BaGoLDir = fullfile(ResultsDir, 'BGL');
 
 cells = dir(fullfile(ResultsDir, 'ResultsStructs', 'Cell_*_Results.mat'));

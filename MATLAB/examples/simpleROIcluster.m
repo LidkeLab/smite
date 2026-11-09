@@ -47,7 +47,7 @@
 %       where experimentalConditions contains no #.  Statistics for a single
 %       condition produces filenames in this format, so can be copied directly.
 %       A typical example of a renamed ALL_*_results file is:
-%          RGY#DBSCAN_N=3,E=50_results.mat
+%          ConditionA#DBSCAN_N=3,E=50_results.mat
 %   ALTERNATIVELY, combined statistics for multiple conditions and experiments
 %      (as above, where line colors and types for CDF2 plots are set by hand)
 %
@@ -185,7 +185,7 @@ condition = answer{1};
 % Look for condition/Analysis/*_ROIs.mat or uncomment "files = ..."
 % lines below and list files manually.
 % Use specified condition.
-%condition = 'RGY';
+%condition = 'ConditionA';
 %pathname = fullfile(start_datadir, condition, 'Analysis');
 %FILES = dir(fullfile(pathname, '*_Results_ROIs.mat'));
 %files = { FILES.name };

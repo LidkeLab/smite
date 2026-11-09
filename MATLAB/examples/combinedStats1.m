@@ -19,7 +19,7 @@
 %      condition (see simpleROIcluster) produces filenames in this format, so
 %      can be copied directly.
 %      A typical example of a *_results.mat file is:
-%         RGY#DBSCAN_N=3,E=50_results.mat
+%         ConditionA#DBSCAN_N=3,E=50_results.mat
 %   ALTERNATIVELY, combined statistics for multiple conditions and experiments
 %      (as above, where line colors and types for CDF2 plots are set by hand)
 %      See simpleROIcluster (or in the future combinedStats2).
@@ -51,7 +51,7 @@ if oneROI
 end
 
 % Select the files starting from start_datadir.
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/';
+start_datadir = '.';
 
 fprintf('Done set parameters.\n');
 
@@ -79,20 +79,15 @@ SC.LinLog = 'semilogx';
 %answer = inputdlg('Output directory identifier:');
 %base_name = answer{1};
 
-pathname = fullfile(start_datadir, 'Analyses', '18conditions');
+% Manual specification: one *_results.mat file per condition, all collected in
+% the directory pathname.
+pathname = start_datadir;
 N = 3;
 E = 30;
 files = {
-sprintf('2F8_20240423-1-2#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8-E345R_20240517-23#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8_E345R_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8-E430G_20240517-23#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8_E430G_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('RGY_20240423-1-2#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('2F8_RGY_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('Prefix_20240423-1-2#DBSCAN_N=%d,E=%d_results.mat', N, E)
-sprintf('Prefix_20240526#DBSCAN_N=%d,E=%d_results.mat', N, E)
+sprintf('ConditionA#DBSCAN_N=%d,E=%d_results.mat', N, E)
+sprintf('ConditionB#DBSCAN_N=%d,E=%d_results.mat', N, E)
+sprintf('ConditionC#DBSCAN_N=%d,E=%d_results.mat', N, E)
 };
 base_name = 'CONSOLIDATED';
 
