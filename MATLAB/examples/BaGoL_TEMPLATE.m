@@ -1,7 +1,7 @@
 % BaGoL run TEMPLATE file used by generateBaGolScripts.m
 
 % Output directory name.
-+Results_BaGoL = 'DF3_01';
++Results_BaGoL = 'Sample_01';
 
 % Generic parameters.
 BaGoLParams.ImageSize = 256;        % (pixel)
@@ -72,9 +72,9 @@ ROIs = false;
 % ### defined relative to the directory where hierBaGoL_wrapper is run.
 % ### Absolute pathnames are also fine, especially when used in conjunction
 % ### with fullfile.
-+D1 = '/mnt/nas/cellpath/Personal Folders/Rachel/20231010_IgE-AntigenStrain/BaGoLHierCM/2024WillRedo/DF3/Results/ResultsStructs';
++D1 = fullfile('.', 'Results', 'ResultsStructs');
 Files = {
-+fullfile(D1, 'Cell_01_Label_01_Data_2021-3-26-23-24-49_Results.mat');
++fullfile(D1, 'Cell_01_Label_01_Results.mat');
 };
 
 % DataROI is defined when running BaGoL over only part of the image.
