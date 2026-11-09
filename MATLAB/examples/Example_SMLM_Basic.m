@@ -3,9 +3,7 @@
 %Create a SMLM object
 SMLMobj=smi.SMLM()  %no input pops open a gui
 
-%Use gui to navigate to a test dataset such as this TIRF DNA-PAINT: 
-
-%  Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin\Dock2-Cell1-2020-11-12-10-29-58.h5
+%Use gui to navigate to a test dataset, for example a TIRF DNA-PAINT .h5 file.
 
 % Set other SMF parameters and try a test fit from gui
 
@@ -14,8 +12,8 @@ SMLMobj=smi.SMLM()  %no input pops open a gui
 %% Scripted Analysis
 
 %or set it manually:
-%SMLMobj.SMF.Data.FileDir='Y:\Sandeep\20-11-2020-DNA_PAINT_Tubulin';
-%SMLMobj.SMF.Data.FileName='Dock2-Cell1-2020-11-12-10-29-58.h5';
+%SMLMobj.SMF.Data.FileDir='/path/to/data';
+%SMLMobj.SMF.Data.FileName='Data.h5';
 
 %give a Analysis ID
 %SMLMobj.SMF.Data.AnalysisID='ID';

@@ -58,51 +58,31 @@ fprintf('Done set parameters.\n');
 
 % Manual specification.
 
-% BATCH processing
-%for treatment = 1:6
-for treatment = 6
+% BATCH processing: each treatment is one condition, whose ROI files are in a
+% subdirectory of start_datadir named after the condition.
+%for treatment = 1:3
+for treatment = 1
 
 switch treatment
 
 case 1
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/2F8_20240423-1-2';
-condition = '2F8_20240423-1-2'
+condition = 'ConditionA'
 
 case 2
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/RGY_20240423-1-2';
-condition = 'RGY_20240423-1-2'
+condition = 'ConditionB'
 
 case 3
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/Prefix_20240423-1-2';
-condition = 'Prefix_20240423-1-2'
-
-case 4
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/2F8-E345R_20240517-23';
-condition = '2F8-E345R_20240517-23'
-
-case 5
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/2F8-E430G_20240517-23';
-condition = '2F8-E430G_20240517-23'
-
-case 6
-start_datadir = '/mnt/nas/cellpath/Genmab/Data/Analyses/COMBINED/B12_20240517-23';
-condition = 'B12_20240517-23'
+condition = 'ConditionC'
 
 % ---
 
 end % switch treatment
 
-% Look for condition/Analysis/*_ROIs.mat or uncomment "files = ..."
-% lines below and list files manually.
-% Use specified condition.
-%condition = '2F8';
-%condition = 'B12';
-%condition = 'E345R';
-%condition = 'RGY';
+% Look for start_datadir/condition/BaGoL_ROIs/*_ROIs.mat or uncomment
+% "files = ..." lines below and list files manually.
 %pathname = fullfile(start_datadir, condition, 'Analysis');
-%
-%pathname = fullfile(start_datadir, 'Results', 'BaGoL_ROIs');
-pathname = fullfile(start_datadir, 'BaGoL_ROIs');
+%pathname = fullfile(start_datadir, condition, 'Results', 'BaGoL_ROIs');
+pathname = fullfile(start_datadir, condition, 'BaGoL_ROIs');
 %pathname = start_datadir;
 FILES = dir(fullfile(pathname, '*_ROIs.mat'));
 files = { FILES.name };

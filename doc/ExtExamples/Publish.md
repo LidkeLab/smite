@@ -33,7 +33,7 @@ SMF = smi_core.SingleMoleculeFitting;
 SMF.Data.CameraType = 'SCMOS';
    % Path to the camera calibration file (Default='')   [MUST BE PROVIDED]
 SMF.Data.CalibrationFilePath = ...
-   '/mnt/nas/lidkelab/sCMOS Calibrations/SequentialSR/GainCalibration_medianGain_2022_05_26.mat';
+   '/path/to/GainCalibration.mat';
    % Camera back-projected pixel size (micrometers)
 SMF.Data.PixelSize = 0.0954; % microns
    % Linear box size for fitting (Pixels)(Default=7)

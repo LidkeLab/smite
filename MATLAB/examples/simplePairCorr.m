@@ -60,8 +60,6 @@
 
 PA = smi_cluster.PairAnalysis();
 
-%start_datadir = '/mnt/nas/cellpath/Genmab/Data/20221119_CHO_HAEGFR_antiHA_antiC1Q/PairwiseCorr';
-%start_datadir = '/mnt/nas/lidkelab/Projects/Mandall lab/10-17-24/Test 1/TGN46/Results/ResultsStructs';
 start_datadir = '.';
 Analysis = 'Analysis';
 

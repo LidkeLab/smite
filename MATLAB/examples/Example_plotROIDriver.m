@@ -24,19 +24,14 @@ options = {'MAPN', 'Gaussian', 'Boundary', 'Cluster', 'OneImage', 'NoSave'};
 %options = {'SR', 'Gaussian', 'Boundary', 'Cluster', 'ROIImages', 'NoSave'};
 %options = {'SR', 'Gaussian', 'Cluster', 'ROIImages'};
 
-start_DataDir = '/mnt/nas/cellpath/Genmab/Data/';
+start_DataDir = '.';
 
-SaveDir = '/mnt/nas/lidkelab/Personal Folders/MJW/ROI/NEW/OUT';
+SaveDir = smi_helpers.mkSMITETmpDir('examples', 'plotROI');
 
 % Cells to produce plots for using an absolute numbering over the cells that
 % were selected,
 IncludeCell = [];
-%IncludeCell = [13, 25]; % DF3
-%IncludeCell = [11, 20]; % DNP-BSA
-%IncludeCell = [9, 116]; % DNP-PEG-BSA
-%IncludeCell = [1, 8]; % DNP-BSA_10nM
-%IncludeCell = [1, 7]; % DNP-BSA_2150pM
-%IncludeCell = [2]; % Resting
+%IncludeCell = [13, 25];   % only cells 13 and 25
 
 PixelSize = 97.8;   % nm/pixel
 

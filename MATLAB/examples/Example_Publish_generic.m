@@ -9,7 +9,6 @@
 % NOTE: 'CoverslipDir' is the top-level directory which contains the
 %        sub-directories 'CoverslipDir'\Cell*\Label*, which themselves
 %        contain data in .h5 files 'CoverslipDir'\Cell*\Label*\Data*.h5
-%SCMOSDir = '/mnt/nas/lidkelab/sCMOS Calibrations/Sequential SR/GainCalibration-2015-12-10-17-19-23.mat';
 CoverslipDir = 'NEEDS_TO_BE_SET!';
 SCMOSDir = 'NEEDS_TO_BE_SET!';
 
